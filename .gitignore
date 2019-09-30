@@ -5,6 +5,9 @@
 *.ipr
 /out/
 
-### frontend ###
-/frontend/node_modules
-/frontend/webpack
+### Frontend ###
+/ChatbotPortal/frontend/react/node_modules
+/ChatbotPortal/frontend/react/webpack
+
+### Backend ###
+/ChatbotPortal/db.sqlite3
