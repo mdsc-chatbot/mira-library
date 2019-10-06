@@ -4,7 +4,7 @@ python:
 services:
   - mysql
 env: 
-  -DJANGO=2.2.5 DB=mysql
+  -DJANGO==2.2.5 DB=mysql
 install:
   - pip install django=2.2.5
 script:
