@@ -3,7 +3,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const productionMode = true;
+const productionMode = false;
 const environment = productionMode ? 'production' : 'development';
 const sourceMaps = productionMode;
 
