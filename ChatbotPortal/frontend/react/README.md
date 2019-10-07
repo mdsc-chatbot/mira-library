@@ -6,4 +6,4 @@ This is the frontend module for ChatbotPortal.
 ``` npm update```  
 
 - To build React resources, run the following command:
-``` npx build ```
+``` npm run-script build```
