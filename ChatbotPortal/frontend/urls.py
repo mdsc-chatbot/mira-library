@@ -14,9 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 
-from django.urls import path
+# To match all urls, used the following url as reference
+# https://stackoverflow.com/questions/51084909/how-can-i-use-a-catch-all-route-using-path-or-re-path-so-that-django-passes
+
+from django.urls import path, re_path
 from . import views
 urlpatterns = [
-    path('resources/(?P<name>[-\s]*)/', views.resources, name='resources'),
+    re_path(r'^resources/(?P<path>.*)/$', views.resources, name='resources'),
     path('', views.index, name='index'),
 ]
