@@ -20,4 +20,5 @@ from django.conf.urls import url, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chatbotportal/', include('frontend.urls'))
+    path('api-auth/', include('rest_framework.urls'))
 ]
