@@ -6,7 +6,7 @@ export class ResourceListItem extends Component {
 
         return (
             <p>
-                <a href={`http://127.0.0.1:8000/api/user/resources/${resource.id}`}>{resource.title}</a>
+                <a href={`/chatbotportal/${resource.id}/`}>{resource.title}</a>
             </p>
         )
     }

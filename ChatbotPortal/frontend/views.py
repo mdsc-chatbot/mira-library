@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-def index(request):
+def index(request, resourceID=None):
     return render(request, 'webpack/index.html')
 
 def resources(request, path):

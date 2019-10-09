@@ -29,9 +29,10 @@ export class ResourceList extends Component {
     }
 
     render() {
+        console.log("render");
 
         return this.state.resources.map((resource) => (
-            <Resource key={resource.id} resource={resource}/>
+            <ResourceListItem key={resource.id} resource={resource}/>
           ));
     }
 }
