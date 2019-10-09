@@ -10,7 +10,6 @@ export default class App extends React.Component {
 		return (
 			<div>
 				<Router>
-					<h3> Resources </h3>
 					<BaseRouter />
 				</Router>
 			</div>
