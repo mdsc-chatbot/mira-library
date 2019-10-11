@@ -8,5 +8,5 @@ env:
 install:
   - pip install django==2.2.5
 script:
-  - python manage.py runserver
+  - python ./ChatbotPortal/manage.py runserver
 
