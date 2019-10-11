@@ -1,28 +1,31 @@
 import React from 'react';
+import Homepage from './Homepage';
+import {Switch, Route} from "react-router-dom"
+import {ProfilePage} from './profile';
+import {ResourcePage} from './resource';
+import {ReviewPage} from './review';
+import HeaderMenu from './HeaderMenu';
 
-export default class App extends React.Component {
-	constructor(props){
-		super(props);
-
-		this.state = {
-			counter : 0
-		};
-	}
-
-	onButtonClick = (event) => {
-		event.preventDefault();
-		this.setState((prevState) => ({
-			counter : prevState.counter + 1
-		}));
-	};
-
-	render() {
-		return (
-			<div>
-				<p>Hello World!</p>
-				<p>Counter:{this.state.counter}</p>
-				<button onClick={this.onButtonClick}>Click me!</button>
-			</div>
-		);
-	}
+export default function App(){
+	return (
+		<div>
+			<HeaderMenu />
+			<Switch>
+				<Route path={baseRoute + '/profile'}>
+					<ProfilePage />
+				</Route>
+				<Route path={baseRoute + '/resource'}>
+					<ResourcePage />
+				</Route>
+				<Route path={baseRoute + '/review'}>
+					<ReviewPage />
+				</Route>
+				<Route>
+					<Homepage />
+				</Route>
+			</Switch>
+		</div>
+	)
 }
+
+export const baseRoute = '/chatbotportal/app';
