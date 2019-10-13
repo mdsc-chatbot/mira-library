@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Form, Rating, Button} from 'semantic-ui-react';
+import {Container, Form, Rating, Button, Dropdown, Popup, Input} from 'semantic-ui-react';
 
 export default class ResourcePage extends React.Component {
 	constructor(props) {
@@ -7,7 +7,11 @@ export default class ResourcePage extends React.Component {
 
 		//TODO: Add search options here for tags...
 		this.state = {
-
+			tagOptions : [
+				{ key: 'child', text: 'Child', value: 'child' },
+				{ key: 'teenager', text: 'Teenager', value: 'teenager' },
+				{ key: 'adult', text: 'adult', value: 'adult' },
+			]
 		};
 	}
 
@@ -18,7 +22,7 @@ export default class ResourcePage extends React.Component {
 					<Form.Group>
 						<Form.Field>
 							<label>Enter URL</label>
-							<input placeholder="xxx@yyy.ca"/>
+							<Input placeholder="xxx@yyy.ca"/>
 						</Form.Field>
 						<Form.Field>
 							<label>Rating</label>
@@ -28,11 +32,17 @@ export default class ResourcePage extends React.Component {
 					<Form.Group>
 						<Form.Field>
 							<label>Tags</label>
-							<input placeholder="Enter tags separated by commas"/>
+							<Form.Group>
+								<Dropdown placeholder='Enter tags separated by commas' fluid multiple selection options={this.state.tagOptions} />
+								<Popup trigger={<Button icon='add' />} flowing hoverable>
+									<Input placeholder="New Tag"/>
+									<Button>Submit</Button>
+								</Popup>
+							</Form.Group>
 						</Form.Field>
 						<Form.Field>
 							<label>Comments</label>
-							<input placeholder="Enter any comments (Optional)"/>
+							<Input placeholder="Enter any comments (Optional)"/>
 						</Form.Field>
 					</Form.Group>
 					<Button type='submit'>Submit</Button>

@@ -1,10 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import os, re
 from django.http import HttpResponse
 
 # Create your views here.
-def index(request, resourceID=None):
+def index(request, path, resourceID=None):
     return render(request, 'webpack/index.html')
+
+def redirect_index(request):
+    return redirect('/chatbotportal/app')
 
 def resources(request, path):
     # We can no longer rely on django templates
