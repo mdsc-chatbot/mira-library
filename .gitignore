@@ -8,7 +8,6 @@
 ### Frontend ###
 /ChatbotPortal/frontend/react/node_modules
 /ChatbotPortal/frontend/react/webpack
-/ChatbotPortal/frontend/react/semantic-ui
 
 ### Backend ###
 /ChatbotPortal/db.sqlite3
