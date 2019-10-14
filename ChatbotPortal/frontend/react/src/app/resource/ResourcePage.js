@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import {Container, Form, Rating, Button, Dropdown, Popup, Input} from 'semantic-ui-react';
 
 export default class ResourcePage extends React.Component {
@@ -13,6 +14,15 @@ export default class ResourcePage extends React.Component {
 				{ key: 'adult', text: 'adult', value: 'adult' },
 			]
 		};
+
+		axios.get('/chatbotportal/resources/fetch-tags', {
+			params : {
+				name: 'young'
+			}
+		}).then(response => {
+			console.log('I got here!');
+			console.log(response);
+		});
 	}
 
 	render() {
