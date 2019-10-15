@@ -19,6 +19,9 @@ export default function HeaderMenu() {
 			<Menu.Item name='review'>
 				<Link to={baseRoute + "/review"}>Review</Link>
 			</Menu.Item>
+			<Menu.Item name='login'>
+				<Link to={baseRoute + "/login"}>Login</Link>
+			</Menu.Item>
 		</Menu>
 	);
 }

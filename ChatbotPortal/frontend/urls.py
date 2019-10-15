@@ -23,3 +23,4 @@ urlpatterns = [
     re_path(r'^resources/(?P<path>.*)/$', views.resources, name='resources'),
     path('', views.index, name='index'),
 ]
+
