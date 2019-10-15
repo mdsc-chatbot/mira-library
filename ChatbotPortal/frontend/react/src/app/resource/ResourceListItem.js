@@ -1,26 +1,24 @@
-import React, { Component } from 'react'
-import { List, Rating } from 'semantic-ui-react'
-import {Link} from 'react-router-dom';
-import {baseRoute} from '../App';
+import React, { Component } from "react";
+import { List, Rating } from "semantic-ui-react";
+import { Link } from "react-router-dom";
+import { baseRoute } from "../App";
 
 export default class ResourceListItem extends Component {
-    render() {
-        const resource = this.props.resource
-        const resource_link = baseRoute + "/resource/" + resource.id
-        console.log(resource_link)
+  render() {
+    const resource = this.props.resource;
+    const resource_link = baseRoute + "/resource/" + resource.id;
+    console.log(resource_link);
 
-        return (
-            <List.Item>
-                <List.Icon name='globe' size='large' verticalAlign='middle' />
-                <List.Content>
-                    <List.Header>
-                        <Link to={resource_link}>{resource.title}</Link>
-                    </List.Header>
-                    <Rating icon='star' defaultRating={3} maxRating={5} disabled/>
-                </List.Content>
-            </List.Item>
-        );
-    }
+    return (
+      <List.Item>
+        <List.Icon name="globe" size="large" verticalAlign="middle" />
+        <List.Content>
+          <List.Header>
+            <Link to={resource_link}>{resource.title}</Link>
+          </List.Header>
+          <Rating icon="star" defaultRating={3} maxRating={5} disabled />
+        </List.Content>
+      </List.Item>
+    );
+  }
 }
-
-// href={`/chatbotportal/${resource.id}/`}

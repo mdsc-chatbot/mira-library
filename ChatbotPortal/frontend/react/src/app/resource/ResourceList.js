@@ -1,53 +1,50 @@
-import React, { Component } from 'react'
-import axios from 'axios';
-import { List } from 'semantic-ui-react'
+import React, { Component } from "react";
+import axios from "axios";
+import { List } from "semantic-ui-react";
 
-import ResourceListItem from './ResourceListItem.js'
+import ResourceListItem from "./ResourceListItem.js";
 
 export default class ResourceList extends Component {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-		super(props);
+    this.state = {
+      resources: []
+    };
+  }
 
-		this.state = {
-            resources: []
-
-		};
-	}
-    
-    fetchResources = () => {
+  fetchResources = () => {
     axios.get("http://127.0.0.1:8000/api/user/resources").then(res => {
-        this.setState({
+      this.setState({
         resources: res.data
-        });
-        console.log(this.state.resources);
+      });
+      console.log(this.state.resources);
     });
-    }
+  };
 
-    componentDidMount() {
-        this.fetchResources();
-    }
+  componentDidMount() {
+    this.fetchResources();
+  }
 
-    componentWillReceiveProps(newProps) {
+  componentWillReceiveProps(newProps) {
     if (newProps.token) {
-        this.fetchResources();      
+      this.fetchResources();
     }
-    }
+  }
 
-    render() {
-        console.log("render");
+  render() {
+    console.log("render");
 
-        const resources = this.state.resources.map((resource) => (
-            <ResourceListItem key={resource.id} resource={resource}/>));
+    const resources = this.state.resources.map(resource => (
+      <ResourceListItem key={resource.id} resource={resource} />
+    ));
 
-        return (
-            <div>
-                <List selection verticalAlign='middle'>
-                    {resources}
-                </List>
-
-            </div>
-        )
-    }
+    return (
+      <div>
+        <List selection verticalAlign="middle">
+          {resources}
+        </List>
+      </div>
+    );
+  }
 }
-
