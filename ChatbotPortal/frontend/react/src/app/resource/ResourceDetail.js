@@ -33,7 +33,7 @@ export default class ResourceDetail extends Component {
               {this.state.resource.title}
               <Popup
                 trigger={
-                  <a href>
+                  <a href={this.state.resource.url}>
                     <Icon name="globe"></Icon>
                   </a>
                 }

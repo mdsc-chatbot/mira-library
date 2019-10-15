@@ -132,4 +132,4 @@ REST_FRAMEWORK = {
     ]
 }
 
-CORS_ORIGIN_ALLOW_ALL = True # Will need to revert this back later
+CORS_ORIGIN_ALLOW_ALL = True  # Will need to revert this back later
