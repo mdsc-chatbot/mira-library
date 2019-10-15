@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { List } from 'semantic-ui-react'
 
-export class ResourceListItem extends Component {
+export default class ResourceListItem extends Component {
     render() {
         const resource = this.props.resource
 
@@ -21,5 +21,3 @@ export class ResourceListItem extends Component {
         );
     }
 }
-
-export default ResourceListItem

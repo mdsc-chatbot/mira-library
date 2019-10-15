@@ -1,19 +1,24 @@
-import React, { Component } from 'react'
-
+import React from 'react';
 import ResourceList from './ResourceList'
 import ResourceSubmitForm from './ResourceSubmitForm'
 
-export class ResourcePage extends Component {
-    
-    render() {
-        return (        
-			<div style={{ background: '#fff', padding: 24, minHeight: 280 }}>
-				<h2> Resources List </h2>
-				{/* <ResourceSubmitForm request_type="post" articleID={null} button_text="Create" /> */}
+export default class ResourcePage extends React.Component {
+	constructor(props) {
+		super(props);
+
+		//TODO: Add search options here for tags...
+		this.state = {
+
+		};
+	}
+
+	render() {
+		return (
+			<div>
+				<ResourceSubmitForm />
 				<ResourceList />
 			</div>
-        )
-    }
+			
+		);
+	}
 }
-
-export default ResourcePage

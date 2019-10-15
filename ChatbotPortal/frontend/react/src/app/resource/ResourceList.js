@@ -3,11 +3,16 @@ import axios from 'axios';
 
 import ResourceListItem from './ResourceListItem.js'
 
-export class ResourceList extends Component {
+export default class ResourceList extends Component {
 
-    state = {
-        resources: []
-    };
+    constructor(props) {
+		super(props);
+
+		this.state = {
+            resources: []
+
+		};
+	}
     
     fetchResources = () => {
     axios.get("http://127.0.0.1:8000/api/user/resources").then(res => {
@@ -37,4 +42,3 @@ export class ResourceList extends Component {
     }
 }
 
-export default ResourceList

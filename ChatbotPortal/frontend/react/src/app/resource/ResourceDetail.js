@@ -1,10 +1,15 @@
 import React, { Component } from 'react'
 import axios from 'axios';
 
-export class ResourceDetail extends Component {
-    state = {
+export default class ResourceDetail extends Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
         resource: {}
+
       };
+    }
     
     componentDidMount() {
       const resourceID = this.props.match.params.resourceID;

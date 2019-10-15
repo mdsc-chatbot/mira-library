@@ -1,9 +1,9 @@
 # README #
 This is the frontend module for ChatbotPortal.
 
-## Installation
+## Initial Setup + Building
 - To install all the necessary libraries/modules for the front-end, run the following command in the frontend directory:  
-``` npm update```  
+``` npm install```  
 
-- To build React resources, run the following command:
+- To build React resources, run the following command:  
 ``` npm run-script build```
