@@ -1,18 +1,31 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import BaseRouter from './routes';
+import Homepage from './Homepage';
+import {Switch, Route} from "react-router-dom"
+import {ProfilePage} from './profile';
+import {ResourcePage} from './resource';
+import {ReviewPage} from './review';
+import HeaderMenu from './HeaderMenu';
 
-import ResourceList from './ResourceList'
-
-export default class App extends React.Component {
-
-	render() {
-		return (
-			<div>
-				<Router>
-					<BaseRouter />
-				</Router>
-			</div>
-		);
-	}
+export default function App(){
+	return (
+		<div>
+			<HeaderMenu />
+			<Switch>
+				<Route path={baseRoute + '/profile'}>
+					<ProfilePage />
+				</Route>
+				<Route path={baseRoute + '/resource'}>
+					<ResourcePage />
+				</Route>
+				<Route path={baseRoute + '/review'}>
+					<ReviewPage />
+				</Route>
+				<Route>
+					<Homepage />
+				</Route>
+			</Switch>
+		</div>
+	)
 }
+
+export const baseRoute = '/chatbotportal/app';

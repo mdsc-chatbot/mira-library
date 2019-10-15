@@ -2,6 +2,7 @@
 // Feel free to change this boolean freely until we figure out how to switch between DEV and PROD mode
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const productionMode = false;
 const environment = productionMode ? 'production' : 'development';
@@ -19,6 +20,8 @@ module.exports = {
 		publicPath: '/chatbotportal/resources/'
 	},
 	plugins : [
+		// this plugins cleans our build directory of old HTML/JS files
+		new CleanWebpackPlugin(),
 		// this plugin builds our HTML file using the provided template
 		new HtmlWebpackPlugin({
 			template : 'src/index.html',
