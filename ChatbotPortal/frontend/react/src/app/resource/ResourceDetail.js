@@ -23,7 +23,10 @@ export default class ResourceDetail extends Component {
   }
 
   render() {
-    console.log("resource detail");
+    console.log(
+      this.state.resource.usefulness_rating,
+      typeof this.state.resource.usefulness_rating
+    );
 
     return (
       <div>
@@ -43,7 +46,16 @@ export default class ResourceDetail extends Component {
             </Card.Header>
             <Card.Meta>
               <p> Created: {this.state.resource.timestamp}</p>
-              <Rating icon="star" defaultRating={3} maxRating={5} disabled />
+              {this.state.resource.usefulness_rating ? (
+                <Rating
+                  icon="star"
+                  defaultRating={this.state.resource.usefulness_rating}
+                  maxRating={5}
+                  disabled
+                />
+              ) : (
+                <div></div>
+              )}
             </Card.Meta>
             <Card.Description>
               <Icon name="comment"></Icon> {this.state.resource.user_comment}

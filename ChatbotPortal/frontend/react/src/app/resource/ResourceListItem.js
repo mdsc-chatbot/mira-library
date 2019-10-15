@@ -7,7 +7,7 @@ export default class ResourceListItem extends Component {
   render() {
     const resource = this.props.resource;
     const resource_link = baseRoute + "/resource/" + resource.id;
-    console.log(resource_link);
+    console.log(resource.usefulness_rating, typeof resource.usefulness_rating);
 
     return (
       <List.Item>
@@ -16,7 +16,12 @@ export default class ResourceListItem extends Component {
           <List.Header>
             <Link to={resource_link}>{resource.title}</Link>
           </List.Header>
-          <Rating icon="star" defaultRating={3} maxRating={5} disabled />
+          <Rating
+            icon="star"
+            defaultRating={resource.usefulness_rating}
+            maxRating={5}
+            disabled
+          />
         </List.Content>
       </List.Item>
     );
