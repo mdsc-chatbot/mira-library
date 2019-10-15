@@ -3,6 +3,7 @@ import Homepage from './Homepage';
 import {Switch, Route} from "react-router-dom"
 import {ProfilePage} from './profile';
 import ResourcePage from './resource/ResourcePage';
+import ResourceDetail from './resource/ResourceDetail';
 import {ReviewPage} from './review';
 import HeaderMenu from './HeaderMenu';
 
@@ -11,15 +12,16 @@ export default function App(){
 		<div>
 			<HeaderMenu />
 			<Switch>
-				<Route path={baseRoute + '/profile'}>
+				<Route exact path={baseRoute + '/profile'}>
 					<ProfilePage />
 				</Route>
-				<Route path={baseRoute + '/resource'}>
+				<Route exact path={baseRoute + '/resource'}>
 					<ResourcePage />
 				</Route>
-				<Route path={baseRoute + '/review'}>
+				<Route exact path={baseRoute + '/review'}>
 					<ReviewPage />
 				</Route>
+				<Route exact path={baseRoute + '/resource/:resourceID'} component={ResourceDetail}></Route>
 				<Route>
 					<Homepage />
 				</Route>

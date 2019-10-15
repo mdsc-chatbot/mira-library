@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import axios from 'axios';
+import { List } from 'semantic-ui-react'
 
 import ResourceListItem from './ResourceListItem.js'
 
@@ -36,9 +37,17 @@ export default class ResourceList extends Component {
     render() {
         console.log("render");
 
-        return this.state.resources.map((resource) => (
-            <ResourceListItem key={resource.id} resource={resource}/>
-          ));
+        const resources = this.state.resources.map((resource) => (
+            <ResourceListItem key={resource.id} resource={resource}/>));
+
+        return (
+            <div>
+                <List selection verticalAlign='middle'>
+                    {resources}
+                </List>
+
+            </div>
+        )
     }
 }
 

@@ -10,7 +10,7 @@ export default class ResourceDetail extends Component {
 
       };
     }
-    
+
     componentDidMount() {
       const resourceID = this.props.match.params.resourceID;
       axios.get(`http://127.0.0.1:8000/api/user/resources/${resourceID}`).then(res => {
@@ -21,6 +21,7 @@ export default class ResourceDetail extends Component {
     }
 
     render() {
+        console.log("resource detail");
 
         return (
             <div>
@@ -30,4 +31,3 @@ export default class ResourceDetail extends Component {
     }
 }
 
-export default ResourceDetail

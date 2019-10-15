@@ -1,6 +1,7 @@
 import React from 'react';
 import ResourceList from './ResourceList'
 import ResourceSubmitForm from './ResourceSubmitForm'
+import { Container } from 'semantic-ui-react'
 
 export default class ResourcePage extends React.Component {
 	constructor(props) {
@@ -14,10 +15,10 @@ export default class ResourcePage extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<Container fluid>
 				<ResourceSubmitForm />
 				<ResourceList />
-			</div>
+			</Container>
 			
 		);
 	}
