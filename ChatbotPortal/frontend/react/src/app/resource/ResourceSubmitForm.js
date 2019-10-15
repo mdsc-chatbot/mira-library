@@ -10,7 +10,8 @@ export default class ResourceSubmitForm extends Component {
       title: "",
       rating: "",
       tags: "",
-      comments: ""
+      comments: "",
+      validated: true
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -26,6 +27,10 @@ export default class ResourceSubmitForm extends Component {
 
   handleSubmit(event) {
     console.log("clicked");
+    if (this.state.url === "") {
+      this.setState({ validated: false });
+      return;
+    }
     const created_resource = {
       title: "Unknown",
       url: this.state.url,
@@ -60,10 +65,30 @@ export default class ResourceSubmitForm extends Component {
       <Container>
         <Form>
           <Form.Group>
-            <Form.Field name="url" onChange={this.handleChange}>
-              <label>Enter URL</label>
-              <input placeholder="xxx@yyy.ca" />
-            </Form.Field>
+            {this.state.validated ? (
+              <Form.Input
+                label="Enter URL"
+                placeholder="xxx@yyy.ca"
+                required
+                name="url"
+                onChange={this.handleChange}
+                width={6}
+              />
+            ) : (
+              <Form.Input
+                error={{
+                  content: "Please enter a url",
+                  pointing: "below"
+                }}
+                fluid
+                label="Enter URL"
+                placeholder="xxx@yyy.ca"
+                required
+                name="url"
+                onChange={this.handleChange}
+                width={6}
+              />
+            )}
             <Form.Field name="rating" onChange={this.handleChange}>
               <label>Rating</label>
               <Rating
