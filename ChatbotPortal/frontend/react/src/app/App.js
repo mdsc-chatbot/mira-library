@@ -2,7 +2,7 @@ import React from 'react';
 import Homepage from './Homepage';
 import {Switch, Route} from "react-router-dom"
 import {ProfilePage} from './profile';
-import {ResourcePage} from './resource';
+import ResourcePage from './resource/ResourcePage';
 import {ReviewPage} from './review';
 import HeaderMenu from './HeaderMenu';
 

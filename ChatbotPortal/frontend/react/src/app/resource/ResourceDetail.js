@@ -6,14 +6,14 @@ export class ResourceDetail extends Component {
         resource: {}
       };
     
-      componentDidMount() {
-        const resourceID = this.props.match.params.resourceID;
-        axios.get(`http://127.0.0.1:8000/api/user/resources/${resourceID}`).then(res => {
-          this.setState({
-            resource: res.data
-          });
+    componentDidMount() {
+      const resourceID = this.props.match.params.resourceID;
+      axios.get(`http://127.0.0.1:8000/api/user/resources/${resourceID}`).then(res => {
+        this.setState({
+          resource: res.data
         });
-      }
+      });
+    }
 
     render() {
 
