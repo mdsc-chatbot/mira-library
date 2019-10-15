@@ -1,9 +1,14 @@
 import React from 'react';
 
+
 export default function ReviewPage() {
 	return (
 		<container>
-			<table class="ui celled table">
+			<div>
+				You have N pending reviews
+				<button class="ui button"style={{position:'absolute', right:0}}>Completed Reviews</button>
+			</div>
+			<table class="ui celled table" style={{paddingTop:30}}>
 				<thead>
 					<tr>
 					<th>URL</th>
