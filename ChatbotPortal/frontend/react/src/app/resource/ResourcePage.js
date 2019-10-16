@@ -1,28 +1,15 @@
 import React from 'react';
-import axios from 'axios';
-import {Container, Form, Rating, Button, Dropdown, Popup, Input} from 'semantic-ui-react';
+import {Container, Form, Rating, Button, Popup, Input} from 'semantic-ui-react';
+import TagDropdown from './TagDropdown';
+import TagPopup from './TagPopup';
 
 export default class ResourcePage extends React.Component {
 	constructor(props) {
 		super(props);
 
-		//TODO: Add search options here for tags...
 		this.state = {
-			tagOptions : [
-				{ key: 'child', text: 'Child', value: 'child' },
-				{ key: 'teenager', text: 'Teenager', value: 'teenager' },
-				{ key: 'adult', text: 'adult', value: 'adult' },
-			]
+			currentTags : null
 		};
-
-		axios.get('/chatbotportal/resources/fetch-tags', {
-			params : {
-				name: 'Young'
-			}
-		}).then(response => {
-			console.log('I got here!');
-			console.log(response);
-		});
 	}
 
 	render() {
@@ -43,11 +30,8 @@ export default class ResourcePage extends React.Component {
 						<Form.Field>
 							<label>Tags</label>
 							<Form.Group>
-								<Dropdown placeholder='Enter tags separated by commas' fluid multiple selection options={this.state.tagOptions} />
-								<Popup trigger={<Button icon='add' />} flowing hoverable>
-									<Input placeholder="New Tag"/>
-									<Button>Submit</Button>
-								</Popup>
+								<TagDropdown onChange={currentTags => this.setState({currentTags})}/>
+								<TagPopup />
 							</Form.Group>
 						</Form.Field>
 						<Form.Field>

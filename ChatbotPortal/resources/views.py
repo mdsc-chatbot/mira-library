@@ -1,16 +1,19 @@
-from django.shortcuts import render
-from django.core import serializers
+
 from django.http import JsonResponse, HttpResponse
-from .models import Tags
+from .models import Tag
 
 # Create your views here.
-#TODO: Add way to create tags...
+
+def create_tags(request):
+    #TODO: Add validation
+    tag = Tag.objects.create(name=request.POST['name'])
+    tag.save()
+    #TODO: Return tag input such that tag is automatically added to input field
+
 def fetch_tags(request):
-    tag_set = None
     try:
-        tag_set = Tags.objects.get(name__contains=request.GET['name'])
+        tag_set = Tag.objects.filter(name__contains=request.GET['name']).values('id', 'name')
+        return JsonResponse(list(tag_set), safe=False)
     except:
         # Return empty http response if can't find tags
         return HttpResponse()
-    json_tags = serializers.serialize('json', tag_set)
-    return JsonResponse(json_tags)
