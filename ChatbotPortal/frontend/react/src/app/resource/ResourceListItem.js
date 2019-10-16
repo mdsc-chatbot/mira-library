@@ -6,15 +6,15 @@ import { baseRoute } from "../App";
 export default class ResourceListItem extends Component {
   render() {
     const resource = this.props.resource;
-    const resource_link = baseRoute + "/resource/" + resource.id;
-    console.log(resource.usefulness_rating, typeof resource.usefulness_rating);
 
     return (
       <List.Item>
         <List.Icon name="globe" size="large" verticalAlign="middle" />
         <List.Content>
           <List.Header>
-            <Link to={resource_link}>{resource.title}</Link>
+            <Link to={baseRoute + "/resource/" + resource.id}>
+              {resource.title}
+            </Link>
           </List.Header>
           <Rating
             icon="star"

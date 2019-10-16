@@ -14,11 +14,10 @@ export default class ResourceList extends Component {
   }
 
   fetchResources = () => {
-    axios.get("http://127.0.0.1:8000/api/user/resources").then(res => {
+    axios.get("http://127.0.0.1:8000/api/resource").then(res => {
       this.setState({
         resources: res.data
       });
-      console.log(this.state.resources);
     });
   };
 
@@ -33,8 +32,6 @@ export default class ResourceList extends Component {
   }
 
   render() {
-    console.log("render");
-
     const resources = this.state.resources.map(resource => (
       <ResourceListItem key={resource.id} resource={resource} />
     ));

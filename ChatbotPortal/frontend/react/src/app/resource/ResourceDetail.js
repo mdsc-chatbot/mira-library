@@ -13,21 +13,14 @@ export default class ResourceDetail extends Component {
 
   componentDidMount() {
     const resourceID = this.props.match.params.resourceID;
-    axios
-      .get(`http://127.0.0.1:8000/api/user/resources/${resourceID}`)
-      .then(res => {
-        this.setState({
-          resource: res.data
-        });
+    axios.get(`http://127.0.0.1:8000/api/resource/${resourceID}`).then(res => {
+      this.setState({
+        resource: res.data
       });
+    });
   }
 
   render() {
-    console.log(
-      this.state.resource.usefulness_rating,
-      typeof this.state.resource.usefulness_rating
-    );
-
     return (
       <div>
         <Card fluid color="blue">
