@@ -21,5 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chatbotportal/', include('frontend.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('chatbotportal/resources/', include('resources.urls'))
+    path('chatbotportal/resources/', include('resource.urls'))
 ]
