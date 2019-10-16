@@ -40,14 +40,17 @@ INSTALLED_APPS = [
     'frontend',
     'rest_framework',
     'user_profile',
+    # 'rest_framework.authtoken',
 ]
+
+AUTH_PROFILE_MODULE = 'user_profile.Profile'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -57,7 +60,7 @@ ROOT_URLCONF = 'ChatbotPortal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend/react')],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/react'),'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,6 +131,14 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
+        # 'rest_framework.permissions.IsAuthenticated'
+        # Add the above statement for protecting the Web App so that no outsider can access it
+        # Use tokens for it
+        # Go to ChatbotPortal\urls.py
+        # Uncomment the last path and the included directory on top
+        # Also uncomment the 'rest_framework.authtoken' from INSTALLED_APPS
+        # Uncomment user_profile/views.py file for authentication_class
+
     ]
 }
