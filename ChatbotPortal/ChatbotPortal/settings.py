@@ -37,14 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontend',
+
     'rest_framework',
     'corsheaders',
+    'signup.apps.SignupConfig',
+
+    'frontend',
     'resources'
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # must be at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,8 +131,27 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ]
+        # 'rest_framework.permissions.AllowAny',
+
+        # A request must be authenticated before it is processed
+        'rest_framework.permissions.IsAuthenticated'
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    # The authentication method the server will try when it receives a request
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
 }
 
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+)
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'ChatbotPortal.utils.my_jwt_response_handler'
+}
+
+AUTH_USER_MODEL = 'signup.User'  # Changes the built-in user model to ours
 CSRF_COOKIE_NAME = "csrftoken"
