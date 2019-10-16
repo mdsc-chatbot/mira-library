@@ -29,4 +29,5 @@ urlpatterns = [
     # For authentication
     path('token-auth/', obtain_jwt_token),
     path('signup/', include('signup.urls')),
+    path('chatbotportal/resource/', include('resource.urls'))
 ]

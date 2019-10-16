@@ -1,7 +1,16 @@
 import React, { Component } from "react";
-import { Container, Form, Rating, Button } from "semantic-ui-react";
 import axios from "axios";
 import validator from "validator";
+import {
+  Container,
+  Form,
+  Rating,
+  Button,
+  Popup,
+  Input
+} from "semantic-ui-react";
+import TagDropdown from "./TagDropdown";
+import TagPopup from "./TagPopup";
 
 export default class ResourceSubmitForm extends Component {
   constructor(props) {
@@ -12,7 +21,8 @@ export default class ResourceSubmitForm extends Component {
       rating: 1,
       tags: "",
       comments: "",
-      validated: true
+      validated: true,
+      currentTags: null
     };
   }
 
@@ -147,6 +157,15 @@ export default class ResourceSubmitForm extends Component {
               placeholder="Enter any comments (Optional)"
             />
           </Form.Group>
+          <Form.Field>
+            <label>Tags</label>
+            <Form.Group>
+              <TagDropdown
+                onChange={currentTags => this.setState({ currentTags })}
+              />
+              <TagPopup />
+            </Form.Group>
+          </Form.Field>
           <Form.Button content="Submit" />
         </Form>
       </Container>
