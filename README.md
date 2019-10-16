@@ -11,8 +11,9 @@ Apart from all this, they can also browse through find a resource section where 
 #### Django backend (Go to ChatbotPortal)
 ```
 pip install -r requirements.txt
-python3 manage.py createsuperuser (Create admin user)
-python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver
+python manage.py createsuperuser (Create admin user)
+python manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver
+python manage.py migrate --run-syncdb (If changing db/ switching branch)
 ```
 
 #### React frontend (Go to ChatbotPortal/frontend/react)
