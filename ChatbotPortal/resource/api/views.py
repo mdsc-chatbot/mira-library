@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 
-from resources.models import Resource
+from resource.models import Resource
 from .serializers import ResourceSerializer
+
 
 class ResourceViewSet(viewsets.ModelViewSet):
     """

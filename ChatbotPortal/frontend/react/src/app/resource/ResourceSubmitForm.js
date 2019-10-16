@@ -14,36 +14,13 @@ export default class ResourceSubmitForm extends Component {
       comments: "",
       validated: true
     };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    let name = event.target.name;
-    let value = event.target.value;
-    this.setState({ [name]: value });
-    console.log(name, value);
-  }
-
-  handleRate = (event, data) => {
-    this.setState({ rating: data.rating });
-  };
-
-  handleSubmit(event) {
-    console.log("clicked");
-
-    // Validations
-    if (!validator.isURL(this.state.url)) {
-      this.setState({ validated: false });
-      event.preventDefault();
-      return;
-    }
-
-    const created_resource = {
-      title: "New resources",
+  create_resource = () => {
+    const resource = {
+      title: "New resources", // TODO
       url: this.state.url,
-      created_by_user: "user",
+      created_by_user: "user", // TODO
 
       user_comment: this.state.comments,
       usefulness_rating: this.state.rating,
@@ -56,8 +33,11 @@ export default class ResourceSubmitForm extends Component {
 
       score: 1
     };
+    return resource;
+  };
 
-    console.log(created_resource);
+  post_resource = () => {
+    const resource = this.create_resource();
 
     axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
     axios.defaults.xsrfCookieName = "csrftoken";
@@ -67,13 +47,14 @@ export default class ResourceSubmitForm extends Component {
     };
 
     axios
-      .post("http://127.0.0.1:8000/api/user/resources/", created_resource)
+      .post("http://127.0.0.1:8000/api/resource/", resource)
       .then(res => {})
       .catch(error => console.error(error));
 
-    console.log("axios");
+    console.log("POST resource success");
+  };
 
-    event.preventDefault();
+  reset_resource_states = () => {
     this.setState({
       url: "",
       tags: "",
@@ -82,7 +63,28 @@ export default class ResourceSubmitForm extends Component {
       rating: 1,
       validated: true
     });
-  }
+  };
+
+  handleRate = (event, data) => {
+    this.setState({ rating: data.rating });
+  };
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleSubmit = event => {
+    // Validations
+    if (!validator.isURL(this.state.url)) {
+      this.setState({ validated: false });
+      event.preventDefault();
+      return;
+    }
+
+    this.post_resource();
+    event.preventDefault();
+    this.reset_resource_states();
+  };
 
   render() {
     return (
@@ -91,13 +93,13 @@ export default class ResourceSubmitForm extends Component {
           <Form.Group>
             {this.state.validated ? (
               <Form.Input
-                label="Enter URL"
-                placeholder="https://"
                 required
                 name="url"
                 onChange={this.handleChange}
                 width={6}
                 value={this.state.url}
+                label="Enter URL"
+                placeholder="https://"
               />
             ) : (
               <Form.Input
@@ -106,24 +108,25 @@ export default class ResourceSubmitForm extends Component {
                   pointing: "below"
                 }}
                 fluid
-                label="Enter URL"
-                placeholder="https://"
                 required
                 name="url"
                 onChange={this.handleChange}
                 width={6}
                 value={this.state.url}
+                label="Enter URL"
+                placeholder="https://"
               />
             )}
             <Rating
-              label="Rating"
-              maxRating={5}
-              defaultRating={this.state.rating}
-              icon="star"
-              size="massive"
+              name="rating"
               onRate={this.handleRate}
               onChange={this.handleChange}
               value={this.state.rating}
+              label="Rating"
+              defaultRating={this.state.rating}
+              maxRating={5}
+              icon="star"
+              size="massive"
             />
           </Form.Group>
 
