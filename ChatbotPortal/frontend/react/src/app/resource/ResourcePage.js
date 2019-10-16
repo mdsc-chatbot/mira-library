@@ -17,7 +17,7 @@ export default class ResourcePage extends React.Component {
 
 		axios.get('/chatbotportal/resources/fetch-tags', {
 			params : {
-				name: 'young'
+				name: 'Young'
 			}
 		}).then(response => {
 			console.log('I got here!');
