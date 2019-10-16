@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Container, Form, Rating, Button } from "semantic-ui-react";
 import axios from "axios";
+import validator from "validator";
 
 export default class ResourceSubmitForm extends Component {
   constructor(props) {
@@ -8,7 +9,7 @@ export default class ResourceSubmitForm extends Component {
     this.state = {
       url: "",
       title: "",
-      rating: "",
+      rating: 1,
       tags: "",
       comments: "",
       validated: true
@@ -25,22 +26,31 @@ export default class ResourceSubmitForm extends Component {
     console.log(name, value);
   }
 
+  handleRate = (event, data) => {
+    this.setState({ rating: data.rating });
+  };
+
   handleSubmit(event) {
     console.log("clicked");
-    if (this.state.url === "") {
+
+    // Validations
+    if (!validator.isURL(this.state.url)) {
       this.setState({ validated: false });
+      event.preventDefault();
       return;
     }
+
     const created_resource = {
-      title: "Unknown",
+      title: "New resources",
       url: this.state.url,
+      created_by_user: "user",
 
       user_comment: this.state.comments,
       usefulness_rating: this.state.rating,
       usefulness_comment: this.state.comments,
 
       website_summary_metadata: "models.TextField()",
-      website_readtime_metadata: "models.DateTimeField()",
+      website_readtime_metadata: new Date("2012.08.10"),
       website_metadata: "models.TextField()",
       website_title: "models.TextField()",
 
@@ -48,31 +58,46 @@ export default class ResourceSubmitForm extends Component {
     };
 
     console.log(created_resource);
+
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.xsrfCookieName = "csrftoken";
+    axios.defaults.headers = {
+      "Content-Type": "application/json",
+      Authorization: `Token ${this.props.token}`
+    };
+
     axios
-      .post(
-        "http://127.0.0.1:8000/api/user/resources/create/",
-        created_resource
-      )
+      .post("http://127.0.0.1:8000/api/user/resources/", created_resource)
       .then(res => {})
       .catch(error => console.error(error));
 
     console.log("axios");
+
     event.preventDefault();
+    this.setState({
+      url: "",
+      tags: "",
+      comments: "",
+      title: "refreshed",
+      rating: 1,
+      validated: true
+    });
   }
 
   render() {
     return (
       <Container>
-        <Form>
+        <Form onSubmit={this.handleSubmit}>
           <Form.Group>
             {this.state.validated ? (
               <Form.Input
                 label="Enter URL"
-                placeholder="xxx@yyy.ca"
+                placeholder="https://"
                 required
                 name="url"
                 onChange={this.handleChange}
                 width={6}
+                value={this.state.url}
               />
             ) : (
               <Form.Input
@@ -82,36 +107,44 @@ export default class ResourceSubmitForm extends Component {
                 }}
                 fluid
                 label="Enter URL"
-                placeholder="xxx@yyy.ca"
+                placeholder="https://"
                 required
                 name="url"
                 onChange={this.handleChange}
                 width={6}
+                value={this.state.url}
               />
             )}
-            <Form.Field name="rating" onChange={this.handleChange}>
-              <label>Rating</label>
-              <Rating
-                maxRating={5}
-                defaultRating={3}
-                icon="star"
-                size="massive"
-              />
-            </Form.Field>
+            <Rating
+              label="Rating"
+              maxRating={5}
+              defaultRating={this.state.rating}
+              icon="star"
+              size="massive"
+              onRate={this.handleRate}
+              onChange={this.handleChange}
+              value={this.state.rating}
+            />
           </Form.Group>
+
           <Form.Group>
-            <Form.Field name="tags" onChange={this.handleChange}>
-              <label>Tags</label>
-              <input placeholder="Enter tags separated by commas" />
-            </Form.Field>
-            <Form.Field name="comments" onChange={this.handleChange}>
-              <label>Comments</label>
-              <input placeholder="Enter any comments (Optional)" />
-            </Form.Field>
+            <Form.Input
+              name="tags"
+              onChange={this.handleChange}
+              value={this.state.tags}
+              label="Tags"
+              placeholder="Enter tags separated by commas"
+            />
+
+            <Form.Input
+              name="comments"
+              onChange={this.handleChange}
+              value={this.state.comments}
+              label="Comments"
+              placeholder="Enter any comments (Optional)"
+            />
           </Form.Group>
-          <Button type="submit" onClick={this.handleSubmit}>
-            Submit
-          </Button>
+          <Form.Button content="Submit" />
         </Form>
       </Container>
     );
