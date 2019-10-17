@@ -15,7 +15,10 @@ class LoginPage extends Component {
             email: '',
             first_name: '',
             last_name: '',
-            affiliation: ''
+            affiliation: '',
+            active: '',
+            staff: '',
+            admin: '',
         };
     }
 
@@ -48,7 +51,13 @@ class LoginPage extends Component {
                 setSecurity({
                     token: json.token,
                     logged_in: true,
-                    email: json.user.email
+                    email: json.user.email,
+                    first_name: json.user.first_name,
+                    last_name: json.user.last_name,
+                    affiliation: json.user.affiliation,
+                    active: json.user.active,
+                    staff: json.user.staff,
+                    admin: json.user.admin,
                 });
                 localStorage.setItem('token', json.token);
                 this.setState({
@@ -126,10 +135,10 @@ class LoginPage extends Component {
                                     handle_login={(event, data) => this.handle_login(event, data, securityContext.setSecurity)}
                                     handleRegisterClicked={this.set_form_to_signup}
                                 />
-                            // ) : this.state.displayed_form === 'signup' ? (
-                            //     <SignupForm
-                            //         handle_signup={(event, data) => this.handle_signup(event, data, securityContext.setSecurity)}
-                            //     />
+                            ) : this.state.displayed_form === 'signup' ? (
+                                <SignupForm
+                                    handle_signup={(event, data) => this.handle_signup(event, data, securityContext.setSecurity)}
+                                />
                             ) : null
                         }
                         <h3>
