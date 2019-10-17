@@ -6,11 +6,12 @@ import {ResourcePage} from './resource';
 import {ReviewPage} from './review';
 import HeaderMenu from './HeaderMenu';
 import LoginPage from "./authentication/LoginPage";
+import {SecurityContextProvider} from "./security/SecurityContext";
 
 export default function App(){
 	return (
 		<div>
-			<SecurityContext>
+			<SecurityContextProvider>
 				<HeaderMenu />
 				<Switch>
 					<Route path={baseRoute + '/profile'}>
@@ -29,7 +30,7 @@ export default function App(){
 						<Homepage />
 					</Route>
 				</Switch>
-			</SecurityContext>
+			</SecurityContextProvider>
 		</div>
 	)
 }

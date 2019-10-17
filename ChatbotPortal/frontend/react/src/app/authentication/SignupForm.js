@@ -1,77 +1,93 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+
 
 class SignupForm extends React.Component {
-  state = {
-    email: '',
-    first_name: '',
-    last_name: '',
-    affiliation: '',
-    password: ''
-  };
+    state = {
+        email: '',
+        first_name: '',
+        last_name: '',
+        affiliation: '',
+        password: ''
+    };
 
-  handle_change = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState(prevstate => {
-      const newState = { ...prevstate };
-      newState[name] = value;
-      return newState;
-    });
-  };
+    handle_change = e => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(prevstate => {
+            const newState = {...prevstate};
+            newState[name] = value;
+            return newState;
+        });
+    };
 
-  render() {
-    return (
-      <form onSubmit={e => this.props.handle_signup(e, this.state)}>
-        <h4>Sign Up</h4>
+    render() {
+        return (
+            <Grid onSubmit={e => this.props.handle_signup(e, this.state)}
+                  textAlign='center'
+                  style={{height: '100vh'}}
+                  verticalAlign='middle'>
+                <Grid.Column style={{maxWidth: 450}}>
+                    <Header as='h2' color='teal' textAlign='center'>
+                        {/*<Image src='/logo.png'/> */}
+                        Create your account
+                    </Header>
+                    <Form size='large'>
+                        <Segment stacked>
+                            <Form.Input fluid
+                                        placeholder='First Name'
+                                        name='first_name'
+                                        value={this.state.first_name}
+                                        onChange={this.handle_change}
+                            />
+                            <Form.Input fluid
+                                        placeholder='Last Name'
+                                        name='last_name'
+                                        value={this.state.last_name}
+                                        onChange={this.handle_change}
+                            />
+                            <Form.Input fluid icon='user'
+                                        iconPosition='left'
+                                        placeholder='E-mail address'
+                                        name='email'
+                                        value={this.state.email}
+                                        onChange={this.handle_change}
+                            />
+                            <Form.Input fluid
+                                        placeholder='Affiliation'
+                                        name='affiliation'
+                                        value={this.state.affiliation}
+                                        onChange={this.handle_change}
+                            />
+                            <Form.Input
+                                fluid
+                                icon='lock'
+                                iconPosition='left'
+                                placeholder='Password'
+                                type='password'
+                                name='password'
+                                value={this.state.password}
+                                onChange={this.handle_change}
+                            />
 
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          name="email"
-          value={this.state.email}
-          onChange={this.handle_change}
-        />
-
-        <label htmlFor="firstName">First Name</label>
-        <input
-          type="text"
-          name="first_name"
-          value={this.state.first_name}
-          onChange={this.handle_change}
-        />
-
-        <label htmlFor="lastName">Last Name</label>
-        <input
-          type="text"
-          name="last_name"
-          value={this.state.last_name}
-          onChange={this.handle_change}
-        />
-
-        <label htmlFor="affiliation">Affiliation</label>
-        <input
-          type="text"
-          name="affiliation"
-          value={this.state.affiliation}
-          onChange={this.handle_change}
-        />
-
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          name="password"
-          value={this.state.password}
-          onChange={this.handle_change}
-        />
-        <input type="submit" />
-      </form>
-    );
-  }
+                            <Button color='teal' fluid size='large'>
+                                Signup
+                            </Button>
+                        </Segment>
+                    </Form>
+                    <Message>
+                        Already have an account? <a href='#' onClick={this.props.handle_login}>Login</a>
+                    </Message>
+                </Grid.Column>
+            </Grid>
+        );
+    }
 }
 
 export default SignupForm;
 
 SignupForm.propTypes = {
-  handle_signup: PropTypes.func.isRequired
+    handle_signup: PropTypes.func.isRequired,
+    handle_login: PropTypes.func.isRequired
 };
