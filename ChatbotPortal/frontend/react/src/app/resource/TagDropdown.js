@@ -58,7 +58,7 @@ export default class TagDropdown extends React.Component {
 		const source = CancelToken.source();
 
 		// Fetch search results
-		axios.get('/chatbotportal/resources/fetch-tags', {
+		axios.get('/chatbotportal/resource/fetch-tags', {
 			params : {
 				name: searchQuery
 			},
