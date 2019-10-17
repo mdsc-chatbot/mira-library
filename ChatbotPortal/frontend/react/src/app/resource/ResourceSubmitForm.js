@@ -49,8 +49,6 @@ export default class ResourceSubmitForm extends Component {
   post_resource = () => {
     const resource = this.create_resource();
 
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-    axios.defaults.xsrfCookieName = "csrftoken";
     axios.defaults.headers = {
       "Content-Type": "application/json",
       Authorization: `Token ${this.props.token}`
