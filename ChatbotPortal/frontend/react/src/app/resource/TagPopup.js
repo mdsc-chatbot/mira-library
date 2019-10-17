@@ -19,8 +19,11 @@ export default class TagPopup extends React.Component {
 
 	handleSubmit = (event, data) => {
 		//TODO: Use return value from post method somehow...
+		event.preventDefault();
 		axios.post('/chatbotportal/resource/create-tag', {
 			name : this.state.value
+		}, {
+			headers: {"Content-Type": "application/json"},
 		});
 		this.setState({
 			value : ''

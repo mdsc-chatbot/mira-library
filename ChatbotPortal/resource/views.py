@@ -1,17 +1,18 @@
-from django.shortcuts import render
-
-
+import json
 from django.http import JsonResponse, HttpResponse
 from .models import Tag
+
 
 # Create your views here.
 
 
 def create_tags(request):
     # TODO: Add validation
-    tag = Tag.objects.create(name=request.POST['name'])
+    form_data = json.loads(request.body.decode('utf-8'))
+    tag = Tag.objects.create(name=form_data['name'])
     tag.save()
     # TODO: Return tag input such that tag is automatically added to input field
+    return HttpResponse()
 
 
 def fetch_tags(request):
