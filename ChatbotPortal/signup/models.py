@@ -74,8 +74,9 @@ class User(AbstractBaseUser):
     )
 
     active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False)  # a admin user; non super-user
-    admin = models.BooleanField(default=False)  # a superuser
+    staff = models.BooleanField(default=False)  # an admin user; non super-user; limited rights;
+    # reviewing rights granted;
+    admin = models.BooleanField(default=False)  # a superuser; with all rights
     # notice the absence of a "Password field", that's built in.
 
     USERNAME_FIELD = 'email'
