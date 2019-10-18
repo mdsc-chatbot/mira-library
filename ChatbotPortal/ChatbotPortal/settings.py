@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     # 'rest_framework.authtoken',
 ]
 
-AUTH_PROFILE_MODULE = 'user_profile.Profile'
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # must be at the top
     'django.middleware.security.SecurityMiddleware',
@@ -151,3 +149,17 @@ JWT_AUTH = {
 
 AUTH_USER_MODEL = 'signup.User'  # Changes the built-in user model to ours
 CSRF_COOKIE_NAME = "csrftoken"
+AUTH_PROFILE_MODULE = 'user_profile.Profile'
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_EMAIL_FIELD = 'email'
+ACCOUNT_LOGOUT_ON_GET = True
+
+REST_AUTH_SERIALIZERS = {
+    "USER_DETAILS_SERIALIZER": "signup.serializers.CustomUserDetailsSerializer",
+}

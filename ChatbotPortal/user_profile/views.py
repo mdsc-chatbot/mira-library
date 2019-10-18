@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from .serializers import ProfileSerializer
 from .models import Profile
+from django.conf import settings
 
 
 class ProfileViewSet(viewsets.ModelViewSet):

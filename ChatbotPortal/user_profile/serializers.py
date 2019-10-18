@@ -1,12 +1,8 @@
 from rest_framework import serializers
 from .models import Profile
-from signup.models import User
-
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', 'first_name', 'last_name', 'affiliation']
+# from signup.models import User
+from django.conf import settings
+from signup.serializers import UserSerializer
 
 
 class ProfileSerializer(serializers.ModelSerializer):
