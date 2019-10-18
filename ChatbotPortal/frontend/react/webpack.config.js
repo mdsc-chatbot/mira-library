@@ -3,6 +3,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const productionMode = false;
 const environment = productionMode ? 'production' : 'development';
@@ -29,7 +30,19 @@ module.exports = {
 				'timesheet.dateFormat' : 'YYYY-MMM-DD', // also set in JsonConfig.java
 			}
 		}),
+		new MiniCssExtractPlugin({
+			// Options similar to the same options in webpackOptions.output
+			// both options are optional
+			filename: "[name].css",
+			chunkFilename: "[id].css"
+		})
 	],
+	resolve: {
+		alias: {
+			"../../theme.config$": path.join(__dirname, "/semantic-ui/theme.config"),
+			"../semantic-ui/site": path.join(__dirname, "/semantic-ui/site")
+		}
+	},
 	module: {
 		rules: [
 			{
@@ -43,10 +56,39 @@ module.exports = {
 				test: /\.(css|scss)$/,
 				include : [/node_modules/],
 				use: [
-					{ loader: 'style-loader' },
-					{ loader: 'css-loader' },
-					{ loader: 'sass-loader' }
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							// you can specify a publicPath here
+							// by default it uses publicPath in webpackOptions.output
+							publicPath: '../',
+							hmr: process.env.NODE_ENV === 'development',
+						},
+					},
+					'css-loader',
+					'sass-loader'
 				]
+			},
+			{
+				test:  /\.(less)$/,
+				include : [/node_modules/],
+				use: [
+					MiniCssExtractPlugin.loader,
+					"css-loader",
+					"less-loader"
+				]
+			},
+			{
+				test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)/,
+				use: "url-loader"
+			},
+			{
+				test: /\.(png|jpe?g|gif)$/i,
+				use: [
+					{
+						loader: 'file-loader',
+					},
+				],
 			},
 		]
 	}

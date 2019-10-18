@@ -1,20 +1,24 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {Menu} from 'semantic-ui-react';
 import {baseRoute} from './App';
 
 export default function HeaderMenu() {
-	const linkstyle = {
-		color: "white",
-		backgroundColor: "DodgerBlue",
-		padding: "10px",
-	};
 
 	return (
-		<span>
-			<Link to={baseRoute}><div style={linkstyle}>Home</div></Link>
-			<Link to={baseRoute + "/profile"}><div style={linkstyle}>Profile</div></Link>
-			<Link to={baseRoute + "/resource"}><div style={linkstyle}>Resource</div></Link>
-			<Link to={baseRoute + "/review"}><div style={linkstyle}>Review</div></Link>
-		</span>
+		<Menu>
+			<Menu.Item name='home'>
+				<Link to={baseRoute}>Home</Link>
+			</Menu.Item>
+			<Menu.Item name='profile'>
+				<Link to={baseRoute + "/profile"}>Profile</Link>
+			</Menu.Item>
+			<Menu.Item name='resource'>
+				<Link to={baseRoute + "/resource"}>Resource</Link>
+			</Menu.Item>
+			<Menu.Item name='review'>
+				<Link to={baseRoute + "/review"}>Review</Link>
+			</Menu.Item>
+		</Menu>
 	);
 }
