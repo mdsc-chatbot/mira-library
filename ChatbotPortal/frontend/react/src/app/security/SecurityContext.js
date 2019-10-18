@@ -1,11 +1,11 @@
 import React from "react";
 
-const SecurityInternalContext = React.createContext({
+export const SecurityContext = React.createContext({
     security: {},
     setSecurity: null,
 });
 
-export class SecurityContext extends React.Component {
+export class SecurityContextProvider extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,9 +21,9 @@ export class SecurityContext extends React.Component {
 
     render() {
         return(
-            <SecurityInternalContext.Provider value={{security : this.state.security, setSecurity : this.setSecurity}}>
-                {children}
-            </SecurityInternalContext.Provider>
+            <SecurityContext.Provider value={{security : this.state.security, setSecurity : this.setSecurity}}>
+                {this.props.children}
+            </SecurityContext.Provider>
         )
     }
 }
