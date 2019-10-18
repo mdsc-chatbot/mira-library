@@ -8,7 +8,6 @@ import { ReviewPage } from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
 import {SecurityContextProvider} from "./security/SecurityContext";
-import {SecurityContextProvider} from "./security/SecurityContext";
 
 export default function App(){
 	return (
