@@ -144,9 +144,15 @@ REST_FRAMEWORK = {
     ],
 }
 
-CORS_ORIGIN_WHITELIST = (
-    'http://localhost:3000',
-)
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#     # 'http://localhost:3000',
+#     'http://localhost:8000',
+# ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+]
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'ChatbotPortal.utils.my_jwt_response_handler'
