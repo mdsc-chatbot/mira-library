@@ -3,29 +3,58 @@ import Profile from "./Profile";
 import {SecurityContext} from '../security/SecurityContext';
 import Nav from "../authentication/Nav";
 import LoginForm from "../authentication/LoginForm";
+import { Header, Icon, Divider, Table } from 'semantic-ui-react'
 
 export default function ProfilePage() {
 	return (
 		<div>
-			<h1>Making changes to profile page</h1>
-			<Profile/>
+			<Divider horizontal>
+      			<Header as='h4'>
+        		<Icon name='user' />
+        		My Profile
+      			</Header>
+    		</Divider>
+
+			<Divider horizontal>
+      			<Header as='h4'>
+        		View your profile below, edit feature coming soon.
+      			</Header>
+    		</Divider>
+
 			<SecurityContext.Consumer>
-                {(securityContext) => (
-                	<div>
-                        <h3>
-                            {securityContext.security.logged_in
-                                ? 	`Email: ${securityContext.security.email} '\n'
-                                	 First Name: ${securityContext.security.first_name} '\n'
-                                	 Last Name: ${securityContext.security.last_name} '\n'
-                                	 Affiliation: ${securityContext.security.affiliation} '\n'
-                                	 Active: ${securityContext.security.active} '\n'
-                                	 Staff: ${securityContext.security.staff} '\n'
-                                	 Admin: ${securityContext.security.admin}`
-                                : 'No Security Context'}
-                        </h3>
-                    </div>
-                )}
-            </SecurityContext.Consumer>
+				{(securityContext) => (
+							<Table definition>
+								{securityContext.security.logged_in ?
+								<Table.Body>
+									<Table.Row>
+										<Table.Cell width={3}>Email</Table.Cell>
+								  		<Table.Cell>{securityContext.security.email}</Table.Cell>
+							  		</Table.Row>
+							  		<Table.Row>
+										<Table.Cell>First Name</Table.Cell>
+								  		<Table.Cell>{securityContext.security.first_name}</Table.Cell>
+							  		</Table.Row>
+							  		<Table.Row>
+								  		<Table.Cell>Last Name</Table.Cell>
+								  		<Table.Cell>{securityContext.security.last_name}</Table.Cell>
+							  		</Table.Row>
+							  		<Table.Row>
+								  		<Table.Cell>Status</Table.Cell>
+								  		<Table.Cell>Newbie</Table.Cell>
+							  		</Table.Row>
+							  		<Table.Row>
+								  		<Table.Cell>Submissions</Table.Cell>
+								  		<Table.Cell>0</Table.Cell>
+							  		</Table.Row>
+							  		<Table.Row>
+         						 		<Table.Cell>Points</Table.Cell>
+								  		<Table.Cell>0</Table.Cell>
+							  		</Table.Row>
+								</Table.Body>
+									: 'Nothing'}
+							</Table>
+					)}
+			</SecurityContext.Consumer>
 		</div>
 	);
 }
