@@ -35,6 +35,8 @@ export default class ResourceList extends Component {
   }
 
   render() {
+    // Filter resources created by current logged in user
+    // Map those resources to ResourceListItem Component
     const resources = this.state.resources.map(resource =>
       resource.created_by_user === this.context.security.email ? (
         <ResourceListItem key={resource.id} resource={resource} />

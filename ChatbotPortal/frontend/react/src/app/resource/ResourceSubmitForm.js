@@ -24,6 +24,7 @@ export default class ResourceSubmitForm extends Component {
   }
 
   create_resource = () => {
+    // Get current logged in user
     const created_by_user = this.context.security.email
       ? this.context.security.email
       : "Unknown user";
@@ -49,11 +50,6 @@ export default class ResourceSubmitForm extends Component {
 
   post_resource = () => {
     const resource = this.create_resource();
-
-    axios.defaults.headers = {
-      "Content-Type": "application/json",
-      Authorization: `Token ${this.props.token}`
-    };
 
     axios
       .post("http://127.0.0.1:8000/api/resource/", resource)
@@ -146,7 +142,6 @@ export default class ResourceSubmitForm extends Component {
               label="Tags"
               placeholder="Enter tags separated by commas"
             />
-
             <Form.Input
               name="comments"
               onChange={this.handleChange}
@@ -155,6 +150,7 @@ export default class ResourceSubmitForm extends Component {
               placeholder="Enter any comments (Optional)"
             />
           </Form.Group>
+
           <Form.Field>
             <label>Tags</label>
             <Form.Group>
@@ -164,6 +160,7 @@ export default class ResourceSubmitForm extends Component {
               <TagPopup />
             </Form.Group>
           </Form.Field>
+
           <Form.Button content="Submit" />
         </Form>
       </Container>
