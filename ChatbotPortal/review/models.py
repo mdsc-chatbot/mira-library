@@ -17,3 +17,4 @@ class Reviews(models.Model):
     default = types.type1
     approved = approvalChoices
     default = approvalChoices.Rejected
+    resource_url = models.TextField()
