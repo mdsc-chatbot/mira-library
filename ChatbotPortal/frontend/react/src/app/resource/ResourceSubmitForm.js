@@ -1,18 +1,15 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import axios from "axios";
 import validator from "validator";
-import {
-  Container,
-  Form,
-  Rating,
-  Button,
-  Popup,
-  Input
-} from "semantic-ui-react";
+import { Container, Form, Rating } from "semantic-ui-react";
+
 import TagDropdown from "./TagDropdown";
 import TagPopup from "./TagPopup";
+import { SecurityContext } from "../security/SecurityContext";
 
 export default class ResourceSubmitForm extends Component {
+  static contextType = SecurityContext;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -27,19 +24,23 @@ export default class ResourceSubmitForm extends Component {
   }
 
   create_resource = () => {
+    const created_by_user = this.context.security.email
+      ? this.context.security.email
+      : "Unknown user";
+
     const resource = {
-      title: "New resources", // TODO
+      title: "Unknown title", // Backend will automatically webscrape for website title
       url: this.state.url,
-      created_by_user: "user", // TODO
+      created_by_user: created_by_user,
 
       user_comment: this.state.comments,
       usefulness_rating: this.state.rating,
       usefulness_comment: this.state.comments,
 
-      website_summary_metadata: "models.TextField()",
+      website_summary_metadata: "",
       website_readtime_metadata: new Date("2012.08.10"),
-      website_metadata: "models.TextField()",
-      website_title: "models.TextField()",
+      website_metadata: "",
+      website_title: "",
 
       score: 1
     };
@@ -58,8 +59,6 @@ export default class ResourceSubmitForm extends Component {
       .post("http://127.0.0.1:8000/api/resource/", resource)
       .then(res => {})
       .catch(error => console.error(error));
-
-    console.log("POST resource success");
   };
 
   reset_resource_states = () => {
@@ -87,11 +86,12 @@ export default class ResourceSubmitForm extends Component {
       this.setState({ validated: false });
       event.preventDefault();
       return;
+    } else {
+      this.post_resource();
+      event.preventDefault();
+      this.reset_resource_states();
+      console.log("POST resource success");
     }
-
-    this.post_resource();
-    event.preventDefault();
-    this.reset_resource_states();
   };
 
   render() {

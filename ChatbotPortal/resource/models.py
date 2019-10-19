@@ -8,26 +8,27 @@ from bs4 import BeautifulSoup
 
 class ResourceManager(models.Manager):
     def create(self, **obj_data):
+        try:
+            # Get website actual title
+            url = obj_data['url']
+            r = urllib.request.Request(url, headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+            html = urllib.request.urlopen(r).read().decode('utf8')
 
-        # Get website actual title
-        url = obj_data['url']
-        r = urllib.request.Request(url, headers={
-                                   'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
-        html = urllib.request.urlopen(r).read().decode('utf8')
+            soup = BeautifulSoup(html, 'html.parser')
+            title = soup.find('title').string
+            if title:
+                obj_data['title'] = title
 
-        soup = BeautifulSoup(html, 'html.parser')
-        title = soup.find('title').string
-        if title:
-            obj_data['title'] = title
-        else:
-            obj_data['title'] = "Unknown title"
+        except Exception:
+            pass
 
         return super().create(**obj_data)
 
 
 class Resource(models.Model):
 
-    title = models.CharField(max_length=100)
+    title = models.TextField()
     url = models.TextField(validators=[URLValidator()])
     timestamp = models.DateTimeField(auto_now_add=True)
 

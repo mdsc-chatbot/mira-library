@@ -3,8 +3,11 @@ import axios from "axios";
 import { List } from "semantic-ui-react";
 
 import ResourceListItem from "./ResourceListItem.js";
+import { SecurityContext } from "../security/SecurityContext";
 
 export default class ResourceList extends Component {
+  static contextType = SecurityContext;
+
   constructor(props) {
     super(props);
 
@@ -32,9 +35,13 @@ export default class ResourceList extends Component {
   }
 
   render() {
-    const resources = this.state.resources.map(resource => (
-      <ResourceListItem key={resource.id} resource={resource} />
-    ));
+    const resources = this.state.resources.map(resource =>
+      resource.created_by_user === this.context.security.email ? (
+        <ResourceListItem key={resource.id} resource={resource} />
+      ) : (
+        <div></div>
+      )
+    );
 
     return (
       <div>
