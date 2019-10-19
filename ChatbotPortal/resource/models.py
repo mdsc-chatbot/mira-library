@@ -30,20 +30,19 @@ class Resource(models.Model):
 
     title = models.TextField()
     url = models.TextField(validators=[URLValidator()])
-    timestamp = models.DateTimeField(auto_now_add=True)
+    rating = models.IntegerField(
+        validators=[MaxValueValidator(5), MinValueValidator(1)])
+    comments = models.TextField(blank=True, null=True)
 
     created_by_user = models.CharField(max_length=100)
-    usefulness_rating = models.IntegerField(
-        validators=[MaxValueValidator(5), MinValueValidator(1)])
-    user_comment = models.TextField(blank=True)
-    usefulness_comment = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
-    website_summary_metadata = models.TextField(blank=True)
-    website_readtime_metadata = models.DateTimeField()
-    website_metadata = models.TextField(blank=True)
-    website_title = models.TextField(blank=True)
-
-    score = models.DecimalField(max_digits=10, decimal_places=1)
+    website_summary_metadata = models.TextField(blank=True, null=True)
+    website_readtime_metadata = models.DateTimeField(blank=True, null=True)
+    website_metadata = models.TextField(blank=True, null=True)
+    website_title = models.TextField(blank=True, null=True)
+    score = models.DecimalField(
+        max_digits=10, decimal_places=1, blank=True, null=True)
 
     objects = ResourceManager()
 

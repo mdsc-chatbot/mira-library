@@ -13,11 +13,12 @@ export default class ResourceSubmitForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      title: "Unknown title",
       url: "",
-      title: "",
       rating: 1,
-      tags: "",
       comments: "",
+
+      tags: "",
       validated: true,
       currentTags: null
     };
@@ -32,18 +33,9 @@ export default class ResourceSubmitForm extends Component {
     const resource = {
       title: "Unknown title", // Backend will automatically webscrape for website title
       url: this.state.url,
-      created_by_user: created_by_user,
-
-      user_comment: this.state.comments,
-      usefulness_rating: this.state.rating,
-      usefulness_comment: this.state.comments,
-
-      website_summary_metadata: "",
-      website_readtime_metadata: new Date("2012.08.10"),
-      website_metadata: "",
-      website_title: "",
-
-      score: 1
+      rating: this.state.rating,
+      comments: this.state.comments,
+      created_by_user: created_by_user
     };
     return resource;
   };
@@ -59,11 +51,12 @@ export default class ResourceSubmitForm extends Component {
 
   reset_resource_states = () => {
     this.setState({
+      title: "Unknown title",
       url: "",
-      tags: "",
-      comments: "",
-      title: "refreshed",
       rating: 1,
+      comments: "",
+
+      tags: "",
       validated: true
     });
   };
@@ -78,7 +71,7 @@ export default class ResourceSubmitForm extends Component {
 
   handleSubmit = event => {
     // Validations
-    if (!validator.isURL(this.state.url)) {
+    if (!validator.isURL(this.state.url) || !this.state.rating) {
       this.setState({ validated: false });
       event.preventDefault();
       return;

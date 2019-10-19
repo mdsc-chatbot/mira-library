@@ -16,7 +16,7 @@ export default class ResourceList extends Component {
     };
   }
 
-  fetchResources = () => {
+  get_resources = () => {
     axios.get("http://127.0.0.1:8000/api/resource").then(res => {
       this.setState({
         resources: res.data
@@ -25,12 +25,12 @@ export default class ResourceList extends Component {
   };
 
   componentDidMount() {
-    this.fetchResources();
+    this.get_resources();
   }
 
   componentWillReceiveProps(newProps) {
     if (newProps.token) {
-      this.fetchResources();
+      this.get_resources();
     }
   }
 
