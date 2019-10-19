@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { List } from "semantic-ui-react";
+import { List, Header } from "semantic-ui-react";
 
 import ResourceListItem from "./ResourceListItem.js";
 import { SecurityContext } from "../security/SecurityContext";
+import Statistics from "./Statistics";
 
 export default class ResourceList extends Component {
   static contextType = SecurityContext;
@@ -44,10 +45,12 @@ export default class ResourceList extends Component {
         <div></div>
       )
     );
-
+    console.log(resources);
     return (
       <div>
-        <List selection verticalAlign="middle">
+        <Header as="h2">Resources</Header>
+        <Statistics submitted_resources={resources.filter(o => o.key).length} />
+        <List selection verticalAlign="middle" className="centered">
           {resources}
         </List>
       </div>
