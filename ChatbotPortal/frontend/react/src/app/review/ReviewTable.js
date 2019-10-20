@@ -52,7 +52,7 @@ export default class ReviewTable extends Component {
         return formatted_review;
     };
 
-    completedReviews = (ids) => {
+    completedReviews = (ids, reviews) => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) === true ?(
                 console.log(r.id),
@@ -62,8 +62,7 @@ export default class ReviewTable extends Component {
                     <td>filler tags</td>
                     {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
                     <td>
-                        <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
-                        <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
+                        {reviews.get(r.id)===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
                     </td>
                 </tr>
             ):(<p></p>)
@@ -131,6 +130,11 @@ export default class ReviewTable extends Component {
         })
         console.log("rev",ids)
 
+        var reviewsApproval = new Map();
+        reviewsI.forEach(function (item){
+            reviewsApproval.set(item.resource_id, item.approved);
+        })
+
         const resources = this.state.resources
         console.log("waow",resources);
         var viewPending = true
@@ -149,7 +153,7 @@ export default class ReviewTable extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids))}
+                            {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
                         </tbody>
                     </Table>
                 </div>
