@@ -40,13 +40,14 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
-
-    'frontend',
     'signup.apps.SignupConfig',
+    'frontend',
+    'resource',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', # must be at the top
+    'corsheaders.middleware.CorsMiddleware',  # must be at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -112,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Edmonton'
 
 USE_I18N = True
 
@@ -130,16 +131,21 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.AllowAny',
+
         # A request must be authenticated before it is processed
         'rest_framework.permissions.IsAuthenticated'
         # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
     # The authentication method the server will try when it receives a request
     'DEFAULT_AUTHENTICATION_CLASSES': [
-            'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-            'rest_framework.authentication.SessionAuthentication',
-            'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -156,4 +162,5 @@ JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER': 'ChatbotPortal.utils.my_jwt_response_handler'
 }
 
-AUTH_USER_MODEL = 'signup.User' # Changes the built-in user model to ours
+AUTH_USER_MODEL = 'signup.User'  # Changes the built-in user model to ours
+CSRF_COOKIE_NAME = "csrftoken"
