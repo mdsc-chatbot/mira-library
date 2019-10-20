@@ -52,11 +52,12 @@ export default class ResourceList extends Component {
 
     return (
       <div>
-        <Header as="h2">Resources</Header>
-        <Statistics resources={resources} />
-        <List selection verticalAlign="middle" className="centered">
-          {resources}
-        </List>
+        <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}>
+          <Statistics resources={resources} />
+          <List selection verticalAlign="middle" className="centered">
+            {resources}
+          </List>
+        </div>
       </div>
     );
   }

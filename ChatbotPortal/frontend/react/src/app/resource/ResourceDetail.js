@@ -22,7 +22,7 @@ export default class ResourceDetail extends Component {
 
   render() {
     return (
-      <div>
+      <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}>
         <Card fluid color="blue">
           <Card.Content>
             <Card.Header>

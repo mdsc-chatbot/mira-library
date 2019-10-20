@@ -158,7 +158,7 @@ class ProfilePage extends Component {
 
                                         {securityContext.security.logged_in ? (
                                             <Button
-                                                color='teal'
+                                                color='blue'
                                                 fluid size='large'
                                                 onClick={this.is_edited}>Save
                                             </Button>
