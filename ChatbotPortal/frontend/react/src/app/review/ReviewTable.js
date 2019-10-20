@@ -12,7 +12,8 @@ export default class ReviewTable extends Component {
         super(props);
         this.state = {
         resources: {},
-        reviews: []
+        reviews: [],
+        pending: 'Completed Reviews'
         };
     }
 
@@ -51,23 +52,30 @@ export default class ReviewTable extends Component {
         return formatted_review;
     };
 
-    completed = (reviewer) => {
-        render();{
-            const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-                ids.includes(r.id) !== true ?(
-                    console.log(r.id),
-                    <tr key={r.id} ref={tr => this.results = tr}>
-                        <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                        <td>{r.comments}</td>
-                        <td>filler tags</td>
-                        {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
-                        <td>
-                            <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
-                            <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
-                        </td>
-                    </tr>
-                ):(<p></p>)
-            ));
+    completedReviews = (ids) => {
+        const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
+            ids.includes(r.id) === true ?(
+                console.log(r.id),
+                <tr key={r.id} ref={tr => this.results = tr}>
+                    <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                    <td>{r.comments}</td>
+                    <td>filler tags</td>
+                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
+                    <td>
+                        <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
+                        <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
+                    </td>
+                </tr>
+            ):(<p></p>)
+        ));
+        return resources_get
+
+    }
+    switchView = () =>{
+        if (this.state.pending === 'Completed Reviews'){
+            this.setState({pending:'Pending Reviews'});
+        } else {
+            this.setState({pending:'Completed Reviews'})
         }
     }
 
@@ -107,9 +115,10 @@ export default class ReviewTable extends Component {
                 </tr>
             ):(<p></p>)
         ));
+        return resources_get
     }
 
-    render() {        
+    render() {    
         // Get current logged in user, take this function out of format_data and consolidate it later
         const reviewer = this.context.security.email
         ? this.context.security.email
@@ -124,11 +133,12 @@ export default class ReviewTable extends Component {
 
         const resources = this.state.resources
         console.log("waow",resources);
+        var viewPending = true
         return (
             <div>
                 <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
-                    You have N pending reviews
-                    <button class="ui right floated button" onClick={() => viewPending = false}>Button</button>
+                    Reviews
+                    <button class="ui right floated button" onClick={() => this.switchView()}>{this.state.pending}</button>
                     <Table class="ui celled table">
                         <thead>
                             <tr>
@@ -139,7 +149,7 @@ export default class ReviewTable extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.getData(ids)}
+                            {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids))}
                         </tbody>
                     </Table>
                 </div>
