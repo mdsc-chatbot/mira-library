@@ -1,36 +1,48 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Button, Form, Grid, Header, Segment} from "semantic-ui-react";
+import {SecurityContext} from '../security/SecurityContext';
 
 class EditForm extends React.Component {
+
+    static contextType = SecurityContext;
+
     constructor(props) {
 		super(props);
 		this.state = {
-			logged_in: localStorage.getItem('token') ? true : false,
+			logged_in: '',
 			id: '',
 			email: '',
             first_name: '',
             last_name: '',
-			is_edited: false
+			is_edited: false,
 		};
 	}
 
     componentDidMount() {
-        if (this.state.logged_in) {
-            fetch('http://localhost:8000/signup/current_user/', {
-                headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
-                }
+        if (this.context.security.logged_in) {
+            // fetch('http://localhost:8000/signup/current_user/', {
+            //     headers: {
+            //         Authorization: `JWT ${localStorage.getItem('token')}`
+            //     }
+            // })
+            //     .then(res => res.json())
+            //     .then(json => {
+            //         this.setState({
+            //             id: json.id,
+            //             email: json.email,
+            //             first_name: json.first_name,
+            //             last_name: json.last_name
+            //         });
+            //     });
+            this.setState({
+                logged_in: this.context.security.logged_in,
+                id: this.context.security.id,
+                email: this.context.security.email,
+                first_name: this.context.security.first_name,
+                last_name: this.context.security.last_name,
+                is_edited: false,
             })
-                .then(res => res.json())
-                .then(json => {
-                    this.setState({
-                        id: json.id,
-                        email: json.email,
-                        first_name: json.first_name,
-                        last_name: json.last_name
-                    });
-                });
         }
     }
 

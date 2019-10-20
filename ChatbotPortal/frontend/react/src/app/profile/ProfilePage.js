@@ -5,21 +5,41 @@ import EditForm from "./EditForm";
 
 class ProfilePage extends Component {
 
-	state = {
-		token: '',
-		displayed_form: 'edit',
-		logged_in: localStorage.getItem('token') ? true : false,
-		id: '',
-		email: '',
-		first_name: '',
-		last_name: '',
-		is_edited: false,
-		url: ''
-	};
+	static contextType = SecurityContext;
+
+	constructor(props){
+		super(props);
+		this.state = {
+			token: '',
+			displayed_form: 'edit',
+			logged_in: '',
+			id: '',
+			email: '',
+			first_name: '',
+			last_name: '',
+			is_edited: false,
+			url: ''
+		};
+	}
+
+	componentDidMount() {
+        if (this.context.security.logged_in) {
+
+            this.setState({
+                logged_in: this.context.security.logged_in,
+				token: this.context.security.token,
+                id: this.context.security.id,
+                email: this.context.security.email,
+                first_name: this.context.security.first_name,
+                last_name: this.context.security.last_name,
+                is_edited: false,
+            })
+        }
+    }
 
 	handle_edit = (e, data, setSecurity) => {
 		e.preventDefault();
-		fetch(`http://localhost:8000/4/update/`, {
+		fetch(`http://localhost:8000/signup/${this.state.id}/update/`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
@@ -81,28 +101,3 @@ class ProfilePage extends Component {
 }
 
 export default ProfilePage;
-
-// export default function ProfilePage() {
-// 	return (
-// 		<EditForm />
-		// {/*<div>*/}
-		// {/*	<SecurityContext.Consumer>*/}
-        // {/*        {(securityContext) => (*/}
-        // {/*        	<div>*/}
-        // {/*                <h3>*/}
-        // {/*                    {securityContext.security.logged_in*/}
-        // {/*                        ? 	`Email: ${securityContext.security.email} '\n'*/}
-        // {/*                        	 First Name: ${securityContext.security.first_name} '\n'*/}
-        // {/*                        	 Last Name: ${securityContext.security.last_name} '\n'*/}
-        // {/*                        	 Affiliation: ${securityContext.security.affiliation} '\n'*/}
-        // {/*                        	 Active: ${securityContext.security.active} '\n'*/}
-        // {/*                        	 Staff: ${securityContext.security.staff} '\n'*/}
-        // {/*                        	 Admin: ${securityContext.security.admin}`*/}
-        // {/*                        : 'No Security Context'}*/}
-        // {/*                </h3>*/}
-        // {/*            </div>*/}
-        // {/*        )}*/}
-        // {/*    </SecurityContext.Consumer>*/}
-		// {/*</div>*/}
-// 	);
-// }
