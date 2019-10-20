@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'signup.apps.SignupConfig',
     'frontend',
     'resource',
-    'review'
+    'review',
     'django_filters',
 ]
 
