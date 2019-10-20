@@ -3,18 +3,8 @@ from enum import Enum
 
 # Create your models here.
 class Reviews(models.Model):
-    class approvalChoices(Enum):
-        Approved = 'APP'
-        Rejected = 'REJ'
-    
-    class types(Enum):
-        type1 = 1
-        type2 = 2
 
-    review_id = models.PositiveIntegerField(primary_key=True)
-    user_id = models.PositiveIntegerField()
-    review_types = types
-    default = types.type1
-    approved = approvalChoices
-    default = approvalChoices.Rejected
+    reviewer_user_email = models.CharField(max_length=100)
+    approved = models.BooleanField()
     resource_url = models.TextField()
+    resource_id = models.PositiveIntegerField()

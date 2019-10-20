@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'signup.apps.SignupConfig',
     'frontend',
-    'resource'
+    'resource',
+    'review'
 ]
 
 MIDDLEWARE = [

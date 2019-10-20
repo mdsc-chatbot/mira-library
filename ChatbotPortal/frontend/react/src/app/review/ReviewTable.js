@@ -1,58 +1,149 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Table } from "semantic-ui-react";
+import { Table, List } from "semantic-ui-react";
+import { SecurityContext } from "../security/SecurityContext";
+import { baseRoute } from "../App";
+import { Link } from "react-router-dom";
 
 export default class ReviewTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      resources: {}
+    static contextType = SecurityContext;
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+        resources: {},
+        reviews: []
+        };
+    }
+
+    get_resources = () => {
+        axios.get("http://127.0.0.1:8000/api/resource").then(res => {
+            this.setState({
+                resources: res.data
+            });
+        });
     };
-  }
 
-  get_resources = () => {
-    axios.get("http://127.0.0.1:8000/api/resource").then(res => {
-      this.setState({
-        resources: res.data
-      });
-    });
-  };
+    get_reviews = () =>{
+        axios.get("http://127.0.0.1:8000/api/review").then(res => {
+            this.setState({
+                reviews: res.data
+            });
+        });
+    }
+    componentDidMount() {
+        this.get_resources();
+        this.get_reviews();
+    }
 
-  componentDidMount() {
-    this.get_resources();
-  }
+    format_data = (data, approval) => {
+        // Get current logged in user
+        const reviewer = this.context.security.email
+            ? this.context.security.email
+            : "Unknown user";
 
-  render() {
-    return (
-        <div>
-            <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
-                You have N pending reviews
-				<button class="ui right floated button" >Completed Reviews</button>
-                <Table class="ui celled table">
-                    <thead>
-                        <tr>
-                        <th>URL</th>
-                        <th>Comments</th>
-                        <th>Tags</th>
-                        <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        {/*placeholder resource references until i figure out the actual response
-                        I think the use is like {resources.JSON KEY HERE} ex. {resources.url}*/}
-                        <td>test</td>
-                        <td>great for kids</td>
-                        <td>kids, ADHD</td>
+        const formatted_review = {
+            reviewer_user_email: reviewer,
+            approved: approval,
+            resource_url: data.url,
+            resource_id: data.id
+        };
+        return formatted_review;
+    };
+
+    completed = (reviewer) => {
+        render();{
+            const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
+                ids.includes(r.id) !== true ?(
+                    console.log(r.id),
+                    <tr key={r.id} ref={tr => this.results = tr}>
+                        <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                        <td>{r.comments}</td>
+                        <td>filler tags</td>
+                        {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
                         <td>
-                            <button class="positive ui button">Approve</button>
-                            <button class="negative ui button">Reject</button>
+                            <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
+                            <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
                         </td>
-                        </tr>
-                    </tbody>
-                </Table>
+                    </tr>
+                ):(<p></p>)
+            ));
+        }
+    }
+
+    approve = (data) => {
+        const review = this.format_data(data, true);
+        console.log(review)
+        axios
+            .post("http://127.0.0.1:8000/api/review/", review)
+            .then(res => {})
+            .catch(error => console.error(error));
+        this.get_reviews();
+    };
+
+    reject = (data) => {
+        const review = this.format_data(data, false);
+        console.log(review)
+        axios
+            .post("http://127.0.0.1:8000/api/review/", review)
+            .then(res => {})
+            .catch(error => console.error(error));
+        this.get_reviews();
+    }
+
+    getData = (ids) =>{
+        const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
+            ids.includes(r.id) !== true ?(
+                console.log(r.id),
+                <tr key={r.id} ref={tr => this.results = tr}>
+                    <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                    <td>{r.comments}</td>
+                    <td>filler tags</td>
+                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
+                    <td>
+                        <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
+                        <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
+                    </td>
+                </tr>
+            ):(<p></p>)
+        ));
+    }
+
+    render() {        
+        // Get current logged in user, take this function out of format_data and consolidate it later
+        const reviewer = this.context.security.email
+        ? this.context.security.email
+        : "Unknown user";
+
+        const reviewsI = this.state.reviews.filter(review => review.reviewer_user_email === reviewer);
+        var ids = []
+        reviewsI.forEach(function (item){
+            ids.push(item.resource_id)
+        })
+        console.log("rev",ids)
+
+        const resources = this.state.resources
+        console.log("waow",resources);
+        return (
+            <div>
+                <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
+                    You have N pending reviews
+                    <button class="ui right floated button" onClick={() => viewPending = false}>Button</button>
+                    <Table class="ui celled table">
+                        <thead>
+                            <tr>
+                            <th>URL</th>
+                            <th>Comments</th>
+                            <th>Tags</th>
+                            <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.getData(ids)}
+                        </tbody>
+                    </Table>
+                </div>
             </div>
-        </div>
-    );
-  }
+        );
+    }
 }
