@@ -1,3 +1,8 @@
 /*******************************
          Site Overrides
 *******************************/
+
+/* Make sure inputs take up as much space as possible */
+.ui.form .fields > .field {
+  flex: 1 1 auto;
+}
