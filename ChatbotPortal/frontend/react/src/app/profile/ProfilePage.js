@@ -3,7 +3,7 @@ import Profile from "./Profile";
 import {SecurityContext} from '../security/SecurityContext';
 import Nav from "../authentication/Nav";
 import LoginForm from "../authentication/LoginForm";
-import { Header, Icon, Divider, Table, Message, Container, Input } from 'semantic-ui-react'
+import {Header, Icon, Divider, Table, Message, Container, Input, Form, Button} from 'semantic-ui-react'
 import Image from "semantic-ui-react/dist/commonjs/elements/Image";
 import {unstable_renderSubtreeIntoContainer} from "react-dom";
 // import styles from './ProfilePage.css'
@@ -25,7 +25,7 @@ class ProfilePage extends Component {
             first_name: '',
             last_name: '',
             is_edited: false,
-            url: ''
+            password:''
         };
     }
 
@@ -43,6 +43,16 @@ class ProfilePage extends Component {
             })
         }
     }
+
+    handle_change = e => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(prevstate => {
+            const newState = {...prevstate};
+            newState[name] = value;
+            return newState;
+        });
+    };
 
     handle_edit = (e, data, setSecurity) => {
         e.preventDefault();
@@ -99,78 +109,76 @@ class ProfilePage extends Component {
 
                         <SecurityContext.Consumer>
                             {(securityContext) => (
-                                <div>
-                                    <Table definition color='blue'>
-                                        {securityContext.security.logged_in ?
-                                            <Table.Body>
-                                                <Table.Row>
-                                                    <Table.Cell width={3}>Profile Picture</Table.Cell>
-                                                    <Table.Cell>
-                                                        <Image src='https://www.iconsdb.com/icons/download/color/4AFFFF/user-512.png' size='small' />
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.Cell>Email</Table.Cell>
-                                                    <Table.Cell>
-                                                        <Input defaultValue={securityContext.security.email} />
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.Cell>First Name</Table.Cell>
-                                                    <Table.Cell><Input  defaultValue={securityContext.security.first_name} /></Table.Cell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.Cell >Last Name</Table.Cell>
-                                                    <Table.Cell><Input defaultValue={securityContext.security.last_name} />
-                                                    </Table.Cell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.Cell>Status</Table.Cell>
-                                                    <Table.Cell>Newbie</Table.Cell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.Cell>Submissions</Table.Cell>
-                                                    <Table.Cell >0</Table.Cell>
-                                                </Table.Row>
-                                                <Table.Row>
-                                                    <Table.Cell>Points</Table.Cell>
-                                                    <Table.Cell >0</Table.Cell>
-                                                </Table.Row>
-                                            </Table.Body>
-                                            :
-                                            <Message icon error>
+                                <React.Fragment>
+                                    <Form onSubmit={e => this.handle_edit(e, this.state)}>
+                                        <Table definition color='blue' onSubmit={this.props.handle_edit}>
+                                            {securityContext.security.logged_in ?
+                                                <Table.Body>
+                                                    <Table.Row>
+                                                        <Table.Cell width={3}>Profile Picture</Table.Cell>
+                                                        <Table.Cell>
+                                                            <Image src='https://www.iconsdb.com/icons/download/color/4AFFFF/user-512.png' size='small' />
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell>Email</Table.Cell>
+                                                        <Table.Cell>
+                                                            {/*<Input name='email' onChange={this.handle_change} defaultValue={securityContext.security.email} />*/}
+                                                            {securityContext.security.email}
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell>First Name</Table.Cell>
+                                                        <Table.Cell><Form.Input name='first_name' onChange={this.handle_change} value={this.state.first_name} /></Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell >Last Name</Table.Cell>
+                                                        <Table.Cell><Form.Input name='last_name' onChange={this.handle_change} value={this.state.last_name} />
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell>Status</Table.Cell>
+                                                        <Table.Cell>Newbie</Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell>Submissions</Table.Cell>
+                                                        <Table.Cell >0</Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell>Points</Table.Cell>
+                                                        <Table.Cell >0</Table.Cell>
+                                                    </Table.Row>
+                                                    <Table.Row>
+                                                        <Table.Cell>Password</Table.Cell>
+                                                        <Table.Cell ><Form.Input name='password' onChange={this.handle_change} value={this.state.password} /></Table.Cell>
+                                                    </Table.Row>
+                                                </Table.Body>
+                                                : null}
+                                        </Table>
+
+                                        {securityContext.security.logged_in ? (
+                                            <Button
+                                                color='teal'
+                                                fluid size='large'
+                                                onClick={this.is_edited}>Save
+                                            </Button>
+                                        ) : null}
+                                    </Form>
+                                    {!securityContext.security.logged_in ? (<Message icon error>
                                                 <Icon name='circle notched' loading/>
                                                 <Message.Content>
                                                     <Message.Header>Nothing to show here!</Message.Header>
                                                     Log in and try again?
                                                 </Message.Content>
-                                            </Message>}
-                                    </Table>
-                                </div>
+                                    </Message>)
+                                : null}
+                                </React.Fragment>
+
 
                             )}
                         </SecurityContext.Consumer>
                     </div>
                 </Container>
-                <div>
-                    <SecurityContext.Consumer>
-                        {(securityContext) => (
-                            <div>
-                                <h3>
-                                    {securityContext.security.logged_in
-                                        ? 	`Email: ${securityContext.security.email} '\n'
-                                	 First Name: ${securityContext.security.first_name} '\n'
-                                	 Last Name: ${securityContext.security.last_name} '\n'
-                                	 Affiliation: ${securityContext.security.affiliation} '\n'
-                                	 Active: ${securityContext.security.active} '\n'
-                                	 Staff: ${securityContext.security.staff} '\n'
-                                	 Admin: ${securityContext.security.admin}`
-                                        : 'No Security Context'}
-                                </h3>
-                            </div>
-                        )}
-                    </SecurityContext.Consumer>
-                </div>
             </React.Fragment>
         );
     }
