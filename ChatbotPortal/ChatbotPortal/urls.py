@@ -25,6 +25,7 @@ urlpatterns = [
     path('chatbotportal/', include('frontend.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/resource/', include('resource.api.urls')),
+    path('', include('review.urls')),
 
     # For authentication
     path('token-auth/', obtain_jwt_token),
