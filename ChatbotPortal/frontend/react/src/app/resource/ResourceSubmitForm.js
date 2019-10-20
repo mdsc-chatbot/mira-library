@@ -4,7 +4,6 @@ import validator from "validator";
 import { Container, Form, Rating } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
-import TagPopup from "./TagPopup";
 import { SecurityContext } from "../security/SecurityContext";
 
 export default class ResourceSubmitForm extends Component {
@@ -18,7 +17,7 @@ export default class ResourceSubmitForm extends Component {
       rating: 1,
       comments: "",
 
-      tags: "",
+      tags: [],
       validated: true,
       currentTags: null
     };
@@ -34,6 +33,7 @@ export default class ResourceSubmitForm extends Component {
       title: "Unknown title", // Backend will automatically webscrape for website title
       url: this.state.url,
       rating: this.state.rating,
+      tags: this.state.tags,
       comments: this.state.comments,
       created_by_user: created_by_user
     };
@@ -56,7 +56,7 @@ export default class ResourceSubmitForm extends Component {
       rating: 1,
       comments: "",
 
-      tags: "",
+      tags: [],
       validated: true
     });
   };
@@ -128,13 +128,12 @@ export default class ResourceSubmitForm extends Component {
           </Form.Group>
 
           <Form.Group>
-            <Form.Input
-              name="tags"
-              onChange={this.handleChange}
-              value={this.state.tags}
-              label="Tags"
-              placeholder="Enter tags separated by commas"
-            />
+            <Form.Field>
+              <label>Tags</label>
+              <Form.Group>
+                <TagDropdown value={this.state.tags} onChange={tags => this.setState({ tags })} />
+              </Form.Group>
+            </Form.Field>
             <Form.Input
               name="comments"
               onChange={this.handleChange}
@@ -143,16 +142,6 @@ export default class ResourceSubmitForm extends Component {
               placeholder="Enter any comments (Optional)"
             />
           </Form.Group>
-
-          <Form.Field>
-            <label>Tags</label>
-            <Form.Group>
-              <TagDropdown
-                onChange={currentTags => this.setState({ currentTags })}
-              />
-              <TagPopup />
-            </Form.Group>
-          </Form.Field>
 
           <Form.Button content="Submit" />
         </Form>

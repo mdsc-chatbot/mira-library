@@ -1,17 +1,30 @@
-from django.shortcuts import render
-
-
-from django.http import JsonResponse, HttpResponse
+import json
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from .models import Tag
+
 
 # Create your views here.
 
 
 def create_tags(request):
-    # TODO: Add validation
-    tag = Tag.objects.create(name=request.POST['name'])
+    form_data = json.loads(request.body.decode('utf-8'))
+
+    # Validation
+    # Name of tag must be unique (case insensitive)
+    if (Tag.objects.filter(name__iexact=form_data['name']).count() != 0):
+        return JsonResponse({
+            'name' : 'Tag already exists.'
+        }, status=400)
+
+    # Saving it
+    tag = Tag.objects.create(name=form_data['name'])
     tag.save()
-    # TODO: Return tag input such that tag is automatically added to input field
+
+    # Return tag so that frontend can dynamically add it to the dropdown
+    return JsonResponse({
+        'id' : tag.id,
+        'name' : tag.name,
+    })
 
 
 def fetch_tags(request):

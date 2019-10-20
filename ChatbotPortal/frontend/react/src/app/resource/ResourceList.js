@@ -44,11 +44,12 @@ export default class ResourceList extends Component {
   }
 
   render() {
-    // Map those resources to ResourceListItem Component
+    // Map resources to ResourceListItem Component
     const resources = this.state.resources.map(resource => (
       <ResourceListItem key={resource.id} resource={resource} />
     ));
     console.log(this.state.resources);
+
     return (
       <div>
         <Header as="h2">Resources</Header>

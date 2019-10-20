@@ -1,15 +1,22 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import axios, {CancelToken} from 'axios';
 import {Dropdown} from 'semantic-ui-react';
-import PropTypes from 'prop-types';
+import TagPopup from "./TagPopup";
+
 
 export default class TagDropdown extends React.Component {
+
+	static mapResponseToDropdownOption = tag => ({
+		key : tag.id,
+		text : tag.name,
+		value : tag.id
+	});
 
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			value : null,
 			searchQuery : '',
 			tagOptions : [], // options to show to user (to click)
 			selectedOptions : [], // selected options so that the current values don't 'disappear' in the UI
@@ -22,7 +29,6 @@ export default class TagDropdown extends React.Component {
 		this.props.onChange(data.value);
 
 		this.setState({
-			value : data.value,
 			searchQuery: ''
 		});
 
@@ -65,11 +71,10 @@ export default class TagDropdown extends React.Component {
 			cancelToken: source.token
 		}).then(response => {
 			// Transform JSON tag into tag that semantic ui's dropdown can read
-			const tagOptions =  response.data.map(tag => ({
-				key : tag.id,
-				text : tag.name,
-				value : tag.id
-			}));
+			let tagOptions = [];
+			if (response.data) {
+				tagOptions = response.data.map(TagDropdown.mapResponseToDropdownOption);
+			}
 
 			// Add any options that didn't come back from the server, but is selected in the dropdown
 			// This makes sure that the value is rendered properly in the UI
@@ -92,24 +97,48 @@ export default class TagDropdown extends React.Component {
 		})
 	};
 
+	handleNewTagAdded = (tag) => {
+		// Adding new tag to values
+		const value = this.props.value.slice();
+		value.push(tag.id);
+		this.props.onChange(value);
+
+		// Adding tag to selected options
+		this.setState((prevState) => {
+			const selectedOptions = prevState.selectedOptions.slice();
+			selectedOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
+			const tagOptions = prevState.tagOptions.slice();
+			tagOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
+
+			return {
+				selectedOptions,
+				tagOptions
+			};
+		});
+	};
+
 	render() {
 		return (
-			<Dropdown
-				fluid
-				selection
-				multiple
-				placeholder='Enter tags'
-				search
-				options={this.state.tagOptions}
-				onChange={this.handleChange}
-				onSearchChange={this.handleSearchChange}
-				searchQuery={this.state.searchQuery}
-				value={this.state.value}
-			/>
+			<React.Fragment>
+				<Dropdown
+					fluid
+					selection
+					multiple
+					placeholder='Enter tags'
+					search
+					options={this.state.tagOptions}
+					onChange={this.handleChange}
+					onSearchChange={this.handleSearchChange}
+					searchQuery={this.state.searchQuery}
+					value={this.props.value}
+				/>
+				<TagPopup onNewTag={this.handleNewTagAdded} />
+			</React.Fragment>
 		);
 	}
 }
 
 TagDropdown.propTypes = {
+	value : PropTypes.array,
 	onChange : PropTypes.func,
 };

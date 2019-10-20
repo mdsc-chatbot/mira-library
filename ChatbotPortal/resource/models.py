@@ -26,6 +26,11 @@ class ResourceManager(models.Manager):
         return super().create(**obj_data)
 
 
+class Tag(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    approved = models.BooleanField(default=False)
+
 class Resource(models.Model):
 
     title = models.TextField()
@@ -33,6 +38,7 @@ class Resource(models.Model):
     rating = models.IntegerField(
         validators=[MaxValueValidator(5), MinValueValidator(1)])
     comments = models.TextField(blank=True, null=True)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     created_by_user = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -46,7 +52,3 @@ class Resource(models.Model):
 
     objects = ResourceManager()
 
-
-class Tag(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
