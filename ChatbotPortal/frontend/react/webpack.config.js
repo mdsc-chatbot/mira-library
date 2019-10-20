@@ -26,9 +26,9 @@ module.exports = {
 		// this plugin builds our HTML file using the provided template
 		new HtmlWebpackPlugin({
 			template : 'src/index.html',
-			meta : {
-				'timesheet.dateFormat' : 'YYYY-MMM-DD', // also set in JsonConfig.java
-			}
+			// meta : {
+			// 	'timesheet.dateFormat' : 'YYYY-MMM-DD',
+			// }
 		}),
 		new MiniCssExtractPlugin({
 			// Options similar to the same options in webpackOptions.output
@@ -53,20 +53,26 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.(css|scss)$/,
-				include : [/node_modules/],
+				test: /\.(css)$/,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader,
 						options: {
 							// you can specify a publicPath here
 							// by default it uses publicPath in webpackOptions.output
-							publicPath: '../',
+							// publicPath: '../',
 							hmr: process.env.NODE_ENV === 'development',
 						},
 					},
-					'css-loader',
-					'sass-loader'
+					{
+						loader: 'css-loader',
+						options: {
+							sourceMap: true,
+							modules: {
+								localIdentName: '[name]__[local]____[hash:base64:5]',
+							},
+						},
+					},
 				]
 			},
 			{
