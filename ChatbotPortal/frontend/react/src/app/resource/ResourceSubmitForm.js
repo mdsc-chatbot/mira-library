@@ -4,7 +4,6 @@ import validator from "validator";
 import { Container, Form, Rating } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
-import TagPopup from "./TagPopup";
 import { SecurityContext } from "../security/SecurityContext";
 
 export default class ResourceSubmitForm extends Component {
@@ -133,7 +132,6 @@ export default class ResourceSubmitForm extends Component {
               <label>Tags</label>
               <Form.Group>
                 <TagDropdown value={this.state.tags} onChange={tags => this.setState({ tags })} />
-                <TagPopup />
               </Form.Group>
             </Form.Field>
             <Form.Input
