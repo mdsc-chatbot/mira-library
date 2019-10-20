@@ -6,7 +6,6 @@ services:
 env: 
   -DJANGO=2.2.5 DB=mysql
 install:
-  - pip install django==2.2.5
-  - pip install djangorestframework
+  - pip install -r requirements.txt
 script:
   - python ./ChatbotPortal/manage.py test
