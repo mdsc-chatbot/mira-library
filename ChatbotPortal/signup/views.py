@@ -37,3 +37,18 @@ class UserUpdateList(UpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializerWithToken
     permission_classes = (permissions.AllowAny,)
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        old_password = instance.password
+        response = self.update(request, *args, **kwargs)
+
+        password = request.data['password']
+        if (password is not None) and (password != ""):
+            instance.set_password(password)
+        else:
+            instance.set_password(old_password)
+
+        instance.save()
+
+        return response
