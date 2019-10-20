@@ -9,6 +9,7 @@ export default class ResourcePage extends React.Component {
   }
 
   render() {
+    // ResourceSubmitFrom -> ResourceList -> ResourceListItem -> ResourceDetail
     return (
       <Container fluid>
         <ResourceSubmitForm />

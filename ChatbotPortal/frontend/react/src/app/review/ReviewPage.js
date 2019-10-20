@@ -1,9 +1,16 @@
 import React from 'react';
+import ReviewTable from './ReviewTable';
 
-export default function ReviewPage() {
-	return (
-		<div>
-			This is an example review page!
-		</div>
-	);
-}
+export default class ResourcePage extends React.Component {
+	constructor(props) {
+	  super(props);
+	}
+  
+	render() {
+	  return (
+		  <container>
+			<ReviewTable />
+		  </container>
+	  );
+	}
+  }

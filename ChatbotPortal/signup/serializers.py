@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
-from signup.models import User
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name', 'affiliation')
+        fields = ('id', 'email', 'first_name', 'last_name', 'affiliation')
 
 
 class UserSerializerWithToken(serializers.ModelSerializer):
@@ -33,4 +33,4 @@ class UserSerializerWithToken(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('token', 'email', 'first_name', 'last_name', 'affiliation', 'password')
+        fields = ('token', 'id', 'email', 'first_name', 'last_name', 'affiliation', 'password')

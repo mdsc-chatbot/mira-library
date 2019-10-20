@@ -1,47 +1,41 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 import axios from "axios";
 import validator from "validator";
-import {
-  Container,
-  Form,
-  Rating,
-  Button,
-  Popup,
-  Input
-} from "semantic-ui-react";
+import { Container, Form, Rating } from "semantic-ui-react";
+
 import TagDropdown from "./TagDropdown";
-import TagPopup from "./TagPopup";
+import { SecurityContext } from "../security/SecurityContext";
 
 export default class ResourceSubmitForm extends Component {
+  static contextType = SecurityContext;
+
   constructor(props) {
     super(props);
     this.state = {
+      title: "Unknown title",
       url: "",
-      title: "",
       rating: 1,
-      tags: "",
       comments: "",
+
+      tags: [],
       validated: true,
       currentTags: null
     };
   }
 
   create_resource = () => {
+    // Get current logged in user
+    const created_by_user = this.context.security.email
+      ? this.context.security.email
+      : "Unknown user";
+
     const resource = {
-      title: "New resources", // TODO
+      title: "Unknown title", // Backend will automatically webscrape for website title
       url: this.state.url,
-      created_by_user: "user", // TODO
-
-      user_comment: this.state.comments,
-      usefulness_rating: this.state.rating,
-      usefulness_comment: this.state.comments,
-
-      website_summary_metadata: "models.TextField()",
-      website_readtime_metadata: new Date("2012.08.10"),
-      website_metadata: "models.TextField()",
-      website_title: "models.TextField()",
-
-      score: 1
+      rating: this.state.rating,
+      tags: this.state.tags,
+      comments: this.state.comments,
+      created_by_user: created_by_user
     };
     return resource;
   };
@@ -49,28 +43,20 @@ export default class ResourceSubmitForm extends Component {
   post_resource = () => {
     const resource = this.create_resource();
 
-    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-    axios.defaults.xsrfCookieName = "csrftoken";
-    axios.defaults.headers = {
-      "Content-Type": "application/json",
-      Authorization: `Token ${this.props.token}`
-    };
-
     axios
       .post("http://127.0.0.1:8000/api/resource/", resource)
       .then(res => {})
       .catch(error => console.error(error));
-
-    console.log("POST resource success");
   };
 
   reset_resource_states = () => {
     this.setState({
+      title: "Unknown title",
       url: "",
-      tags: "",
-      comments: "",
-      title: "refreshed",
       rating: 1,
+      comments: "",
+
+      tags: [],
       validated: true
     });
   };
@@ -85,15 +71,16 @@ export default class ResourceSubmitForm extends Component {
 
   handleSubmit = event => {
     // Validations
-    if (!validator.isURL(this.state.url)) {
+    if (!validator.isURL(this.state.url) || !this.state.rating) {
       this.setState({ validated: false });
       event.preventDefault();
       return;
+    } else {
+      this.post_resource();
+      event.preventDefault();
+      this.reset_resource_states();
+      console.log("POST resource success");
     }
-
-    this.post_resource();
-    event.preventDefault();
-    this.reset_resource_states();
   };
 
   render() {
@@ -141,14 +128,12 @@ export default class ResourceSubmitForm extends Component {
           </Form.Group>
 
           <Form.Group>
-            <Form.Input
-              name="tags"
-              onChange={this.handleChange}
-              value={this.state.tags}
-              label="Tags"
-              placeholder="Enter tags separated by commas"
-            />
-
+            <Form.Field>
+              <label>Tags</label>
+              <Form.Group>
+                <TagDropdown value={this.state.tags} onChange={tags => this.setState({ tags })} />
+              </Form.Group>
+            </Form.Field>
             <Form.Input
               name="comments"
               onChange={this.handleChange}
@@ -157,15 +142,7 @@ export default class ResourceSubmitForm extends Component {
               placeholder="Enter any comments (Optional)"
             />
           </Form.Group>
-          <Form.Field>
-            <label>Tags</label>
-            <Form.Group>
-              <TagDropdown
-                onChange={currentTags => this.setState({ currentTags })}
-              />
-              <TagPopup />
-            </Form.Group>
-          </Form.Field>
+
           <Form.Button content="Submit" />
         </Form>
       </Container>

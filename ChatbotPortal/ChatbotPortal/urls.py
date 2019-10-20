@@ -14,10 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from rest_framework_jwt.views import obtain_jwt_token
-from django.conf.urls import include
+from django.conf.urls import url, include
+from django.views.generic import TemplateView
+from django.conf.urls import url, include, re_path
 from django.contrib import admin
 from django.urls import path
-# from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,8 @@ urlpatterns = [
     path('chatbotportal/', include('frontend.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/resource/', include('resource.api.urls')),
+    path('', include('review.urls')),
+
     # For authentication
     path('token-auth/', obtain_jwt_token),
     path('signup/', include('signup.urls')),

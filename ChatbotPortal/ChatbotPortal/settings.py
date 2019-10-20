@@ -35,13 +35,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontend',
+
     'rest_framework',
     'user_profile',
     'corsheaders',
-    'resource',
     'signup.apps.SignupConfig',
-    # 'rest_framework.authtoken',
+    'frontend',
+    'resource',
+    'review',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +62,7 @@ ROOT_URLCONF = 'ChatbotPortal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend/react'), 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend/react')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -108,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Edmonton'
 
 USE_I18N = True
 
@@ -136,12 +138,24 @@ REST_FRAMEWORK = {
         # Also uncomment the 'rest_framework.authtoken' from INSTALLED_APPS
         # Uncomment user_profile/views.py file for authentication_class
 
-    ]
+        # A request must be authenticated before it is processed
+        'rest_framework.permissions.IsAuthenticated'
+        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    # The authentication method the server will try when it receives a request
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = [
-#     # 'http://localhost:3000',
+#     'http://localhost:3000',
 #     'http://localhost:8000',
 # ]
 
