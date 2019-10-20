@@ -7,11 +7,12 @@ import {SecurityContext} from '../security/SecurityContext';
 // import './App.css';
 
 class LoginPage extends Component {
+    static contextType = SecurityContext;
+
     constructor(props) {
         super(props);
         this.state = {
             displayed_form: 'login',
-            logged_in: localStorage.getItem('token') ? true : false,
             id: '',
             email: '',
             first_name: '',
@@ -24,10 +25,10 @@ class LoginPage extends Component {
     }
 
     componentDidMount() {
-        if (this.state.logged_in) {
+        if (this.context.security.logged_in) {
             fetch('http://localhost:8000/signup/current_user/', {
                 headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
+                    Authorization: `JWT ${this.context.security.token}`
                 }
             })
                 .then(res => res.json())
@@ -66,7 +67,6 @@ class LoginPage extends Component {
                     staff: json.user.staff,
                     admin: json.user.admin,
                 });
-                localStorage.setItem('token', json.token);
                 this.setState({
                     displayed_form: '',
                 });
@@ -100,8 +100,9 @@ class LoginPage extends Component {
     };
 
     handle_logout = () => {
-        localStorage.removeItem('token');
-        this.setState({logged_in: false, email: ''});
+        this.context.setSecurity({
+            logged_in : false
+        });
     };
 
     display_form = form => {
@@ -115,25 +116,13 @@ class LoginPage extends Component {
     };
 
     render() {
-        let form;
-        switch (this.state.displayed_form) {
-            case 'login':
-                form = <LoginForm handle_login={this.handle_login}/>;
-                break;
-            case 'signup':
-                form = <SignupForm handle_signup={this.handle_signup}/>;
-                break;
-            default:
-                form = null;
-        }
-
         return (
 
             <SecurityContext.Consumer>
                 {(securityContext) => (
                     <div className="App">
                         <Nav
-                            logged_in={this.state.logged_in}
+                            logged_in={this.context.security.logged_in}
                             display_form={this.display_form}
                             handle_logout={this.handle_logout}
                         />
