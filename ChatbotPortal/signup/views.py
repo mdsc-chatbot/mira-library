@@ -49,6 +49,8 @@ class UserUpdateList(UpdateAPIView):
         else:
             instance.set_password(old_password)
 
+        instance.first_name = request.data['first_name']
+        instance.last_name = request.data['last_name']
         instance.save()
 
         return response
