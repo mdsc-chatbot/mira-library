@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Menu, Header, Icon, Button } from "semantic-ui-react";
+import { Menu, Header, Icon, Button, Label, Image } from "semantic-ui-react";
 import { baseRoute } from "./App";
 
 export default function HeaderMenu() {
@@ -34,6 +34,18 @@ export default function HeaderMenu() {
           Sign Up
         </Button>
       </Menu.Item>
+      <Menu.Menu position="right">
+        <Menu.Item>
+          <Label as="a" color="blue" image>
+            <Image
+              size="tiny"
+              src="https://www.iconsdb.com/icons/download/color/4AFFFF/checked-user-24.png"
+            />
+            My Self
+          </Label>
+          <Link to={baseRoute + "/profile"} />
+        </Menu.Item>
+      </Menu.Menu>
     </Menu>
   );
 }
