@@ -9,7 +9,6 @@ export default class TagDropdown extends React.Component {
 		super(props);
 
 		this.state = {
-			value : null,
 			searchQuery : '',
 			tagOptions : [], // options to show to user (to click)
 			selectedOptions : [], // selected options so that the current values don't 'disappear' in the UI
@@ -22,7 +21,6 @@ export default class TagDropdown extends React.Component {
 		this.props.onChange(data.value);
 
 		this.setState({
-			value : data.value,
 			searchQuery: ''
 		});
 
@@ -65,11 +63,14 @@ export default class TagDropdown extends React.Component {
 			cancelToken: source.token
 		}).then(response => {
 			// Transform JSON tag into tag that semantic ui's dropdown can read
-			const tagOptions =  response.data.map(tag => ({
-				key : tag.id,
-				text : tag.name,
-				value : tag.id
-			}));
+			let tagOptions = [];
+			if (response.data) {
+				tagOptions = response.data.map(tag => ({
+					key : tag.id,
+					text : tag.name,
+					value : tag.id
+				}));
+			}
 
 			// Add any options that didn't come back from the server, but is selected in the dropdown
 			// This makes sure that the value is rendered properly in the UI
@@ -104,12 +105,13 @@ export default class TagDropdown extends React.Component {
 				onChange={this.handleChange}
 				onSearchChange={this.handleSearchChange}
 				searchQuery={this.state.searchQuery}
-				value={this.state.value}
+				value={this.props.value}
 			/>
 		);
 	}
 }
 
 TagDropdown.propTypes = {
+	value : PropTypes.array,
 	onChange : PropTypes.func,
 };

@@ -32,7 +32,7 @@ export default class TagPopup extends React.Component {
 
 	render() {
 		return (
-			<Popup trigger={<Button icon='add' />} flowing hoverable>
+			<Popup trigger={<Button icon='add' onClick={event => event.preventDefault()} />} flowing hoverable>
 				<Input placeholder="New Tag" onChange={this.handleChange} value={this.state.value}/>
 				<Button onClick={this.handleSubmit}>Submit</Button>
 			</Popup>

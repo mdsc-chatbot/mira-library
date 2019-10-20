@@ -19,7 +19,7 @@ export default class ResourceSubmitForm extends Component {
       url: "",
       title: "",
       rating: 1,
-      tags: "",
+      tags: [],
       comments: "",
       validated: true,
       currentTags: null
@@ -32,6 +32,7 @@ export default class ResourceSubmitForm extends Component {
       url: this.state.url,
       created_by_user: "user", // TODO
 
+      tags: this.state.tags,
       user_comment: this.state.comments,
       usefulness_rating: this.state.rating,
       usefulness_comment: this.state.comments,
@@ -65,7 +66,7 @@ export default class ResourceSubmitForm extends Component {
   reset_resource_states = () => {
     this.setState({
       url: "",
-      tags: "",
+      tags: [],
       comments: "",
       title: "refreshed",
       rating: 1,
@@ -139,14 +140,13 @@ export default class ResourceSubmitForm extends Component {
           </Form.Group>
 
           <Form.Group>
-            <Form.Input
-              name="tags"
-              onChange={this.handleChange}
-              value={this.state.tags}
-              label="Tags"
-              placeholder="Enter tags separated by commas"
-            />
-
+            <Form.Field>
+              <label>Tags</label>
+              <Form.Group>
+                <TagDropdown value={this.state.tags} onChange={tags => this.setState({ tags })} />
+                <TagPopup />
+              </Form.Group>
+            </Form.Field>
             <Form.Input
               name="comments"
               onChange={this.handleChange}
@@ -155,15 +155,7 @@ export default class ResourceSubmitForm extends Component {
               placeholder="Enter any comments (Optional)"
             />
           </Form.Group>
-          <Form.Field>
-            <label>Tags</label>
-            <Form.Group>
-              <TagDropdown
-                onChange={currentTags => this.setState({ currentTags })}
-              />
-              <TagPopup />
-            </Form.Group>
-          </Form.Field>
+
           <Form.Button content="Submit" />
         </Form>
       </Container>
