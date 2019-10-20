@@ -12,13 +12,14 @@ class LoginPage extends Component {
         this.state = {
             displayed_form: 'login',
             logged_in: localStorage.getItem('token') ? true : false,
+            id: '',
             email: '',
             first_name: '',
             last_name: '',
             affiliation: '',
             active: '',
             staff: '',
-            admin: '',
+            admin: ''
         };
     }
 
@@ -31,7 +32,12 @@ class LoginPage extends Component {
             })
                 .then(res => res.json())
                 .then(json => {
-                    this.setState({email: json.email});
+                    this.setState({
+                        id: json.id,
+                        email: json.email,
+                        first_name: json.first_name,
+                        last_name: json.last_name
+                    });
                 });
         }
     }
@@ -51,6 +57,7 @@ class LoginPage extends Component {
                 setSecurity({
                     token: json.token,
                     logged_in: true,
+                    id: json.user.id,
                     email: json.user.email,
                     first_name: json.user.first_name,
                     last_name: json.user.last_name,
@@ -80,6 +87,7 @@ class LoginPage extends Component {
                 setSecurity({
                     token: json.token,
                     logged_in: true,
+                    id: json.id,
                     email: json.email,
                     first_name: json.first_name,
                     last_name: json.last_name,
@@ -143,7 +151,7 @@ class LoginPage extends Component {
                         }
                         <h3>
                             {securityContext.security.logged_in
-                                ? `Hello, ${securityContext.security.email}`
+                                ? `Hello, ${securityContext.security.id}`
                                 : 'Please Log In'}
                         </h3>
                     </div>

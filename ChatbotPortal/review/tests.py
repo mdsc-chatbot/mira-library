@@ -1,3 +1,9 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
-# Create your tests here.
+from .models import Reviews
+
+
+class reviewTest(TestCase):
+    #no functions to test
+    pass

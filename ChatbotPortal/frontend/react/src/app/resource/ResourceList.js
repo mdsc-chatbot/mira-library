@@ -18,11 +18,19 @@ export default class ResourceList extends Component {
   }
 
   get_resources = () => {
-    axios.get("http://127.0.0.1:8000/api/resource").then(res => {
-      this.setState({
-        resources: res.data
-      });
-    });
+    if (this.context.security.email) {
+      axios
+        .get("http://127.0.0.1:8000/api/resource", {
+          params: {
+            created_by_user: this.context.security.email
+          }
+        })
+        .then(res => {
+          this.setState({
+            resources: res.data
+          });
+        });
+    }
   };
 
   componentDidMount() {
@@ -36,20 +44,16 @@ export default class ResourceList extends Component {
   }
 
   render() {
-    // Filter resources created by current logged in user
-    // Map those resources to ResourceListItem Component
-    const resources = this.state.resources.map(resource =>
-      resource.created_by_user === this.context.security.email ? (
-        <ResourceListItem key={resource.id} resource={resource} />
-      ) : (
-        <div></div>
-      )
-    );
-    console.log(resources);
+    // Map resources to ResourceListItem Component
+    const resources = this.state.resources.map(resource => (
+      <ResourceListItem key={resource.id} resource={resource} />
+    ));
+    console.log(this.state.resources);
+
     return (
       <div>
         <Header as="h2">Resources</Header>
-        <Statistics submitted_resources={resources.filter(o => o.key).length} />
+        <Statistics resources={resources} />
         <List selection verticalAlign="middle" className="centered">
           {resources}
         </List>

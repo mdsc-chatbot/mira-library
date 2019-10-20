@@ -2,6 +2,7 @@ from rest_framework import viewsets
 
 from resource.models import Resource
 from .serializers import ResourceSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ResourceViewSet(viewsets.ModelViewSet):
@@ -10,3 +11,5 @@ class ResourceViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ResourceSerializer
     queryset = Resource.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['created_by_user']

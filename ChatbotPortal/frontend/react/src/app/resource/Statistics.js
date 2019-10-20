@@ -8,7 +8,7 @@ export class Statistics extends Component {
         <Statistic size="mini" color="blue">
           <Statistic.Value>
             <Icon name="globe" />
-            {this.props.submitted_resources}
+            {this.props.resources.length}
           </Statistic.Value>
           <Statistic.Label> Submitted Resources</Statistic.Label>
         </Statistic>

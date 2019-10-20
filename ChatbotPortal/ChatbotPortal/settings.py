@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'frontend',
     'resource',
     'review'
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -143,11 +144,14 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = [
-#     # 'http://localhost:3000',
+#     'http://localhost:3000',
 #     'http://localhost:8000',
 # ]
 
