@@ -39,10 +39,10 @@ export default class ResourceDetail extends Component {
             </Card.Header>
             <Card.Meta>
               <p> Created: {this.state.resource.timestamp}</p>
-              {this.state.resource.usefulness_rating ? (
+              {this.state.resource.rating ? (
                 <Rating
                   icon="star"
-                  defaultRating={this.state.resource.usefulness_rating}
+                  defaultRating={this.state.resource.rating}
                   maxRating={5}
                   disabled
                 />
@@ -51,7 +51,7 @@ export default class ResourceDetail extends Component {
               )}
             </Card.Meta>
             <Card.Description>
-              <Icon name="comment"></Icon> {this.state.resource.user_comment}
+              <Icon name="comment"></Icon> {this.state.resource.comments}
             </Card.Description>
           </Card.Content>
         </Card>

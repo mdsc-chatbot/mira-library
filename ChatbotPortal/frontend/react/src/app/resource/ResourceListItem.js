@@ -18,7 +18,7 @@ export default class ResourceListItem extends Component {
           </List.Header>
           <Rating
             icon="star"
-            defaultRating={resource.usefulness_rating}
+            defaultRating={resource.rating}
             maxRating={5}
             disabled
           />

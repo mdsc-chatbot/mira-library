@@ -20,8 +20,6 @@ class ResourceAdmin(admin.ModelAdmin):
 
 admin.site.register(Resource, ResourceAdmin)
 
-# Register your models here.
-
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
