@@ -1,4 +1,5 @@
 import React from 'react';
+import {Container} from 'semantic-ui-react';
 
 export default class HomePage extends React.Component {
 	constructor(props){
@@ -18,11 +19,10 @@ export default class HomePage extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<p>Hello World!</p>
-				<p>Counter:{this.state.counter}</p>
-				<button onClick={this.onButtonClick}>Click me!</button>
-			</div>
+			<Container>
+				<h2>Welcome to ChatbotPortal!</h2>
+				<p>This is an example page that will show the public feed in the future.</p>
+			</Container>
 		);
 	}
 }
