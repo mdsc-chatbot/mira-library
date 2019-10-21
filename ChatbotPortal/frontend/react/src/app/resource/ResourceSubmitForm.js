@@ -5,6 +5,7 @@ import { Container, Form, Rating } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
 import { SecurityContext } from "../security/SecurityContext";
+import styles from './ResourceSubmitForm.css';
 
 export default class ResourceSubmitForm extends Component {
   static contextType = SecurityContext;
@@ -114,23 +115,26 @@ export default class ResourceSubmitForm extends Component {
                 placeholder="https://"
               />
             )}
-            <Rating
-              name="rating"
-              onRate={this.handleRate}
-              onChange={this.handleChange}
-              value={this.state.rating}
-              label="Rating"
-              defaultRating={this.state.rating}
-              maxRating={5}
-              icon="star"
-              size="massive"
-            />
+            <Form.Field>
+              <label>Resource Quality</label>
+              <Rating
+                name="rating"
+                onRate={this.handleRate}
+                onChange={this.handleChange}
+                value={this.state.rating}
+                label="Rating"
+                defaultRating={this.state.rating}
+                maxRating={5}
+                icon="star"
+                size="massive"
+              />
+            </Form.Field>
           </Form.Group>
 
           <Form.Group>
             <Form.Field>
               <label>Tags</label>
-              <Form.Group>
+              <Form.Group className={styles.dropdownPadding}>
                 <TagDropdown value={this.state.tags} onChange={tags => this.setState({ tags })} />
               </Form.Group>
             </Form.Field>
