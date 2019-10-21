@@ -15,6 +15,7 @@ python manage.py createsuperuser (Create admin user)
 python manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver
 python manage.py migrate --run-syncdb (If changing db/ switching branch)
 ```
+If encounter 401 error, login to admin site
 
 #### React frontend (Go to ChatbotPortal/frontend/react)
 ```
