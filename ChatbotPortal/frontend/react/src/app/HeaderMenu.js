@@ -17,8 +17,8 @@ export class HeaderMenu extends Component {
 
         return (
             <div>
-                <Segment style={{ padding: "3em 0em" }} vertical>
-                    <Menu pointing secondary size="large" color="blue">
+                <Segment style={{ padding: "2em 0em" }} vertical inverted>
+                    <Menu inverted pointing secondary size="large">
                         <Menu.Item as="a" style={{ paddingLeft: 50 }}>
                             <Link to={baseRoute}>
                                 <Header as="h2" style={{ color: "#3075c9" }}>
