@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Container, Header, Button, Segment, Grid } from "semantic-ui-react";
+import { baseRoute } from "./App";
+import { Link } from "react-router-dom";
 
 export class HomepageHead extends Component {
     render() {
@@ -27,12 +29,17 @@ export class HomepageHead extends Component {
                             fontWeight: "normal"
                         }}
                     />
-                    <Button size="big" color="orange">
-                        View all our resources
-                    </Button>
-                    <Button size="big" color="green">
-                        Log in to submit resources
-                    </Button>
+
+                    <Link to={baseRoute + "/resource"}>
+                        <Button size="big" color="orange">
+                            View all our resources
+                        </Button>
+                    </Link>
+                    <Link to={baseRoute + "/login"}>
+                        <Button size="big" color="green">
+                            Log in to submit resources
+                        </Button>
+                    </Link>
                 </Segment>
             </div>
         );
