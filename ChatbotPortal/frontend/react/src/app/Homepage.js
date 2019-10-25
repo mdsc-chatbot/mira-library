@@ -1,5 +1,5 @@
 import React from "react";
-import { Segment } from "semantic-ui-react";
+import { Divider } from "semantic-ui-react";
 import HomepageHead from "./HomepageHead";
 import Footer from "./Footer";
 import HomepageContent from "./HomepageContent";
@@ -14,10 +14,9 @@ export default class HomePage extends React.Component {
     render() {
         return (
             <div>
-                <Segment textAlign="center" style={{ minHeight: 400 }}>
-                    <HomepageHead />
-                </Segment>
+                <HomepageHead />
                 <HomepageContent />
+                <Divider />
                 <Footer />
             </div>
         );

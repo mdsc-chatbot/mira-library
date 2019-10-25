@@ -6,9 +6,9 @@ import { baseRoute } from "./App";
 export default function HeaderMenu() {
     return (
         <div>
-            <Segment>
+            <Segment style={{ padding: "3em 0em" }} vertical>
                 <Menu pointing secondary size="large">
-                    <Menu.Item as="a" style={{ paddingLeft: 100 }}>
+                    <Menu.Item as="a" style={{ paddingLeft: 50 }}>
                         <Link to={baseRoute}>
                             <Header as="h2" style={{ color: "#3075c9" }}>
                                 <Icon name="qq" />
