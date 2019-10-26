@@ -168,13 +168,13 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 CSRF_COOKIE_NAME = "csrftoken"
 
 # Email Authentication Settings
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '0eb8097bf1b6e8'
-EMAIL_HOST_PASSWORD = '1f9324c01eff7f'
-EMAIL_PORT = '2525'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.mailtrap.io'
+# EMAIL_HOST_USER = '0eb8097bf1b6e8'
+# EMAIL_HOST_PASSWORD = '1f9324c01eff7f'
+# EMAIL_PORT = '2525'
 
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = 'ganymedeofzeus@gmail.com'
-# EMAIL_HOST_PASSWORD = 'youthofadonis'
-# EMAIL_PORT = 587
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'testouremials@gmail.com'
+EMAIL_HOST_PASSWORD = 'testtheemail'
+EMAIL_PORT = 587
