@@ -52,6 +52,9 @@ export default class ResourceSubmitForm extends Component {
 
     post_resource = () => {
         const resource = this.create_resource();
+        axios.defaults.headers.common = {
+            Authorization: `Bearer ${this.context.security.token}`
+        };
 
         axios
             .post("http://127.0.0.1:8000/api/resource/", resource)
