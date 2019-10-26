@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 export const SecurityContext = React.createContext({
     /**
@@ -13,6 +14,7 @@ export class SecurityContextProvider extends React.Component {
      * A security context provider that provides context to every component
      * @param props properties that needs to be passed
      */
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
     constructor(props) {
         /**
          * A constructor that sets the security as state
@@ -32,6 +34,27 @@ export class SecurityContextProvider extends React.Component {
         })
     };
 
+    componentDidMount() {
+        axios
+            .get(this.BASE_AUTH_URL + 'currentuser/')
+            .then(
+                response => {
+                    // if response.data !== null
+                    if (response.data !== '') {
+                        response.data['is_logged_in'] = true;
+                        this.setState({security: response.data});
+                        console.log(this.state.security.is_logged_in);
+                    } else {
+                        response.data['is_logged_in'] = false;
+                        this.setState({security: response.data});
+                        console.log(this.state.security.is_logged_in);
+                    }
+                },
+                error => {
+                    console.log(error);
+                }
+            );
+    };
     render() {
         return(
             <SecurityContext.Provider value={{security : this.state.security, setSecurity : this.setSecurity}}>

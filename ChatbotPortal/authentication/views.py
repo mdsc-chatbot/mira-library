@@ -1,9 +1,20 @@
-from django.contrib.auth import authenticate, login
+from pprint import pprint
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.sessions.models import Session
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import permissions, status, generics
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
 from .api.serializers import CustomUserSerializer, CustomUserTokenSerializer, UserUpdateSerializer
+from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
 # from rest_framework.decorators import api_view
@@ -130,15 +141,46 @@ class RegisterUsersView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        CustomUser.objects.create_user(
+        user = CustomUser.objects.create_user(
             email=email,
             password=password,
             first_name=first_name,
             last_name=last_name,
-            affiliation=affiliation
+            affiliation=affiliation,
+            is_active=False
         )
 
-        return Response(status=status.HTTP_201_CREATED)
+        # get the current site
+        current_site = get_current_site(request)
+        # setting email subject
+        mail_subject = 'Activate ChatbotPortal'
+        # setting email body through rendering
+        # the json data into string to show on a html template
+        message = render_to_string(
+            'activation_email.html',
+            {
+                'user': user,
+                'domain': current_site.domain,
+                # encoding the bytes of user's primary key
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                # creating a token from the user's details
+                'token': account_activation_token.make_token(user),
+            }
+        )
+
+        # creating an Email message object with designated fields
+        email = EmailMessage(
+            subject=mail_subject,
+            body=message,
+            to=[user.email, ]
+        )
+
+        email.send()
+
+        return Response(
+            data={'message': 'To activate your portal, please confirm your email address.'},
+            status=status.HTTP_201_CREATED
+        )
 
 
 class UpdateUserView(generics.RetrieveUpdateAPIView):
@@ -160,6 +202,13 @@ class DeleteUserView(generics.DestroyAPIView):
     queryset = CustomUser.objects.all()
 
     def delete(self, request, *args, **kwargs):
+        """
+        A delete method for deleting a registered user account.
+        :param request: Request generated from the frontend form
+        :param args: Non keyword arguments
+        :param kwargs: Keyword arguments
+        :return: Response of serialized data or status
+        """
         try:
             pk = request.data.get('id', )  # getting the ID of the user to be deleted
             instance = CustomUser.objects.get(id=pk)  # getting the User from the database
@@ -176,9 +225,101 @@ class RetriveUserView(generics.RetrieveAPIView):
     GET auth/retrieve
     Retrive User API
     """
-    permission_classes = (permissions.IsAuthenticated, )    # Only authenticated users can have access
+    permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can have access
     queryset = CustomUser.objects.all()
 
     def get(self, request, *args, **kwargs):
+        """
+        A get method for getting the current user's details.
+        :param request: Request generated from the frontend form
+        :param args: Non keyword arguments
+        :param kwargs: Keyword arguments
+        :return: Response of serialized data or status
+        """
         serializer = CustomUserSerializer(request.user)
         return Response(serializer.data)
+
+
+def activate(request, uidb64, token):
+    """
+    activate view function renders upon clicking the link sent on the email.
+    references:
+        1. https://medium.com/@frfahim/django-registration-with-confirmation-email-bb5da011e4ef
+        2. https://blog.hlab.tech/part-ii-how-to-sign-up-user-and-send-confirmation-email-in-django-2-1-and-python-3-6/
+    :param request: The link request sent from the email address
+    :param uidb64: The base64 encoded primary key
+    :param token: The token created from the User details
+    :return: Response with serialized User, status value
+    """
+    try:
+        # Decoding the uidb64 and transforming into text
+        uid = force_text(urlsafe_base64_decode(uidb64))
+
+        # Retrieving the user with such user id
+        user = CustomUser.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        # Assign user as None if no user is found with that id
+        user = None
+
+    # If the user exists and the token is similar, activate the user
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return redirect('http://127.0.0.1:8000/chatbotportal/app/login')
+        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
+        # return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class CurrentUserView(generics.RetrieveAPIView):
+    """
+    GET auth/currentuser
+    Retrive User API
+    """
+    permission_classes = (permissions.AllowAny,)  # anyone can have access
+
+    def get(self, request, *args, **kwargs):
+        """
+        A get method for getting the current user who is already logged in.
+        :param request: Request generated from the frontend form
+        :param args: Non keyword arguments
+        :param kwargs: Keyword arguments
+        :return: Response of serialized data or status
+        """
+        # logout(request)
+        # Check if the request has a session associated with it
+        if (bool(request.session._session)):
+            uid = request.session._session['_auth_user_id']
+            user = CustomUser.objects.get(id=uid)
+
+            if user is not None:
+                serializer = CustomUserTokenSerializer(user, context={'request': request})
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        # ASK HENRY ***************************************************************************************************************************************************************************
+        return Response(status=status.HTTP_200_OK)
+
+
+class LogoutView(generics.RetrieveAPIView):
+    """
+    GET auth/logout
+    Logout User API
+    """
+    permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can have access
+
+    def get(self, request, *args, **kwargs):
+        """
+        A get method for letting user logout.
+        :param request: Request generated from the frontend form
+        :param args: Non keyword arguments
+        :param kwargs: Keyword arguments
+        :return: Response of serialized data or status
+        """
+        logout(request)
+        # If the user becomes anonymous, return HTTP_200_OK
+        if request.user.is_anonymous:
+            return Response(data={'user': 'AnonymousUser'}, status=status.HTTP_200_OK)
+
+        # If the user is not anonymous, meaning no logout happened, return HTTP_400_BAD_REQUEST
+        return Response(data={'user': 'NotAnonymousUser'}, status=status.HTTP_400_BAD_REQUEST)

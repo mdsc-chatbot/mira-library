@@ -1,6 +1,7 @@
+from django.conf.urls import url
 from django.urls import path
 
-from .views import LoginView, RegisterUsersView, UpdateUserView, DeleteUserView, RetriveUserView
+from .views import LoginView, RegisterUsersView, UpdateUserView, DeleteUserView, RetriveUserView, CurrentUserView, LogoutView, activate
 
 urlpatterns = [
     # path('current_user/', current_user, name='current_user'),
@@ -13,4 +14,8 @@ urlpatterns = [
     path(r'auth/<pk>/update/', UpdateUserView.as_view(), name='auth-update'),
     path(r'auth/delete/<pk>/', DeleteUserView.as_view(), name='auth-delete'),
     path('auth/retrieve/', RetriveUserView.as_view(), name='auth-retrieve'),
+    path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
+    path('auth/currentuser/', CurrentUserView.as_view(), name='auth-current-user'),
+
+    path(r'activate/<uidb64>/<token>/', activate, name='activate'),
 ]

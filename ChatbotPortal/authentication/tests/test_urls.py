@@ -1,25 +1,14 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 
-from ..views import LoginView, RegisterUsersView, UpdateUserView, DeleteUserView
+from ..views import LoginView, RegisterUsersView, UpdateUserView, DeleteUserView, activate, CurrentUserView, LogoutView, \
+    RetriveUserView
 
 
 class TestUrls(SimpleTestCase):
     """
     Tests the urls redirected from http://127.0.0.1:8000/signup/
     """
-
-    # def test_current_user_url_is_resolved(self):
-    #     url = reverse('current_user')
-    #     self.assertEquals(resolve(url).func, current_user)
-    #
-    # def test_UserCreateList_url_is_resolved(self):
-    #     url = reverse('user_create_list')
-    #     self.assertEquals(resolve(url).func.view_class, UserCreateList)
-    #
-    # def test_UserUpdateList_url_is_resolved(self):
-    #     url = reverse('user_update', args=['some-pk'])
-    #     self.assertEquals(resolve(url).func.view_class, UserUpdateList)
 
     def test_login_url(self):
         """
@@ -52,3 +41,35 @@ class TestUrls(SimpleTestCase):
         """
         url = reverse('auth-delete', args=['some-pk'])
         self.assertEquals(resolve(url).func.view_class, DeleteUserView)
+
+    def test_retrieve_url(self):
+        """
+        Tests the Tests the http://127.0.0.1:8000/authorization/auth/retrieve/ url.
+        :return: None
+        """
+        url = reverse('auth-retrieve')
+        self.assertEquals(resolve(url).func.view_class, RetriveUserView)
+
+    def test_currentuser_url(self):
+        """
+        Tests the Tests the http://127.0.0.1:8000/authorization/auth/currentuser/ url.
+        :return: None
+        """
+        url = reverse('auth-current-user')
+        self.assertEquals(resolve(url).func.view_class, CurrentUserView)
+
+    def test_logout_url(self):
+        """
+        Tests the Tests the http://127.0.0.1:8000/authorization/auth/logout/ url.
+        :return: None
+        """
+        url = reverse('auth-logout')
+        self.assertEquals(resolve(url).func.view_class, LogoutView)
+
+    def test_activation_url(self):
+        """
+        Tests the Tests the activate/<uidb64>/<token>/ url.
+        :return: None
+        """
+        url = reverse('activate', args=['some-pk', 'some-token'])
+        self.assertEquals(resolve(url).func, activate)

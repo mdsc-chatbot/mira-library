@@ -69,7 +69,7 @@ class LoginPage extends Component {
                 response => {
                     response.data['is_logged_in'] = true;
                     this.context.setSecurity(response.data);
-                    console.log(this.context.security)
+                    console.log(this.context.security);
                 },
                 error => {
                     console.log(error)
@@ -110,9 +110,20 @@ class LoginPage extends Component {
         /**
          * This function handles the logout by setting
          */
-        this.context.setSecurity({
-            is_logged_in: false
-        });
+        axios
+            .get(this.BASE_AUTH_URL + 'logout/')
+            .then(
+                response => {
+                    if (response.data['user'] === 'AnonymousUser') {
+                        this.context.setSecurity({
+                            is_logged_in: false
+                        });
+                    }
+                },
+                error => {
+                    console.log(error);
+                }
+            )
     };
 
     /**

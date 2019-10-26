@@ -116,7 +116,6 @@ class AuthLoginUserTest(BaseViewTest):
 
         # test login with valid credentials
         response = self.login_a_user('test@super.com', '1234')
-        print(response.data)
         # assert token key exists
         self.assertIn('token', response.data)
         # assert status code is 200 OK
@@ -126,6 +125,35 @@ class AuthLoginUserTest(BaseViewTest):
         response = self.login_a_user('anonymous', 'whoareyou')
         # assert status code is 401 UNAUTHORIZED
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_login_of_registed_user(self):
+        """
+        Testing the login permission of different registered user.
+        :return: None
+        """
+
+        # register with valid credentials who needs an email verification
+        user = CustomUser.objects.create_user(
+            email='new@user.com',
+            password='1234',
+            first_name='NewTestUser',
+            last_name='NewTestUser',
+            affiliation='Tester',
+            is_active=False
+        )
+
+        # Login before email verification
+        response = self.login_a_user('new@user.com', '1234')
+        # assert status code is 401 UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Assuming the email is verified
+        user.is_active = True
+        user.save()
+        # Login after email verification
+        response = self.login_a_user('new@user.com', '1234')
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class AuthRegisterUserTest(BaseViewTest):
@@ -344,6 +372,7 @@ class RetrieveUserTest(BaseViewTest):
     """
     Tests for auth/retrieve/ endpoint
     """
+
     def setUp(self):
         self.regular_user = CustomUser.objects.create_user(
             email='regular@user.ca',
@@ -376,6 +405,98 @@ class RetrieveUserTest(BaseViewTest):
         self.assertEqual(response.data['affiliation'], self.regular_user.affiliation)
 
 
+class TestCurrentUserView(BaseViewTest):
+    """
+    Tests for auth/currentuser endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a regular user.
+        :return: None
+        """
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular@user.ca',
+            password='5678',
+            first_name='regular',
+            last_name='regular',
+            affiliation='TestingCurrentUserView',
+        )
+
+    def test_current_user_view(self):
+        """
+        This method tests for various scenarios for retrieving a current user.
+        :return: None
+        """
+
+        url = reverse('auth-current-user')
+
+        # Check for current user after login a user
+        self.login_client('regular@user.ca', '5678')
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(response.data)
+        self.assertEqual(response.data['email'], 'regular@user.ca')
+        self.assertIn('token', response.data)
+
+        # Check for current user after logout a user
+        self.client.logout()
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert response data is empty
+        self.assertIsNone(response.data)
+
+
+class TestLogoutView(BaseViewTest):
+    """
+    Tests for auth/logout/ endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a regular user.
+        :return: None
+        """
+        self.regular_user = CustomUser.objects.create_user(
+            email='regular@user.ca',
+            password='5678',
+            first_name='regular',
+            last_name='regular',
+            affiliation='TestingLogout',
+        )
+
+    def test_logging_out_a_user(self):
+        """
+        This function tests for logout scenarios.
+        :return: None
+        """
+
+        # Login the regular user
+        self.login_client('regular@user.ca', '5678')
+
+        # Calling logout API
+        logout_url = reverse('auth-logout')
+        response = self.client.get(logout_url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['user'], 'AnonymousUser')
+
+        # Regular logout operation does not work on the testing module
+        # once a user is logged in through testing, so needs to use client
+        # logout operation from APIClient
+        self.client.logout()
+
+        # Trying to retrieve the current user which should not be returned
+        current_user_url = reverse('auth-current-user')
+        response = self.client.get(current_user_url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert response data is empty
+        self.assertIsNone(response.data)
 
 
 """
