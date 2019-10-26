@@ -24,7 +24,7 @@ export class HomepageHead extends Component {
                     />
                     <Header
                         as="h3"
-                        content="Resources site provding information about autism, intellectual disability, and learning disability."
+                        content="Resources site providing information about autism, intellectual disability, and learning disability."
                         style={{
                             fontWeight: "normal"
                         }}

@@ -58,10 +58,10 @@ export default class ResourceSubmitForm extends Component {
             .then(res => {})
             .catch(error => {
                 console.error(error);
-                this.setState({ submitted: -1 });
+                return -1;
             });
 
-        this.setState({ submitted: 1 });
+        return 1;
     };
 
     handleRate = (event, data) => {
@@ -79,11 +79,14 @@ export default class ResourceSubmitForm extends Component {
             event.preventDefault();
             return;
         } else {
-            this.post_resource();
+            this.setState({ submitted: this.post_resource() }, () => {
+                setTimeout(() => {
+                    this.setState(this.baseState);
+                }, 1000);
+            });
             event.preventDefault();
             console.log("POST resource success");
         }
-        this.setState(this.baseState);
     };
 
     render() {
@@ -160,7 +163,7 @@ export default class ResourceSubmitForm extends Component {
                             placeholder="Enter any comments (Optional)"
                         />
 
-                        <div className="submit_message">
+                        <div>
                             {(() => {
                                 if (this.state.submitted === 1)
                                     return (
