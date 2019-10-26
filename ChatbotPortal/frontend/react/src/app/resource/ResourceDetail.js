@@ -10,6 +10,8 @@ import {
     Divider
 } from "semantic-ui-react";
 
+import styles from "./Resource.css";
+
 export default class ResourceDetail extends Component {
     constructor(props) {
         super(props);
@@ -36,23 +38,12 @@ export default class ResourceDetail extends Component {
                 style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
             >
                 <Container>
-                    <Popup
-                        flowing
-                        hoverable
-                        size="small"
-                        trigger={
-                            <a href={this.state.resource.url}>
-                                <Header as="h3" style={{ fontSize: "2em" }}>
-                                    <Icon name="globe" />
-                                    <Header.Content>
-                                        {this.state.resource.title}
-                                    </Header.Content>
-                                </Header>
-                            </a>
-                        }
-                    >
-                        <Popup.Content>{this.state.resource.url}</Popup.Content>
-                    </Popup>
+                    <Header as="h3" style={{ fontSize: "2em" }}>
+                        <Icon name="globe" />
+                        <Header.Content>
+                            {this.state.resource.title}
+                        </Header.Content>
+                    </Header>
 
                     <Divider></Divider>
 
@@ -62,6 +53,13 @@ export default class ResourceDetail extends Component {
                     <p style={{ color: "grey", marginTop: -10 }}>
                         Date submitted: {this.state.resource.timestamp}
                     </p>
+
+                    <a href={this.state.resource.url} target="_blank">
+                        <h4 className={styles.link}>
+                            {this.state.resource.url}
+                        </h4>
+                    </a>
+
                     {this.state.resource.rating ? (
                         <Rating
                             icon="star"
