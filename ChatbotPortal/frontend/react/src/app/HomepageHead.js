@@ -8,7 +8,7 @@ export class HomepageHead extends Component {
         return (
             <div>
                 <Segment
-                    style={{ padding: "8em 0em", minHeight: 400 }}
+                    style={{ paddingBottom: 50, minHeight: 300 }}
                     textAlign="center"
                     vertical
                 >

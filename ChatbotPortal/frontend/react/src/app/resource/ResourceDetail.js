@@ -6,7 +6,8 @@ import {
     Rating,
     Popup,
     Card,
-    Container
+    Container,
+    Divider
 } from "semantic-ui-react";
 
 export default class ResourceDetail extends Component {
@@ -35,40 +36,50 @@ export default class ResourceDetail extends Component {
                 style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
             >
                 <Container>
-                    <Header
-                        as="h3"
-                        style={{
-                            fontSize: "2em"
-                        }}
-                        color="blue"
+                    <Popup
+                        flowing
+                        hoverable
+                        size="small"
+                        trigger={
+                            <a href={this.state.resource.url}>
+                                <Header as="h3" style={{ fontSize: "2em" }}>
+                                    <Icon name="globe" />
+                                    <Header.Content>
+                                        {this.state.resource.title}
+                                    </Header.Content>
+                                </Header>
+                            </a>
+                        }
                     >
-                        Resource detail
-                    </Header>
-                    <a href={this.state.resource.url}>
-                        <Header as="h3">
-                            <Icon name="globe" />
-                            <Header.Content>
-                                {this.state.resource.title}
-                            </Header.Content>
-                        </Header>
-                    </a>
-                    <Header as="h5" color="grey">
+                        <Popup.Content>{this.state.resource.url}</Popup.Content>
+                    </Popup>
+
+                    <Divider></Divider>
+
+                    <p style={{ color: "grey", paddingTop: 25 }}>
                         Submitted by {this.state.resource.created_by_user}
-                    </Header>
-                    <Header as="h5" color="grey">
-                        Created: {this.state.resource.timestamp}
-                    </Header>
+                    </p>
+                    <p style={{ color: "grey", marginTop: -10 }}>
+                        Date submitted: {this.state.resource.timestamp}
+                    </p>
                     {this.state.resource.rating ? (
                         <Rating
                             icon="star"
                             defaultRating={this.state.resource.rating}
                             maxRating={5}
                             disabled
+                            size="massive"
                         />
                     ) : (
                         <div></div>
                     )}
-                    <Icon name="comment"></Icon> {this.state.resource.comments}
+                    <Header as="h5" color="grey">
+                        <Icon name="comment" />
+                        <Header.Content>Comments:</Header.Content>
+                    </Header>
+                    <p style={{ color: "grey", marginTop: -10 }}>
+                        {this.state.resource.comments}
+                    </p>
                 </Container>
             </div>
         );

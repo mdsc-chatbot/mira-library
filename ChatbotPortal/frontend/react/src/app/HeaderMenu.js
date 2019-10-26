@@ -17,7 +17,7 @@ export class HeaderMenu extends Component {
 
         return (
             <div>
-                <Segment style={{ padding: "2em 0em" }} vertical inverted>
+                <Segment inverted>
                     <Menu inverted pointing secondary size="large">
                         <Menu.Item as="a" style={{ paddingLeft: 50 }}>
                             <Link to={baseRoute}>
