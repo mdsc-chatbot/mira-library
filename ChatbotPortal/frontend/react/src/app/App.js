@@ -11,6 +11,7 @@ import { SecurityContextProvider } from "./security/SecurityContext";
 import { Divider } from "semantic-ui-react";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
+import PublicResource from "./public/PublicResource";
 
 export default function App() {
     return (
@@ -37,6 +38,9 @@ export default function App() {
                     ></Route>
                     <Route exact path={baseRoute + "/resource_submit"}>
                         <ResourceSubmitForm />
+                    </Route>
+                    <Route exact path={baseRoute + "/public_resource"}>
+                        <PublicResource />
                     </Route>
                     <Route>
                         <Homepage />

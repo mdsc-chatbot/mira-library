@@ -30,9 +30,9 @@ export class HomepageHead extends Component {
                         }}
                     />
 
-                    <Link to={baseRoute + "/resource"}>
+                    <Link to={baseRoute + "/public_resource"}>
                         <Button size="big" color="orange">
-                            View all our resources
+                            View all our public resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/login"}>

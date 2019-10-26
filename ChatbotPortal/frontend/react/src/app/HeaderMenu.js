@@ -2,8 +2,11 @@ import React, { Component } from "react";
 import { Menu, Header, Icon, Segment } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
+import { SecurityContext } from "./security/SecurityContext";
 
 export class HeaderMenu extends Component {
+    static contextType = SecurityContext;
+
     constructor(props) {
         super(props);
 
@@ -28,51 +31,64 @@ export class HeaderMenu extends Component {
                             </Link>
                         </Menu.Item>
 
-                        {/* <Menu.Item
-                            name="Resources"
+                        <Menu.Item
+                            name="Public Resources"
                             as={Link}
-                            to={baseRoute + "/resource"}
+                            to={baseRoute + "/public_resource"}
                             position="right"
-                            active={activeItem === "Resources"}
+                            active={activeItem === "Public Resources"}
                             onClick={this.handleItemClick}
                         />
-                        <Menu.Item
-                            name="Login"
-                            as={Link}
-                            to={baseRoute + "/login"}
-                            active={activeItem === "Login"}
-                            onClick={this.handleItemClick}
-                        /> */}
 
-                        <Menu.Item
-                            name="Profile"
-                            as={Link}
-                            to={baseRoute + "/profile"}
-                            position="right"
-                            active={activeItem === "Profile"}
-                            onClick={this.handleItemClick}
-                        />
-                        <Menu.Item
-                            name="My resources"
-                            as={Link}
-                            to={baseRoute + "/resource"}
-                            active={activeItem === "My resources"}
-                            onClick={this.handleItemClick}
-                        />
-                        <Menu.Item
-                            name="My reviews"
-                            as={Link}
-                            to={baseRoute + "/review"}
-                            active={activeItem === "My reviews"}
-                            onClick={this.handleItemClick}
-                        />
-                        <Menu.Item
-                            name="Logout"
-                            as={Link}
-                            to={baseRoute + "/login"}
-                            active={activeItem === "Logout"}
-                            onClick={this.handleItemClick}
-                        />
+                        {this.context.security.logged_in && (
+                            <Menu.Item
+                                name="My Profile"
+                                as={Link}
+                                to={baseRoute + "/profile"}
+                                active={activeItem === "My Profile"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.logged_in && (
+                            <Menu.Item
+                                name="My resources"
+                                as={Link}
+                                to={baseRoute + "/resource"}
+                                active={activeItem === "My resources"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.logged_in && (
+                            <Menu.Item
+                                name="My reviews"
+                                as={Link}
+                                to={baseRoute + "/review"}
+                                active={activeItem === "My reviews"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.logged_in && (
+                            <Menu.Item
+                                name="Logout"
+                                as={Link}
+                                to={baseRoute + "/login"}
+                                active={activeItem === "Logout"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {!this.context.security.logged_in && (
+                            <Menu.Item
+                                name="Login"
+                                as={Link}
+                                to={baseRoute + "/login"}
+                                active={activeItem === "Login"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
                     </Menu>
                 </Segment>
             </div>
