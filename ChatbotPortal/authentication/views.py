@@ -1,7 +1,4 @@
-from pprint import pprint
-
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
@@ -16,61 +13,6 @@ from rest_framework_jwt.settings import api_settings
 from .api.serializers import CustomUserSerializer, CustomUserTokenSerializer, UserUpdateSerializer
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
-
-# from rest_framework.decorators import api_view
-# from rest_framework.generics import UpdateAPIView
-# from rest_framework.views import APIView
-# from .serializers import UserSerializer, UserSerializerWithToken
-
-
-# @api_view(['GET'])
-# def current_user(request):
-#     """
-#     Determine the current user by their token, and return their data
-#     """
-#
-#     serializer = UserSerializer(request.user)
-#     return Response(serializer.data)
-#
-#
-# class UserCreateList(APIView):
-#     """
-#     Create a new user. It's called 'UserList' because normally we'd have a get
-#     method here too, for retrieving a list of all User objects.
-#     """
-#
-#     permission_classes = (permissions.AllowAny,)
-#
-#     def post(self, request, format=None):
-#         serializer = UserSerializerWithToken(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#
-#
-# class UserUpdateList(UpdateAPIView):
-#     queryset = CustomUser.objects.all()
-#     serializer_class = UserSerializerWithToken
-#     permission_classes = (permissions.AllowAny,)
-#
-#     def put(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         old_password = instance.password
-#         response = self.update(request, *args, **kwargs)
-#
-#         password = request.data['password']
-#         if (password is not None) and (password != ""):
-#             instance.set_password(password)
-#         else:
-#             instance.set_password(old_password)
-#
-#         instance.first_name = request.data['first_name']
-#         instance.last_name = request.data['last_name']
-#         instance.save()
-#
-#         return response
-
 
 # Get the JWT settings, add these lines after the import/from lines
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
