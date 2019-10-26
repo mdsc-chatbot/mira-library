@@ -26,7 +26,6 @@ urlpatterns = [
     path('', include('review.urls')),
 
     # For authentication
-    path('token-auth/', obtain_jwt_token),
     path('authentication/', include('authentication.urls')),
     path('chatbotportal/resource/', include('resource.urls')),
 
