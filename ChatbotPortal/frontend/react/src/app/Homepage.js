@@ -1,29 +1,20 @@
-import React from 'react';
-import styles from './Homepage.css'
+import React from "react";
+import HomepageHead from "./HomepageHead";
+import HomepageContent from "./HomepageContent";
 
 export default class HomePage extends React.Component {
-	constructor(props){
-		super(props);
+    constructor(props) {
+        super(props);
 
-		this.state = {
-			counter : 0
-		};
-	}
+        this.state = {};
+    }
 
-	onButtonClick = (event) => {
-		event.preventDefault();
-		this.setState((prevState) => ({
-			counter : prevState.counter + 1
-		}));
-	};
-
-	render() {
-		return (
-			<div>
-				<p>Hello World! This text is <h1 className={styles.test}>yellow!</h1></p>
-				<p>Counter:{this.state.counter}</p>
-				<button onClick={this.onButtonClick}>Click me!</button>
-			</div>
-		);
-	}
+    render() {
+        return (
+            <div>
+                <HomepageHead />
+                <HomepageContent />
+            </div>
+        );
+    }
 }
