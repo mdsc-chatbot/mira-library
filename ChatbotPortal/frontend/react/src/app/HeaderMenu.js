@@ -22,7 +22,12 @@ export class HeaderMenu extends Component {
             <div>
                 <Segment inverted>
                     <Menu inverted pointing secondary size="large">
-                        <Menu.Item as="a" style={{ paddingLeft: 50 }}>
+                        <Menu.Item
+                            as="a"
+                            style={{ paddingLeft: 50 }}
+                            active={activeItem === "Home"}
+                            onClick={this.handleItemClick}
+                        >
                             <Link to={baseRoute}>
                                 <Header as="h2" style={{ color: "#3075c9" }}>
                                     <Icon name="qq" />
