@@ -34,7 +34,8 @@ export default function App() {
                         exact
                         path={baseRoute + "/resource/:resourceID"}
                         component={ResourceDetail}
-                    ></Route>
+                    >
+                    </Route>
                     <Route exact path={baseRoute + "/resource_submit"}>
                         <ResourceSubmitForm />
                     </Route>

@@ -1,6 +1,29 @@
 import React from "react";
 import axios from "axios";
 
+export const refreshLoadingSecurityContext = (url, setSecurity) => {
+        axios
+            .get(url + 'currentuser/')
+            .then(
+                response => {
+                    // if response.data !== null
+                    if (response.data !== '') {
+                        response.data['is_logged_in'] = true;
+                        setSecurity(response.data);
+                        // console.log(this.state.security.is_logged_in);
+                    } else {
+                        response.data['is_logged_in'] = false;
+                        setSecurity(response.data);
+                        // console.log(this.state.security.is_logged_in);
+                    }
+                },
+                error => {
+                    console.log(error);
+                }
+            );
+
+    };
+
 export const SecurityContext = React.createContext({
     /**
      * creating a security context

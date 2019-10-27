@@ -215,13 +215,8 @@ class UpdateUserTest(BaseViewTest):
         self.assertNotEqual(self.user.first_name, 'AfterUpdate')
         self.assertNotEqual(self.user.last_name, 'AfterUpdate')
 
-        # test login with valid credentials before updating
-        response = self.login_a_user('user@update.com', '1234')
-        # assert status code is 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        # let the user login to generate token
-        token = self.login_client('user@update.com', '1234')
+        # Checking authorization, login a user without setting authorization token
+        self.login_a_user('user@update.com', '1234')
 
         # primary key of the user to be updated
         pk = self.user.id
@@ -242,7 +237,24 @@ class UpdateUserTest(BaseViewTest):
             }),
             content_type='application/json'
         )
-        # assert status code is 200 OK
+        # assert status code is 401_UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Checking authorization, login a user and setting authorization token
+        self.login_client('user@update.com', '1234')
+
+        # Performing PUT request to update a user.
+        response = self.client.put(
+            url,
+            data=json.dumps({
+                'first_name': 'AfterUpdate',
+                'last_name': 'AfterUpdate',
+                'password': '5678'
+            }),
+            content_type='application/json'
+        )
+
+        # assert status code is 200_OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # getting the user from the database using primary key
@@ -253,16 +265,6 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(self.user.last_name, 'AfterUpdate')
         self.assertNotEqual(self.user.first_name, 'BeforeUpdate')
         self.assertNotEqual(self.user.last_name, 'BeforeUpdate')
-
-        # test login with credentials before updating
-        response = self.login_a_user('user@update.com', '1234')
-        # assert status code is 401 UNAUTHORIZED
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-        # test login with credentials after updating
-        response = self.login_a_user('user@update.com', '5678')
-        # assert status code is 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class DeleteUserTest(BaseViewTest):

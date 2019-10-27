@@ -78,7 +78,7 @@ class UserUpdateSerializer(serializers.Serializer):
     """
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
-    password = serializers.CharField(max_length=255)
+    # password = serializers.CharField(max_length=255)
 
     def update(self, instance, validated_data):
         """
@@ -88,12 +88,12 @@ class UserUpdateSerializer(serializers.Serializer):
         :return: Updated instance
         """
         # pop the password out since we need to hash it
-        password = validated_data.pop('password')
+        # password = validated_data.pop('password')
         # update the instance with the rest of the validated data fields
         instance.__dict__.update(validated_data)
-        if password:
-            # update password if the password field was not empty
-            instance.set_password(password)
+        # if password:
+        #     # update password if the password field was not empty
+        #     instance.set_password(password)
         # Save the updated instance
         instance.save()
         return instance
