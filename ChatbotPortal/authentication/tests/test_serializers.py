@@ -77,7 +77,7 @@ class TestSerializers(TestCase):
         data = self.user_update_serializer.data
         # Serialized fields are not same as the fields in key_attributes
         self.assertNotEqual(set(data.keys()), set(self.key_attributes))
-        self.assertEqual(set(data.keys()), {'first_name', 'last_name', 'password'})
+        self.assertEqual(set(data.keys()), {'first_name', 'last_name'})
 
     def test_field_content(self):
         """
@@ -102,7 +102,7 @@ class TestSerializers(TestCase):
 
         self.assertNotIn('password', regular)
         self.assertNotIn('password', tokenized)
-        self.assertIn('password', updated)
+        self.assertNotIn('password', updated)
 
         self.assertNotIn('token', regular)
         self.assertIn('token', tokenized)
