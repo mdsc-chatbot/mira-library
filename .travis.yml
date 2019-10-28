@@ -7,7 +7,10 @@ env:
   -DJANGO=2.2.5 DB=mysql
 install:
   - pip install -r requirements.txt
+before-script:
+- mysql -e 'create database test;' -u root
 script:
+  - python ./ChatbotPortal/manage.py makemigrations && python manage.py migrate --run-syncdb
   - python ./ChatbotPortal/manage.py test resource.tests
 
 
