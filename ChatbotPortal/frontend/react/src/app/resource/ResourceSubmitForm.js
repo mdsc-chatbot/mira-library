@@ -47,10 +47,17 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("title", "Unknown title");
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("rating", this.state.rating);
-        this.state.tags && this.state.tags.length > 0 ? resourceFormData.append("tags", this.state.tags) : null;
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
-        resourceFormData.append("attachment", this.state.attachment);
+        this.state.attachment !== null ? resourceFormData.append("attachment", this.state.attachment) : null;
+
+        // Submission for tags
+        // Lists have to be submitted in a certain way in order for the server to recognize it
+        if (this.state.tags && this.state.tags.length) {
+            this.state.tags.forEach((value) => {
+                resourceFormData.append(`tags`, value)
+            })
+        }
 
         return resourceFormData;
     };

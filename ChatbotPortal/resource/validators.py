@@ -1,5 +1,4 @@
 from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
 
 # Validator for making sure that the file doesn't exceed a certain byte range
 # Size should be in mb range

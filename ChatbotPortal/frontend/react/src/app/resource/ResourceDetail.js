@@ -7,7 +7,8 @@ import {
     Popup,
     Card,
     Container,
-    Divider
+    Divider,
+    Label,
 } from "semantic-ui-react";
 
 import styles from "./Resource.css";
@@ -24,7 +25,7 @@ export default class ResourceDetail extends Component {
     componentDidMount() {
         const resourceID = this.props.match.params.resourceID;
         axios
-            .get(`http://127.0.0.1:8000/api/resource/${resourceID}`)
+            .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`)
             .then(res => {
                 this.setState({
                     resource: res.data
@@ -61,16 +62,31 @@ export default class ResourceDetail extends Component {
                     </a>
 
                     {this.state.resource.rating ? (
-                        <Rating
-                            icon="star"
-                            defaultRating={this.state.resource.rating}
-                            maxRating={5}
-                            disabled
-                            size="massive"
-                        />
+                        <p>
+                            <Rating
+                                icon="star"
+                                defaultRating={this.state.resource.rating}
+                                maxRating={5}
+                                disabled
+                                size="massive"
+                            />
+                        </p>
                     ) : (
-                        <div></div>
+                        null
                     )}
+                    {this.state.resource.tags && this.state.resource.tags.length > 0 ? (
+                        <p>
+                            <span style={{ color: "grey" }}>
+                                Tags:
+                            </span>
+                            {
+                                this.state.resource.tags.map(tag => (
+                                    <Label key={tag} size="large">{tag}</Label>
+                                ))
+                            }
+                        </p>
+
+                    ) : null}
                     <Header as="h5" color="grey">
                         <Icon name="comment" />
                         <Header.Content>Comments:</Header.Content>
