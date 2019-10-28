@@ -11,9 +11,9 @@ Apart from all this, they can also browse through find a resource section where 
 #### Django backend (Go to ChatbotPortal)
 ```
 pip install -r requirements.txt
-python manage.py createsuperuser (Create admin user)
-python manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver
-python manage.py migrate --run-syncdb (If changing db/ switching branch)
+python manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb
+python manage.py createsuperuser
+python manage.py runserver
 ```
 If encounter 401 error, login to admin site
 
