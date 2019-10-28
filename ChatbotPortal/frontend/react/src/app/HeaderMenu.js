@@ -45,7 +45,7 @@ export class HeaderMenu extends Component {
                             onClick={this.handleItemClick}
                         />
 
-                        {this.context.security.logged_in && (
+                        {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="My Profile"
                                 as={Link}
@@ -55,7 +55,7 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
-                        {this.context.security.logged_in && (
+                        {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="My resources"
                                 as={Link}
@@ -75,7 +75,7 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
-                        {this.context.security.logged_in && (
+                        {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="Logout"
                                 as={Link}
@@ -85,7 +85,7 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
-                        {!this.context.security.logged_in && (
+                        {!this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="Login"
                                 as={Link}
