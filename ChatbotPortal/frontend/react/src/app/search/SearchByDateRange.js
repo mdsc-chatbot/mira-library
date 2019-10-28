@@ -1,18 +1,21 @@
 import React from 'react';
 import {DatesRangeInput} from 'semantic-ui-calendar-react';
-import {Form} from 'semantic-ui-react'
+import {Button, Form, Segment} from 'semantic-ui-react'
+import axios from "axios";
 
 class SearchByDateRange extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            date: '',
-            time: '',
-            dateTime: '',
             datesRange: ''
         };
     }
+
+    handle_search = (e, searchFormData) => {
+        // prevent the browser to reload itself (Ask Henry if it is necessary)
+        e.preventDefault();
+    };
 
     handleChange = (event, {name, value}) => {
         if (this.state.hasOwnProperty(name)) {
@@ -31,6 +34,12 @@ class SearchByDateRange extends React.Component {
                     onChange={this.handleChange}
                     dateFormat={"YYYY-MM-DD"}
                 />
+
+                <Button
+                    color="blue"
+                    fluid size="large">
+                    Search
+                </Button>
             </Form>
         );
     }
