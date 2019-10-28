@@ -10,7 +10,11 @@ install:
 before-script:
 - mysql -e 'drop database if exists test; create database test;' -u root
 script:
+  - rm ./ChatbotPortal/sqlite3.db
   - python ./ChatbotPortal/manage.py makemigrations
+  - python ./ChatbotPortal/manage.py migrate
+  - python ./ChatbotPortal/manage.py migrate --run-syncdb
+
 
 
 
