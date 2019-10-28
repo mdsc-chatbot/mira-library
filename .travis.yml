@@ -10,7 +10,7 @@ install:
 before-script:
 - mysql -e 'create database test;' -u root
 script:
-  - python ./ChatbotPortal/manage.py migrate
+  - python ./ChatbotPortal/manage.py migrate --run-syncdb
   - python ./ChatbotPortal/manage.py test resource.tests
   - python ./ChatbotPortal/manage.py test authentication.tests
 
