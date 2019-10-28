@@ -7,7 +7,8 @@ import {
     Rating,
     Segment,
     Header,
-    Message
+    Message,
+    Input,
 } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
@@ -23,6 +24,8 @@ export default class ResourceSubmitForm extends Component {
             title: "Unknown title",
             url: "",
             rating: 1,
+            attachment: null,
+            attachmentPath: "", // To clear the file after submitting it
             comments: "",
 
             tags: [],
@@ -39,22 +42,24 @@ export default class ResourceSubmitForm extends Component {
             ? this.context.security.email
             : "Unknown user";
 
-        const resource = {
-            title: "Unknown title", // Backend will automatically webscrape for website title
-            url: this.state.url,
-            rating: this.state.rating,
-            tags: this.state.tags,
-            comments: this.state.comments,
-            created_by_user: created_by_user
-        };
-        return resource;
+        const resourceFormData = new FormData();
+
+        resourceFormData.append("title", "Unknown title");
+        resourceFormData.append("url", this.state.url);
+        resourceFormData.append("rating", this.state.rating);
+        this.state.tags && this.state.tags.length > 0 ? resourceFormData.append("tags", this.state.tags) : null;
+        resourceFormData.append("comments", this.state.comments);
+        resourceFormData.append("created_by_user", created_by_user);
+        resourceFormData.append("attachment", this.state.attachment);
+
+        return resourceFormData;
     };
 
     post_resource = () => {
-        const resource = this.create_resource();
+        const resourceFormData = this.create_resource();
 
         axios
-            .post("http://127.0.0.1:8000/api/resource/", resource)
+            .post("http://127.0.0.1:8000/api/resource/", resourceFormData)
             .then(res => {})
             .catch(error => {
                 console.error(error);
@@ -70,6 +75,14 @@ export default class ResourceSubmitForm extends Component {
 
     handleChange = event => {
         this.setState({ [event.target.name]: event.target.value });
+    };
+
+    // event.target.value holds the pathname of a file
+    handleFileChange = event => {
+        this.setState({
+            [event.nativeEvent.target.name]: event.nativeEvent.target.files[0],
+            attachmentPath: event.nativeEvent.target.value
+        });
     };
 
     handleSubmit = event => {
@@ -162,6 +175,11 @@ export default class ResourceSubmitForm extends Component {
                             label="Comments"
                             placeholder="Enter any comments (Optional)"
                         />
+
+                        <Form.Field>
+                            <label>Upload an attachment</label>
+                            <Input type="file" name="attachment" value={this.state.attachmentPath} onChange={this.handleFileChange} />
+                        </Form.Field>
 
                         <div>
                             {(() => {
