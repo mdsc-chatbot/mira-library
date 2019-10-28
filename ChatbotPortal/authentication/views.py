@@ -1,11 +1,16 @@
+import datetime
+
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from rest_framework import filters
 from rest_framework import permissions, status, generics
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
@@ -224,6 +229,7 @@ class CurrentUserView(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         """
         A get method for getting the current user who is already logged in.
+        reference: https://stackoverflow.com/questions/8000040/how-to-get-logged-in-users-uid-from-session-in-django
         :param request: Request generated from the frontend form
         :param args: Non keyword arguments
         :param kwargs: Keyword arguments
@@ -231,15 +237,18 @@ class CurrentUserView(generics.RetrieveAPIView):
         """
         # logout(request)
         # Check if the request has a session associated with it
-        if (bool(request.session._session)):
-            uid = request.session._session['_auth_user_id']
+        if bool(request.session.session_key):
+            # if bool(request.session._session):
+            session_key = request.session.session_key
+            session = Session.objects.get(session_key=session_key)
+            session_data = session.get_decoded()
+            uid = session_data.get('_auth_user_id')
+            # uid = request.session._session['_auth_user_id']
             user = CustomUser.objects.get(id=uid)
 
             if user is not None:
                 serializer = CustomUserTokenSerializer(user, context={'request': request})
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-        # ASK HENRY ***************************************************************************************************************************************************************************
         return Response(status=status.HTTP_200_OK)
 
 
@@ -265,3 +274,159 @@ class LogoutView(generics.RetrieveAPIView):
 
         # If the user is not anonymous, meaning no logout happened, return HTTP_400_BAD_REQUEST
         return Response(data={'user': 'NotAnonymousUser'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AllUsersView(generics.ListAPIView):
+    """
+    GET super/alluser/
+    Lists all users
+    """
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can have access
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+
+
+class SearchByDateRangeView(generics.ListAPIView):
+    """
+    GET super/search/date_range/<str:search_option>/<slug:start_date>/<slug:end_date>/
+    Lists all users based on a range of date
+    """
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    serializer_class = CustomUserSerializer
+
+    def get_queryset(self):
+        """
+        This overrides the built-in get_queryset, in order to perform filtering operations.
+        :return: filtered queryset
+        """
+        # Get all the instance of the model
+        queryset = CustomUser.objects.all()
+
+        # Key words from path parameters
+        search_option = self.kwargs['search_option']
+        start_date = self.kwargs['start_date']
+        end_date = self.kwargs['end_date']
+
+        # Checks if the path parameter are of right value, otherwise return empty queryset
+        try:
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            # To get rid of run time warning of naive datetime incorporate current time zone
+            current_timezone = timezone.get_current_timezone()
+            start_date = current_timezone.localize(start_date)
+            end_date = current_timezone.localize(end_date)
+        except ValueError:
+            return queryset.none()
+
+        # Filter based on last logged in attributes
+        if search_option == 'last_login':
+            return queryset.filter(last_login__range=(start_date, end_date))
+
+        # Filter based on date_joined attributes
+        elif search_option == 'date_joined':
+            return queryset.filter(date_joined__range=(start_date, end_date))
+
+        # If the search option was invalid, return empty queryset
+        else:
+            return queryset.none()
+
+
+class SearchByIdRangeView(generics.ListAPIView):
+    """
+    GET super/search/id_range/<int:start_id>/<int:end_id>/
+    Lists all users based on a range of ids
+    """
+
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    serializer_class = CustomUserSerializer
+
+    def get_queryset(self):
+        """
+        This overrides the built-in get_queryset, in order to perform filtering operations.
+        :return: filtered queryset
+        """
+
+        # Get all the instance of the model
+        queryset = CustomUser.objects.all()
+
+        # Checking if valid id is coming from the path, otherwise return empty query
+        try:
+            start_id = int(self.kwargs['start_id'])
+            end_id = int(self.kwargs['end_id'])
+        except ValueError:
+            return queryset.none()
+
+        # Checking if the start_id <= end_id and both the ids are greater than 0
+        if 0 < start_id <= end_id and end_id > 0:
+            return queryset.filter(id__range=(start_id, end_id))
+        else:
+            # Otherwise return empty query
+            return queryset.none()
+
+
+class SearchByAnythingView(generics.ListAPIView):
+    """
+    GET uper/search/by_anything/
+    Lists all users based on a search string (not case sensitive)
+    """
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+
+    # Get all the instance of the model
+    queryset = CustomUser.objects.all()
+
+    # Declare the serializer
+    serializer_class = CustomUserSerializer
+
+    # Define backend search filter for drf
+    filter_backends = (filters.SearchFilter,)
+
+    # Define the attribute fields to be searched, must be present in the model
+    search_fields = [
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'affiliation',
+    ]
+
+
+class SearchFilterUserView(generics.ListAPIView):
+    """
+    GET super/search/filter/<str:filter_by>/<str:filter_value>/
+    Lists all the filtered users based on either is_active, is_reviewer, is_staff, is_superuser
+    """
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    serializer_class = CustomUserSerializer
+
+    def get_queryset(self):
+        """
+        This overrides the built-in get_queryset, in order to perform filtering operations.
+        :return: filtered queryset
+        """
+
+        # Get all the instance of the model
+        queryset = CustomUser.objects.all()
+
+        # Fields to be filtered
+        filter_fields = ['is_active', 'is_reviewer', 'is_staff', 'is_superuser']
+
+        # Key words from path parameters
+        filter_by = self.kwargs['filter_by']
+        filter_value = self.kwargs['filter_value']
+
+        # If the filter_by value exists in filter_field, the filter the query
+        if filter_by in filter_fields:
+            try:
+                return queryset.filter(**{filter_by: eval(filter_value)})
+            except NameError:
+                # eval raises name error if the string is no exactly either 'True' or 'False'
+                return queryset.none()
+        else:
+            return queryset.none()
+
+
+"""
+References:
+1. https://medium.com/swlh/searching-in-django-rest-framework-45aad62e7782
+
+"""

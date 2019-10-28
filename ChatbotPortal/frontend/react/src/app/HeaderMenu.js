@@ -73,6 +73,13 @@ export class HeaderMenu extends Component {
                             active={activeItem === "Logout"}
                             onClick={this.handleItemClick}
                         />
+                         <Menu.Item
+                            name="Search"
+                            as={Link}
+                            to={baseRoute + "/search"}
+                            active={activeItem === "Search"}
+                            onClick={this.handleItemClick}
+                        />
                     </Menu>
                 </Segment>
             </div>
