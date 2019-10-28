@@ -1,0 +1,69 @@
+{% autoescape off %}
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Email Verification Chatbot Portal</title>
+	<style>
+		body {
+			margin: 20px; 										/* Having an outside margin */
+			padding: 5px;
+		}
+
+		header{	 
+			/*background-image: url("../images/flywheel.jpg"); 	/* The image used */
+			background-color: #0000FF; 							/* Used if the image is unavailable */
+			background-repeat: no-repeat; 						/* Do not repeat the image */
+			background-size: cover; 							/* Resize the background image to cover the entire container */
+			height: 50%; 										/* You must set a specified height */
+			/* background-position: center; */ 					/* Center the image */
+			padding: 5px;
+		}
+
+		h1{
+			padding-top: 30px; 									/* Padding the headline from the top of the box */
+			font-size: 25px;									/* The size of the text (hardcoded) */
+			color: rgba(255, 255, 255, 1);						/* Color of the text (white) */
+			text-align:center;									/* Center the text */
+			text-transform: uppercase;							/* Showing only uppercase letters */
+			text-shadow: 2px 2px rgba(0, 0, 0, 1);				/* Having a shadow effect on the text */
+		}
+
+		/* Idle style for the links */
+		a:link{
+			display: inline-block;								/* Having the anchors as inline-block to be displayed side by side */
+			background-color: rgba(0, 255, 255, 0.25);		/* A transparent background color on the navigation boxes */
+			border-radius: 10px;								/* Carving the box edges */
+			width: 20%;											/* Width of the boxes */
+			margin-left: 55%;
+			
+			padding: 20px;										/* Padding the texts from the top of the box */
+			font-size: 100%;										/* Font size proportionate to the anchor box size */
+			font-weight: bold;									/* Bold font */
+			color: rgba(0, 0, 0, 1);							/* Color of the font (black) */
+			text-align: center;									/* Center the text in the anchor box */
+			text-decoration: none;								/* Remove the underline from the texts */
+		}
+
+		/* Styling the right container for the texts */
+		.middle{
+			float: left;										/* Having the element at the right */
+			display: inline-block;								/* Having the element as inline-block to be displayed side by side */
+			width: 74.5%;										/* Proportional width of the element */
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>Welcome to Chatbotportal</h1>
+	</header>
+	<main>
+		<section class = "middle">
+			<h2>Please Activate Your Portal</h2>
+			<p>Hi {{user.first_name}}, </p>
+			<p>Please click on the button to activate your Chatbot Portal account.</p>
+			<a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" target="_blank">Confirm</a>
+		</section>
+	</main>
+</body>
+</html>
+{% endautoescape %}
