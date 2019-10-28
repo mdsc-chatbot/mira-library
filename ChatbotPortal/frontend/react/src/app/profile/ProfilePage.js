@@ -1,49 +1,80 @@
 import React, {Component} from 'react';
-import Profile from "./Profile";
+import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import Nav from "../authentication/Nav";
-import LoginForm from "../authentication/LoginForm";
-import {Header, Icon, Divider, Table, Message, Container, Input, Form, Button} from 'semantic-ui-react'
+import {Button, Container, Divider, Form, Header, Icon, Message, Table} from 'semantic-ui-react'
 import Image from "semantic-ui-react/dist/commonjs/elements/Image";
-import {unstable_renderSubtreeIntoContainer} from "react-dom";
-// import styles from './ProfilePage.css'
-import EditForm from "./EditForm";
 
 
 class ProfilePage extends Component {
-
+    /**
+     * This class renders the profile information
+     * @type {React.Context<*>}
+     */
     static contextType = SecurityContext;
 
-    constructor(props){
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+
+
+    constructor(props) {
+        /**
+         * This constructor sets up the primary state for the props
+         */
         super(props);
         this.state = {
-            token: '',
-            displayed_form: 'edit',
-            logged_in: '',
-            id: '',
-            email: '',
+            is_logged_in: '',
+            is_edited: '',
             first_name: '',
-            last_name: '',
-            is_edited: false,
-            password:''
+            last_name: ''
         };
-    }
+    };
 
     componentDidMount() {
-        if (this.context.security.logged_in) {
-
+        /**
+         * Upon mounting the component, it checks the login state from the security context,
+         * if the login state is gone due to refresh, then the current user is retrieved,
+         * and required information is stored in the props.
+         */
+        if (!this.context.security.is_logged_in) {
+            axios
+                .get(this.BASE_AUTH_URL + 'currentuser/')
+                .then(
+                    response => {
+                        if (response.data !== '') {
+                            this.setState({
+                                first_name: response.data['first_name'],
+                                last_name: response.data['last_name'],
+                                is_logged_in: true,
+                                is_edited: false
+                            })
+                        } else {
+                            this.setState({
+                                is_logged_in: false
+                            });
+                        }
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
+        } else {
+            /**
+             * If the context says that the user is already logged in,
+             * then set the props using the security context data
+             */
             this.setState({
-                logged_in: this.context.security.logged_in,
-                token: this.context.security.token,
-                id: this.context.security.id,
-                email: this.context.security.email,
-                first_name: this.context.security.first_name,
-                last_name: this.context.security.last_name,
+                is_logged_in: this.context.security.is_logged_in,
                 is_edited: false,
-            })
+                first_name: this.context.security.first_name,
+                last_name: this.context.security.last_name
+            });
         }
-    }
+    };
 
+    /**
+     * This function handles any changes that happens to the form fields
+     * and store the changes to the state
+     * @param e = event
+     */
     handle_change = e => {
         const name = e.target.name;
         const value = e.target.value;
@@ -54,47 +85,48 @@ class ProfilePage extends Component {
         });
     };
 
-    handle_edit = (e, data, setSecurity) => {
+    /**
+     * This function handles the overall edit operations
+     * @param e : event
+     * @param editedData : data from the EditForm upon submission
+     */
+    handle_edit = (e, editedData) => {
         e.preventDefault();
-        fetch(`http://localhost:8000/signup/${this.state.id}/update/`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then(json => {
-                setSecurity({
-                    logged_in: true,
-                    id: json.id,
-                    email: json.email,
-                    first_name: json.first_name,
-                    last_name: json.last_name
-                });
-                this.setState({
-                    logged_in: true,
-                    id: json.id,
-                    email: json.email,
-                    first_name: json.first_name,
-                    last_name: json.last_name,
-                });
-            });
+
+        // Defining header and content-type for accessing authenticated information
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+
+        /**
+         * Perform a put request for edit.
+         * Upon successful response, set the security context and component props with response data.
+         * Otherwise, send an error is thrown."
+         */
+        axios
+            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', editedData, {headers: options})
+            .then(
+                response => {
+                    this.setState({
+                        first_name: response.data['first_name'],
+                        last_name: response.data['last_name'],
+                        is_edited: true,
+                    });
+                    this.context.security.first_name = this.state.first_name;
+                    this.context.security.last_name = this.state.first_name;
+                    console.log(this.context.security)
+                },
+                error => {
+                    console.log(error);
+                }
+            );
     };
 
-    updateURL = pk => {
-        this.setState({
-            url: `http://localhost:8000/${pk}/update/`
-        })
-    };
-
-    is_edited = () => {
-        this.setState({
-            edited: true
-        });
-    };
-
+    /**
+     * This renders the ProfileForm
+     * @returns {React.Fragment}
+     */
     render() {
         return (
             <React.Fragment>
@@ -102,22 +134,23 @@ class ProfilePage extends Component {
                     <div>
                         <Divider horizontal>
                             <Header as='h4'>
-                                <Icon name='user' />
+                                <Icon name='user'/>
                                 My Profile
                             </Header>
                         </Divider>
-
                         <SecurityContext.Consumer>
                             {(securityContext) => (
                                 <React.Fragment>
                                     <Form onSubmit={e => this.handle_edit(e, this.state)}>
                                         <Table definition color='blue' onSubmit={this.props.handle_edit}>
-                                            {securityContext.security.logged_in ?
+                                            {securityContext.security.is_logged_in ?
                                                 <Table.Body>
                                                     <Table.Row>
                                                         <Table.Cell width={3}>Profile Picture</Table.Cell>
                                                         <Table.Cell>
-                                                            <Image src='https://www.iconsdb.com/icons/download/color/4AFFFF/user-512.png' size='small' />
+                                                            <Image
+                                                                src='https://www.iconsdb.com/icons/download/color/4AFFFF/user-512.png'
+                                                                size='small'/>
                                                         </Table.Cell>
                                                     </Table.Row>
                                                     <Table.Row>
@@ -129,12 +162,15 @@ class ProfilePage extends Component {
                                                     </Table.Row>
                                                     <Table.Row>
                                                         <Table.Cell>First Name</Table.Cell>
-                                                        <Table.Cell><Form.Input name='first_name' onChange={this.handle_change} value={this.state.first_name} /></Table.Cell>
+                                                        <Table.Cell><Form.Input name='first_name'
+                                                                                onChange={this.handle_change}
+                                                                                value={this.state.first_name}/></Table.Cell>
                                                     </Table.Row>
                                                     <Table.Row>
-                                                        <Table.Cell >Last Name</Table.Cell>
-                                                        <Table.Cell><Form.Input name='last_name' onChange={this.handle_change} value={this.state.last_name} />
-                                                        </Table.Cell>
+                                                        <Table.Cell>Last Name</Table.Cell>
+                                                        <Table.Cell><Form.Input name='last_name'
+                                                                                onChange={this.handle_change}
+                                                                                value={this.state.last_name}/></Table.Cell>
                                                     </Table.Row>
                                                     <Table.Row>
                                                         <Table.Cell>Status</Table.Cell>
@@ -142,39 +178,32 @@ class ProfilePage extends Component {
                                                     </Table.Row>
                                                     <Table.Row>
                                                         <Table.Cell>Submissions</Table.Cell>
-                                                        <Table.Cell >0</Table.Cell>
+                                                        <Table.Cell>0</Table.Cell>
                                                     </Table.Row>
                                                     <Table.Row>
                                                         <Table.Cell>Points</Table.Cell>
-                                                        <Table.Cell >0</Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>Password</Table.Cell>
-                                                        <Table.Cell ><Form.Input name='password' onChange={this.handle_change} value={this.state.password} /></Table.Cell>
+                                                        <Table.Cell>0</Table.Cell>
                                                     </Table.Row>
                                                 </Table.Body>
                                                 : null}
                                         </Table>
 
-                                        {securityContext.security.logged_in ? (
+                                        {securityContext.security.is_logged_in ? (
                                             <Button
                                                 color='blue'
-                                                fluid size='large'
-                                                onClick={this.is_edited}>Save
+                                                fluid size='large'>Save
                                             </Button>
                                         ) : null}
                                     </Form>
-                                    {!securityContext.security.logged_in ? (<Message icon error>
-                                                <Icon name='circle notched' loading/>
-                                                <Message.Content>
-                                                    <Message.Header>Nothing to show here!</Message.Header>
-                                                    Log in and try again?
-                                                </Message.Content>
-                                    </Message>)
-                                : null}
+                                    {!securityContext.security.is_logged_in ? (<Message icon error>
+                                            <Icon name='circle notched' loading/>
+                                            <Message.Content>
+                                                <Message.Header>Nothing to show here!</Message.Header>
+                                                Log in and try again?
+                                            </Message.Content>
+                                        </Message>)
+                                        : null}
                                 </React.Fragment>
-
-
                             )}
                         </SecurityContext.Consumer>
                     </div>

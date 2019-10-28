@@ -9,5 +9,6 @@ install:
   - pip install -r requirements.txt
 script:
   - python ./ChatbotPortal/manage.py test resource.tests
+  - python ./ChatbotPortal/manage.py test authentication.tests
 
 
