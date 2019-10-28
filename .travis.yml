@@ -8,7 +8,7 @@ env:
 install:
   - pip install -r requirements.txt
 before-script:
-- mysql -e 'create database test;' -u root
+- mysql -e 'drop database if exists test; create database test;' -u root
 script:
   - python ./ChatbotPortal/manage.py makemigrations
   - python ./ChatbotPortal/manage.py migrate
