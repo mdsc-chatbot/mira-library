@@ -1,9 +1,17 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Divider, Form, Header, Icon, Message, Table} from 'semantic-ui-react'
-import Image from "semantic-ui-react/dist/commonjs/elements/Image";
+import {Button, Container, Form, Icon, Card, Image, Segment, Label} from 'semantic-ui-react'
 
+
+const styles = {
+    center: {
+        marginLeft: "auto",
+        marginRight: "auto",
+        width:'400px',
+        border:'1px'
+    }
+}
 
 class ProfilePage extends Component {
     /**
@@ -114,8 +122,9 @@ class ProfilePage extends Component {
                         is_edited: true,
                     });
                     this.context.security.first_name = this.state.first_name;
-                    this.context.security.last_name = this.state.first_name;
+                    this.context.security.last_name = this.state.last_name;
                     console.log(this.context.security)
+                    console.log("Saved Changes")
                 },
                 error => {
                     console.log(error);
@@ -131,78 +140,97 @@ class ProfilePage extends Component {
         return (
             <React.Fragment>
                 <Container>
-                    <div>
-                        <Divider horizontal>
-                            <Header as='h4'>
-                                <Icon name='user'/>
-                                My Profile
-                            </Header>
-                        </Divider>
+                    <div className={styles.center}>
                         <SecurityContext.Consumer>
                             {(securityContext) => (
-                                <React.Fragment>
-                                    <Form onSubmit={e => this.handle_edit(e, this.state)}>
-                                        <Table definition color='blue' onSubmit={this.props.handle_edit}>
-                                            {securityContext.security.is_logged_in ?
-                                                <Table.Body>
-                                                    <Table.Row>
-                                                        <Table.Cell width={3}>Profile Picture</Table.Cell>
-                                                        <Table.Cell>
-                                                            <Image
-                                                                src='https://www.iconsdb.com/icons/download/color/4AFFFF/user-512.png'
-                                                                size='small'/>
-                                                        </Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>Email</Table.Cell>
-                                                        <Table.Cell>
-                                                            {/*<Input name='email' onChange={this.handle_change} defaultValue={securityContext.security.email} />*/}
-                                                            {securityContext.security.email}
-                                                        </Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>First Name</Table.Cell>
-                                                        <Table.Cell><Form.Input name='first_name'
-                                                                                onChange={this.handle_change}
-                                                                                value={this.state.first_name}/></Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>Last Name</Table.Cell>
-                                                        <Table.Cell><Form.Input name='last_name'
-                                                                                onChange={this.handle_change}
-                                                                                value={this.state.last_name}/></Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>Status</Table.Cell>
-                                                        <Table.Cell>Newbie</Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>Submissions</Table.Cell>
-                                                        <Table.Cell>0</Table.Cell>
-                                                    </Table.Row>
-                                                    <Table.Row>
-                                                        <Table.Cell>Points</Table.Cell>
-                                                        <Table.Cell>0</Table.Cell>
-                                                    </Table.Row>
-                                                </Table.Body>
-                                                : null}
-                                        </Table>
-
-                                        {securityContext.security.is_logged_in ? (
-                                            <Button
+                                <React.Fragment className={styles.center}>
+                                    <Form style={{ width:"50%"}} onSubmit={e => this.handle_edit(e, this.state)}>
+                                        <Segment style={{ backgroundColor:"PaleGreen"}}>
+                                            <Label
+                                                size='big'
+                                                as='h1'
+                                                icon='user'
                                                 color='blue'
-                                                fluid size='large'>Save
-                                            </Button>
-                                        ) : null}
+                                                content='My Profile'
+                                                ribbon>
+                                            </Label>
+                                            {securityContext.security.is_logged_in ?
+                                                <Card style={{ backgroundColor: 'lavender'}} fluid centered onSubmit={this.props.handle_edit}>
+                                                    <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
+                                                    <Card.Content>
+                                                        <Card.Header>
+
+                                                            <Form.Group widths='equal'>
+
+                                                                <Form.Input
+                                                                    style={{height:'38px'}}
+                                                                    fluid
+                                                                    label='First name'
+                                                                    name='first_name'
+                                                                    onChange={this.handle_change}
+                                                                    value={this.state.first_name}
+                                                                />
+                                                                <Form.Input
+                                                                    style={{height:'38px'}}
+                                                                    fluid
+                                                                    label='Last name'
+                                                                    name='last_name'
+                                                                    onChange={this.handle_change}
+                                                                    value={this.state.last_name}
+                                                                />
+
+                                                            </Form.Group>
+
+
+
+                                                        </Card.Header>
+                                                    </Card.Content>
+
+
+                                                    <Card.Content extra>
+                                                        {/*<h3 style={{ color: 'green' }}>*/}
+                                                        <h3>
+                                                            <Icon color='blue' name='mail'/>
+                                                            {securityContext.security.email}
+                                                        </h3>
+                                                    </Card.Content>
+
+                                                    <Card.Content extra>
+                                                        <h3>
+                                                            <Icon color='blue' name='certificate'/>
+                                                            Newbie
+                                                        </h3>
+                                                    </Card.Content>
+
+                                                    <Card.Content extra>
+                                                        <h3>
+                                                            <Icon color='blue' name='pencil alternate'/>
+                                                            # Submissions = 25
+                                                        </h3>
+                                                    </Card.Content>
+
+                                                    <Card.Content extra>
+                                                        <h3>
+                                                            <Icon color='blue' name='trophy'/>
+                                                            Points = 56
+                                                        </h3>
+                                                    </Card.Content>
+
+
+                                                        <Button
+                                                            color='blue'
+                                                            fluid
+                                                            size='huge'
+                                                        >
+                                                           <Icon name='sync' />Save Changes
+                                                        </Button>
+
+
+                                                </Card>
+                                                : null}
+                                        </Segment>
                                     </Form>
-                                    {!securityContext.security.is_logged_in ? (<Message icon error>
-                                            <Icon name='circle notched' loading/>
-                                            <Message.Content>
-                                                <Message.Header>Nothing to show here!</Message.Header>
-                                                Log in and try again?
-                                            </Message.Content>
-                                        </Message>)
-                                        : null}
+
                                 </React.Fragment>
                             )}
                         </SecurityContext.Consumer>
