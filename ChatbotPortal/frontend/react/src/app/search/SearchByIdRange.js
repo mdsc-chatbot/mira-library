@@ -5,7 +5,7 @@ import {SecurityContext} from "../security/SecurityContext";
 
 
 /**
- * This class helps searching the users by a range of dates
+ * This class helps searching the users by a range of ids
  */
 class SearchByIdRange extends React.Component {
 
@@ -20,7 +20,7 @@ class SearchByIdRange extends React.Component {
 
         /**
          * The state of this component
-         * @type {{datesRange: string, value: string}}
+         * @type {{is_logged_in: boolean, id2: string, id1: string}}
          */
         this.state = {
             is_logged_in: false,
@@ -57,7 +57,7 @@ class SearchByIdRange extends React.Component {
 
     /**
      * This function executes the query by calling backend controller (API),
-     * which returns the users who have the defined date characteristics.
+     * which returns the users who are in the range of the ids.
      * @param e = event
      * @param searchFormData = Data received from search form
      */
@@ -111,7 +111,7 @@ class SearchByIdRange extends React.Component {
     };
 
     /**
-     * This function renders the form containing the DateRangeInput and Dropdown menus
+     * This function renders the form containing the input fields
      * @returns {*}
      */
     render() {

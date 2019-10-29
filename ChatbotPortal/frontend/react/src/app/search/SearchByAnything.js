@@ -20,7 +20,7 @@ class SearchByAnything extends React.Component {
 
         /**
          * The state of this component
-         * @type {{datesRange: string, value: string}}
+         * @type {{item: string, is_logged_in: boolean}}
          */
         this.state = {
             is_logged_in: false,

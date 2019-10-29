@@ -16,7 +16,7 @@ const filter_value = [
 ];
 
 /**
- * This class helps searching the users by a range of dates
+ * This class helps filtering users based on either is_active or is_reviewer or is_staff or is_superuser
  */
 class SearchFilter extends React.Component {
 
@@ -31,7 +31,7 @@ class SearchFilter extends React.Component {
 
         /**
          * The state of this component
-         * @type {{datesRange: string, value: string}}
+         * @type {{is_logged_in: boolean, filterValue: string, filterBy: string}}
          */
         this.state = {
             is_logged_in: false,
@@ -68,14 +68,13 @@ class SearchFilter extends React.Component {
 
     /**
      * This function executes the query by calling backend controller (API),
-     * which returns the users who have the defined date characteristics.
+     * which returns the filtered users.
      * @param e = event
      * @param searchFormData = Data received from search form
      */
     handle_search = (e, searchFormData) => {
         // prevent the browser to reload itself (Ask Henry if it is necessary)
         e.preventDefault();
-        console.log(searchFormData)
         if (this.context.security.is_logged_in) {
 
             // The backend URL
@@ -94,7 +93,6 @@ class SearchFilter extends React.Component {
                 .get(url, {headers: options})
                 .then(
                     response => {
-                        console.log(response.data);
                         this.setState({
 
                             // Setting the response in user state
@@ -109,7 +107,7 @@ class SearchFilter extends React.Component {
     };
 
     /**
-     * This function handles the changes that happen to in the drop down field of the form.
+     * This function handles the changes that happen to the state in the drop down field of the form.
      * @param e = Event
      * @param value = The value from the drop down form that will be stored in the state
      * @param key = Key of the value-
@@ -119,7 +117,7 @@ class SearchFilter extends React.Component {
     };
 
     /**
-     * This function renders the form containing the DateRangeInput and Dropdown menus
+     * This function renders the form containing the Dropdown options
      * @returns {*}
      */
     render() {
@@ -128,30 +126,30 @@ class SearchFilter extends React.Component {
                 {(securityContext) => (
                     <Form onSubmit={e => this.handle_search(e, this.state)}>
                         <Grid>
-                        <Grid.Column width={6}>
-                            <Dropdown
-                                selection
-                                options={filter_by}
-                                placeholder='Is Active?'
-                                onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterBy')}
-                            />
-                        </Grid.Column>
-                        <Grid.Column width={6}>
-                            <Dropdown
-                                selection
-                                options={filter_value}
-                                placeholder='Yes'
-                                onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterValue')}
-                            />
-                        </Grid.Column>
+                            <Grid.Column width={6}>
+                                <Dropdown
+                                    selection
+                                    options={filter_by}
+                                    placeholder='Is Active?'
+                                    onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterBy')}
+                                />
+                            </Grid.Column>
+                            <Grid.Column width={6}>
+                                <Dropdown
+                                    selection
+                                    options={filter_value}
+                                    placeholder='Yes'
+                                    onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterValue')}
+                                />
+                            </Grid.Column>
 
-                        {securityContext.security.is_logged_in ? (
-                            <Button
-                                color="blue"
-                                fluid size="large">
-                                Search
-                            </Button>
-                        ) : null}
+                            {securityContext.security.is_logged_in ? (
+                                <Button
+                                    color="blue"
+                                    fluid size="large">
+                                    Search
+                                </Button>
+                            ) : null}
                         </Grid>
                     </Form>
                 )}
