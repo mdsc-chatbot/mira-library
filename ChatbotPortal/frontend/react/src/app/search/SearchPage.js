@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import SearchBar from './SearchBar'
 import SearchByDateRange from './SearchByDateRange'
 import SearchByIdRange from './SearchByIdRange'
+import SearchByAnything from "./SearchByAnything";
 
 class SearchPage extends Component {
     constructor(props) {
@@ -11,7 +12,7 @@ class SearchPage extends Component {
     render() {
         return (
             <container>
-                <SearchByIdRange/>
+                <SearchByAnything/>
             </container>
         );
     }

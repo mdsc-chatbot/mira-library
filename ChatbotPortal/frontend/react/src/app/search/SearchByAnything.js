@@ -5,9 +5,9 @@ import {SecurityContext} from "../security/SecurityContext";
 
 
 /**
- * This class helps searching the users by a range of dates
+ * This class helps searching the users by any attribute
  */
-class SearchByIdRange extends React.Component {
+class SearchByAnything extends React.Component {
 
     static contextType = SecurityContext;
 
@@ -24,8 +24,7 @@ class SearchByIdRange extends React.Component {
          */
         this.state = {
             is_logged_in: false,
-            id1: '',
-            id2: ''
+            item: ''
         };
     }
 
@@ -57,7 +56,7 @@ class SearchByIdRange extends React.Component {
 
     /**
      * This function executes the query by calling backend controller (API),
-     * which returns the users who have the defined date characteristics.
+     * which returns the users who have the defined attribute characteristics.
      * @param e = event
      * @param searchFormData = Data received from search form
      */
@@ -66,7 +65,7 @@ class SearchByIdRange extends React.Component {
         e.preventDefault();
         if (this.context.security.is_logged_in) {
             // The backend URL
-            const url = `http://127.0.0.1:8000/authentication/super/search/id_range/${searchFormData.id1}/${searchFormData.id2}/`;
+            const url = `http://127.0.0.1:8000/authentication/super/search/by_anything/?search=${searchFormData.item}`;
 
             // Having the permission header loaded
             const options = {
@@ -111,7 +110,7 @@ class SearchByIdRange extends React.Component {
     };
 
     /**
-     * This function renders the form containing the DateRangeInput and Dropdown menus
+     * This function renders the form containing the search input field
      * @returns {*}
      */
     render() {
@@ -121,19 +120,11 @@ class SearchByIdRange extends React.Component {
                     <Form onSubmit={e => this.handle_search(e, this.state)}>
                         <Form.Input
                             fluid
-                            placeholder="Start ID"
-                            name="id1"
-                            value={this.state.id1}
+                            placeholder="Search by any attribute ..."
+                            name="item"
+                            value={this.state.item}
                             onChange={this.handle_change}
                         />
-                        <Form.Input
-                            fluid
-                            placeholder="End ID"
-                            name="id2"
-                            value={this.state.id2}
-                            onChange={this.handle_change}
-                        />
-
                         {securityContext.security.is_logged_in ? (
                             <Button
                                 color="blue"
@@ -148,4 +139,4 @@ class SearchByIdRange extends React.Component {
     }
 }
 
-export default SearchByIdRange;
+export default SearchByAnything;
