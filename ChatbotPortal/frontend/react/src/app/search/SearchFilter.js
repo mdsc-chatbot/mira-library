@@ -1,0 +1,163 @@
+import React from 'react';
+import {Button, Dropdown, Form, Grid} from 'semantic-ui-react'
+import axios from "axios";
+import {SecurityContext} from "../security/SecurityContext";
+
+const filter_by = [
+    {key: 'is_active', value: 'is_active', text: 'Is active?'},
+    {key: 'is_reviewer', value: 'is_reviewer', text: 'Is a reviewer?'},
+    {key: 'is_staff', value: 'is_staff', text: 'Is a staff?'},
+    {key: 'is_superuser', value: 'is_superuser', text: 'Is a superuser?'},
+];
+
+const filter_value = [
+    {key: 'true', value: 'True', text: 'Yes'},
+    {key: 'false', value: 'False', text: 'No'},
+];
+
+/**
+ * This class helps searching the users by a range of dates
+ */
+class SearchFilter extends React.Component {
+
+    static contextType = SecurityContext;
+
+    /**
+     * This is the constructor that declare the initial state with default values.
+     * @param props = Properties that will be used in the constructor
+     */
+    constructor(props) {
+        super(props);
+
+        /**
+         * The state of this component
+         * @type {{datesRange: string, value: string}}
+         */
+        this.state = {
+            is_logged_in: false,
+            filterBy: 'is_active',
+            filterValue: 'True'
+        };
+    }
+
+    /**
+     * This function gets called when the the component gets mounted
+     */
+    componentDidMount() {
+        this.updateStateFromSecurityContext();
+    }
+
+    /**
+     * This function is called when either the state or the props or both get updated
+     */
+    componentDidUpdate() {
+        this.updateStateFromSecurityContext();
+
+    }
+
+    /**
+     * This function updates the state from the security context
+     */
+    updateStateFromSecurityContext = () => {
+        if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
+            this.setState({
+                is_logged_in: this.context.security.is_logged_in
+            });
+        }
+    };
+
+    /**
+     * This function executes the query by calling backend controller (API),
+     * which returns the users who have the defined date characteristics.
+     * @param e = event
+     * @param searchFormData = Data received from search form
+     */
+    handle_search = (e, searchFormData) => {
+        // prevent the browser to reload itself (Ask Henry if it is necessary)
+        e.preventDefault();
+        console.log(searchFormData)
+        if (this.context.security.is_logged_in) {
+
+            // The backend URL
+            const url = `http://127.0.0.1:8000/authentication/super/search/filter/${searchFormData.filterBy}/${searchFormData.filterValue}/`;
+
+            // Having the permission header loaded
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
+            };
+
+            /**
+             * Calling the backend API
+             */
+            axios
+                .get(url, {headers: options})
+                .then(
+                    response => {
+                        console.log(response.data);
+                        this.setState({
+
+                            // Setting the response in user state
+                            users: response.data,
+                        });
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                )
+        }
+    };
+
+    /**
+     * This function handles the changes that happen to in the drop down field of the form.
+     * @param e = Event
+     * @param value = The value from the drop down form that will be stored in the state
+     * @param key = Key of the value-
+     */
+    handle_change_dropdown = (value, key) => {
+        this.setState({[key]: value})
+    };
+
+    /**
+     * This function renders the form containing the DateRangeInput and Dropdown menus
+     * @returns {*}
+     */
+    render() {
+        return (
+            <SecurityContext.Consumer>
+                {(securityContext) => (
+                    <Form onSubmit={e => this.handle_search(e, this.state)}>
+                        <Grid>
+                        <Grid.Column width={6}>
+                            <Dropdown
+                                selection
+                                options={filter_by}
+                                placeholder='Is Active?'
+                                onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterBy')}
+                            />
+                        </Grid.Column>
+                        <Grid.Column width={6}>
+                            <Dropdown
+                                selection
+                                options={filter_value}
+                                placeholder='Yes'
+                                onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterValue')}
+                            />
+                        </Grid.Column>
+
+                        {securityContext.security.is_logged_in ? (
+                            <Button
+                                color="blue"
+                                fluid size="large">
+                                Search
+                            </Button>
+                        ) : null}
+                        </Grid>
+                    </Form>
+                )}
+            </SecurityContext.Consumer>
+        );
+    }
+}
+
+export default SearchFilter;
