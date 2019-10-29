@@ -1,17 +1,8 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label} from 'semantic-ui-react'
-
-
-const styles = {
-    center: {
-        marginLeft: "auto",
-        marginRight: "auto",
-        width:'400px',
-        border:'1px'
-    }
-}
+import {Button, Container, Form, Icon, Card, Image, Segment, Label} from 'semantic-ui-react';
+import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
     /**
@@ -86,8 +77,8 @@ class ProfilePage extends Component {
     handle_change = e => {
         const name = e.target.name;
         const value = e.target.value;
-        this.setState(prevstate => {
-            const newState = {...prevstate};
+        this.setState(prevState => {
+            const newState = {...prevState};
             newState[name] = value;
             return newState;
         });
@@ -140,101 +131,96 @@ class ProfilePage extends Component {
         return (
             <React.Fragment>
                 <Container>
-                    <div className={styles.center}>
-                        <SecurityContext.Consumer>
-                            {(securityContext) => (
-                                <React.Fragment className={styles.center}>
-                                    <Form style={{ width:"50%"}} onSubmit={e => this.handle_edit(e, this.state)}>
-                                        <Segment style={{ backgroundColor:"PaleGreen"}}>
-                                            <Label
-                                                size='big'
-                                                as='h1'
-                                                icon='user'
-                                                color='blue'
-                                                content='My Profile'
-                                                ribbon>
-                                            </Label>
-                                            {securityContext.security.is_logged_in ?
-                                                <Card style={{ backgroundColor: 'lavender'}} fluid centered onSubmit={this.props.handle_edit}>
-                                                    <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
-                                                    <Card.Content>
-                                                        <Card.Header>
+                    <SecurityContext.Consumer>
+                        {(securityContext) => (
+                            <Form className={styles.centeredForm} onSubmit={e => this.handle_edit(e, this.state)}>
+                                <Segment className={styles.segmentBackground}>
+                                    <Label
+                                        size='big'
+                                        as='h1'
+                                        icon='user'
+                                        color='blue'
+                                        content='My Profile'
+                                        ribbon>
+                                    </Label>
+                                    {securityContext.security.is_logged_in ?
+                                        <Card className={styles.cardBackground} fluid centered onSubmit={this.props.handle_edit}>
+                                            <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
+                                            <Card.Content>
+                                                <Card.Header>
 
-                                                            <Form.Group widths='equal'>
+                                                    <Form.Group widths='equal'>
 
-                                                                <Form.Input
-                                                                    style={{height:'38px'}}
-                                                                    fluid
-                                                                    label='First name'
-                                                                    name='first_name'
-                                                                    onChange={this.handle_change}
-                                                                    value={this.state.first_name}
-                                                                />
-                                                                <Form.Input
-                                                                    style={{height:'38px'}}
-                                                                    fluid
-                                                                    label='Last name'
-                                                                    name='last_name'
-                                                                    onChange={this.handle_change}
-                                                                    value={this.state.last_name}
-                                                                />
-
-                                                            </Form.Group>
-
-
-
-                                                        </Card.Header>
-                                                    </Card.Content>
-
-
-                                                    <Card.Content extra>
-                                                        {/*<h3 style={{ color: 'green' }}>*/}
-                                                        <h3>
-                                                            <Icon color='blue' name='mail'/>
-                                                            {securityContext.security.email}
-                                                        </h3>
-                                                    </Card.Content>
-
-                                                    <Card.Content extra>
-                                                        <h3>
-                                                            <Icon color='blue' name='certificate'/>
-                                                            Newbie
-                                                        </h3>
-                                                    </Card.Content>
-
-                                                    <Card.Content extra>
-                                                        <h3>
-                                                            <Icon color='blue' name='pencil alternate'/>
-                                                            # Submissions = 25
-                                                        </h3>
-                                                    </Card.Content>
-
-                                                    <Card.Content extra>
-                                                        <h3>
-                                                            <Icon color='blue' name='trophy'/>
-                                                            Points = 56
-                                                        </h3>
-                                                    </Card.Content>
-
-
-                                                        <Button
-                                                            color='blue'
+                                                        <Form.Input
+                                                            className={styles.fixedInputHeight}
                                                             fluid
-                                                            size='huge'
-                                                        >
-                                                           <Icon name='sync' />Save Changes
-                                                        </Button>
+                                                            label='First name'
+                                                            name='first_name'
+                                                            onChange={this.handle_change}
+                                                            value={this.state.first_name}
+                                                        />
+                                                        <Form.Input
+                                                            className={styles.fixedInputHeight}
+                                                            fluid
+                                                            label='Last name'
+                                                            name='last_name'
+                                                            onChange={this.handle_change}
+                                                            value={this.state.last_name}
+                                                        />
+
+                                                    </Form.Group>
 
 
-                                                </Card>
-                                                : null}
-                                        </Segment>
-                                    </Form>
 
-                                </React.Fragment>
-                            )}
-                        </SecurityContext.Consumer>
-                    </div>
+                                                </Card.Header>
+                                            </Card.Content>
+
+
+                                            <Card.Content extra>
+                                                {/*<h3 style={{ color: 'green' }}>*/}
+                                                <h3>
+                                                    <Icon color='blue' name='mail'/>
+                                                    {securityContext.security.email}
+                                                </h3>
+                                            </Card.Content>
+
+                                            <Card.Content extra>
+                                                <h3>
+                                                    <Icon color='blue' name='certificate'/>
+                                                    Newbie
+                                                </h3>
+                                            </Card.Content>
+
+                                            <Card.Content extra>
+                                                <h3>
+                                                    <Icon color='blue' name='pencil alternate'/>
+                                                    # Submissions = 25
+                                                </h3>
+                                            </Card.Content>
+
+                                            <Card.Content extra>
+                                                <h3>
+                                                    <Icon color='blue' name='trophy'/>
+                                                    Points = 56
+                                                </h3>
+                                            </Card.Content>
+
+
+                                                <Button
+                                                    color='blue'
+                                                    fluid
+                                                    size='huge'
+                                                >
+                                                   <Icon name='sync' />Save Changes
+                                                </Button>
+
+
+                                        </Card>
+                                        : null}
+                                </Segment>
+                            </Form>
+                        )}
+                    </SecurityContext.Consumer>
                 </Container>
             </React.Fragment>
         );
