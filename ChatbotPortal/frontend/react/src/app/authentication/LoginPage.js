@@ -104,29 +104,6 @@ class LoginPage extends Component {
     };
 
     /**
-     * This function handles logout operation
-     */
-    handle_logout = () => {
-        /**
-         * This function handles the logout by setting
-         */
-        axios
-            .get(this.BASE_AUTH_URL + 'logout/')
-            .then(
-                response => {
-                    if (response.data['user'] === 'AnonymousUser') {
-                        this.context.setSecurity({
-                            is_logged_in: false
-                        });
-                    }
-                },
-                error => {
-                    console.log(error);
-                }
-            )
-    };
-
-    /**
      * This function sets the display_form state
      * to navigate to different forms.
      * @param form : String

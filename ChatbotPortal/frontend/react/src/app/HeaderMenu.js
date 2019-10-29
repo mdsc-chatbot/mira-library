@@ -36,13 +36,7 @@ export class HeaderMenu extends Component {
                             active={activeItem === "Resources"}
                             onClick={this.handleItemClick}
                         />
-                        <Menu.Item
-                            name="Login"
-                            as={Link}
-                            to={baseRoute + "/login"}
-                            active={activeItem === "Login"}
-                            onClick={this.handleItemClick}
-                        /> */}
+                         */}
 
                         <Menu.Item
                             name="Profile"
@@ -67,9 +61,16 @@ export class HeaderMenu extends Component {
                             onClick={this.handleItemClick}
                         />
                         <Menu.Item
-                            name="Logout"
+                            name="Login"
                             as={Link}
                             to={baseRoute + "/login"}
+                            active={activeItem === "Login"}
+                            onClick={this.handleItemClick}
+                        />
+                        <Menu.Item
+                            name="Logout"
+                            as={Link}
+                            to={baseRoute + "/logout"}
                             active={activeItem === "Logout"}
                             onClick={this.handleItemClick}
                         />
