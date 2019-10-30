@@ -18,7 +18,6 @@ script:
   - python ./ChatbotPortal/manage.py makemigrations authentication
   - python ./ChatbotPortal/manage.py makemigrations resource
   - python ./ChatbotPortal/manage.py makemigrations review
-  - python ./ChatbotPortal/manage.py makemigrations signup
   - python ./ChatbotPortal/manage.py makemigrations user_profile
   - python ./ChatbotPortal/manage.py migrate
   - python ./ChatbotPortal/manage.py migrate --run-syncdb
