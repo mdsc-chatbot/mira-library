@@ -1,156 +1,166 @@
 import React, {Component} from 'react';
-import Nav from './Nav';
+import axios from "axios";
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import {SecurityContext} from '../security/SecurityContext';
 
-// import './App.css';
 
 class LoginPage extends Component {
+    /**
+     * The LoginPage that will render the login form
+     * and communicate with the backend.
+     * @type {React.Context<*>}
+     */
+    static contextType = SecurityContext;
+
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+
     constructor(props) {
+        /**
+         * A constructor that defines state with properties
+         */
         super(props);
+        /**
+         * State displayed_form determines which form to display
+         * @type {
+         *          {
+         *              displayed_form: string}
+         *          }
+         */
         this.state = {
-            displayed_form: 'login',
-            logged_in: localStorage.getItem('token') ? true : false,
-            id: '',
-            email: '',
-            first_name: '',
-            last_name: '',
-            affiliation: '',
-            active: '',
-            staff: '',
-            admin: ''
+            displayed_form: 'login'
         };
     }
 
     componentDidMount() {
-        if (this.state.logged_in) {
-            fetch('http://localhost:8000/signup/current_user/', {
-                headers: {
-                    Authorization: `JWT ${localStorage.getItem('token')}`
+        /**
+         * When component get mounted check if the user is already logged in.
+         */
+        if (this.context.security.logged_in) {
+            axios.get(
+                this.BASE_AUTH_URL + 'retrieve',
+                {
+                    headers: {'Authorization': `Bearer ${this.context.security.token}`}
                 }
-            })
-                .then(res => res.json())
-                .then(json => {
-                    this.setState({
-                        id: json.id,
-                        email: json.email,
-                        first_name: json.first_name,
-                        last_name: json.last_name
-                    });
-                });
+            ).then(response => {
+                console.log(response.data);
+                console.log(response.data.token);
+            });
         }
     }
 
-    handle_login = (e, data, setSecurity) => {
+    /**
+     * This function handles the overall login operations
+     * @param e : event
+     * @param loginFormData : data from LoginForm upon submission
+     */
+    handle_login = (e, loginFormData) => {
+        // prevent the browser to reload itself (Ask Henry if it is necessary)
         e.preventDefault();
-        fetch('http://localhost:8000/token-auth/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then(json => {
 
-                setSecurity({
-                    token: json.token,
-                    logged_in: true,
-                    id: json.user.id,
-                    email: json.user.email,
-                    first_name: json.user.first_name,
-                    last_name: json.user.last_name,
-                    affiliation: json.user.affiliation,
-                    active: json.user.active,
-                    staff: json.user.staff,
-                    admin: json.user.admin,
-                });
-                localStorage.setItem('token', json.token);
-                this.setState({
-                    displayed_form: '',
-                });
-            });
+        /**
+         * Perform a post request for login.
+         * Upon successful response, set the security context with response data.
+         * Otherwise, send an error message saying "Forgot password?"
+         */
+        axios
+            .post(this.BASE_AUTH_URL + 'login/', loginFormData)
+            .then(
+                response => {
+                    response.data['is_logged_in'] = true;
+                    this.context.setSecurity(response.data);
+                    console.log(this.context.security);
+                },
+                error => {
+                    console.log(error)
+                }
+            );
     };
 
-    handle_signup = (e, data, setSecurity) => {
+    /**
+     * This function handles the overall signup operations
+     * @param e : event
+     * @param signupFormData : data from SignupForm upon submission
+     */
+    handle_signup = (e, signupFormData) => {
+        // prevent the browser to reload itself (Ask Henry if it is necessary)
         e.preventDefault();
-        fetch('http://localhost:8000/signup/users/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then(json => {
-                setSecurity({
-                    token: json.token,
-                    logged_in: true,
-                    id: json.id,
-                    email: json.email,
-                    first_name: json.first_name,
-                    last_name: json.last_name,
-                    affiliation: json.affiliation
-                });
-                this.setState({
-                    displayed_form: '',
-                });
-            });
+
+        /**
+         * Perform a post request for signup.
+         * Upon successful response, the user gets created.
+         * Otherwise, send an error message saying "User was not created. Try again."
+         */
+        axios
+            .post(this.BASE_AUTH_URL + 'register/', signupFormData)
+            .then(
+                response => {
+                    console.log(response.status + ": User got created.")
+                },
+                error => {
+                    console.log(error + ": User did not get created.")
+                }
+            );
     };
 
+    /**
+     * This function handles logout operation
+     */
     handle_logout = () => {
-        localStorage.removeItem('token');
-        this.setState({logged_in: false, email: ''});
+        /**
+         * This function handles the logout by setting
+         */
+        axios
+            .get(this.BASE_AUTH_URL + 'logout/')
+            .then(
+                response => {
+                    if (response.data['user'] === 'AnonymousUser') {
+                        this.context.setSecurity({
+                            is_logged_in: false
+                        });
+                    }
+                },
+                error => {
+                    console.log(error);
+                }
+            )
     };
 
+    /**
+     * This function sets the display_form state
+     * to navigate to different forms.
+     * @param form : String
+     */
     display_form = form => {
         this.setState({
             displayed_form: form
         });
     };
 
-    set_form_to_signup = () => {
-        this.display_form('signup');
-    };
-
+    /**
+     * This renders the LoginForm and SignupForm
+     * @returns {SecurityContext.Consumer}
+     */
     render() {
-        let form;
-        switch (this.state.displayed_form) {
-            case 'login':
-                form = <LoginForm handle_login={this.handle_login}/>;
-                break;
-            case 'signup':
-                form = <SignupForm handle_signup={this.handle_signup}/>;
-                break;
-            default:
-                form = null;
-        }
-
         return (
-
             <SecurityContext.Consumer>
                 {(securityContext) => (
                     <div className="App">
-                        <Nav
-                            logged_in={this.state.logged_in}
-                            display_form={this.display_form}
-                            handle_logout={this.handle_logout}
-                        />
                         {
                             this.state.displayed_form === 'login' ? (
                                 <LoginForm
-                                    handle_login={(event, data) => this.handle_login(event, data, securityContext.setSecurity)}
-                                    handleRegisterClicked={this.set_form_to_signup}
+                                    handle_login={(event, data) => this.handle_login(event, data)}
+                                    handleRegisterClicked={this.display_form}
                                 />
                             ) : this.state.displayed_form === 'signup' ? (
                                 <SignupForm
-                                    handle_signup={(event, data) => this.handle_signup(event, data, securityContext.setSecurity)}
+                                    handle_signup={(event, data) => this.handle_signup(event, data)}
+                                    handleLoginClicked={this.display_form}
                                 />
                             ) : null
                         }
                         <h3>
-                            {securityContext.security.logged_in
+                            {securityContext.security.is_logged_in
                                 ? `Hello, ${securityContext.security.id}`
                                 : 'Please Log In'}
                         </h3>

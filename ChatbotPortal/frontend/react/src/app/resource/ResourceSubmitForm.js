@@ -38,7 +38,7 @@ export default class ResourceSubmitForm extends Component {
 
     create_resource = () => {
         // Get current logged in user
-        const created_by_user = this.context.security.email
+        const created_by_user = this.context.security.is_logged_in
             ? this.context.security.email
             : "Unknown user";
 
@@ -64,6 +64,9 @@ export default class ResourceSubmitForm extends Component {
 
     post_resource = () => {
         const resourceFormData = this.create_resource();
+        axios.defaults.headers.common = {
+            Authorization: `Bearer ${this.context.security.token}`
+        };
 
         axios
             .post("http://127.0.0.1:8000/api/resource/", resourceFormData)

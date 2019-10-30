@@ -1,5 +1,4 @@
 from django.db import models
-# from signup.models import User
 from django.conf import settings
 
 
