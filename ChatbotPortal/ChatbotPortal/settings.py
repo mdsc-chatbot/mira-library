@@ -65,7 +65,8 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'frontend/react'),
-            os.path.join(BASE_DIR, 'authentication/email_manager', 'templates'),
+            os.path.join(
+                BASE_DIR, 'authentication/email_manager', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -114,8 +115,7 @@ MEDIA_URL = '/media/'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         # Unauthenticated users will have readonly access (by default)
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
+        'rest_framework.permissions.IsAuthenticated'],
     # The authentication method the server will try when it receives a request
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
