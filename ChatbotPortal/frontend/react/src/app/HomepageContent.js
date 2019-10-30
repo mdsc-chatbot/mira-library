@@ -12,7 +12,7 @@ export class HomepageContent extends Component {
     render() {
         return (
             <div>
-                <Segment style={{ padding: "8em 0em" }} vertical>
+                <Segment vertical>
                     <Grid container stackable verticalAlign="middle">
                         <Grid.Row>
                             <Header

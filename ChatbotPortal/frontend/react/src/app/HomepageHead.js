@@ -8,7 +8,7 @@ export class HomepageHead extends Component {
         return (
             <div>
                 <Segment
-                    style={{ padding: "8em 0em", minHeight: 400 }}
+                    style={{ paddingBottom: 50, minHeight: 300 }}
                     textAlign="center"
                     vertical
                 >
@@ -24,15 +24,15 @@ export class HomepageHead extends Component {
                     />
                     <Header
                         as="h3"
-                        content="Resources site provding information about autism, intellectual disability, and learning disability."
+                        content="Resources site providing information about autism, intellectual disability, and learning disability."
                         style={{
                             fontWeight: "normal"
                         }}
                     />
 
-                    <Link to={baseRoute + "/resource"}>
+                    <Link to={baseRoute + "/public_resource"}>
                         <Button size="big" color="orange">
-                            View all our resources
+                            View all our public resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/login"}>
