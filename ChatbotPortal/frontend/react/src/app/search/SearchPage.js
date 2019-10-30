@@ -4,7 +4,7 @@ import SearchByDateRange from "./SearchByDateRange";
 import SearchByIdRange from "./SearchByIdRange";
 import SearchByAnything from "./SearchByAnything";
 import SearchFilter from "./SearchFilter";
-import SearchAdvanceOption from "./SearchAdvanceOption";
+import SearchAdvancedOption from "./SearchAdvancedOption";
 
 import {
     Button,
@@ -35,7 +35,7 @@ class SearchPage extends Component {
                     Search
                 </Header>
                 <Search />
-                <SearchAdvanceOption />
+                <SearchAdvancedOption />
             </div>
         );
     }

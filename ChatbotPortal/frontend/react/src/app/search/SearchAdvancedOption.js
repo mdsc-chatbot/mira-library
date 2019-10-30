@@ -4,9 +4,9 @@ import SearchByDateRange from "./SearchByDateRange";
 import SearchFilter from "./SearchFilter";
 import SearchByIdrange from "./SearchByIdRange";
 
-export class SearchAdvanceOption extends Component {
+export class SearchAdvancedOption extends Component {
     render() {
-        const advance_search_option = [
+        const advanced_search_option = [
             {
                 key: "date",
                 title: "Date",
@@ -42,15 +42,15 @@ export class SearchAdvanceOption extends Component {
             }
         ];
 
-        const advance_search = [
+        const advanced_search = [
             {
-                key: "advance_search",
-                title: "Advance search",
+                key: "advanced_search",
+                title: "Advanced search",
                 content: {
                     content: (
                         <div style={{ paddingLeft: 20, marginTop: -20 }}>
                             <Accordion.Accordion
-                                panels={advance_search_option}
+                                panels={advanced_search_option}
                                 exclusive={false}
                             />
                         </div>
@@ -61,10 +61,10 @@ export class SearchAdvanceOption extends Component {
 
         return (
             <div>
-                <Accordion defaultActiveIndex={1} panels={advance_search} />
+                <Accordion defaultActiveIndex={1} panels={advanced_search} />
             </div>
         );
     }
 }
 
-export default SearchAdvanceOption;
+export default SearchAdvancedOption;
