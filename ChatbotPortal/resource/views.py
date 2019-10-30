@@ -45,3 +45,24 @@ def download_attachment(request, resource_id):
     response['Content-Disposition'] = 'attachment; filename="{}"'.format(resource.attachment.name.rsplit('/', 1)[-1])
 
     return response
+    
+def fetch_tags_by_id(request):
+    try:
+        idlist = []
+        print("yes", request.GET['ids'])
+        for idFind in request.GET['ids']:
+            print(idFind)
+            tag = Tag.objects.filter(id = idFind)
+            idlist.append(tag)
+        return idlist
+    except:
+        # Return empty http response if can't find tags
+        return []
+
+def fetch_all_tags(request):
+    try:
+        tag_set = Tag.objects.filter(approved=False)
+        return JsonResponse(list(tag_set), safe=False)
+    except:
+        # Return empty http response if can't find tags
+        return None

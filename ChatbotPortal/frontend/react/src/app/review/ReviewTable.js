@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, List } from "semantic-ui-react";
+import { Table, Header, Segment } from "semantic-ui-react";
 import { SecurityContext } from "../security/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -13,7 +13,8 @@ export default class ReviewTable extends Component {
         this.state = {
         resources: {},
         reviews: [],
-        pending: 'Completed Reviews'
+        pending: 'Completed Reviews',
+        header:'Review new resources and tags here!'
         };
     }
 
@@ -72,9 +73,9 @@ export default class ReviewTable extends Component {
     }
     switchView = () =>{
         if (this.state.pending === 'Completed Reviews'){
-            this.setState({pending:'Pending Reviews'});
+            this.setState({pending:'Pending Reviews',header:'View a list of your review actions here!'});
         } else {
-            this.setState({pending:'Completed Reviews'})
+            this.setState({pending:'Completed Reviews',header:'Review new resources and tags here!'})
         }
     }
 
@@ -98,6 +99,19 @@ export default class ReviewTable extends Component {
         this.get_reviews();
     }
 
+    tagsReceived = (idList) =>{
+        console.log(typeof(idList))
+        axios.get('/chatbotportal/resource/fetch-tags-by-id', {
+			params : {
+				ids: idList
+            }
+        }).then(response =>{
+            if (response.data){
+                return response.data
+            }
+        })
+    }
+
     getData = (ids) =>{
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) !== true ?(
@@ -105,8 +119,8 @@ export default class ReviewTable extends Component {
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>{r.comments}</td>
-                    <td>filler tags</td>
-                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
+                    <td>{this.tagsReceived(r.tags)}</td>
+                    {console.log(r.tags)}
                     <td>
                         <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
                         <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
@@ -128,7 +142,6 @@ export default class ReviewTable extends Component {
         reviewsI.forEach(function (item){
             ids.push(item.resource_id)
         })
-        console.log("rev",ids)
 
         var reviewsApproval = new Map();
         reviewsI.forEach(function (item){
@@ -136,26 +149,40 @@ export default class ReviewTable extends Component {
         })
 
         const resources = this.state.resources
-        console.log("waow",resources);
         var viewPending = true
         return (
             <div>
                 <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
-                    Reviews
-                    <button class="ui right floated button" onClick={() => this.switchView()}>{this.state.pending}</button>
-                    <Table class="ui celled table">
-                        <thead>
-                            <tr>
-                            <th>URL</th>
-                            <th>Comments</th>
-                            <th>Tags</th>
-                            <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
-                        </tbody>
-                    </Table>
+                    <div style={{ padding: "2em 0em",textAlign: "center" }}
+                        vertical>
+
+                        <Header
+                            as="h3"
+                            style={{
+                                fontSize: "2em"
+                            }}
+                            color="blue">
+                            Reviews
+                        </Header>
+
+                        <Header as="h4" color="grey">{this.state.header}</Header>
+                    </div>
+                    <button class="ui right floated button" style={{display:"block"}} onClick={() => this.switchView()}>{this.state.pending}</button>
+                    <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
+                        <Table class="ui celled table">
+                            <thead>
+                                <tr>
+                                <th>URL</th>
+                                <th>Comments</th>
+                                <th>Tags</th>
+                                <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
         );

@@ -7,6 +7,7 @@
 
 ### Frontend ###
 /ChatbotPortal/frontend/react/node_modules
+/ChatbotPortal/node_modules/
 /ChatbotPortal/frontend/react/webpack
 package-lock.json
 
