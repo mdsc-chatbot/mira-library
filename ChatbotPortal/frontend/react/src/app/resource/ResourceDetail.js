@@ -10,6 +10,7 @@ import {
     Divider,
     Label,
 } from "semantic-ui-react";
+import fileDownload from "js-file-download";
 
 import styles from "./Resource.css";
 
@@ -32,6 +33,15 @@ export default class ResourceDetail extends Component {
                 });
             });
     }
+
+    downloadAttachment = () => {
+        axios
+            .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`)
+            .then(response => {
+                const fileName = response.headers['content-disposition'].split('\"')[1];
+                fileDownload(response.data, fileName)
+            });
+    };
 
     render() {
         return (
@@ -87,7 +97,15 @@ export default class ResourceDetail extends Component {
                         </p>
 
                     ) : null}
-                    <Header as="h5" color="grey">
+                    {this.state.resource.attachment ? (
+                        <Header as="h5" color="grey">
+                            <a href="#" onClick={this.downloadAttachment}>
+                                <Icon name="download" />
+                                <Header.Content>Download attachment</Header.Content>
+                            </a>
+                        </Header>
+                    ) : null}
+                    <Header as="h5" color="grey" >
                         <Icon name="comment" />
                         <Header.Content>Comments:</Header.Content>
                     </Header>
