@@ -163,7 +163,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Changes the built-in user model to ours
-AUTH_USER_MODEL = 'authentication.CustomUser'
+# AUTH_USER_MODEL = 'authentication.CustomUser'
 
 CSRF_COOKIE_NAME = "csrftoken"
 
