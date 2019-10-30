@@ -35,7 +35,7 @@ export default class ResourceSubmitForm extends Component {
 
     create_resource = () => {
         // Get current logged in user
-        const created_by_user = this.context.security.email
+        const created_by_user = this.context.security.is_logged_in
             ? this.context.security.email
             : "Unknown user";
 
