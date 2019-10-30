@@ -14,6 +14,7 @@ script:
   - find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
   - find . -path "*/migrations/*.pyc"  -delete
   - python ./ChatbotPortal/manage.py makemigrations
+  - python ./ChatbotPortal/manage.py migrate
   - python ./ChatbotPortal/manage.py migrate --run-syncdb
 
 
