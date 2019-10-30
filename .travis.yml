@@ -12,5 +12,6 @@ before-script:
 script:
   - python ./ChatbotPortal/manage.py makemigrations && python manage.py migrate --run-syncdb
   - python ./ChatbotPortal/manage.py test resource.tests
+  - python ./ChatbotPortal/manage.py test authentication.tests
 
 

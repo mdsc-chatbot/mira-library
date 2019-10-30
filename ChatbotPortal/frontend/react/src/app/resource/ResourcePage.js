@@ -4,17 +4,15 @@ import ResourceSubmitForm from "./ResourceSubmitForm";
 import { Container } from "semantic-ui-react";
 
 export default class ResourcePage extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+    constructor(props) {
+        super(props);
+    }
 
-  render() {
-    // ResourceSubmitFrom -> ResourceList -> ResourceListItem -> ResourceDetail
-    return (
-      <Container fluid>
-        <ResourceSubmitForm />
-        <ResourceList />
-      </Container>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <ResourceList />
+            </div>
+        );
+    }
 }
