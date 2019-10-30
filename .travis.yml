@@ -8,12 +8,18 @@ install:
 before-script:
 - mysql -e 'drop database if exists test; create database test;' -u root
 script:
-  - rm ./ChatbotPortal/db.sqlite3
+  # First, delete all migration scripts
   - find . -path "*/migrations/*.py" -delete
-  - find . -path "*/migrations/*.pyc"  -delete
-  - python ./ChatbotPortal/manage.py makemigrations authentication # This needs to occur if overriding django's users Ref: https://stackoverflow.com/questions/41032038/migration-fails-when-extending-django-user-model
+  - find . -path "*/migrations/*.pyc" -delete
+
+  # Build migrations in a proper order
+  # Authentication goes first, otherwise module dependencies will break
+  # Authentication migration needs to occur if overriding django's users. Reference: https://stackoverflow.com/questions/41032038/migration-fails-when-extending-django-user-model
+  - python ./ChatbotPortal/manage.py makemigrations authentication
   - python ./ChatbotPortal/manage.py migrate
-#  - python ./ChatbotPortal/manage.py migrate --run-syncdb
+  - python ./ChatbotPortal/manage.py migrate --run-syncdb
+  - python ./ChatbotPortal/manage.py test resource.tests
+  - python ./ChatbotPortal/manage.py test authentication.tests
 
 
 
