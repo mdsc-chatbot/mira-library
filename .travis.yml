@@ -16,8 +16,14 @@ script:
   # Authentication goes first, otherwise module dependencies will break
   # Authentication migration needs to occur if overriding django's users. Reference: https://stackoverflow.com/questions/41032038/migration-fails-when-extending-django-user-model
   - python ./ChatbotPortal/manage.py makemigrations authentication
+  - python ./ChatbotPortal/manage.py makemigrations resource
+  - python ./ChatbotPortal/manage.py makemigrations review
+  - python ./ChatbotPortal/manage.py makemigrations signup
+  - python ./ChatbotPortal/manage.py makemigrations user_profile
   - python ./ChatbotPortal/manage.py migrate
   - python ./ChatbotPortal/manage.py migrate --run-syncdb
+
+  # Run tests
   - python ./ChatbotPortal/manage.py test resource.tests
   - python ./ChatbotPortal/manage.py test authentication.tests
 
