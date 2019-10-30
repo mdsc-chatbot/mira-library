@@ -12,6 +12,7 @@ import { Divider } from "semantic-ui-react";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
+import SearchPage from "./search/SearchPage"
 
 export default function App() {
     return (
@@ -31,11 +32,15 @@ export default function App() {
                     <Route exact path={baseRoute + "/login"}>
                         <LoginPage />
                     </Route>
+                    <Route exact path={baseRoute + "/search"}>
+                        <SearchPage />
+                    </Route>
                     <Route
                         exact
                         path={baseRoute + "/resource/:resourceID"}
                         component={ResourceDetail}
-                    ></Route>
+                    >
+                    </Route>
                     <Route exact path={baseRoute + "/resource_submit"}>
                         <ResourceSubmitForm />
                     </Route>

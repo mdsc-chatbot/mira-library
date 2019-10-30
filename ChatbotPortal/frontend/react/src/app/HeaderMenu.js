@@ -94,6 +94,16 @@ export class HeaderMenu extends Component {
                                 onClick={this.handleItemClick}
                             />
                         )}
+
+                        {this.context.security.logged_in && (
+                           <Menu.Item
+                              name="Search"
+                              as={Link}
+                              to={baseRoute + "/search"}
+                              active={activeItem === "Search"}
+                              onClick={this.handleItemClick}
+                          />
+                        )}
                     </Menu>
                 </Segment>
             </div>
