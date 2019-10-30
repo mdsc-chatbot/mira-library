@@ -9,11 +9,13 @@ before-script:
 - mysql -e 'drop database if exists test; create database test;' -u root
 script:
   - rm ./ChatbotPortal/db.sqlite3
+  - python manage.py migrate --fake admin zero
   - find . -path "*/migrations/*.py" -delete
   - find . -path "*/migrations/*.pyc"  -delete
   - python ./ChatbotPortal/manage.py makemigrations
-  - python ./ChatbotPortal/manage.py migrate
-  - python ./ChatbotPortal/manage.py migrate --run-syncdb
+  - python manage.py migrate --fake-initial
+#  - python ./ChatbotPortal/manage.py migrate
+#  - python ./ChatbotPortal/manage.py migrate --run-syncdb
 
 
 
