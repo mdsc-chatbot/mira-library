@@ -10,10 +10,12 @@ class SearchPage extends Component {
         super(props);
     }
 
+
+
     render() {
         return (
             <container>
-                <SearchFilter/>
+                <SearchBar/>
             </container>
         );
     }
