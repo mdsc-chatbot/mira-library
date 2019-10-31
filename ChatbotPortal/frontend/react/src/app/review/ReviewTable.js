@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Header, Segment } from "semantic-ui-react";
+import { Table, Header, Label } from "semantic-ui-react";
 import { SecurityContext } from "../security/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -14,7 +14,8 @@ export default class ReviewTable extends Component {
         resources: {},
         reviews: [],
         pending: 'Completed Reviews',
-        header:'Review new resources and tags here!'
+        header:'Review new resources and tags here!',
+        resourceData:{}
         };
     }
 
@@ -33,33 +34,21 @@ export default class ReviewTable extends Component {
             });
         });
     }
+
     componentDidMount() {
         this.get_resources();
         this.get_reviews();
     }
 
-    format_data = (data, approval) => {
-        // Get current logged in user
-        const reviewer = this.context.security.email
-            ? this.context.security.email
-            : "Unknown user";
-
-        const formatted_review = {
-            reviewer_user_email: reviewer,
-            approved: approval,
-            resource_url: data.url,
-            resource_id: data.id
-        };
-        return formatted_review;
-    };
 
     completedReviews = (ids, reviews) => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) === true ?(
                 console.log(r.id),
+                console.log(reviews),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.comments}</td>
+                    <td>{reviews.get(r.id).comments}</td>
                     <td>filler tags</td>
                     {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
                     <td>
@@ -79,51 +68,14 @@ export default class ReviewTable extends Component {
         }
     }
 
-    approve = (data) => {
-        const review = this.format_data(data, true);
-        console.log(review)
-        axios
-            .post("http://127.0.0.1:8000/api/review/", review)
-            .then(res => {})
-            .catch(error => console.error(error));
-        this.get_reviews();
-    };
-
-    reject = (data) => {
-        const review = this.format_data(data, false);
-        console.log(review)
-        axios
-            .post("http://127.0.0.1:8000/api/review/", review)
-            .then(res => {})
-            .catch(error => console.error(error));
-        this.get_reviews();
-    }
-
-    tagsReceived = (idList) =>{
-        console.log(typeof(idList))
-        axios.get('/chatbotportal/resource/fetch-tags-by-id', {
-			params : {
-				ids: idList
-            }
-        }).then(response =>{
-            if (response.data){
-                return response.data
-            }
-        })
-    }
-
     getData = (ids) =>{
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) !== true ?(
                 console.log(r.id),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.comments}</td>
-                    <td>{this.tagsReceived(r.tags)}</td>
-                    {console.log(r.tags)}
                     <td>
-                        <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
-                        <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
+                        <button class="right floated ui button"><Link to={baseRoute + "/review/"+r.id}>Review</Link></button>
                     </td>
                 </tr>
             ):(<p></p>)
@@ -172,9 +124,7 @@ export default class ReviewTable extends Component {
                         <Table class="ui celled table">
                             <thead>
                                 <tr>
-                                <th>URL</th>
-                                <th>Comments</th>
-                                <th>Tags</th>
+                                <th>Resource</th>
                                 <th></th>
                                 </tr>
                             </thead>

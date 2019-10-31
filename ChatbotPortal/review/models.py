@@ -9,5 +9,5 @@ class Reviews(models.Model):
     approved = models.BooleanField()
     resource_url = models.TextField()
     resource_id = models.PositiveIntegerField()
-    #review_comments = models.TextField()
-    #review_rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    review_comments = models.TextField(default="No Comment")
+    review_rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
