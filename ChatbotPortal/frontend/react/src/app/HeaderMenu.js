@@ -31,7 +31,7 @@ export class HeaderMenu extends Component {
                             <Link to={baseRoute}>
                                 <Header as="h2" style={{ color: "#3075c9" }}>
                                     <Icon name="qq" />
-                                    Chatbot Portal
+                                    Chatbot Resources
                                 </Header>
                             </Link>
                         </Menu.Item>

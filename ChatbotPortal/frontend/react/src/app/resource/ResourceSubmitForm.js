@@ -8,7 +8,7 @@ import {
     Segment,
     Header,
     Message,
-    Input,
+    Input
 } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
@@ -49,14 +49,16 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
-        this.state.attachment !== null ? resourceFormData.append("attachment", this.state.attachment) : null;
+        this.state.attachment !== null
+            ? resourceFormData.append("attachment", this.state.attachment)
+            : null;
 
         // Submission for tags
         // Lists have to be submitted in a certain way in order for the server to recognize it
         if (this.state.tags && this.state.tags.length) {
-            this.state.tags.forEach((value) => {
-                resourceFormData.append(`tags`, value)
-            })
+            this.state.tags.forEach(value => {
+                resourceFormData.append(`tags`, value);
+            });
         }
 
         return resourceFormData;
@@ -155,7 +157,7 @@ export default class ResourceSubmitForm extends Component {
                             />
                         )}
                         <Form.Field>
-                            <label>Resource Quality</label>
+                            <label>Resource Usefulness Rating</label>
                             <Rating
                                 name="rating"
                                 onRate={this.handleRate}
@@ -188,7 +190,12 @@ export default class ResourceSubmitForm extends Component {
 
                         <Form.Field>
                             <label>Upload an attachment</label>
-                            <Input type="file" name="attachment" value={this.state.attachmentPath} onChange={this.handleFileChange} />
+                            <Input
+                                type="file"
+                                name="attachment"
+                                value={this.state.attachmentPath}
+                                onChange={this.handleFileChange}
+                            />
                         </Form.Field>
 
                         <div>
