@@ -220,7 +220,7 @@ export default class ResourceSubmitForm extends Component {
                             })()}
                         </div>
 
-                        <Form.Button content="Submit" color="green" />
+                        <Form.Button name="submit" content="Submit" color="green" />
                     </Form>
                 </Container>
             </div>
