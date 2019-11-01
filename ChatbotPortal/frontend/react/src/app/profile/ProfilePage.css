@@ -9,3 +9,20 @@
 .textStyle {
     color: Red;
 }
+
+.segmentBackground {
+    background-color: palegreen;
+}
+
+.cardBackground {
+    background-color: lavender;
+}
+
+.centeredForm {
+    width: 50%;
+    left: 25%;
+}
+
+.fixedInputHeight {
+    height: 38px
+}
