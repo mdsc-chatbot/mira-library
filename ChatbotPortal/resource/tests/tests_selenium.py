@@ -60,12 +60,20 @@ class TestResourceSubmission(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
         self.driver.implicitly_wait(50)
+        self.vars = {}
         super(TestResourceSubmission, self).setUp()
 
     def tearDown(self):
         self.driver.close()
         self.driver.quit()
         super(TestResourceSubmission, self).tearDown()
+
+    def wait_for_window(self, timeout = 2):
+        time.sleep(round(timeout / 1000))
+        wh_now = self.driver.window_handles
+        wh_then = self.vars["window_handles"]
+        if len(wh_now) > len(wh_then):
+            return set(wh_now).difference(set(wh_then)).pop()
 
     def setup_test_db(self):
 
@@ -158,5 +166,11 @@ class TestResourceSubmission(LiveServerTestCase):
         else:
             test_tags = ""
 
-        # self.driver.find_element(By.CSS_SELECTOR, ".Resource__link____1ER80").click()
+        self.vars["window_handles"] = self.driver.window_handles
+        self.driver.find_element(By.CSS_SELECTOR, ".Resource__link____1ER80").click()
+        self.vars["win7210"] = self.wait_for_window(2000)
+        self.vars["root"] = self.driver.current_window_handle
+        self.driver.switch_to.window(self.vars["win7210"])
+        self.driver.close()
+        self.driver.switch_to.window(self.vars["root"])
         return [test_header, test_url, test_tags, test_comments]
