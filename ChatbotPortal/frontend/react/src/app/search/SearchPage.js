@@ -14,19 +14,21 @@ import {
     Header,
     Search
 } from "semantic-ui-react";
+import axios from "axios";
+import {SecurityContext} from "../security/SecurityContext";
 
 class SearchPage extends Component {
     constructor(props) {
         super(props);
     }
 
-
+    static contextType = SecurityContext;
 
     render() {
         return (
 
             <div
-                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
+                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, height: 600 }}
             >
                 <Header
                     as="h3"
@@ -38,8 +40,8 @@ class SearchPage extends Component {
                     Search
                 </Header>
                 {/*<Search />*/}
-                <SearchBar />
                 <SearchAdvancedOption />
+                <SearchBar />
             </div>
         );
     }
