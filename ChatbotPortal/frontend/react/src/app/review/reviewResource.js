@@ -184,8 +184,8 @@ export default class ResourceDetail extends Component {
                             placeholder="Enter any comments (Optional)"
                     />
                     {console.log(this.state.resource)}
-                    <button class="positive ui button" onClick={() => this.approve(this.state.resource)}>Approve</button>
-                    <button class="negative ui button" onClick={() => this.reject(this.state.resource)}>Reject</button>
+                    <button class="positive ui button" onClick={() => this.approve(this.state.resource)}><Link to={baseRoute + "/review/"}>Approve</Link></button>
+                    <button class="negative ui button" onClick={() => this.reject(this.state.resource)}><Link to={baseRoute + "/review/"}>Reject</Link></button>
                 </div>
             </div>
         );

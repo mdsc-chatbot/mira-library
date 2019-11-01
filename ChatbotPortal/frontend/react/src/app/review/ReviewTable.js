@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Header, Label } from "semantic-ui-react";
+import { Table, Header, Rating } from "semantic-ui-react";
 import { SecurityContext } from "../security/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -45,14 +45,19 @@ export default class ReviewTable extends Component {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) === true ?(
                 console.log(r.id),
-                console.log(reviews),
+                console.log("comment",reviews.get(r.id)[1]),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{reviews.get(r.id).comments}</td>
-                    <td>filler tags</td>
-                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
+                    <td>{reviews.get(r.id)[1]}</td>
+                    <td><Rating
+                                icon="star"
+                                defaultRating={reviews.get(r.id)[2]}
+                                maxRating={5}
+                                disabled
+                                size="massive"/>
+                    </td>
                     <td>
-                        {reviews.get(r.id)===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                        {reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
                     </td>
                 </tr>
             ):(<p></p>)
@@ -60,6 +65,7 @@ export default class ReviewTable extends Component {
         return resources_get
 
     }
+    
     switchView = () =>{
         if (this.state.pending === 'Completed Reviews'){
             this.setState({pending:'Pending Reviews',header:'View a list of your review actions here!'});
@@ -82,6 +88,12 @@ export default class ReviewTable extends Component {
         ));
         return resources_get
     }
+    pendingHeader = () =>{
+        return <tr><th>Resource</th><th></th></tr>
+    }
+    completedHeader = () =>{
+        return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
+    }
 
     render() {    
         // Get current logged in user, take this function out of format_data and consolidate it later
@@ -97,7 +109,7 @@ export default class ReviewTable extends Component {
 
         var reviewsApproval = new Map();
         reviewsI.forEach(function (item){
-            reviewsApproval.set(item.resource_id, item.approved);
+            reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating]);
         })
 
         const resources = this.state.resources
@@ -123,10 +135,7 @@ export default class ReviewTable extends Component {
                     <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
                         <Table class="ui celled table">
                             <thead>
-                                <tr>
-                                <th>Resource</th>
-                                <th></th>
-                                </tr>
+                                {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
                             </thead>
                             <tbody>
                                 {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
