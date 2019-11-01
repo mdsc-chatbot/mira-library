@@ -4,7 +4,8 @@ import urllib
 import urllib.request
 from bs4 import BeautifulSoup
 
-from .validators import url_validation, rating_max_validation, rating_min_validation, validate_file_size
+from .validators import validate_file_size
+from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator
 
 class ResourceManager(models.Manager):
     def create(self, **obj_data):
@@ -34,9 +35,9 @@ class Tag(models.Model):
 class Resource(models.Model):
 
     title = models.TextField()
-    url = models.TextField(validators=[url_validation])
+    url = models.TextField(validators=[URLValidator])
     rating = models.IntegerField(
-        validators=[rating_max_validation, rating_min_validation])
+        validators=[MaxValueValidator(5), MinValueValidator(1)])
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
     attachment = models.FileField(blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
