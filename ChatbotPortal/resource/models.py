@@ -35,7 +35,7 @@ class Tag(models.Model):
 class Resource(models.Model):
 
     title = models.TextField()
-    url = models.TextField(validators=[URLValidator])
+    url = models.TextField(validators=[URLValidator()])
     rating = models.IntegerField(
         validators=[MaxValueValidator(5), MinValueValidator(1)])
     comments = models.TextField(blank=True, null=True)
