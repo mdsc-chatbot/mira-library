@@ -39,7 +39,7 @@ class Resource(models.Model):
         validators=[rating_max_validation, rating_min_validation])
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
-    attachment = models.FileField(blank=True, upload_to='resource_attachment/', validators=[validate_file_size(size=50)])
+    attachment = models.FileField(blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 
     created_by_user = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
