@@ -4,8 +4,6 @@ import {
     Header,
     Icon,
     Rating,
-    Popup,
-    Card,
     Container,
     Divider,
     Label,
@@ -13,6 +11,8 @@ import {
 } from "semantic-ui-react";
 import { SecurityContext } from "../security/SecurityContext";
 import fileDownload from "js-file-download";
+import { baseRoute } from "../App";
+import { Link } from "react-router-dom";
 
 export default class ResourceDetail extends Component {
     static contextType = SecurityContext;
@@ -78,6 +78,10 @@ export default class ResourceDetail extends Component {
         return formatted_review;
     };
     
+    handleRate = (event, data) => {
+        this.setState({ rating: data.rating });
+    };
+
     handleChange = event => {
         this.setState({ [event.target.name]: event.target.value });
     };
@@ -161,32 +165,41 @@ export default class ResourceDetail extends Component {
                         {this.state.resource.comments}
                     </p>
                 </Container>
-                <div>
-                    <Form.Field>
-                        <label>Resource Quality</label>
-                        <Rating
-                            name="rating"
-                            onRate={this.handleRate}
-                            onChange={this.handleChange}
-                            value={this.state.rating}
-                            label="Rating"
-                            defaultRating={this.state.rating}
-                            maxRating={5}
-                            icon="star"
-                            size="massive"
-                        />
-                    </Form.Field>
-                    <Form.TextArea
-                            name="comments"
-                            onChange={this.handleChange}
-                            value={this.state.comments}
-                            label="Comments"
-                            placeholder="Enter any comments (Optional)"
-                    />
-                    {console.log(this.state.resource)}
-                    <button class="positive ui button" onClick={() => this.approve(this.state.resource)}><Link to={baseRoute + "/review/"}>Approve</Link></button>
-                    <button class="negative ui button" onClick={() => this.reject(this.state.resource)}><Link to={baseRoute + "/review/"}>Reject</Link></button>
-                </div>
+                <Container style={{width:'50%', height:'10%'}}>
+                    <h2>Submit Review</h2>
+                    <div class="ui form">
+                        <div class="required field" style={{display:"block"}}>
+                            <h4>Submission Quality</h4>
+                            <Form.Field>
+                                <Rating
+                                    name="rating"
+                                    onRate={this.handleRate}
+                                    onChange={this.handleChange}
+                                    value={this.state.rating}
+                                    defaultRating={this.state.rating}
+                                    maxRating={5}
+                                    icon="star"
+                                    size="massive"
+                                />
+                            </Form.Field>
+                        </div>
+                        <div class="required field" style={{display:"block"}}>
+                            <h4>Review Comments</h4>
+                            <Form.TextArea
+                                    name="comments"
+                                    onChange={this.handleChange}
+                                    value={this.state.comments}
+                                    placeholder="Enter any comments about this resource"
+                                    default="No comments"
+                            />
+                        </div>
+                        {console.log(this.state.resource)}
+                        <div style={{display:'block'}}>
+                            <Link to={baseRoute + "/review/"}><button class="positive ui button" onClick={() => this.approve(this.state.resource)}>Approve</button></Link>
+                            <Link to={baseRoute + "/review/"}><button class="negative ui button" onClick={() => this.reject(this.state.resource)}>Reject</button></Link>
+                        </div>
+                    </div>
+                </Container>
             </div>
         );
     }
