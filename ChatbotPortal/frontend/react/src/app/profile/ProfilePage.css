@@ -10,11 +10,11 @@
     color: Red;
 }
 
-.segmentBackground {
+:global(.ui.segment).segmentBackground  {
     background-color: palegreen;
 }
 
-.cardBackground {
+:global(.ui.card).cardBackground {
     background-color: lavender;
 }
 
