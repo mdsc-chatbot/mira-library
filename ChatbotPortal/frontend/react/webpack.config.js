@@ -52,8 +52,11 @@ module.exports = {
 					loader: "babel-loader"
 				}
 			},
+            // This query is for css files in our project, not third-party libraries (e.g. react-virtualized)
+            // This uses CSS modules
 			{
 				test: /\.(css)$/,
+                exclude: /node_modules/,
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader,
@@ -71,6 +74,29 @@ module.exports = {
 							modules: {
 								localIdentName: '[name]__[local]____[hash:base64:5]',
 							},
+						},
+					},
+				]
+			},
+            // This piece of code is for css in third party libraries; We do NOT use css modules renaming.
+            // Only looks in node_modules
+            {
+				test: /\.(css)$/,
+                include : [/node_modules/],
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							// you can specify a publicPath here
+							// by default it uses publicPath in webpackOptions.output
+							// publicPath: '../',
+							hmr: process.env.NODE_ENV === 'development',
+						},
+					},
+					{
+						loader: 'css-loader',
+						options: {
+							sourceMap: true,
 						},
 					},
 				]

@@ -3,7 +3,6 @@ import axios from "axios";
 import {SecurityContext} from "../security/SecurityContext";
 import {Table, Column} from 'react-virtualized';
 import 'react-virtualized/styles.css';
-// import {Table} from "semantic-ui-react";
 
 // const {Table, Column} = ReactVirtualized;
 
@@ -15,12 +14,12 @@ class SearchBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            users: [{'id':1, 'email':'apu@a.ca'}]
+            users: ''
         }
     }
 
     componentDidMount() {
-        // this.get_users();
+        this.get_users();
     }
 
     get_users = () => {
@@ -67,7 +66,7 @@ class SearchBar extends Component {
 
     render() {
         return(
-            <div class="container">
+            <div className="container">
                 <h1>Table example </h1>
                 <Table
                     rowClassName='table-row'

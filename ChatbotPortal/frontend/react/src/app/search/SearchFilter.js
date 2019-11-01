@@ -1,25 +1,24 @@
-import React from 'react';
-import {Button, Dropdown, Form, Grid} from 'semantic-ui-react'
+import React from "react";
+import { Button, Dropdown, Form, Grid, Checkbox } from "semantic-ui-react";
 import axios from "axios";
-import {SecurityContext} from "../security/SecurityContext";
+import { SecurityContext } from "../security/SecurityContext";
 
 const filter_by = [
-    {key: 'is_active', value: 'is_active', text: 'Is active?'},
-    {key: 'is_reviewer', value: 'is_reviewer', text: 'Is a reviewer?'},
-    {key: 'is_staff', value: 'is_staff', text: 'Is a staff?'},
-    {key: 'is_superuser', value: 'is_superuser', text: 'Is a superuser?'},
+    { key: "is_active", value: "is_active", text: "Is active?" },
+    { key: "is_reviewer", value: "is_reviewer", text: "Is a reviewer?" },
+    { key: "is_staff", value: "is_staff", text: "Is a staff?" },
+    { key: "is_superuser", value: "is_superuser", text: "Is a superuser?" }
 ];
 
 const filter_value = [
-    {key: 'true', value: 'True', text: 'Yes'},
-    {key: 'false', value: 'False', text: 'No'},
+    { key: "true", value: "True", text: "Yes" },
+    { key: "false", value: "False", text: "No" }
 ];
 
 /**
  * This class helps filtering users based on either is_active or is_reviewer or is_staff or is_superuser
  */
 class SearchFilter extends React.Component {
-
     static contextType = SecurityContext;
 
     /**
@@ -35,8 +34,8 @@ class SearchFilter extends React.Component {
          */
         this.state = {
             is_logged_in: false,
-            filterBy: 'is_active',
-            filterValue: 'True'
+            filterBy: "is_active",
+            filterValue: "True"
         };
     }
 
@@ -52,14 +51,17 @@ class SearchFilter extends React.Component {
      */
     componentDidUpdate() {
         this.updateStateFromSecurityContext();
-
     }
 
     /**
      * This function updates the state from the security context
      */
     updateStateFromSecurityContext = () => {
-        if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
+        if (
+            this.state.is_logged_in === false &&
+            this.context.security &&
+            this.context.security.is_logged_in
+        ) {
             this.setState({
                 is_logged_in: this.context.security.is_logged_in
             });
@@ -76,33 +78,29 @@ class SearchFilter extends React.Component {
         // prevent the browser to reload itself (Ask Henry if it is necessary)
         e.preventDefault();
         if (this.context.security.is_logged_in) {
-
             // The backend URL
             const url = `http://127.0.0.1:8000/authentication/super/search/filter/${searchFormData.filterBy}/${searchFormData.filterValue}/`;
 
             // Having the permission header loaded
             const options = {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.context.security.token}`
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.context.security.token}`
             };
 
             /**
              * Calling the backend API
              */
-            axios
-                .get(url, {headers: options})
-                .then(
-                    response => {
-                        this.setState({
-
-                            // Setting the response in user state
-                            users: response.data,
-                        });
-                    },
-                    error => {
-                        console.log(error);
-                    }
-                )
+            axios.get(url, { headers: options }).then(
+                response => {
+                    this.setState({
+                        // Setting the response in user state
+                        users: response.data
+                    });
+                },
+                error => {
+                    console.log(error);
+                }
+            );
         }
     };
 
@@ -113,7 +111,7 @@ class SearchFilter extends React.Component {
      * @param key = Key of the value-
      */
     handle_change_dropdown = (value, key) => {
-        this.setState({[key]: value})
+        this.setState({ [key]: value });
     };
 
     /**
@@ -123,35 +121,33 @@ class SearchFilter extends React.Component {
     render() {
         return (
             <SecurityContext.Consumer>
-                {(securityContext) => (
-                    <Form onSubmit={e => this.handle_search(e, this.state)}>
-                        <Grid>
-                            <Grid.Column width={6}>
-                                <Dropdown
-                                    selection
-                                    options={filter_by}
-                                    placeholder='Is Active?'
-                                    onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterBy')}
-                                />
-                            </Grid.Column>
-                            <Grid.Column width={6}>
-                                <Dropdown
-                                    selection
-                                    options={filter_value}
-                                    placeholder='Yes'
-                                    onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterValue')}
-                                />
-                            </Grid.Column>
-
-                            {securityContext.security.is_logged_in ? (
-                                <Button
-                                    color="blue"
-                                    fluid size="large">
-                                    Search
-                                </Button>
-                            ) : null}
-                        </Grid>
-                    </Form>
+                {securityContext => (
+                    <div>
+                        <Checkbox
+                            label="User"
+                            onChange={this.toggle}
+                            checked={this.state.checked_user}
+                            style={{ paddingLeft: 20 }}
+                        />
+                        <Checkbox
+                            label="Review"
+                            onChange={this.toggle}
+                            checked={this.state.checked_review}
+                            style={{ paddingLeft: 20 }}
+                        />
+                        <Checkbox
+                            label="Admin"
+                            onChange={this.toggle}
+                            checked={this.state.checked_admin}
+                            style={{ paddingLeft: 20 }}
+                        />
+                        <Checkbox
+                            label="Active"
+                            onChange={this.toggle}
+                            checked={this.state.checked_active}
+                            style={{ paddingLeft: 20 }}
+                        />
+                    </div>
                 )}
             </SecurityContext.Consumer>
         );
