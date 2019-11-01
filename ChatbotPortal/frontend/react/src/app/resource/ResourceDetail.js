@@ -109,7 +109,7 @@ export default class ResourceDetail extends Component {
                         <Icon name="comment" />
                         <Header.Content>Comments:</Header.Content>
                     </Header>
-                    <p style={{ color: "grey", marginTop: -10 }}>
+                    <p id="comments"style={{ color: "grey", marginTop: -10 }}>
                         {this.state.resource.comments}
                     </p>
                 </Container>

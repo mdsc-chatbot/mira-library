@@ -29,6 +29,9 @@ export default class ResourceList extends Component {
 
     get_resources = () => {
         if (this.context.security.email) {
+            axios.defaults.headers.common = {
+                Authorization: `Bearer ${this.context.security.token}`
+            };
             axios
                 .get("http://127.0.0.1:8000/api/resource", {
                     params: {
