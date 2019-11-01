@@ -2,7 +2,7 @@ import json
 
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, NoReverseMatch
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
@@ -48,7 +48,7 @@ class BaseViewTest(APITestCase):
             content_type='application/json'
         )
 
-    def login_client(self, email="", password=""):
+    def login_client(self, email='', password=''):
         """
         To be used for generating HTTP Authorization header upon login.
         :param email: user email
@@ -499,6 +499,598 @@ class TestLogoutView(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # assert response data is empty
         self.assertIsNone(response.data)
+
+
+class TestAllUsersView(BaseViewTest):
+    """
+    Tests for super/search/alluser/ endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a super user and two regular users.
+        :return: None
+        """
+        self.super_user = CustomUser.objects.create_superuser(
+            email='super@user.ca',
+            password='1234'
+        )
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular1@user.ca',
+            password='5678',
+            first_name='regular1',
+            last_name='regular1',
+            affiliation='TestGettingAllUserList',
+        )
+        self.regular_user2 = CustomUser.objects.create_user(
+            email='regular2@user.ca',
+            password='4321',
+            first_name='regular2',
+            last_name='regular2',
+            affiliation='TestGettingAllUserList'
+        )
+
+        self.url = reverse('search-alluser')
+
+    def test_AllUsersView_by_regular_user(self):
+        """
+        This function tests whether a regular user can view all the user details.
+        :return: None
+        """
+        self.login_client('regular1@user.ca', '5678')
+        response = self.client.get(self.url)
+        # assert status code is 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_AllUsersView_by_super_user(self):
+        """
+        This function tests whether a super user can view all the user details.
+        :return: None
+        """
+        self.login_client('super@user.ca', '1234')
+        response = self.client.get(self.url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+
+
+class TestSearchByDateRangeView(BaseViewTest):
+    """
+    Tests for super/search/date_range/<str:search_option>/<slug:start_date>/<slug:end_date>/ endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a super user and two regular users.
+        :return: None
+        """
+        self.super_user = CustomUser.objects.create_superuser(
+            email='super@user.ca',
+            password='1234'
+        )
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular1@user.ca',
+            password='5678',
+            first_name='regular1',
+            last_name='regular1',
+            affiliation='TestGettingUsersByDateRange',
+        )
+        self.regular_user2 = CustomUser.objects.create_user(
+            email='regular2@user.ca',
+            password='4321',
+            first_name='regular2',
+            last_name='regular2',
+            affiliation='TestGettingUsersByDateRange'
+        )
+
+    def test_SearchByDateRangeView_by_regular_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('regular1@user.ca', '5678')
+
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'last_login',
+                'start_date': '2010-01-01',
+                'end_date': '2020-01-01'
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_SearchByDateRangeView_by_super_user(self):
+        """
+        This function tests whether a super user can search users based on a range of either last_login or joined_date.
+        :return: None
+        """
+
+        # Having another user logged in so that we can have more than one user in the search list
+        self.login_client('regular1@user.ca', '5678')
+        # Logging in super user
+        self.login_client('super@user.ca', '1234')
+
+        # Last login test using valid url
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'last_login',
+                'start_date': '2010-01-01',
+                'end_date': '2020-01-01'
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The length of response data should be 2 since 2 users were logged in
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+
+        # logging in another user
+        self.login_client('regular2@user.ca', '4321')
+        # logging in super user
+        self.login_client('super@user.ca', '1234')
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The length of response data should be 3 since 3 users were logged in
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+
+        # Last login test using valid url, when no login in formation was found
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'last_login',
+                'start_date': '2010-01-01',
+                'end_date': '2015-01-01'
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The length of response data should be 0
+        self.assertEqual(len(response.data), 0)
+
+        # Last login test using invalid date
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'last_login',
+                'start_date': 'ggg',
+                'end_date': 'kkk'
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The query returns nothing
+        self.assertEqual(len(response.data), 0)
+
+        # date_joined test using valid url
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'date_joined',
+                'start_date': '2010-01-01',
+                'end_date': '2020-01-01'
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The response data should have length of 3, since 3 users were created
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+
+        # date_joined test using valid url, when no account was created
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'date_joined',
+                'start_date': '2010-01-01',
+                'end_date': '2015-01-01'
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The length of response data should be 0
+        self.assertEqual(len(response.data), 0)
+
+        # date_joined test using invalid date
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'date_joined',
+                'start_date': 'invalid-date',
+                'end_date': 'date-invalid'
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The response data should have length of 0
+        self.assertEqual(len(response.data), 0)
+
+        # testing invalid search option, search option must be either, date_joined or last_login
+        url = reverse(
+            'search-by-date-range',
+            kwargs={
+                'search_option': 'invalid search option',
+                'start_date': '2010-01-01',
+                'end_date': '2020-01-01'
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # The response data should have length of 0
+        self.assertEqual(len(response.data), 0)
+
+
+class TestSearchByIdRangeView(BaseViewTest):
+    """
+    Tests for super/search/id_range/<int:start_id>/<int:end_id>/ endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a super user and two regular users.
+        :return: None
+        """
+        self.super_user = CustomUser.objects.create_superuser(
+            email='super@user.ca',
+            password='1234'
+        )
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular1@user.ca',
+            password='5678',
+            first_name='regular1',
+            last_name='regular1',
+            affiliation='TestGettingUsersByIdRange',
+        )
+        self.regular_user2 = CustomUser.objects.create_user(
+            email='regular2@user.ca',
+            password='4321',
+            first_name='regular2',
+            last_name='regular2',
+            affiliation='TestGettingUsersByIdRange'
+        )
+
+    def test_SearchByIdRangeView_by_regular_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('regular1@user.ca', '5678')
+
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 1,
+                'end_id': 100
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_SearchByIdRangeView_by_super_user(self):
+        """
+        This function tests whether a super user can search users based on a range of ids.
+        :return: None
+        """
+        self.login_client('super@user.ca', '1234')
+
+        # Search with a valid id range that have users
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 1,
+                'end_id': 10
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+
+        # Search with a valid id range that do not have users
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 5,
+                'end_id': 10
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+        # start_id = 0
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 0,
+                'end_id': 10
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+        # end_id = 0
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 0,
+                'end_id': 0
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+        # start_id < end_id
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 3,
+                'end_id': 2
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+        # start_id = end_id
+        url = reverse(
+            'search-by-id-range',
+            kwargs={
+                'start_id': 2,
+                'end_id': 2
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['email'], 'regular1@user.ca')
+
+        # start_id < 0, end_id < 0
+        try:
+            reverse(
+                'search-by-id-range',
+                kwargs={
+                    'start_id': -2,
+                    'end_id': -2
+                }
+            )
+        except NoReverseMatch:
+            # The url fails to match
+            self.assertRaises(NoReverseMatch)
+
+
+class TestSearchByAnythingView(BaseViewTest):
+    """
+    Tests for super/search/by_anything/ endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a super user and two regular users.
+        :return: None
+        """
+        self.super_user = CustomUser.objects.create_superuser(
+            email='super@user.ca',
+            password='1234'
+        )
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular1@user.ca',
+            password='5678',
+            first_name='regular1',
+            last_name='regular1',
+            affiliation='TestGettingUsersByAnything',
+        )
+        self.regular_user2 = CustomUser.objects.create_user(
+            email='regular2@user.ca',
+            password='4321',
+            first_name='regular2',
+            last_name='regular2',
+            affiliation='TestGettingUsersByAnything'
+        )
+
+    def test_SearchByAnythingView_by_regular_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('regular1@user.ca', '5678')
+        url = reverse('search-by-anything')
+
+        response = self.client.get(url, data={'search': 'Test'})
+        # assert status code is 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_SearchByAnythingView_by_super_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('super@user.ca', '1234')
+        url = reverse('search-by-anything')
+
+        # Search for a valid item, that exists
+        response = self.client.get(url, data={'search': 'Test'})
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular2@user.ca')
+
+        # Search for a valid item, that exists
+        response = self.client.get(url, data={'search': 'regular1'})
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['email'], 'regular1@user.ca')
+
+        # Search for a valid item, that does not exist
+        response = self.client.get(url, data={'search': 'regular11'})
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+
+class TestSearchFilterUserView(BaseViewTest):
+    """
+    Tests for super/search/filter/<str:filter_by>/<str:filter_value>/ endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a super user and two regular users.
+        :return: None
+        """
+        self.super_user = CustomUser.objects.create_superuser(
+            email='super@user.ca',
+            password='1234'
+        )
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular1@user.ca',
+            password='5678',
+            first_name='regular1',
+            last_name='regular1',
+            affiliation='TestGettingFilteredUser',
+        )
+        self.regular_user2 = CustomUser.objects.create_user(
+            email='regular2@user.ca',
+            password='4321',
+            first_name='regular2',
+            last_name='regular2',
+            affiliation='TestGettingFilteredUser'
+        )
+
+    def test_SearchFilterUserView_by_regular_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('regular1@user.ca', '5678')
+        url = reverse(
+            'search-filter-user',
+            kwargs={
+                'filter_by': 'is_active',
+                'filter_value': True
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_SearchByAnythingView_by_super_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('super@user.ca', '1234')
+
+        # Search for valid filter_by option with valid filter_value
+        url = reverse(
+            'search-filter-user',
+            kwargs={
+                'filter_by': 'is_active',
+                'filter_value': True
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+
+        # Search for valid filter_by option with valid filter_value
+        url = reverse(
+            'search-filter-user',
+            kwargs={
+                'filter_by': 'is_superuser',
+                'filter_value': True
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+
+        # Search for invalid filter_by option with valid filter_value
+        url = reverse(
+            'search-filter-user',
+            kwargs={
+                'filter_by': 'first_name',
+                'filter_value': True
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+        # Search for valid filter_by option with invalid filter_value
+        url = reverse(
+            'search-filter-user',
+            kwargs={
+                'filter_by': 'is_active',
+                'filter_value': 'true'
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+        # Search for invalid filter_by option with invalid filter_value
+        url = reverse(
+            'search-filter-user',
+            kwargs={
+                'filter_by': 'last_login',
+                'filter_value': 'true'
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
 
 
 """

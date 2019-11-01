@@ -21,7 +21,7 @@ class ProfilePage extends Component {
          */
         super(props);
         this.state = {
-            is_logged_in: '',
+            is_logged_in: false,
             is_edited: '',
             first_name: '',
             last_name: ''
@@ -29,38 +29,16 @@ class ProfilePage extends Component {
     };
 
     componentDidMount() {
-        /**
-         * Upon mounting the component, it checks the login state from the security context,
-         * if the login state is gone due to refresh, then the current user is retrieved,
-         * and required information is stored in the props.
-         */
-        if (!this.context.security.is_logged_in) {
-            axios
-                .get(this.BASE_AUTH_URL + 'currentuser/')
-                .then(
-                    response => {
-                        if (response.data !== '') {
-                            this.setState({
-                                first_name: response.data['first_name'],
-                                last_name: response.data['last_name'],
-                                is_logged_in: true,
-                                is_edited: false
-                            })
-                        } else {
-                            this.setState({
-                                is_logged_in: false
-                            });
-                        }
-                    },
-                    error => {
-                        console.log(error);
-                    }
-                );
-        } else {
-            /**
-             * If the context says that the user is already logged in,
-             * then set the props using the security context data
-             */
+        this.updateStateFromSecurityContext();
+    }
+
+    componentDidUpdate() {
+        this.updateStateFromSecurityContext();
+
+    }
+
+    updateStateFromSecurityContext =() => {
+        if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
             this.setState({
                 is_logged_in: this.context.security.is_logged_in,
                 is_edited: false,
