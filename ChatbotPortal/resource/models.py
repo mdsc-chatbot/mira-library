@@ -1,10 +1,10 @@
 from django.db import models
-from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator
 
 import urllib
 import urllib.request
 from bs4 import BeautifulSoup
 
+from .validators import url_validation, rating_max_validation, rating_min_validation
 
 class ResourceManager(models.Manager):
     def create(self, **obj_data):
@@ -34,9 +34,9 @@ class Tag(models.Model):
 class Resource(models.Model):
 
     title = models.TextField()
-    url = models.TextField(validators=[URLValidator()])
+    url = models.TextField(validators=[url_validation])
     rating = models.IntegerField(
-        validators=[MaxValueValidator(5), MinValueValidator(1)])
+        validators=[rating_max_validation, rating_min_validation])
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
 
