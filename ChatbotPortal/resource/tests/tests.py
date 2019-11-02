@@ -6,6 +6,7 @@ from ..models import Resource
 
 class ResourceTest(TestCase):
     def test_webscrape_website_title(self):
+        Resource.objects.all().delete()
         resource = Resource.objects.create(
             title="Unknown title",
             url="https://www.ualberta.ca/",
@@ -18,6 +19,7 @@ class ResourceTest(TestCase):
         self.assertEqual(db_resource.title.strip(), "University of Alberta")
 
     def test_validations(self):
+        Resource.objects.all().delete()
         resource = Resource.objects.create(
             title="Unknown title",
             url="https://www.ualberta.ca/",
