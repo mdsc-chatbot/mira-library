@@ -3,6 +3,8 @@ import axios from "axios";
 import {SecurityContext} from "../security/SecurityContext";
 import {AutoSizer, Column, InfiniteLoader, Table} from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import PropTypes from "prop-types";
+import LoginForm from "../authentication/LoginForm";
 
 // const {Table, Column} = ReactVirtualized;
 
@@ -26,100 +28,31 @@ class SearchBar extends Component {
         this.loadMoreRows({startIndex: 0,stopIndex: 1})
     }
 
-    // get_users = () => {
-    //     // Defining header and content-type for accessing authenticated information
-    //     const options = {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${this.context.security.token}`
-    //     };
-    //     axios
-    //         .get(this.BASE_URL + 'super/search/alluser/', {headers : options})
-    //         .then(
-    //             response => {
-    //                 // console.log(response.data);
-    //                 this.setState({
-    //                     users : response.data
-    //                 });
-    //                 this.setState({
-    //                     loadedData: this.state.loadedData.concat(this.state.users)
-    //                 });
-    //                 console.log(this.state.loadedData)
-    //             },
-    //             error => {
-    //                 console.log(error);
-    //             }
-    //         );
-    // };
-
-    // loadMoreRows = ({startIndex, stopIndex}) => {
-    //     console.log("I am inside loadmorerows");
-    //     // simulate a request
-    //     setTimeout(() => {this.actualLoadMore({startIndex, stopIndex})}, 500);
-    //     // we need to return a promise
-    //     return new Promise((resolve, reject) => {
-    //         this.promiseResolve = resolve;
-    //     })
-    // };
-    //
-    // actualLoadMore = ({startIndex, stopIndex}) => {
-    //     this.getRowsFromServer(startIndex, stopIndex);
-    //     this.promiseResolve();
-    // }
 
     loadMoreRows = ({startIndex, stopIndex}) => {
-        this.props.getDataFromServer({startIndex, stopIndex}).then( (result) => {
-            var tempData = this.state.loadedData
+        this.getRowsFromServer({startIndex, stopIndex}).then( (result) => {
+            var tempData = this.state.loadedData;
             result.forEach(returnItem => {
                 tempData.push(returnItem)
-            })
+            });
             this.setState({loadedData:tempData})
         })
     }
 
     getRowsFromServer = ({startIndex, stopIndex }) => {
         return new Promise((resolve, reject) => {
-            fetch(`http://127.0.0.1:8000/authentication/super/search/id_range/${startIndex}/${stopIndex}/`)
+            fetch(`http://127.0.0.1:8000/authentication/super/rows/${startIndex}/${stopIndex}/`)
                 .then(response => response.json())
                 .then(result => {
                     resolve(result)
                 })
         })
-    }
-    // getRowsFromServer = (startIndex, stopIndex) => {
-    //     console.log("I am inside getRows");
-    //
-    //     const url = `http://127.0.0.1:8000/authentication/super/search/id_range/${startIndex}/${stopIndex}/`;
-    //
-    //     // Having the permission header loaded
-    //     const options = {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${this.context.security.token}`
-    //     };
-    //
-    //     /**
-    //      * Calling the backend API
-    //      */
-    //     axios
-    //         .get(url, {headers: options})
-    //         .then(
-    //             response => {
-    //                 console.log(response.data)
-    //                 this.setState({
-    //                     loadedData: this.state.loadedData.concat(response.data)
-    //                 });
-    //                 console.log(this.state.loadedData)
-    //             },
-    //             error => {
-    //                 console.log(error);
-    //             }
-    //         )
-    // };
+    };
 
     isRowLoaded = ({index}) => {
         console.log(index);
         return !!this.state.loadedData[index];
     };
-
 
 
     render() {
@@ -133,7 +66,7 @@ class SearchBar extends Component {
                     // should be resolved once the new data area loaded
                     loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
-                    rowCount={10000000}
+                    rowCount={1000000}
                 >
                     {/*onRowsRender: This function should be passed as the child's onRowsRender property,
                     it informs loader when the user is scrolling*/}
@@ -225,3 +158,8 @@ class SearchBar extends Component {
 }
 
 export default SearchBar;
+
+SearchBar.propTypes = {
+    // Getting the total_number_of_user variable
+    total_number_of_user: PropTypes.number.isRequired
+};
