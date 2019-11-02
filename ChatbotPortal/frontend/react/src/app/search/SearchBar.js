@@ -31,6 +31,7 @@ class SearchBar extends Component {
 
     loadMoreRows = ({startIndex, stopIndex}) => {
         this.getRowsFromServer({startIndex, stopIndex}).then( (result) => {
+            // console.log(result)
             var tempData = this.state.loadedData;
             result.forEach(returnItem => {
                 tempData.push(returnItem)
@@ -41,11 +42,17 @@ class SearchBar extends Component {
 
     getRowsFromServer = ({startIndex, stopIndex }) => {
         return new Promise((resolve, reject) => {
-            fetch(`http://127.0.0.1:8000/authentication/super/rows/${startIndex}/${stopIndex}/`)
-                .then(response => response.json())
-                .then(result => {
-                    resolve(result)
-                })
+            const url = `http://127.0.0.1:8000/authentication/super/rows/${startIndex}/${stopIndex}/`;
+
+            // Having the permission header loaded
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
+            };
+
+            axios
+                .get(url, {headers: options})
+                .then(response => {resolve(response.data)}, error => {console.log(error)})
         })
     };
 
@@ -66,7 +73,7 @@ class SearchBar extends Component {
                     // should be resolved once the new data area loaded
                     loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
-                    rowCount={1000000}
+                    rowCount={100000}
                 >
                     {/*onRowsRender: This function should be passed as the child's onRowsRender property,
                     it informs loader when the user is scrolling*/}
