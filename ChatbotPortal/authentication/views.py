@@ -440,6 +440,30 @@ class TotalNumberOfUserView(generics.RetrieveAPIView):
         return Response(content)
 
 
+class RangeOfUsersView(generics.ListAPIView):
+    """
+    GET super/rows/<int:start_id>/<int:end_id>/
+    Lists users upto a certain row
+    """
+
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    serializer_class = CustomUserSerializer
+
+    def get_queryset(self):
+        """
+        This overrides the built-in get_queryset, in order to perform filtering operations.
+        :return: filtered queryset
+        """
+        start_row = int(self.kwargs['start_row'])
+        end_row = int(self.kwargs['end_row'])
+
+        # Get all the instance of the model
+        queryset = CustomUser.objects.all().order_by('id')[start_row:end_row]
+
+        return queryset
+
+
+
 """
 References:
 1. https://medium.com/swlh/searching-in-django-rest-framework-45aad62e7782
