@@ -23,9 +23,7 @@ class SearchBar extends Component {
     }
 
     componentDidMount() {
-        // this.get_users();
-        // this.getRowsFromServer(1, 1);
-        this.loadMoreRows({startIndex: 0,stopIndex: 1})
+        this.loadMoreRows({startIndex: 0,stopIndex: 1});
     }
 
 
@@ -57,7 +55,7 @@ class SearchBar extends Component {
     };
 
     isRowLoaded = ({index}) => {
-        console.log(index);
+        // console.log(index);
         return !!this.state.loadedData[index];
     };
 
@@ -73,7 +71,7 @@ class SearchBar extends Component {
                     // should be resolved once the new data area loaded
                     loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
-                    rowCount={100000}
+                    rowCount={1000000}
                 >
                     {/*onRowsRender: This function should be passed as the child's onRowsRender property,
                     it informs loader when the user is scrolling*/}
@@ -165,8 +163,3 @@ class SearchBar extends Component {
 }
 
 export default SearchBar;
-
-SearchBar.propTypes = {
-    // Getting the total_number_of_user variable
-    total_number_of_user: PropTypes.number.isRequired
-};
