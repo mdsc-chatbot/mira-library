@@ -431,8 +431,8 @@ class TotalNumberOfUserView(generics.RetrieveAPIView):
     GET super/total/users/
     Getting the number of total instance of model CustomUser
     """
-    permission_classes = (permissions.AllowAny, )
-    renderer_classes = (JSONRenderer, )
+    permission_classes = (permissions.IsAdminUser,)
+    renderer_classes = (JSONRenderer,)
 
     def get(self, request, *args, **kwargs):
         user_count = CustomUser.objects.count()
