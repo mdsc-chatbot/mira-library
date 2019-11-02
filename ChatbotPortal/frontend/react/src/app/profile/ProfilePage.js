@@ -133,6 +133,7 @@ class ProfilePage extends Component {
                 <Container>
                     <SecurityContext.Consumer>
                         {(securityContext) => (
+
                             <Form className={styles.centeredForm} onSubmit={e => this.handle_edit(e, this.state)}>
                                 <Segment className={styles.segmentBackground}>
                                     <Label
@@ -206,19 +207,20 @@ class ProfilePage extends Component {
                                             </Card.Content>
 
 
-                                                <Button
-                                                    color='blue'
-                                                    fluid
-                                                    size='huge'
-                                                >
-                                                   <Icon name='sync' />Save Changes
-                                                </Button>
+                                            <Button
+                                                color='blue'
+                                                fluid
+                                                size='huge'
+                                            >
+                                                <Icon name='sync' />Save Changes
+                                            </Button>
 
 
                                         </Card>
                                         : null}
                                 </Segment>
                             </Form>
+
                         )}
                     </SecurityContext.Consumer>
                 </Container>

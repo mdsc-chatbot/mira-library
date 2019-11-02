@@ -10,13 +10,13 @@
     color: Red;
 }
 
-:global(.ui.segment).segmentBackground  {
-    background-color: palegreen;
-}
+/*:global(.ui.segment).segmentBackground  {*/
+/*    background-color: palegreen;*/
+/*}*/
 
-:global(.ui.card).cardBackground {
-    background-color: lavender;
-}
+/*:global(.ui.card).cardBackground {*/
+/*    background-color: lavender;*/
+/*}*/
 
 .centeredForm {
     width: 50%;
@@ -24,5 +24,5 @@
 }
 
 .fixedInputHeight {
-    height: 38px
+    height: 45px
 }
