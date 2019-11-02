@@ -1150,6 +1150,91 @@ class TestTotalNumberOfUserView(BaseViewTest):
         self.assertEqual(response.data['user_count'], 3)
 
 
+class TestRangeOfUsersView(BaseViewTest):
+    """
+    Tests for super/rows/<int: start_row>/<int: end_row> endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a super user and two regular users.
+        :return: None
+        """
+        self.super_user = CustomUser.objects.create_superuser(
+            email='super@user.ca',
+            password='1234'
+        )
+        self.regular_user1 = CustomUser.objects.create_user(
+            email='regular1@user.ca',
+            password='5678',
+            first_name='regular1',
+            last_name='regular1',
+            affiliation='TestGettingFilteredUser',
+        )
+        self.regular_user2 = CustomUser.objects.create_user(
+            email='regular2@user.ca',
+            password='4321',
+            first_name='regular2',
+            last_name='regular2',
+            affiliation='TestGettingFilteredUser'
+        )
+
+    def test_TotalNumberOfUserView_by_regular_user(self):
+        """
+        This function tests whether a regular user can perform a search operation.
+        :return: None
+        """
+        self.login_client('regular1@user.ca', '5678')
+        # Search for invalid filter_by option with invalid filter_value
+        url = reverse(
+            'get-rows',
+            kwargs={
+                'start_row': 0,
+                'end_row': 1
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_TotalNumberOfUserView_by_super_user(self):
+        """
+        This function tests whether a super user can perform a search operation.
+        :return: None
+        """
+        self.login_client('super@user.ca', '1234')
+
+        # Search for valid row range
+        url = reverse(
+            'get-rows',
+            kwargs={
+                'start_row': 0,
+                'end_row': 1
+            }
+        )
+
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+
+        # Search for invalid row range
+        url = reverse(
+            'get-rows',
+            kwargs={
+                'start_row': 5,
+                'end_row': 4
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+
+
 """
 References
 1. https://medium.com/backticks-tildes/lets-build-an-api-with-django-rest-framework-part-2-cfb87e2c8a6c
