@@ -2,11 +2,7 @@
         User Overrides
 *******************************/
 
-::selection {
-    background-color: #CCE2FF;
-    color: red;
-    font-weight: bold;
-    transition: font-weight 0.2s ease;
-
+.ui.styled.accordion .title:hover,
+.ui.styled.accordion .accordion .title:hover {
+  font-weight : bold;
 }
-
