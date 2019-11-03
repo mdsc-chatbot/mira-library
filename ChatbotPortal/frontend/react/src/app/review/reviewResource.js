@@ -23,11 +23,11 @@ export default class ResourceDetail extends Component {
         this.state = {
             resource: {},
             rating: 1,
-            comments: "",
+            comments: ""
         };
     }
 
-    get_resource_details = () =>{
+    get_resource_details = () => {
         const resourceID = this.props.match.params.resourceID;
         axios
             .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`)
@@ -36,29 +36,82 @@ export default class ResourceDetail extends Component {
                     resource: res.data
                 });
             });
-    }
+    };
 
     componentDidMount() {
         this.get_resource_details();
     }
 
-    approve = (data) => {
+    approve = data => {
         const review = this.format_data(data, true);
-        console.log(review)
+        console.log(review);
         axios
             .post("http://127.0.0.1:8000/api/review/", review)
             .then(res => {})
             .catch(error => console.error(error));
+        this.update_resource(1);
     };
 
-    reject = (data) => {
+    reject = data => {
         const review = this.format_data(data, false);
-        console.log(review)
+        console.log(review);
         axios
             .post("http://127.0.0.1:8000/api/review/", review)
             .then(res => {})
             .catch(error => console.error(error));
-    }
+        this.update_resource(-1);
+    };
+
+    put_resource = resource => {
+        const options = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.context.security.token}`
+        };
+        const resourceID = this.props.match.params.resourceID;
+        axios
+            .put(
+                "http://127.0.0.1:8000/api/resource/" + resourceID + "/update/",
+                resource,
+                { headers: options }
+            )
+            .then(
+                response => {},
+                error => {
+                    console.log(error);
+                }
+            );
+    };
+
+    update_resource = score => {
+        const required_approvals_rejections = 2;
+        this.get_resource_details();
+        const resource = this.state.resource;
+
+        if (resource.final_review === "pending") {
+            resource.review_score += score;
+            resource.number_of_reviews += 1;
+
+            if (resource.review_score === required_approvals_rejections) {
+                resource.final_review = "approved";
+            } else if (
+                resource.review_score ===
+                -1 * required_approvals_rejections
+            ) {
+                resource.final_review = "rejected";
+            } else if (
+                resource.number_of_reviews > required_approvals_rejections
+            ) {
+                if (resource.review_score > 0) {
+                    resource.final_review = "approved";
+                } else if (resource.review_score < 0) {
+                    resource.final_review = "rejected";
+                }
+            }
+
+            console.log(resource);
+            this.put_resource(resource);
+        }
+    };
 
     format_data = (data, approval) => {
         const resourceID = this.props.match.params.resourceID;
@@ -77,7 +130,7 @@ export default class ResourceDetail extends Component {
         };
         return formatted_review;
     };
-    
+
     handleRate = (event, data) => {
         this.setState({ rating: data.rating });
     };
@@ -88,10 +141,14 @@ export default class ResourceDetail extends Component {
 
     downloadAttachment = () => {
         axios
-            .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`)
+            .get(
+                `/chatbotportal/resource/download-attachment/${this.state.resource.id}`
+            )
             .then(response => {
-                const fileName = response.headers['content-disposition'].split('\"')[1];
-                fileDownload(response.data, fileName)
+                const fileName = response.headers["content-disposition"].split(
+                    '"'
+                )[1];
+                fileDownload(response.data, fileName);
             });
     };
 
@@ -118,9 +175,7 @@ export default class ResourceDetail extends Component {
                     </p>
 
                     <a href={this.state.resource.url} target="_blank">
-                        <h4>
-                            {this.state.resource.url}
-                        </h4>
+                        <h4>{this.state.resource.url}</h4>
                     </a>
 
                     {this.state.resource.rating ? (
@@ -133,31 +188,29 @@ export default class ResourceDetail extends Component {
                                 size="massive"
                             />
                         </p>
-                    ) : (
-                        null
-                    )}
-                    {this.state.resource.tags && this.state.resource.tags.length > 0 ? (
+                    ) : null}
+                    {this.state.resource.tags &&
+                    this.state.resource.tags.length > 0 ? (
                         <p>
-                            <span style={{ color: "grey" }}>
-                                Tags:
-                            </span>
-                            {
-                                this.state.resource.tags.map(tag => (
-                                    <Label key={tag} size="large">{tag}</Label>
-                                ))
-                            }
+                            <span style={{ color: "grey" }}>Tags:</span>
+                            {this.state.resource.tags.map(tag => (
+                                <Label key={tag} size="large">
+                                    {tag}
+                                </Label>
+                            ))}
                         </p>
-
                     ) : null}
                     {this.state.resource.attachment ? (
                         <Header as="h5" color="grey">
                             <a href="#" onClick={this.downloadAttachment}>
                                 <Icon name="download" />
-                                <Header.Content>Download attachment</Header.Content>
+                                <Header.Content>
+                                    Download attachment
+                                </Header.Content>
                             </a>
                         </Header>
                     ) : null}
-                    <Header as="h5" color="grey" >
+                    <Header as="h5" color="grey">
                         <Icon name="comment" />
                         <Header.Content>Comments:</Header.Content>
                     </Header>
@@ -165,10 +218,13 @@ export default class ResourceDetail extends Component {
                         {this.state.resource.comments}
                     </p>
                 </Container>
-                <Container style={{width:'50%', height:'10%'}}>
+                <Container style={{ width: "50%", height: "10%" }}>
                     <h2>Submit Review</h2>
                     <div class="ui form">
-                        <div class="required field" style={{display:"block"}}>
+                        <div
+                            class="required field"
+                            style={{ display: "block" }}
+                        >
                             <h4>Submission Quality</h4>
                             <Form.Field>
                                 <Rating
@@ -183,20 +239,41 @@ export default class ResourceDetail extends Component {
                                 />
                             </Form.Field>
                         </div>
-                        <div class="required field" style={{display:"block"}}>
+                        <div
+                            class="required field"
+                            style={{ display: "block" }}
+                        >
                             <h4>Review Comments</h4>
                             <Form.TextArea
-                                    name="comments"
-                                    onChange={this.handleChange}
-                                    value={this.state.comments}
-                                    placeholder="Enter any comments about this resource"
-                                    default="No comments"
+                                name="comments"
+                                onChange={this.handleChange}
+                                value={this.state.comments}
+                                placeholder="Enter any comments about this resource"
+                                default="No comments"
                             />
                         </div>
                         {console.log(this.state.resource)}
-                        <div style={{display:'block'}}>
-                            <Link to={baseRoute + "/review/"}><button class="positive ui button" onClick={() => this.approve(this.state.resource)}>Approve</button></Link>
-                            <Link to={baseRoute + "/review/"}><button class="negative ui button" onClick={() => this.reject(this.state.resource)}>Reject</button></Link>
+                        <div style={{ display: "block" }}>
+                            <Link to={baseRoute + "/review/"}>
+                                <button
+                                    class="positive ui button"
+                                    onClick={() =>
+                                        this.approve(this.state.resource)
+                                    }
+                                >
+                                    Approve
+                                </button>
+                            </Link>
+                            <Link to={baseRoute + "/review/"}>
+                                <button
+                                    class="negative ui button"
+                                    onClick={() =>
+                                        this.reject(this.state.resource)
+                                    }
+                                >
+                                    Reject
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 </Container>
