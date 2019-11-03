@@ -129,9 +129,10 @@ class TestResourceSubmission(LiveServerTestCase):
             actual_resource_detail, "//a[3]/div/div", test_tags=True)
 
         # Test not found url and rating
-        actual_resource_detail = ["Unknown title", "http://127.0.0.1:8000/", "", ""]
+        actual_resource_detail = ["Unknown title",
+                                  "http://127.0.0.1:8000/", "", ""]
         self.valid_resource_submission(
-                    actual_resource_detail, "//a[4]/div/div")
+            actual_resource_detail, "//a[4]/div/div")
 
     def invalid_resource_submission(self, actual_resource_detail):
         self.submit_a_resource(actual_resource_detail)
@@ -147,7 +148,8 @@ class TestResourceSubmission(LiveServerTestCase):
             test_resource_path, test_tags=test_tags)
 
         assert "You've submitted a resource!" == test_valid_text
-        actual_resource_detail[2] = actual_resource_detail[2].replace(",", "")  # Get rid of commas for tags comparision
+        actual_resource_detail[2] = actual_resource_detail[2].replace(
+            ",", "")  # Get rid of commas for tags comparision
         # print(actual_resource_detail, test_resource_detail)
         assert actual_resource_detail == test_resource_detail
 
@@ -156,7 +158,7 @@ class TestResourceSubmission(LiveServerTestCase):
 
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         time.sleep(1)
-        
+
         self.driver.find_element(By.NAME, "submit_a_resource").click()
         self.driver.find_element(By.NAME, "url").send_keys(url)
         self.driver.find_element(By.NAME, "comments").send_keys(comments)
@@ -166,7 +168,7 @@ class TestResourceSubmission(LiveServerTestCase):
             self.driver.find_element(
                 By.CSS_SELECTOR, ".ui > .search").send_keys(Keys.ENTER)
         # self.driver.find_element(By.XPATH, ("//i[2]")).click() # star rating
-        
+
         time.sleep(2)
         self.driver.find_element(By.NAME, "submit").click()
 
@@ -174,21 +176,23 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         self.driver.find_element(By.XPATH, (resource_xpath)).click()
 
-        test_header = self.driver.find_element(By.XPATH, ("//h3")).text
+        test_header = self.driver.find_element(By.ID, "title_header").text
         test_url = self.driver.find_element(
-            By.CSS_SELECTOR, ".Resource__link____1ER80").text
+            By.CSS_SELECTOR, ".ResourceDetail__link____gFhTH").text
         test_comments = self.driver.find_element(By.ID, "comments").text
 
         if test_tags:
-            test_tags = self.driver.find_element(By.XPATH, ("//p[4]")).text
-            test_tags = test_tags.replace("Tags:", "")
+
+            test_tags = self.driver.find_element(
+                By.XPATH, ("//div[3]/div[3]")).text
+            test_tags = test_tags.replace("Tags:\n", "")
             # print("tags", test_tags)
         else:
             test_tags = ""
 
         self.vars["window_handles"] = self.driver.window_handles
         self.driver.find_element(
-            By.CSS_SELECTOR, ".Resource__link____1ER80").click()
+            By.CSS_SELECTOR, ".ResourceDetail__link____gFhTH").click()
         self.vars["win7210"] = self.wait_for_window(2000)
         self.vars["root"] = self.driver.current_window_handle
         self.driver.switch_to.window(self.vars["win7210"])
