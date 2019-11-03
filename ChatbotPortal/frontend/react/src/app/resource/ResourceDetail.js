@@ -3,16 +3,16 @@ import axios from "axios";
 import {
     Header,
     Icon,
-    Rating,
-    Popup,
-    Card,
+    Menu,
     Container,
     Divider,
     Label,
+    Rating,
+    Grid,
 } from "semantic-ui-react";
 import fileDownload from "js-file-download";
 
-import styles from "./Resource.css";
+import styles from "./ResourceDetail.css";
 
 export default class ResourceDetail extends Component {
     constructor(props) {
@@ -44,70 +44,114 @@ export default class ResourceDetail extends Component {
     };
 
     render() {
+        // Common props for grid row, columns that are re-usable.
+        // If we need this in more than one place, consider re-making this into several components.
+        const gridRowProps = {
+            className : styles.smallRowPadding,
+            columns : '2',
+        };
+
+        const gridKeyColumnProps = {
+            className : styles.greyColumn,
+            floated : 'left',
+            textAlign : 'right',
+            width : '2',
+        };
+
+        const gridValueColumnProps = {
+            width : '14',
+        };
+
         return (
             <div
                 style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
             >
                 <Container>
-                    <Header as="h3" style={{ fontSize: "2em" }}>
-                        <Icon name="globe" />
-                        <Header.Content>
-                            {this.state.resource.title}
-                        </Header.Content>
-                    </Header>
-
-                    <Divider></Divider>
-
-                    <p style={{ color: "grey", paddingTop: 25 }}>
-                        Submitted by {this.state.resource.created_by_user}
-                    </p>
-                    <p style={{ color: "grey", marginTop: -10 }}>
-                        Date submitted: {this.state.resource.timestamp}
-                    </p>
-
-                    <a href={this.state.resource.url} target="_blank">
-                        <h4 className={styles.link}>
-                            {this.state.resource.url}
-                        </h4>
-                    </a>
-
-                    {this.state.resource.rating ? (
-                        <p>
+                    <Menu text>
+                        <Menu.Item>
+                            <Header as="h2">
+                                <div>
+                                    <span>
+                                        <Icon name="globe" />
+                                        <Header.Content>
+                                            {this.state.resource.title}
+                                        </Header.Content>
+                                    </span>
+                                    <a href={this.state.resource.url} target="_blank">
+                                        <h4 className={styles.link}>
+                                            {this.state.resource.url}
+                                        </h4>
+                                    </a>
+                                </div>
+                            </Header>
+                        </Menu.Item>
+                        <Menu.Item position="right">
                             <Rating
-                                icon="star"
-                                defaultRating={this.state.resource.rating}
-                                maxRating={5}
-                                disabled
-                                size="massive"
+                              icon="star"
+                              rating={this.state.resource.rating}
+                              maxRating={5}
+                              disabled
+                              size="massive"
                             />
-                        </p>
-                    ) : (
-                        null
-                    )}
-                    {this.state.resource.tags && this.state.resource.tags.length > 0 ? (
-                        <p>
-                            <span style={{ color: "grey" }}>
-                                Tags:
-                            </span>
-                            {
-                                this.state.resource.tags.map(tag => (
-                                    <Label key={tag} size="large">{tag}</Label>
-                                ))
-                            }
-                        </p>
+                        </Menu.Item>
+                    </Menu>
 
-                    ) : null}
-                    {this.state.resource.attachment ? (
-                        <Header as="h5" color="grey">
-                            <a href="#" onClick={this.downloadAttachment}>
-                                <Icon name="download" />
-                                <Header.Content>Download attachment</Header.Content>
-                            </a>
-                        </Header>
-                    ) : null}
-                    <Header as="h5" color="grey" >
+                    <Divider className={styles.dividerPadding} />
+
+                    <Grid>
+                        <Grid.Row {...gridRowProps}>
+                            <Grid.Column {...gridKeyColumnProps}>
+                                Submitted by:
+                            </Grid.Column>
+                            <Grid.Column {... gridValueColumnProps}>
+                                {this.state.resource.created_by_user}
+                            </Grid.Column>
+                        </Grid.Row>
+
+                        <Grid.Row {...gridRowProps}>
+                            <Grid.Column {...gridKeyColumnProps}>
+                                Date submitted:
+                            </Grid.Column>
+                            <Grid.Column {... gridValueColumnProps}>
+                                {this.state.resource.timestamp}
+                            </Grid.Column>
+                        </Grid.Row>
+
+                        {this.state.resource.tags && this.state.resource.tags.length > 0 ? (
+                            <Grid.Row {...gridRowProps}>
+                                <Grid.Column {...gridKeyColumnProps}>
+                                    Tags:
+                                </Grid.Column>
+                                <Grid.Column {... gridValueColumnProps}>
+                                    {
+                                        this.state.resource.tags.map(tag => (
+                                          <Label key={tag} size="large">{tag}</Label>
+                                        ))
+                                    }
+                                </Grid.Column>
+                            </Grid.Row>
+                        ) : null}
+
+                        {this.state.resource.attachment ? (
+                            <Grid.Row>
+                                <Grid.Column>
+                                    <Header as="h5" color="grey">
+                                        <a href="#" onClick={this.downloadAttachment}>
+                                            <Icon name="download" />
+                                            <Header.Content>Download attachment</Header.Content>
+                                        </a>
+                                    </Header>
+                                </Grid.Column>
+                            </Grid.Row>
+                        ) : null}
+
+                    </Grid>
+
+                    <Divider />
+
+                    <Header as="h5" color="grey" className={styles.noMarginHeader}>
                         <Icon name="comment" />
-                        <Header.Content>Comments:</Header.Content>
+                        <Header.Content>Comment:</Header.Content>
                     </Header>
                     <p id="comments"style={{ color: "grey", marginTop: -10 }}>
                         {this.state.resource.comments}
