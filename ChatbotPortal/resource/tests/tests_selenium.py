@@ -36,6 +36,10 @@ INPUT
 - comments: React makes it painless to create interactive UIs. Design simple views for each state in your application, and React will efficiently update and render just the right components when your data changes.
 - attachment: file
 
+6 Resource submission not found url (should still saves to database)
+= url: http://127.0.0.1:8000/
+
+
 TEST OUTPUT
 - click on resource and go to resource detail to compare if url, rating, tags, comments and attachement are the same as inputs
 '''
@@ -123,6 +127,11 @@ class TestResourceSubmission(LiveServerTestCase):
                                   "react", "React makes it painless to create interactive UIs. Design simple views for each state in your application, and React will efficiently update and render just the right components when your data changes."]
         self.valid_resource_submission(
             actual_resource_detail, "//a[3]/div/div", test_tags=True)
+
+        # Test not found url and rating
+        actual_resource_detail = ["Unknown title", "http://127.0.0.1:8000/", "", ""]
+        self.valid_resource_submission(
+                    actual_resource_detail, "//a[4]/div/div")
 
     def invalid_resource_submission(self, actual_resource_detail):
         self.submit_a_resource(actual_resource_detail)
