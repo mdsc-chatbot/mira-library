@@ -17,7 +17,7 @@ export default class ReviewTable extends Component {
         pending: 'Completed Reviews',
         header:'Review new resources and tags here!',
         resourceData:{},
-        order:"most recent"
+        order:"newest"
         };
     }
 
@@ -77,8 +77,17 @@ export default class ReviewTable extends Component {
     handleOrder = (e, {value}) => {this.setState({ order: {value}.value})}
 
     
-    getData = (ids) =>{
-        function compare( a, b ) {
+    getData = (reviews,ids) =>{
+        function numRevs(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id);
+        }, 0); return numReviews}
+        function numRevsApproved(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === true);
+        }, 0); return numReviews}
+        function numRevsRejected(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === false);
+        }, 0); return numReviews}
+        function compareOldest( a, b ) {
             if ((new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000)){
               return -1;
             }
@@ -87,7 +96,7 @@ export default class ReviewTable extends Component {
             }
             return 0;
           }
-          function compare2( a, b ) {
+          function compareNewest( a, b ) {
             if ((new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000)){
               return -1;
             }
@@ -96,11 +105,35 @@ export default class ReviewTable extends Component {
             }
             return 0;
           }
+          function compareReviews( a, b) {
+              if(numRevs(a.id) < numRevs(b.id)){
+                  return -1;
+              }
+              if(numRevs(a.id) > numRevs(b.id)){
+                return 1;
+              }
+              return 0;
+          }
+          function compareTieBreak( a){
+            if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) === numRevsRejected(a.id)){
+                console.log(a.id)
+                return -1;
+            }
+            if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) !== numRevsRejected(a.id)){
+                return 0;
+            }
+            return 1;
+            //console.log(a.id,numRevsApproved(a.id))
+          }
 
         if (this.state.order === 'oldest'){
-            this.state.resources = this.state.resources.sort(compare)
-        }else if(this.state.order ==='most recent'){
-            this.state.resources = this.state.resources.sort(compare2)
+            this.state.resources = this.state.resources.sort(compareOldest)
+        }else if(this.state.order === 'newest'){
+            this.state.resources = this.state.resources.sort(compareNewest)
+        }else if(this.state.order === 'least reviewed'){
+            this.state.resources = this.state.resources.sort(compareReviews)
+        }else if(this.state.order === 'tie breakers'){
+            this.state.resources = this.state.resources.sort(compareTieBreak)
         }
         console.log(this.state.order,this.state.resources)
 
@@ -108,8 +141,6 @@ export default class ReviewTable extends Component {
             ids.includes(r.id) !== true ?(
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.id}</td>
-                    <td>{r.timestamp}</td>
                     <td>
                         <button class="right floated ui button"><Link to={baseRoute + "/review/"+r.id}>Review</Link></button>
                     </td>
@@ -144,7 +175,7 @@ export default class ReviewTable extends Component {
         })
 
         const choices= [
-            {text:'most recent', value: 'most recent'},
+            {text:'most recent', value: 'newest'},
             {text:'oldest', value: 'oldest'},
             {text:'least reviewed', value: 'least reviewed'},
             {text:'tie breaker needed', value:'tie breakers'}
@@ -186,7 +217,7 @@ export default class ReviewTable extends Component {
                                 {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
                             </thead>
                             <tbody>
-                                {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
+                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids)):(this.completedReviews(ids, reviewsApproval))}
                             </tbody>
                         </Table>
                     </div>
