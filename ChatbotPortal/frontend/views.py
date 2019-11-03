@@ -30,3 +30,15 @@ def resources(request, path):
 
     file = open(path_string, encoding="utf-8")
     return HttpResponse(file.read(), content_type=content_type)
+
+def review(request, path):
+    path_string = os.path.join(os.path.dirname(__file__), 'react', 'webpack')
+    for path_item in path.split("/"):
+        path_string = os.path.join(path_string, path_item)
+    
+    content_type = 'text/html'
+    if path.endswith('.js'):
+        content_type = 'text/javascript'
+
+    file = open(path_string, encoding="utf-8")
+    return HttpResponse(file.read(), content_type=content_type)
