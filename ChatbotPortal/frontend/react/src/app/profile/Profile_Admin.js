@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label} from 'semantic-ui-react';
+import {Button, Container, Form, Icon, Card, Image, Segment, Label, Checkbox} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
@@ -12,7 +12,6 @@ class ProfilePage extends Component {
     static contextType = SecurityContext;
 
     BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
-
 
 
     constructor(props) {
@@ -85,18 +84,6 @@ class ProfilePage extends Component {
         });
     };
 
-    saveFunction = () => {
-        alert("Your changes were saved!");
-    };
-
-    cancelFunction = () => {
-        alert("No changes were saved!");
-    };
-
-    deleteFunction = () => {
-        alert("A request has been sent to the admin!");
-    };
-
     /**
      * This function handles the overall edit operations
      * @param e : event
@@ -153,8 +140,8 @@ class ProfilePage extends Component {
                                         size='big'
                                         as='h1'
                                         icon='user'
-                                        color='blue'
-                                        content='My Profile'
+                                        color='red'
+                                        content='Sample Profile'
                                         ribbon>
                                     </Label>
                                     {securityContext.security.is_logged_in ?
@@ -193,61 +180,50 @@ class ProfilePage extends Component {
                                             <Card.Content extra>
                                                 {/*<h3 style={{ color: 'green' }}>*/}
                                                 <h3>
-                                                    <Icon color='blue' name='mail'/>
+                                                    <Icon color='red' name='mail'/>
                                                     {securityContext.security.email}
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='certificate'/>
+                                                    <Icon color='red' name='certificate'/>
                                                     Newbie
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='pencil alternate'/>
+                                                    <Icon color='red' name='pencil alternate'/>
                                                     # Submissions = 25
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='trophy'/>
+                                                    <Icon color='red' name='trophy'/>
                                                     Points = 56
                                                 </h3>
                                             </Card.Content>
 
-                                            <Button.Group fluid size='big'>
-                                                <Button animated='fade' negative onClick={this.cancelFunction}>
-                                                    <Button.Content visible>
-                                                        <Icon name='cancel' />
-                                                        Cancel Changes
-                                                    </Button.Content>
-                                                    <Button.Content hidden>No changes will be made</Button.Content>
-                                                </Button>
-                                                <Button.Or />
-                                                <Button animated='fade' positive onClick={this.saveFunction}>
-                                                    <Button.Content visible>
-                                                        <Icon name='sync' />
-                                                        Save Changes
-                                                    </Button.Content>
-                                                    <Button.Content hidden>Changes made will be saved</Button.Content>
-                                                </Button>
-                                            </Button.Group>
+                                            <Card.Content extra>
+                                                <Segment.Group horizontal>
+                                                    <Segment color='red'>
+                                                        <Checkbox label='Staff' slider />
+                                                    </Segment>
+                                                    <Segment color='red'>
+                                                        <Checkbox label='Reviewer' slider />
+                                                    </Segment>
+                                                </Segment.Group>
+                                            </Card.Content>
+
 
                                             <Button
-                                                animated='fade'
-                                                icon
-                                                basic
                                                 color='red'
                                                 fluid
-                                                size='big'
-                                                onClick={this.deleteFunction}
+                                                size='huge'
                                             >
-                                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
-                                                <Button.Content hidden>Send Request To Admin</Button.Content>
+                                                <Icon name='delete' />Delete User
                                             </Button>
 
 
