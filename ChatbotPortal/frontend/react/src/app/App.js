@@ -4,6 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import { ProfilePage } from "./profile";
 import ResourcePage from "./resource/ResourcePage";
 import ResourceDetail from "./resource/ResourceDetail";
+import reviewResource from "./review/reviewResource";
 import { ReviewPage } from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
@@ -44,7 +45,14 @@ export default function App() {
                         exact
                         path={baseRoute + "/resource/:resourceID"}
                         component={ResourceDetail}
-                    ></Route>
+                    >
+                    </Route>
+                    <Route
+                        exact
+                        path={baseRoute + "/review/:resourceID"}
+                        component={reviewResource}
+                    >
+                    </Route>
                     <Route exact path={baseRoute + "/resource_submit"}>
                         <ResourceSubmitForm />
                     </Route>
