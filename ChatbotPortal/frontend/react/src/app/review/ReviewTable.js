@@ -157,6 +157,9 @@ export default class ReviewTable extends Component {
         return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
     }
 
+    sorting = (options) =>{
+        return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
+    }
     render() {    
         // Get current logged in user, take this function out of format_data and consolidate it later
         const reviewer = this.context.security.email
@@ -201,16 +204,20 @@ export default class ReviewTable extends Component {
 
                         <Header as="h4" color="grey">{this.state.header}</Header>
                     </div>
-                    <h4>Order Submissions By </h4>
-                    <Dropdown class="ui inline dropdown"
-                        name="subject"
-                        placeholder='most recent'
-                        selection 
-                        onChange={this.handleOrder}
-                        options={choices} 
-                        value={value}
-                    />
-                    <button class="ui right floated button" style={{display:"block"}} onClick={() => this.switchView()}>{this.state.pending}</button>
+                    {this.state.pending === 'Completed Reviews'?
+                        <div style={{display:'inline-block'}}>
+                        <h4>Order Submissions By </h4>
+                        <Dropdown class="ui inline dropdown"
+                            name="subject"
+                            placeholder='most recent'
+                            selection 
+                            onChange={this.handleOrder}
+                            options={choices} 
+                            value={value}
+                        />
+                        </div>
+                    :null}
+                    <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button>
                     <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
                         <Table class="ui celled table">
                             <thead>
