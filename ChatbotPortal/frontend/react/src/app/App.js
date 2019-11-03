@@ -13,7 +13,8 @@ import { Divider } from "semantic-ui-react";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
-import SearchPage from "./search/SearchPage"
+import SearchPage from "./search/SearchPage";
+import FAQ from "./FAQ.js";
 
 export default function App() {
     return (
@@ -53,6 +54,9 @@ export default function App() {
                     </Route>
                     <Route exact path={baseRoute + "/public_resource"}>
                         <PublicResource />
+                    </Route>
+                    <Route exact path={baseRoute + "/faq"}>
+                        <FAQ />
                     </Route>
                     <Route>
                         <Homepage />

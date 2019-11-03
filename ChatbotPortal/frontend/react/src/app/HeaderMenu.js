@@ -21,7 +21,7 @@ export class HeaderMenu extends Component {
         return (
             <div>
                 <Segment inverted>
-                    <Menu inverted pointing secondary size="large">
+                    <Menu inverted pointing secondary size="small">
                         <Menu.Item
                             as="a"
                             style={{ paddingLeft: 50 }}
@@ -31,7 +31,7 @@ export class HeaderMenu extends Component {
                             <Link to={baseRoute}>
                                 <Header as="h2" style={{ color: "#3075c9" }}>
                                     <Icon name="qq" />
-                                    Chatbot Portal
+                                    Chatbot Resources
                                 </Header>
                             </Link>
                         </Menu.Item>
@@ -42,6 +42,14 @@ export class HeaderMenu extends Component {
                             to={baseRoute + "/public_resource"}
                             position="right"
                             active={activeItem === "Public Resources"}
+                            onClick={this.handleItemClick}
+                        />
+
+                        <Menu.Item
+                            name="FAQ"
+                            as={Link}
+                            to={baseRoute + "/faq"}
+                            active={activeItem === "FAQ"}
                             onClick={this.handleItemClick}
                         />
 

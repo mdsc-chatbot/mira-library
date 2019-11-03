@@ -10,6 +10,7 @@
 /ChatbotPortal/node_modules/
 /ChatbotPortal/frontend/react/webpack
 package-lock.json
+/ChatbotPortal/frontend/react/package-lock.json
 
 ### Backend ###
 /ChatbotPortal/db.sqlite3
