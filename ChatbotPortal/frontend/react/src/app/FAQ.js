@@ -193,7 +193,6 @@ export class FAQ extends Component {
                     panels={panels}
                     styled
                     fluid
-                    exclusive={false}
                 />
             </div>
         );
