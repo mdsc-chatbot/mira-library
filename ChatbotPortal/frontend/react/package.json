@@ -38,7 +38,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "react-infinite-loader": "^1.0.4",
-    "js-file-download": "^0.4.8",
+    "js-file-download": "^0.4me.8",
     "react-router": "^5.1.1",
     "react-router-dom": "^5.1.1",
     "react-validation": "^3.0.7",
