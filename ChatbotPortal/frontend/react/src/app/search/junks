@@ -3,7 +3,7 @@ import axios from "axios";
 import {SecurityContext} from "../security/SecurityContext";
 import {Table} from "semantic-ui-react";
 
-class SearchBar extends Component {
+class SearchTable extends Component {
     static contextType = SecurityContext;
 
     BASE_URL = 'http://127.0.0.1:8000/authentication/';
@@ -100,7 +100,7 @@ class SearchBar extends Component {
     }
 }
 
-export default SearchBar;
+export default SearchTable;
 
 const styles = {
     outside_table: {

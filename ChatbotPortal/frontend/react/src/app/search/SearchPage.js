@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import SearchBar from "./SearchBar";
+import SearchTable from "./SearchTable";
 import SearchAdvancedOption from "./SearchAdvancedOption";
 import {Header} from "semantic-ui-react";
 import {SecurityContext} from "../security/SecurityContext";
@@ -8,7 +8,18 @@ import axios from "axios";
 class SearchPage extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            results: [],
+            is_advance_used: false
+        };
     }
+
+    handle_result_change = (results) => {
+        this.setState({
+            results,
+            is_advance_used : true
+        });
+    };
 
     static contextType = SecurityContext;
 
@@ -27,8 +38,8 @@ class SearchPage extends Component {
                 >
                     Search
                 </Header>
-                <SearchAdvancedOption />
-                <SearchBar />
+                <SearchAdvancedOption handle_result_change = {this.handle_result_change}/>
+                <SearchTable loadedData = {this.state.results} is_advance_used = {this.state.is_advance_used}/>
             </div>
         );
     }

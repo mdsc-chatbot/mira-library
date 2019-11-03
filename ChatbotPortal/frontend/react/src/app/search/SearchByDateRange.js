@@ -90,11 +90,7 @@ class SearchByDateRange extends React.Component {
                 .then(
                     response => {
                         // console.log(response.data);
-                        this.setState({
-
-                            // Setting the response in user state
-                            users: response.data,
-                        });
+                        this.props.handle_result_change(response.data);
                     },
                     error => {
                         console.log(error);

@@ -1,7 +1,15 @@
 import React, {Component} from 'react';
+import axios from "axios";
 import {SecurityContext} from "../security/SecurityContext";
-import {AutoSizer, Column, SortDirection, Table} from 'react-virtualized';
+import {AutoSizer, Column, SortDirection, Table, InfiniteLoader} from 'react-virtualized';
 import 'react-virtualized/styles.css';
+import {render} from "react-dom";
+import SearchPage from "./SearchPage";
+import LoginPage from "../authentication/LoginPage";
+import {Redirect} from "react-router";
+import {baseRoute} from "../App";
+import {Header, Icon} from "semantic-ui-react";
+import {Link} from "react-router-dom";
 
 /**
  * This component has a regular view for showing all the users by repeatedly loading data
@@ -9,7 +17,7 @@ import 'react-virtualized/styles.css';
  * react table library to fetch the data in a promise resolve manner to ensure the
  * maximum performance through providing infinite scroll to the user (admin).
  */
-class SearchBar extends Component {
+class SearchTable extends Component {
 
     // The security context
     static contextType = SecurityContext;
@@ -25,7 +33,9 @@ class SearchBar extends Component {
          */
         this.state = {
             rowHeight: 0,
-            loadedData: []
+            loadedData: [],
+            // loadedData: this.props.loadedData
+            redirectToUserProfile: false
         }
     }
 
@@ -43,17 +53,27 @@ class SearchBar extends Component {
      * @param stopIndex = the ending row to be fetched from the database
      */
     loadMoreRows = ({startIndex, stopIndex}) => {
+        // Getting rows from server; upon successful completion, every items in the
+        // result is pushed in a temporary variable which in turn is stored in the
+        // loadedData state.
         this.getRowsFromServer({startIndex, stopIndex}).then((result) => {
-            // console.log(result)
-            var tempData = this.state.loadedData;
+            let tempData = this.state.loadedData.slice();
             result.forEach(returnItem => {
                 tempData.push(returnItem)
             });
             this.setState({loadedData: tempData})
         })
-    }
+    };
 
+    /**
+     * This function calls the backend API to fetch a range of rows asynchronously
+     * @param startIndex = the starting row to be fetched from the database
+     * @param stopIndex = the ending row to be fetched from the database
+     */
     getRowsFromServer = ({startIndex, stopIndex}) => {
+        /**
+         * Creating a promise
+         */
         return new Promise((resolve, reject) => {
             const url = `http://127.0.0.1:8000/authentication/super/rows/${startIndex}/${stopIndex}/`;
 
@@ -66,23 +86,54 @@ class SearchBar extends Component {
             axios
                 .get(url, {headers: options})
                 .then(response => {
+                    // Resolving the promise
                     resolve(response.data)
                 }, error => {
-                    console.log(error)
+                    // Rejecting the promise
+                    reject(error)
                 })
         })
     };
 
+    /**
+     * This function checks if a row is already loaded in the view
+     * @param index = Index of the row that needs to be loaded
+     */
     isRowLoaded = ({index}) => {
-        // console.log(index);
-        return !!this.state.loadedData[index];
+        if (this.props.is_advance_used) {
+            return !!this.props.loadedData[index]
+        } else {
+            return !!this.state.loadedData[index]
+        }
+    };
+
+    rowCount = () => {
+        return this.props.is_advance_used ?
+            this.props.loadedData.length:
+            this.state.loadedData.length
+    };
+
+    rowGetter = ({index}) => {
+        if (this.props.is_advance_used) {
+            return this.props.loadedData[index]
+        } else {
+            return this.state.loadedData[index]
+        }
+    };
+
+    handleRowClick = ({index}) => {
+        console.log("I am clicking row");
+        this.setState({
+            redirectToUserProfile: true
+        });
+
     };
 
 
-    sortDirection = () => {
-    }
-    sortBy = () => {
-    }
+    // sortDirection = () => {
+    // }
+    // sortBy = () => {
+    // }
 
     render() {
         return (
@@ -93,15 +144,15 @@ class SearchBar extends Component {
                     isRowLoaded={this.isRowLoaded}
                     // A function that receives a start index and a stop index and should return a promise that
                     // should be resolved once the new data area loaded
-                    loadMoreRows={this.loadMoreRows}
+                    loadMoreRows={this.props.is_advance_used ? () => null : this.loadMoreRows}
+                    // loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
                     rowCount={1000000}
                 >
                     {/*onRowsRender: This function should be passed as the child's onRowsRender property,
-                    it informs loader when the user is scrolling*/
-                    } {/*registerChild: This function should be set as the child's ref property. It enables a set
-                    of rows to be refreshed once their data has finished loading*/
-                }
+                    it informs loader when the user is scrolling*/}
+                    {/*registerChild: This function should be set as the child's ref property. It enables a set
+                    of rows to be refreshed once their data has finished loading*/}
 
                     {
                         ({onRowsRendered, registerChild}) => (
@@ -122,9 +173,12 @@ class SearchBar extends Component {
                                         // The height of the rows
                                         rowHeight={40}
                                         // The number of rows (real time is expensive operation)
-                                        rowCount={this.state.loadedData.length}
+                                        // rowCount={this.props.loadedData.length}
+                                        rowCount={this.rowCount()}
                                         // A function that given the row index returns the rwo object
-                                        rowGetter={({index}) => this.state.loadedData[index]}
+                                        // rowGetter={({index}) => this.props.loadedData[index]}
+                                        rowGetter={this.rowGetter}
+                                        onRowClick={this.handleRowClick}
                                     >
                                         <Column
                                             label='Id'
@@ -187,12 +241,16 @@ class SearchBar extends Component {
                             </AutoSizer>)
                     }
                 </InfiniteLoader>
+
+                {this.state.redirectToUserProfile ? (
+                    <Redirect to={baseRoute}/>
+                ) : null}
             </div>
         );
     }
 }
 
-export default SearchBar;
+export default SearchTable;
 
 //https://medium.com/@joedister/using-react-virtualized-infiniteloader-autosizer-and-table-with-material-ui-styles-react-76d3596b6c93
 //https://www.abidibo.net/blog/2019/01/11/react-virtualized-infinite-scrolling-table-how/

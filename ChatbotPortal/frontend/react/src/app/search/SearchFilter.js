@@ -92,10 +92,7 @@ class SearchFilter extends React.Component {
              */
             axios.get(url, { headers: options }).then(
                 response => {
-                    this.setState({
-                        // Setting the response in user state
-                        users: response.data
-                    });
+                    this.props.handle_result_change(response.data);
                 },
                 error => {
                     console.log(error);
@@ -122,6 +119,7 @@ class SearchFilter extends React.Component {
         return (
             <SecurityContext.Consumer>
                 {securityContext => (
+
                     <div>
                         <Checkbox
                             label="User"
