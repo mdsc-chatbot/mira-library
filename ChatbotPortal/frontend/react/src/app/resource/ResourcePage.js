@@ -9,10 +9,8 @@ export default class ResourcePage extends React.Component {
     }
 
     render() {
-        // ResourceSubmitFrom -> ResourceList -> ResourceListItem -> ResourceDetail
         return (
             <div>
-                {/* <ResourceSubmitForm /> */}
                 <ResourceList />
             </div>
         );

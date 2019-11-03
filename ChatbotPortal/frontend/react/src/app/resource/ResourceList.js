@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { List, Header, Segment, Button, Grid, Card } from "semantic-ui-react";
+import {
+    List,
+    Header,
+    Segment,
+    Button,
+    Grid,
+    Card,
+    Container
+} from "semantic-ui-react";
 
 import ResourceListItem from "./ResourceListItem.js";
 import { SecurityContext } from "../security/SecurityContext";
@@ -21,6 +29,9 @@ export default class ResourceList extends Component {
 
     get_resources = () => {
         if (this.context.security.email) {
+            axios.defaults.headers.common = {
+                Authorization: `Bearer ${this.context.security.token}`
+            };
             axios
                 .get("http://127.0.0.1:8000/api/resource", {
                     params: {
@@ -53,9 +64,15 @@ export default class ResourceList extends Component {
         console.log(this.state.resources);
 
         return (
-            <div>
-                <Segment
-                    style={{ padding: "2em 0em" }}
+            <div
+                style={{
+                    paddingTop: 30,
+                    paddingLeft: 100,
+                    paddingRight: 100
+                }}
+            >
+                <Container
+                    style={{ paddingBottom: 50 }}
                     textAlign="center"
                     vertical
                 >
@@ -76,17 +93,13 @@ export default class ResourceList extends Component {
                     <ResourceStatistic resources={resources} />
 
                     <Link to={baseRoute + "/resource_submit"}>
-                        <Button positive size="big">
+                        <Button name="submit_a_resource" positive size="big">
                             Submit a resource
                         </Button>
                     </Link>
-                </Segment>
+                </Container>
 
-                <Card.Group
-                    itemsPerRow={3}
-                    style={{ padding: "0em 7em" }}
-                    vertical
-                >
+                <Card.Group itemsPerRow={3} vertical stackable>
                     {resources}
                 </Card.Group>
             </div>

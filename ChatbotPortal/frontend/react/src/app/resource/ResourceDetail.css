@@ -1,0 +1,20 @@
+.link:hover {
+    text-decoration: underline;
+}
+
+:global(.ui.grid > .row).smallRowPadding {
+    padding-top : 0.1rem;
+    padding-bottom : 0.1rem;
+}
+
+.dividerPadding {
+    padding: 0.5rem
+}
+
+:global(.ui.header).noMarginHeader {
+    margin : 0;
+}
+
+.greyColumn {
+    color : grey;
+}

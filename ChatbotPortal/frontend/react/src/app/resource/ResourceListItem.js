@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { List, Rating, Card, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { baseRoute } from "../App";
+import styles from "./ResourceDetail.css";
 
 export default class ResourceListItem extends Component {
     render() {
@@ -18,6 +19,11 @@ export default class ResourceListItem extends Component {
                         Submitted by {resource.created_by_user}
                     </Card.Meta>
                     <Card.Description>
+                        <a href={resource.url} target="_blank">
+                            <p className={styles.link}>
+                                Open new tab to go to url
+                            </p>
+                        </a>
                         <Rating
                             icon="star"
                             defaultRating={resource.rating}
