@@ -23,7 +23,7 @@ script:
   - python ./ChatbotPortal/manage.py migrate --run-syncdb
 
   # Run tests
-  - python ./ChatbotPortal/manage.py test resource.tests
+  - python ./ChatbotPortal/manage.py test resource.tests.tests
   - python ./ChatbotPortal/manage.py test authentication.tests
 
 
