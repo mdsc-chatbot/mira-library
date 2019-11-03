@@ -65,7 +65,7 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
-                        {this.context.security.logged_in && (
+                        {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="My reviews"
                                 as={Link}
@@ -91,6 +91,16 @@ export class HeaderMenu extends Component {
                                 as={Link}
                                 to={baseRoute + "/login"}
                                 active={activeItem === "Login"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="Search"
+                                as={Link}
+                                to={baseRoute + "/search"}
+                                active={activeItem === "Search"}
                                 onClick={this.handleItemClick}
                             />
                         )}

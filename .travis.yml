@@ -1,17 +1,31 @@
 language: python
 python:
   - "3.7"
-services:
-  - mysql
-env: 
-  -DJANGO=2.2.5 DB=mysql
+#services:
+#  - mysql
 install:
   - pip install -r requirements.txt
 before-script:
-- mysql -e 'create database test;' -u root
+- mysql -e 'drop database if exists test; create database test;' -u root
 script:
-  - python ./ChatbotPortal/manage.py makemigrations && python manage.py migrate --run-syncdb
+  # First, delete all migration scripts
+  - find . -path "*/migrations/*.py" -delete
+  - find . -path "*/migrations/*.pyc" -delete
+
+  # Build migrations in a proper order
+  # Authentication goes first, otherwise module dependencies will break
+  # Authentication migration needs to occur if overriding django's users. Reference: https://stackoverflow.com/questions/41032038/migration-fails-when-extending-django-user-model
+  - python ./ChatbotPortal/manage.py makemigrations authentication
+  - python ./ChatbotPortal/manage.py makemigrations resource
+  - python ./ChatbotPortal/manage.py makemigrations review
+  - python ./ChatbotPortal/manage.py makemigrations user_profile
+  - python ./ChatbotPortal/manage.py migrate
+  - python ./ChatbotPortal/manage.py migrate --run-syncdb
+
+  # Run tests
   - python ./ChatbotPortal/manage.py test resource.tests
   - python ./ChatbotPortal/manage.py test authentication.tests
+
+
 
 

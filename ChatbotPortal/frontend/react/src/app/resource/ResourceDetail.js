@@ -7,8 +7,10 @@ import {
     Popup,
     Card,
     Container,
-    Divider
+    Divider,
+    Label,
 } from "semantic-ui-react";
+import fileDownload from "js-file-download";
 
 import styles from "./Resource.css";
 
@@ -24,13 +26,22 @@ export default class ResourceDetail extends Component {
     componentDidMount() {
         const resourceID = this.props.match.params.resourceID;
         axios
-            .get(`http://127.0.0.1:8000/api/resource/${resourceID}`)
+            .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`)
             .then(res => {
                 this.setState({
                     resource: res.data
                 });
             });
     }
+
+    downloadAttachment = () => {
+        axios
+            .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`)
+            .then(response => {
+                const fileName = response.headers['content-disposition'].split('\"')[1];
+                fileDownload(response.data, fileName)
+            });
+    };
 
     render() {
         return (
@@ -61,17 +72,40 @@ export default class ResourceDetail extends Component {
                     </a>
 
                     {this.state.resource.rating ? (
-                        <Rating
-                            icon="star"
-                            defaultRating={this.state.resource.rating}
-                            maxRating={5}
-                            disabled
-                            size="massive"
-                        />
+                        <p>
+                            <Rating
+                                icon="star"
+                                defaultRating={this.state.resource.rating}
+                                maxRating={5}
+                                disabled
+                                size="massive"
+                            />
+                        </p>
                     ) : (
-                        <div></div>
+                        null
                     )}
-                    <Header as="h5" color="grey">
+                    {this.state.resource.tags && this.state.resource.tags.length > 0 ? (
+                        <p>
+                            <span style={{ color: "grey" }}>
+                                Tags:
+                            </span>
+                            {
+                                this.state.resource.tags.map(tag => (
+                                    <Label key={tag} size="large">{tag}</Label>
+                                ))
+                            }
+                        </p>
+
+                    ) : null}
+                    {this.state.resource.attachment ? (
+                        <Header as="h5" color="grey">
+                            <a href="#" onClick={this.downloadAttachment}>
+                                <Icon name="download" />
+                                <Header.Content>Download attachment</Header.Content>
+                            </a>
+                        </Header>
+                    ) : null}
+                    <Header as="h5" color="grey" >
                         <Icon name="comment" />
                         <Header.Content>Comments:</Header.Content>
                     </Header>

@@ -11,43 +11,46 @@ import { SecurityContextProvider } from "./security/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
+import SearchPage from "./search/SearchPage"
 
 export default function App() {
     return (
-        <div style={{ display:"flex", minHeight:"100vh", flexDirection:"column" }}>
+        <div>
             <SecurityContextProvider>
                 <HeaderMenu />
-                <div style={{ flex:1 }}>
-                    <Switch>
-                        <Route exact path={baseRoute + "/profile"}>
-                            <ProfilePage />
-                        </Route>
-                        <Route exact path={baseRoute + "/resource"}>
-                            <ResourcePage />
-                        </Route>
-                        <Route exact path={baseRoute + "/review"}>
-                            <ReviewPage />
-                        </Route>
-                        <Route exact path={baseRoute + "/login"}>
-                            <LoginPage />
-                        </Route>
-                        <Route
-                            exact
-                            path={baseRoute + "/resource/:resourceID"}
-                            component={ResourceDetail}
-                        >
-                        </Route>
-                        <Route exact path={baseRoute + "/resource_submit"}>
-                            <ResourceSubmitForm />
-                        </Route>
-                        <Route exact path={baseRoute + "/public_resource"}>
-                            <PublicResource />
-                        </Route>
-                        <Route>
-                            <Homepage />
-                        </Route>
-                    </Switch>
-                </div>
+                <Switch>
+                    <Route exact path={baseRoute + "/profile"}>
+                        <ProfilePage />
+                    </Route>
+                    <Route exact path={baseRoute + "/resource"}>
+                        <ResourcePage />
+                    </Route>
+                    <Route exact path={baseRoute + "/review"}>
+                        <ReviewPage />
+                    </Route>
+                    <Route exact path={baseRoute + "/login"}>
+                        <LoginPage />
+                    </Route>
+                    <Route exact path={baseRoute + "/search"}>
+                        <SearchPage />
+                    </Route>
+                    <Route
+                        exact
+                        path={baseRoute + "/resource/:resourceID"}
+                        component={ResourceDetail}
+                    >
+                    </Route>
+                    <Route exact path={baseRoute + "/resource_submit"}>
+                        <ResourceSubmitForm />
+                    </Route>
+                    <Route exact path={baseRoute + "/public_resource"}>
+                        <PublicResource />
+                    </Route>
+                    <Route>
+                        <Homepage />
+                    </Route>
+                </Switch>
+                <Divider />
                 <Footer />
             </SecurityContextProvider>
         </div>
