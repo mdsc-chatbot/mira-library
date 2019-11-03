@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, List } from "semantic-ui-react";
+import { Table, Header, Rating } from "semantic-ui-react";
 import { SecurityContext } from "../security/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -13,7 +13,9 @@ export default class ReviewTable extends Component {
         this.state = {
         resources: {},
         reviews: [],
-        pending: 'Completed Reviews'
+        pending: 'Completed Reviews',
+        header:'Review new resources and tags here!',
+        resourceData:{}
         };
     }
 
@@ -32,37 +34,30 @@ export default class ReviewTable extends Component {
             });
         });
     }
+
     componentDidMount() {
         this.get_resources();
         this.get_reviews();
     }
 
-    format_data = (data, approval) => {
-        // Get current logged in user
-        const reviewer = this.context.security.email
-            ? this.context.security.email
-            : "Unknown user";
-
-        const formatted_review = {
-            reviewer_user_email: reviewer,
-            approved: approval,
-            resource_url: data.url,
-            resource_id: data.id
-        };
-        return formatted_review;
-    };
 
     completedReviews = (ids, reviews) => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) === true ?(
                 console.log(r.id),
+                console.log("comment",reviews.get(r.id)[1]),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.comments}</td>
-                    <td>filler tags</td>
-                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
+                    <td>{reviews.get(r.id)[1]}</td>
+                    <td><Rating
+                                icon="star"
+                                defaultRating={reviews.get(r.id)[2]}
+                                maxRating={5}
+                                disabled
+                                size="massive"/>
+                    </td>
                     <td>
-                        {reviews.get(r.id)===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                        {reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
                     </td>
                 </tr>
             ):(<p></p>)
@@ -70,32 +65,13 @@ export default class ReviewTable extends Component {
         return resources_get
 
     }
+    
     switchView = () =>{
         if (this.state.pending === 'Completed Reviews'){
-            this.setState({pending:'Pending Reviews'});
+            this.setState({pending:'Pending Reviews',header:'View a list of your review actions here!'});
         } else {
-            this.setState({pending:'Completed Reviews'})
+            this.setState({pending:'Completed Reviews',header:'Review new resources and tags here!'})
         }
-    }
-
-    approve = (data) => {
-        const review = this.format_data(data, true);
-        console.log(review)
-        axios
-            .post("http://127.0.0.1:8000/api/review/", review)
-            .then(res => {})
-            .catch(error => console.error(error));
-        this.get_reviews();
-    };
-
-    reject = (data) => {
-        const review = this.format_data(data, false);
-        console.log(review)
-        axios
-            .post("http://127.0.0.1:8000/api/review/", review)
-            .then(res => {})
-            .catch(error => console.error(error));
-        this.get_reviews();
     }
 
     getData = (ids) =>{
@@ -104,17 +80,19 @@ export default class ReviewTable extends Component {
                 console.log(r.id),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.comments}</td>
-                    <td>filler tags</td>
-                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
                     <td>
-                        <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
-                        <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
+                        <button class="right floated ui button"><Link to={baseRoute + "/review/"+r.id}>Review</Link></button>
                     </td>
                 </tr>
             ):(<p></p>)
         ));
         return resources_get
+    }
+    pendingHeader = () =>{
+        return <tr><th>Resource</th><th></th></tr>
+    }
+    completedHeader = () =>{
+        return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
     }
 
     render() {    
@@ -128,34 +106,42 @@ export default class ReviewTable extends Component {
         reviewsI.forEach(function (item){
             ids.push(item.resource_id)
         })
-        console.log("rev",ids)
 
         var reviewsApproval = new Map();
         reviewsI.forEach(function (item){
-            reviewsApproval.set(item.resource_id, item.approved);
+            reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating]);
         })
 
         const resources = this.state.resources
-        console.log("waow",resources);
         var viewPending = true
         return (
             <div>
                 <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
-                    Reviews
-                    <button class="ui right floated button" onClick={() => this.switchView()}>{this.state.pending}</button>
-                    <Table class="ui celled table">
-                        <thead>
-                            <tr>
-                            <th>URL</th>
-                            <th>Comments</th>
-                            <th>Tags</th>
-                            <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
-                        </tbody>
-                    </Table>
+                    <div style={{ padding: "2em 0em",textAlign: "center" }}
+                        vertical>
+
+                        <Header
+                            as="h3"
+                            style={{
+                                fontSize: "2em"
+                            }}
+                            color="blue">
+                            Reviews
+                        </Header>
+
+                        <Header as="h4" color="grey">{this.state.header}</Header>
+                    </div>
+                    <button class="ui right floated button" style={{display:"block"}} onClick={() => this.switchView()}>{this.state.pending}</button>
+                    <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
+                        <Table class="ui celled table">
+                            <thead>
+                                {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
+                            </thead>
+                            <tbody>
+                                {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
         );

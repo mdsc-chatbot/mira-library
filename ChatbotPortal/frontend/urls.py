@@ -21,6 +21,7 @@ from django.urls import path, re_path
 from . import views
 urlpatterns = [
     re_path(r'^resources/(?P<path>.*)/$', views.resources, name='resources'),
+    re_path(r'^review/(?P<path>.*)/$', views.review, name='review'),
     re_path(r'^app(?P<path>.*)', views.index, name='index'),
     path('', views.redirect_index, name='redirect_index'),
 ]
