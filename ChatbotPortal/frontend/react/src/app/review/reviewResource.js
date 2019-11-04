@@ -23,7 +23,7 @@ export default class ResourceDetail extends Component {
         this.state = {
             resource: {},
             rating: 1,
-            comments: "",
+            comments: "No comments",
         };
     }
 
@@ -212,7 +212,6 @@ export default class ResourceDetail extends Component {
                                     onChange={this.handleChange}
                                     value={this.state.comments}
                                     placeholder="Enter any comments about this resource"
-                                    default="No comments"
                             />
                         </div>
                         {console.log(this.state.resource)}
