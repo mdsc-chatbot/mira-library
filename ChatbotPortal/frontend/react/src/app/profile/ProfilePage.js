@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label} from 'semantic-ui-react';
+import {Button, Container, Form, Icon, Card, Image, Segment, Label, Input} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
@@ -24,7 +24,10 @@ class ProfilePage extends Component {
             is_logged_in: false,
             is_edited: '',
             first_name: '',
-            last_name: ''
+            last_name: '',
+            profile_picture: null,
+            submissions:'',
+            points:'',
         };
     };
 
@@ -43,7 +46,10 @@ class ProfilePage extends Component {
                 is_logged_in: this.context.security.is_logged_in,
                 is_edited: false,
                 first_name: this.context.security.first_name,
-                last_name: this.context.security.last_name
+                last_name: this.context.security.last_name,
+                profile_picture: this.context.security.profile_picture,
+                submissions: this.context.security.submissions,
+                points: this.context.security.points,
             });
         }
     };
@@ -62,6 +68,15 @@ class ProfilePage extends Component {
             return newState;
         });
     };
+
+    handleImageChange = event => {
+        this.setState({
+            // [event.nativeEvent.target.name]: event.nativeEvent.target.files[0],
+            // imagePath: event.nativeEvent.target.value
+            imagePath: event.target.files[0]
+        })
+    };
+
 
     saveFunction = () => {
         alert("Your changes were saved!");
@@ -82,11 +97,21 @@ class ProfilePage extends Component {
      */
     handle_edit = (e, editedData) => {
         e.preventDefault();
+        let formData = new FormData();
+        if (this.state.imagePath) formData.append('profile_picture', this.state.imagePath);
+        formData.append('first_name', this.state.first_name);
+        formData.append('last_name', this.state.last_name);
+        // Object.values(editedData).forEach((formField) => {
+        //     if (formField[0] !== 'imagePath') {
+        //         formData.append(formField[2], formField[3]);
+        //     }
+        // });
 
         // Defining header and content-type for accessing authenticated information
         const options = {
+            'Authorization': `Bearer ${this.context.security.token}`,
+            // "Content-Type":"multipart/form-data"
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.context.security.token}`
         };
 
         /**
@@ -95,16 +120,19 @@ class ProfilePage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', editedData, {headers: options})
+            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', formData, {headers: options})
             .then(
                 response => {
+                    console.log(response.data);
                     this.setState({
                         first_name: response.data['first_name'],
                         last_name: response.data['last_name'],
+                        profile_picture:response.data['profile_picture'],
                         is_edited: true,
                     });
                     this.context.security.first_name = this.state.first_name;
                     this.context.security.last_name = this.state.last_name;
+                    this.context.security.profile_picture = this.state.profile_picture;
                     console.log(this.context.security)
                     console.log("Saved Changes")
                 },
@@ -126,7 +154,7 @@ class ProfilePage extends Component {
                         {(securityContext) => (
 
                             <Form className={styles.centeredForm} onSubmit={e => this.handle_edit(e, this.state)}>
-                                <Segment className={styles.segmentBackground}>
+                                <Segment>
                                     <Label
                                         size='big'
                                         as='h1'
@@ -136,8 +164,12 @@ class ProfilePage extends Component {
                                         ribbon>
                                     </Label>
                                     {securityContext.security.is_logged_in ?
-                                        <Card className={styles.cardBackground} fluid centered onSubmit={this.props.handle_edit}>
-                                            <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
+                                        <Card fluid centered onSubmit={this.props.handle_edit}>
+                                            {this.state.profile_picture ? (
+
+                                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} />
+                                            ) : null}
+                                            <Form.Input type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
                                             <Card.Content>
                                                 <Card.Header>
 
@@ -178,22 +210,27 @@ class ProfilePage extends Component {
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='certificate'/>
-                                                    Newbie
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
                                                     <Icon color='blue' name='pencil alternate'/>
-                                                    # Submissions = 25
+                                                    {securityContext.security.submissions}
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
                                                     <Icon color='blue' name='trophy'/>
-                                                    Points = 56
+                                                    {securityContext.security.points}
+                                                </h3>
+                                            </Card.Content>
+
+                                            <Card.Content extra>
+                                                <h3>
+                                                    <Icon color='blue' name='certificate'/>
+                                                    { securityContext.security.is_staff ? (
+                                                        'Staff'
+                                                    ) : securityContext.security.is_reviewer ? (
+                                                        'Reviewer'
+                                                    ) : 'Newbie'
+                                                    }
                                                 </h3>
                                             </Card.Content>
 

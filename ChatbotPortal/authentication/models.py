@@ -35,6 +35,12 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=False,
     )
 
+    profile_picture = models.ImageField(blank=True, null=True, upload_to='profile_pics')
+
+    submissions = models.IntegerField(blank=True, default=0)
+
+    points = models.IntegerField(blank=True, default=0)
+
     date_joined = models.DateTimeField(default=timezone.now)
 
     # Will be turned into True after email verification
@@ -60,4 +66,4 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     def __str__(self):
-        return self.email
+        return f'{self.first_name} Profile'

@@ -50,7 +50,6 @@ export default function App() {
                         <Homepage />
                     </Route>
                 </Switch>
-                <Divider />
                 <Footer />
             </SecurityContextProvider>
         </div>
