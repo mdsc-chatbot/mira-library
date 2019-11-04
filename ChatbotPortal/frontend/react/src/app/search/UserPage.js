@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label, Checkbox} from 'semantic-ui-react';
-import styles from "./ProfilePage.css";
+import {Button, Card, Checkbox, Container, Form, Icon, Image, Label, Segment} from 'semantic-ui-react';
+import styles from "../profile/ProfilePage.css";
 
-class ProfilePage extends Component {
+class UserPage extends Component {
     /**
      * This class renders the profile information
      * @type {React.Context<*>}
@@ -145,8 +145,10 @@ class ProfilePage extends Component {
                                         ribbon>
                                     </Label>
                                     {securityContext.security.is_logged_in ?
-                                        <Card className={styles.cardBackground} fluid centered onSubmit={this.props.handle_edit}>
-                                            <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
+                                        <Card className={styles.cardBackground} fluid centered
+                                              onSubmit={this.props.handle_edit}>
+                                            <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg'
+                                                   wrapped ui={true}/>
                                             <Card.Content>
                                                 <Card.Header>
 
@@ -170,7 +172,6 @@ class ProfilePage extends Component {
                                                         />
 
                                                     </Form.Group>
-
 
 
                                                 </Card.Header>
@@ -209,10 +210,10 @@ class ProfilePage extends Component {
                                             <Card.Content extra>
                                                 <Segment.Group horizontal>
                                                     <Segment color='red'>
-                                                        <Checkbox label='Staff' slider />
+                                                        <Checkbox label='Staff' slider/>
                                                     </Segment>
                                                     <Segment color='red'>
-                                                        <Checkbox label='Reviewer' slider />
+                                                        <Checkbox label='Reviewer' slider/>
                                                     </Segment>
                                                 </Segment.Group>
                                             </Card.Content>
@@ -223,7 +224,7 @@ class ProfilePage extends Component {
                                                 fluid
                                                 size='huge'
                                             >
-                                                <Icon name='delete' />Delete User
+                                                <Icon name='delete'/>Delete User
                                             </Button>
 
 
@@ -240,4 +241,4 @@ class ProfilePage extends Component {
     }
 }
 
-export default ProfilePage;
+export default UserPage;
