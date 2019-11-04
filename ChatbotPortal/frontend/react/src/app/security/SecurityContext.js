@@ -12,6 +12,7 @@ export const refreshLoadingSecurityContext = (url, setSecurity) => {
                         setSecurity(response.data);
                         // console.log(this.state.security.is_logged_in);
                     } else {
+                        response.data = {};
                         response.data['is_logged_in'] = false;
                         setSecurity(response.data);
                         // console.log(this.state.security.is_logged_in);
@@ -68,6 +69,7 @@ export class SecurityContextProvider extends React.Component {
                         this.setState({security: response.data});
                         console.log(this.state.security.is_logged_in);
                     } else {
+                        response.data = {};
                         response.data['is_logged_in'] = false;
                         this.setState({security: response.data});
                         console.log(this.state.security.is_logged_in);
