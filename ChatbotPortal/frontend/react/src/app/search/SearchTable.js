@@ -161,8 +161,8 @@ class SearchTable extends Component {
                                     <Table
                                         ref={registerChild}
                                         onRowsRendered={onRowsRendered}
-                                        sortBy={'first_name'}
-                                        sortDirection={SortDirection.ASC}
+                                        //sortBy={'first_name'}
+                                        //sortDirection={SortDirection.ASC}
                                         rowClassName='table-row'
                                         // The height of the table header
                                         headerHeight={40}
