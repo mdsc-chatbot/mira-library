@@ -28,45 +28,45 @@ class UserPage extends Component {
     };
 
     componentDidMount() {
-        /**
-         * Upon mounting the component, it checks the login state from the security context,
-         * if the login state is gone due to refresh, then the current user is retrieved,
-         * and required information is stored in the props.
-         */
-        if (!this.context.security.is_logged_in) {
-            axios
-                .get(this.BASE_AUTH_URL + 'currentuser/')
-                .then(
-                    response => {
-                        if (response.data !== '') {
-                            this.setState({
-                                first_name: response.data['first_name'],
-                                last_name: response.data['last_name'],
-                                is_logged_in: true,
-                                is_edited: false
-                            })
-                        } else {
-                            this.setState({
-                                is_logged_in: false
-                            });
-                        }
-                    },
-                    error => {
-                        console.log(error);
-                    }
-                );
-        } else {
-            /**
-             * If the context says that the user is already logged in,
-             * then set the props using the security context data
-             */
-            this.setState({
-                is_logged_in: this.context.security.is_logged_in,
-                is_edited: false,
-                first_name: this.context.security.first_name,
-                last_name: this.context.security.last_name
-            });
-        }
+        // /**
+        //  * Upon mounting the component, it checks the login state from the security context,
+        //  * if the login state is gone due to refresh, then the current user is retrieved,
+        //  * and required information is stored in the props.
+        //  */
+        // if (!this.context.security.is_logged_in) {
+        //     axios
+        //         .get(this.BASE_AUTH_URL + 'currentuser/')
+        //         .then(
+        //             response => {
+        //                 if (response.data !== '') {
+        //                     this.setState({
+        //                         first_name: response.data['first_name'],
+        //                         last_name: response.data['last_name'],
+        //                         is_logged_in: true,
+        //                         is_edited: false
+        //                     })
+        //                 } else {
+        //                     this.setState({
+        //                         is_logged_in: false
+        //                     });
+        //                 }
+        //             },
+        //             error => {
+        //                 console.log(error);
+        //             }
+        //         );
+        // } else {
+        //     /**
+        //      * If the context says that the user is already logged in,
+        //      * then set the props using the security context data
+        //      */
+        //     this.setState({
+        //         is_logged_in: this.context.security.is_logged_in,
+        //         is_edited: false,
+        //         first_name: this.context.security.first_name,
+        //         last_name: this.context.security.last_name
+        //     });
+        // }
     };
 
     /**
@@ -160,7 +160,7 @@ class UserPage extends Component {
                                                             label='First name'
                                                             name='first_name'
                                                             onChange={this.handle_change}
-                                                            value={this.state.first_name}
+                                                            value={this.props.rowData.first_name}
                                                         />
                                                         <Form.Input
                                                             className={styles.fixedInputHeight}
@@ -168,7 +168,7 @@ class UserPage extends Component {
                                                             label='Last name'
                                                             name='last_name'
                                                             onChange={this.handle_change}
-                                                            value={this.state.last_name}
+                                                            value={this.props.rowData.last_name}
                                                         />
 
                                                     </Form.Group>
@@ -182,7 +182,7 @@ class UserPage extends Component {
                                                 {/*<h3 style={{ color: 'green' }}>*/}
                                                 <h3>
                                                     <Icon color='red' name='mail'/>
-                                                    {securityContext.security.email}
+                                                    {this.props.rowData.email}
                                                 </h3>
                                             </Card.Content>
 

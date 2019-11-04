@@ -15,6 +15,7 @@ import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
 import SearchPage from "./search/SearchPage";
 import FAQ from "./FAQ.js";
+import UserPage from "./search/UserPage";
 
 export default function App() {
     return (
