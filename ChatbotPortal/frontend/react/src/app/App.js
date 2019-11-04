@@ -8,6 +8,7 @@ import reviewResource from "./review/reviewResource";
 import { ReviewPage } from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
+import LogoutPage from "./authentication/LogoutPage";
 import { SecurityContextProvider } from "./security/SecurityContext";
 import { Divider } from "semantic-ui-react";
 import Footer from "./Footer";
@@ -33,6 +34,9 @@ export default function App() {
                     </Route>
                     <Route exact path={baseRoute + "/login"}>
                         <LoginPage />
+                    </Route>
+                    <Route exact path={baseRoute + "/logout"}>
+                        <LogoutPage />
                     </Route>
                     <Route exact path={baseRoute + "/search"}>
                         <SearchPage />
