@@ -23,7 +23,7 @@ export default class ResourceDetail extends Component {
         this.state = {
             resource: {},
             rating: 1,
-            comments: ""
+            comments: "No comments",
         };
     }
 
@@ -265,11 +265,10 @@ export default class ResourceDetail extends Component {
                         >
                             <h4>Review Comments</h4>
                             <Form.TextArea
-                                name="comments"
-                                onChange={this.handleChange}
-                                value={this.state.comments}
-                                placeholder="Enter any comments about this resource"
-                                default="No comments"
+                                    name="comments"
+                                    onChange={this.handleChange}
+                                    value={this.state.comments}
+                                    placeholder="Enter any comments about this resource"
                             />
                         </div>
                         {console.log(this.state.resource)}
