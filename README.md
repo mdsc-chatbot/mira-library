@@ -19,7 +19,6 @@ If encounter 401 error, login to admin site
 
 #### React frontend (Go to ChatbotPortal/frontend/react)
 ```
-npm update
 npm install
 npm run-script build
 ```
