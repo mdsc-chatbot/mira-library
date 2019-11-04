@@ -4,14 +4,17 @@ import { Switch, Route } from "react-router-dom";
 import { ProfilePage } from "./profile";
 import ResourcePage from "./resource/ResourcePage";
 import ResourceDetail from "./resource/ResourceDetail";
+import reviewResource from "./review/reviewResource";
 import { ReviewPage } from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
+import LogoutPage from "./authentication/LogoutPage";
 import { SecurityContextProvider } from "./security/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
-import SearchPage from "./search/SearchPage"
+import SearchPage from "./search/SearchPage";
+import FAQ from "./FAQ.js";
 
 export default function App() {
     return (
@@ -31,6 +34,9 @@ export default function App() {
                     <Route exact path={baseRoute + "/login"}>
                         <LoginPage />
                     </Route>
+                    <Route exact path={baseRoute + "/logout"}>
+                        <LogoutPage />
+                    </Route>
                     <Route exact path={baseRoute + "/search"}>
                         <SearchPage />
                     </Route>
@@ -40,11 +46,20 @@ export default function App() {
                         component={ResourceDetail}
                     >
                     </Route>
+                    <Route
+                        exact
+                        path={baseRoute + "/review/:resourceID"}
+                        component={reviewResource}
+                    >
+                    </Route>
                     <Route exact path={baseRoute + "/resource_submit"}>
                         <ResourceSubmitForm />
                     </Route>
                     <Route exact path={baseRoute + "/public_resource"}>
                         <PublicResource />
+                    </Route>
+                    <Route exact path={baseRoute + "/faq"}>
+                        <FAQ />
                     </Route>
                     <Route>
                         <Homepage />

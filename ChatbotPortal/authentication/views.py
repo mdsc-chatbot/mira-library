@@ -12,6 +12,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from rest_framework import filters
 from rest_framework import permissions, status, generics
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
@@ -425,8 +426,47 @@ class SearchFilterUserView(generics.ListAPIView):
             return queryset.none()
 
 
+class TotalNumberOfUserView(generics.RetrieveAPIView):
+    """
+    GET super/total/users/
+    Getting the number of total instance of model CustomUser
+    """
+    permission_classes = (permissions.IsAdminUser,)
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request, *args, **kwargs):
+        user_count = CustomUser.objects.count()
+        content = {'user_count': user_count}
+        return Response(content)
+
+
+class RangeOfUsersView(generics.ListAPIView):
+    """
+    GET super/rows/<int:start_id>/<int:end_id>/
+    Lists users upto a certain row
+    """
+
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    serializer_class = CustomUserSerializer
+
+    def get_queryset(self):
+        """
+        This overrides the built-in get_queryset, in order to perform filtering operations.
+        :return: filtered queryset
+        """
+        start_row = int(self.kwargs['start_row'])
+        end_row = int(self.kwargs['end_row'])
+
+        # Get all the instance of the model
+        queryset = CustomUser.objects.all().order_by('id')[start_row:end_row]
+
+        return queryset
+
+
+
 """
 References:
 1. https://medium.com/swlh/searching-in-django-rest-framework-45aad62e7782
+2. https://stackoverflow.com/questions/25151586/django-rest-framework-retrieving-object-count-from-a-model
 
 """
