@@ -4,7 +4,7 @@ import { Container, Grid, Segment } from "semantic-ui-react";
 export class Footer extends Component {
     render() {
         return (
-            <div style={{position:"absolute",bottom:0,left:0,right:0}}>
+            <div>
                 <Segment vertical inverted>
                     <Grid container stackable verticalAlign="middle">
                         <Grid.Row divided>
