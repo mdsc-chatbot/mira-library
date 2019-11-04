@@ -9,3 +9,20 @@
 .textStyle {
     color: Red;
 }
+
+/*:global(.ui.segment).segmentBackground  {*/
+/*    background-color: palegreen;*/
+/*}*/
+
+/*:global(.ui.card).cardBackground {*/
+/*    background-color: lavender;*/
+/*}*/
+
+.centeredForm {
+    width: 50%;
+    left: 25%;
+}
+
+.fixedInputHeight {
+    height: 45px
+}

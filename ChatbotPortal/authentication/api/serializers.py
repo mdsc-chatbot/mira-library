@@ -23,7 +23,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'is_active',
             'is_reviewer',
             'is_staff',
-            'is_superuser'
+            'is_superuser',
+            'profile_picture',
+            'submissions',
+            'points'
         ]
 
 
@@ -67,9 +70,11 @@ class CustomUserTokenSerializer(serializers.ModelSerializer):
             'is_reviewer',
             'is_staff',
             'is_superuser',
-            'token'
+            'token',
+            'profile_picture',
+            'submissions',
+            'points'
         ]
-
 
 
 class UserUpdateSerializer(serializers.Serializer):
@@ -78,6 +83,8 @@ class UserUpdateSerializer(serializers.Serializer):
     """
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
+    profile_picture = serializers.ImageField(required=False)
+
     # password = serializers.CharField(max_length=255)
 
     def update(self, instance, validated_data):
@@ -97,3 +104,7 @@ class UserUpdateSerializer(serializers.Serializer):
         # Save the updated instance
         instance.save()
         return instance
+
+class customUserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser

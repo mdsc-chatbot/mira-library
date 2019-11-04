@@ -140,6 +140,10 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'media', 'profile_pics'),
+)
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         # Unauthenticated users will have readonly access (by default)

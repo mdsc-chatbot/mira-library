@@ -10,7 +10,6 @@ import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
 import LogoutPage from "./authentication/LogoutPage";
 import { SecurityContextProvider } from "./security/SecurityContext";
-import { Divider } from "semantic-ui-react";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
@@ -66,7 +65,6 @@ export default function App() {
                         <Homepage />
                     </Route>
                 </Switch>
-                <Divider />
                 <Footer />
             </SecurityContextProvider>
         </div>

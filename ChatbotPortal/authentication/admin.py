@@ -22,6 +22,9 @@ class CustomUserAdmin(UserAdmin):
         'is_staff',
         'is_superuser',
         'last_login',
+        'profile_picture',
+        'submissions',
+        'points'
     ]
 
     # Fields to be filtered
@@ -38,7 +41,8 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = [
         ('Login Credentials', {'fields': ['email', 'password']}),
         ('User Details',
-         {'fields': ['first_name', 'last_name', 'affiliation', 'is_active', 'date_joined', 'last_login']}),
+         {'fields': ['first_name', 'last_name', 'affiliation', 'is_active', 'date_joined', 'last_login',
+                     'profile_picture', 'submissions', 'points']}),
         ('Permissions', {'fields': ['is_reviewer', 'is_staff', 'is_superuser']}),
     ]
 
@@ -73,7 +77,11 @@ class CustomUserAdmin(UserAdmin):
                 'is_superuser',
                 'first_name',
                 'last_name',
-                'affiliation')}
+                'affiliation',
+                'profile_picture',
+                'submissions',
+                'points'
+            )}
          ),
     ]
 
