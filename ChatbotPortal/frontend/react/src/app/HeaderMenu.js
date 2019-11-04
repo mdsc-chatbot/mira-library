@@ -45,7 +45,7 @@ export class HeaderMenu extends Component {
                             onClick={this.handleItemClick}
                         />
 
-                        <Menu.Item
+                         <Menu.Item
                             name="FAQ"
                             as={Link}
                             to={baseRoute + "/faq"}
@@ -87,7 +87,7 @@ export class HeaderMenu extends Component {
                             <Menu.Item
                                 name="Logout"
                                 as={Link}
-                                to={baseRoute + "/login"}
+                                to={baseRoute + "/logout"}
                                 active={activeItem === "Logout"}
                                 onClick={this.handleItemClick}
                             />
