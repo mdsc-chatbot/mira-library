@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, List } from "semantic-ui-react";
+import { Table, Header, Rating, Dropdown } from "semantic-ui-react";
 import { SecurityContext } from "../security/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
+
 
 export default class ReviewTable extends Component {
     static contextType = SecurityContext;
@@ -11,9 +12,12 @@ export default class ReviewTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        resources: {},
+        resources: [],
         reviews: [],
-        pending: 'Completed Reviews'
+        pending: 'Completed Reviews',
+        header:'Review new resources and tags here!',
+        resourceData:{},
+        order:"newest"
         };
     }
 
@@ -32,37 +36,28 @@ export default class ReviewTable extends Component {
             });
         });
     }
+
     componentDidMount() {
         this.get_resources();
         this.get_reviews();
     }
 
-    format_data = (data, approval) => {
-        // Get current logged in user
-        const reviewer = this.context.security.email
-            ? this.context.security.email
-            : "Unknown user";
-
-        const formatted_review = {
-            reviewer_user_email: reviewer,
-            approved: approval,
-            resource_url: data.url,
-            resource_id: data.id
-        };
-        return formatted_review;
-    };
 
     completedReviews = (ids, reviews) => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) === true ?(
-                console.log(r.id),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.comments}</td>
-                    <td>filler tags</td>
-                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
+                    <td>{reviews.get(r.id)[1]}</td>
+                    <td><Rating
+                                icon="star"
+                                defaultRating={reviews.get(r.id)[2]}
+                                maxRating={5}
+                                disabled
+                                size="massive"/>
+                    </td>
                     <td>
-                        {reviews.get(r.id)===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                        {reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
                     </td>
                 </tr>
             ):(<p></p>)
@@ -70,53 +65,101 @@ export default class ReviewTable extends Component {
         return resources_get
 
     }
+    
     switchView = () =>{
         if (this.state.pending === 'Completed Reviews'){
-            this.setState({pending:'Pending Reviews'});
+            this.setState({pending:'Pending Reviews',header:'View a list of your review actions here!'});
         } else {
-            this.setState({pending:'Completed Reviews'})
+            this.setState({pending:'Completed Reviews',header:'Review new resources and tags here!'})
         }
     }
 
-    approve = (data) => {
-        const review = this.format_data(data, true);
-        console.log(review)
-        axios
-            .post("http://127.0.0.1:8000/api/review/", review)
-            .then(res => {})
-            .catch(error => console.error(error));
-        this.get_reviews();
-    };
+    handleOrder = (e, {value}) => {this.setState({ order: {value}.value})}
 
-    reject = (data) => {
-        const review = this.format_data(data, false);
-        console.log(review)
-        axios
-            .post("http://127.0.0.1:8000/api/review/", review)
-            .then(res => {})
-            .catch(error => console.error(error));
-        this.get_reviews();
-    }
+    
+    getData = (reviews,ids) =>{
+        function numRevs(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id);
+        }, 0); return numReviews}
+        function numRevsApproved(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === true);
+        }, 0); return numReviews}
+        function numRevsRejected(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === false);
+        }, 0); return numReviews}
+        function compareOldest( a, b ) {
+            if ((new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000)){
+              return -1;
+            }
+            if ( (new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000) ){
+              return 1;
+            }
+            return 0;
+          }
+          function compareNewest( a, b ) {
+            if ((new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000)){
+              return -1;
+            }
+            if ( (new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000) ){
+              return 1;
+            }
+            return 0;
+          }
+          function compareReviews( a, b) {
+              if(numRevs(a.id) < numRevs(b.id)){
+                  return -1;
+              }
+              if(numRevs(a.id) > numRevs(b.id)){
+                return 1;
+              }
+              return 0;
+          }
+          function compareTieBreak( a){
+            if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) === numRevsRejected(a.id)){
+                console.log(a.id)
+                return -1;
+            }
+            if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) !== numRevsRejected(a.id)){
+                return 0;
+            }
+            return 1;
+            //console.log(a.id,numRevsApproved(a.id))
+          }
 
-    getData = (ids) =>{
+        if (this.state.order === 'oldest'){
+            this.state.resources = this.state.resources.sort(compareOldest)
+        }else if(this.state.order === 'newest'){
+            this.state.resources = this.state.resources.sort(compareNewest)
+        }else if(this.state.order === 'least reviewed'){
+            this.state.resources = this.state.resources.sort(compareReviews)
+        }else if(this.state.order === 'tie breakers'){
+            this.state.resources = this.state.resources.sort(compareTieBreak)
+        }
+        console.log(this.state.order,this.state.resources)
+
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) !== true ?(
-                console.log(r.id),
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{r.comments}</td>
-                    <td>filler tags</td>
-                    {/*<td>{r.tags}</td> this is more complicated than just grabbing them*/}
                     <td>
-                        <button class="positive ui button" onClick={() => this.approve(r)}>Approve</button>
-                        <button class="negative ui button" onClick={() => this.reject(r)}>Reject</button>
+                        <button class="right floated ui button"><Link to={baseRoute + "/review/"+r.id}>Review</Link></button>
                     </td>
                 </tr>
             ):(<p></p>)
         ));
+        console.log(resources_get)
         return resources_get
     }
+    pendingHeader = () =>{
+        return <tr><th>Resource</th><th></th></tr>
+    }
+    completedHeader = () =>{
+        return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
+    }
 
+    sorting = (options) =>{
+        return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
+    }
     render() {    
         // Get current logged in user, take this function out of format_data and consolidate it later
         const reviewer = this.context.security.email
@@ -128,34 +171,63 @@ export default class ReviewTable extends Component {
         reviewsI.forEach(function (item){
             ids.push(item.resource_id)
         })
-        console.log("rev",ids)
 
         var reviewsApproval = new Map();
         reviewsI.forEach(function (item){
-            reviewsApproval.set(item.resource_id, item.approved);
+            reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating]);
         })
 
+        const choices= [
+            {text:'most recent', value: 'newest'},
+            {text:'oldest', value: 'oldest'},
+            {text:'least reviewed', value: 'least reviewed'},
+            {text:'tie breaker needed', value:'tie breakers'}
+          ]
+
+        const { value } = this.state.order;
         const resources = this.state.resources
-        console.log("waow",resources);
         var viewPending = true
         return (
             <div>
                 <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
-                    Reviews
-                    <button class="ui right floated button" onClick={() => this.switchView()}>{this.state.pending}</button>
-                    <Table class="ui celled table">
-                        <thead>
-                            <tr>
-                            <th>URL</th>
-                            <th>Comments</th>
-                            <th>Tags</th>
-                            <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.pending === 'Completed Reviews'?(this.getData(ids)):(this.completedReviews(ids, reviewsApproval))}
-                        </tbody>
-                    </Table>
+                    <div style={{ padding: "2em 0em",textAlign: "center" }}
+                        vertical>
+
+                        <Header
+                            as="h3"
+                            style={{
+                                fontSize: "2em"
+                            }}
+                            color="blue">
+                            Reviews
+                        </Header>
+
+                        <Header as="h4" color="grey">{this.state.header}</Header>
+                    </div>
+                    {this.state.pending === 'Completed Reviews'?
+                        <div style={{display:'inline-block'}}>
+                        <h4>Order Submissions By </h4>
+                        <Dropdown class="ui inline dropdown"
+                            name="subject"
+                            placeholder='most recent'
+                            selection 
+                            onChange={this.handleOrder}
+                            options={choices} 
+                            value={value}
+                        />
+                        </div>
+                    :null}
+                    <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button>
+                    <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
+                        <Table class="ui celled table">
+                            <thead>
+                                {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
+                            </thead>
+                            <tbody>
+                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids)):(this.completedReviews(ids, reviewsApproval))}
+                            </tbody>
+                        </Table>
+                    </div>
                 </div>
             </div>
         );

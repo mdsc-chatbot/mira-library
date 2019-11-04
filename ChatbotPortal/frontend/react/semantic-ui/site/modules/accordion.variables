@@ -1,3 +1,7 @@
 /*******************************
     User Variable Overrides
 *******************************/
+
+@styledTitleColor: black;
+@styledTitleFontWeight: normal;
+@styledTitleTransition: font-weight 0.2s ease, background 0.1s ease, color 0.1s ease;

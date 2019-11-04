@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
+import datetime
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -23,6 +23,7 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEST = False    # Set to True to run test db, rerun all migrations
 
 ALLOWED_HOSTS = []
 
@@ -36,14 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
-    'user_profile',
+
     'corsheaders',
-    'signup.apps.SignupConfig',
+    'django_filters',
+    'rest_framework',
+    'authentication',
     'frontend',
+    'user_profile',
     'resource',
     'review',
-    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +64,11 @@ ROOT_URLCONF = 'ChatbotPortal.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend/react')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'frontend/react'),
+            os.path.join(
+                BASE_DIR, 'authentication/email_manager', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,30 +86,39 @@ WSGI_APPLICATION = 'ChatbotPortal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+DATABASES_AVAILABLE = {
+    'main': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'db',
+        # 'USER': 'user',
+        # 'PASSWORD': 'password',
+        # 'HOST': '',
+        # 'PORT': '',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    'test': {
+        # Create a separate db for testing, assign itself to its own test db
+        # This is dangerous but since the test db is trival, it's ok?
+        # note: delete all objects before test
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
+        'TEST': {
+            'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3')
+        }
+    },
 }
 
-# Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
+# IMPORTANT: Change DJANGO_DATABASE_TEST to main when not testing, need rerun all migrations
+if TEST:
+    database = os.environ.get('DJANGO_DATABASE_TEST', 'test')
+else:
+    database = os.environ.get('DJANGO_DATABASE_TEST', 'main')
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+DATABASES = {
+    'default': DATABASES_AVAILABLE[database]
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -125,32 +140,48 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-        # 'rest_framework.permissions.IsAuthenticated'
-        # Add the above statement for protecting the Web App so that no outsider can access it
-        # Use tokens for it
-        # Go to ChatbotPortal\urls.py
-        # Uncomment the last path and the included directory on top
-        # Also uncomment the 'rest_framework.authtoken' from INSTALLED_APPS
-        # Uncomment user_profile/views.py file for authentication_class
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'media', 'profile_pics'),
+)
 
-        # A request must be authenticated before it is processed
-        'rest_framework.permissions.IsAuthenticated'
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ],
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        # Unauthenticated users will have readonly access (by default)
+        'rest_framework.permissions.IsAuthenticated'],
     # The authentication method the server will try when it receives a request
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
     ],
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}
 
+
+# JWT settings
+JWT_AUTH = {
+    'JWT_ENCODE_HANDLER': 'rest_framework_jwt.utils.jwt_encode_handler',
+    'JWT_DECODE_HANDLER': 'rest_framework_jwt.utils.jwt_decode_handler',
+    'JWT_PAYLOAD_HANDLER': 'rest_framework_jwt.utils.jwt_payload_handler',
+    'JWT_PAYLOAD_GET_USER_ID_HANDLER': 'rest_framework_jwt.utils.jwt_get_user_id_from_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'rest_framework_jwt.utils.jwt_response_payload_handler',
+
+    'JWT_SECRET_KEY': SECRET_KEY,
+    'JWT_GET_USER_SECRET_KEY': None,
+    'JWT_PUBLIC_KEY': None,
+    'JWT_PRIVATE_KEY': None,
+    'JWT_ALGORITHM': 'HS256',
+    'JWT_VERIFY': True,
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_LEEWAY': 0,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    'JWT_AUDIENCE': None,
+    'JWT_ISSUER': None,
+
+    'JWT_ALLOW_REFRESH': False,
+    'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_AUTH_COOKIE': None,
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -163,23 +194,19 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
 ]
 
-JWT_AUTH = {
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'ChatbotPortal.utils.my_jwt_response_handler'
-}
+# Changes the built-in user model to ours
+AUTH_USER_MODEL = 'authentication.CustomUser'
 
-AUTH_USER_MODEL = 'signup.User'  # Changes the built-in user model to ours
 CSRF_COOKIE_NAME = "csrftoken"
-AUTH_PROFILE_MODULE = 'user_profile.Profile'
 
-# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-# ACCOUNT_AUTHENTICATION_METHOD = 'email'
-#
-# ACCOUNT_EMAIL_REQUIRED = True
-# ACCOUNT_UNIQUE_EMAIL = True
-# ACCOUNT_USERNAME_REQUIRED = False
-# ACCOUNT_USER_EMAIL_FIELD = 'email'
-# ACCOUNT_LOGOUT_ON_GET = True
+# Email Authentication Settings
+# EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.mailtrap.io'
+EMAIL_HOST_USER = '8cf7d64be71b92'
+EMAIL_HOST_PASSWORD = '64d7e07ce02e61'
+EMAIL_PORT = '2525'
 
-REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "signup.serializers.CustomUserDetailsSerializer",
-}
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_HOST_USER = 'testouremials@gmail.com'
+# EMAIL_HOST_PASSWORD = 'testtheemail'
+# EMAIL_PORT = 587

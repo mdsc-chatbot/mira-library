@@ -1,6 +1,6 @@
-import json
+import json, mimetypes
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
-from .models import Tag
+from .models import Resource, Tag
 
 
 # Create your views here.
@@ -35,3 +35,13 @@ def fetch_tags(request):
     except:
         # Return empty http response if can't find tags
         return HttpResponse()
+
+# Downloads request attachment
+def download_attachment(request, resource_id):
+    resource = Resource.objects.get(pk=int(resource_id))
+
+    content_type = mimetypes.guess_type(resource.attachment.name)
+    response = HttpResponse(resource.attachment.file.read(), content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename="{}"'.format(resource.attachment.name.rsplit('/', 1)[-1])
+
+    return response

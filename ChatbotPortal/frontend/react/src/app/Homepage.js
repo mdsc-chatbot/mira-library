@@ -1,28 +1,26 @@
-import React from 'react';
-import {Container} from 'semantic-ui-react';
+import React from "react";
+import HomepageHead from "./HomepageHead";
+import HomepageContent from "./HomepageContent";
 
 export default class HomePage extends React.Component {
-	constructor(props){
-		super(props);
+    constructor(props) {
+        super(props);
 
-		this.state = {
-			counter : 0
-		};
-	}
+        this.state = {};
+    }
 
-	onButtonClick = (event) => {
-		event.preventDefault();
-		this.setState((prevState) => ({
-			counter : prevState.counter + 1
-		}));
-	};
-
-	render() {
-		return (
-			<Container>
-				<h2>Welcome to ChatbotPortal!</h2>
-				<p>This is an example page that will show the public feed in the future.</p>
-			</Container>
-		);
-	}
+    render() {
+        return (
+            <div
+                style={{
+                    paddingTop: 30,
+                    paddingLeft: 100,
+                    paddingRight: 100
+                }}
+            >
+                <HomepageHead />
+                <HomepageContent />
+            </div>
+        );
+    }
 }

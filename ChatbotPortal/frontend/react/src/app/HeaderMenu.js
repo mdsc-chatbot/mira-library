@@ -1,51 +1,122 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Menu, Header, Icon, Button, Label, Image } from "semantic-ui-react";
+import React, { Component } from "react";
+import { Menu, Header, Icon, Segment } from "semantic-ui-react";
 import { baseRoute } from "./App";
+import { Link } from "react-router-dom";
+import { SecurityContext } from "./security/SecurityContext";
 
-export default function HeaderMenu() {
-  return (
-    <Menu size="large">
-      <Link to={baseRoute}>
-        <Menu.Item as="a">
-          <Header as="h2" style={{ color: "#3075c9" }}>
-            <Icon name="qq" />
-            Chatbot Portal
-          </Header>
-        </Menu.Item>
-      </Link>
-      <Menu.Item name="home" as="a">
-        <Link to={baseRoute}>Home</Link>
-      </Menu.Item>
-      <Menu.Item name="profile" as="a">
-        <Link to={baseRoute + "/profile"}>Profile</Link>
-      </Menu.Item>
-      <Menu.Item name="resource" as="a">
-        <Link to={baseRoute + "/resource"}>Resource</Link>
-      </Menu.Item>
-      <Menu.Item name="review" as="a">
-        <Link to={baseRoute + "/review"}>Review</Link>
-      </Menu.Item>
-      <Menu.Item position="right">
-        <Button as="a">
-          <Link to={baseRoute + "/login"}>Login</Link>
-        </Button>
-        <Button as="a" style={{ marginLeft: "0.5em" }}>
-          Sign Up
-        </Button>
-      </Menu.Item>
-      <Menu.Menu position="right">
-        <Menu.Item>
-          <Label as="a" color="blue" image>
-            <Image
-              size="tiny"
-              src="https://www.iconsdb.com/icons/download/color/4AFFFF/checked-user-24.png"
-            />
-            My Self
-          </Label>
-          <Link to={baseRoute + "/profile"} />
-        </Menu.Item>
-      </Menu.Menu>
-    </Menu>
-  );
+export class HeaderMenu extends Component {
+    static contextType = SecurityContext;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {};
+    }
+
+    handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
+    render() {
+        const { activeItem } = this.state;
+
+        return (
+            <div>
+                <Segment inverted>
+                    <Menu inverted pointing secondary size="small">
+                        <Menu.Item
+                            as="a"
+                            style={{ paddingLeft: 50 }}
+                            active={activeItem === "Home"}
+                            onClick={this.handleItemClick}
+                        >
+                            <Link to={baseRoute}>
+                                <Header as="h2" style={{ color: "#3075c9" }}>
+                                    <Icon name="qq" />
+                                    Chatbot Resources
+                                </Header>
+                            </Link>
+                        </Menu.Item>
+
+                        <Menu.Item
+                            name="Public Resources"
+                            as={Link}
+                            to={baseRoute + "/public_resource"}
+                            position="right"
+                            active={activeItem === "Public Resources"}
+                            onClick={this.handleItemClick}
+                        />
+
+                         <Menu.Item
+                            name="FAQ"
+                            as={Link}
+                            to={baseRoute + "/faq"}
+                            active={activeItem === "FAQ"}
+                            onClick={this.handleItemClick}
+                        />
+
+                        {this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="My Profile"
+                                as={Link}
+                                to={baseRoute + "/profile"}
+                                active={activeItem === "My Profile"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="My resources"
+                                as={Link}
+                                to={baseRoute + "/resource"}
+                                active={activeItem === "My resources"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="My reviews"
+                                as={Link}
+                                to={baseRoute + "/review"}
+                                active={activeItem === "My reviews"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="Logout"
+                                as={Link}
+                                to={baseRoute + "/logout"}
+                                active={activeItem === "Logout"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {!this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="Login"
+                                as={Link}
+                                to={baseRoute + "/login"}
+                                active={activeItem === "Login"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
+                        {this.context.security.is_logged_in && (
+                            <Menu.Item
+                                name="Search"
+                                as={Link}
+                                to={baseRoute + "/search"}
+                                active={activeItem === "Search"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+                    </Menu>
+                </Segment>
+            </div>
+        );
+    }
 }
+
+export default HeaderMenu;
