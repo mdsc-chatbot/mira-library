@@ -184,7 +184,7 @@ class TestResourceSubmission(LiveServerTestCase):
         if test_tags:
 
             test_tags = self.driver.find_element(
-                By.XPATH, ("//div[3]/div[3]")).text
+                By.XPATH, ("//div[3]/div[4]")).text
             test_tags = test_tags.replace("Tags:\n", "")
             # print("tags", test_tags)
         else:

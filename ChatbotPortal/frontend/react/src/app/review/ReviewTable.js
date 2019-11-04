@@ -22,7 +22,12 @@ export default class ReviewTable extends Component {
     }
 
     get_resources = () => {
-        axios.get("http://127.0.0.1:8000/api/resource").then(res => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        axios.get("http://127.0.0.1:8000/api/resource", {headers: options}).then(res => {
             this.setState({
                 resources: res.data
             });
@@ -30,7 +35,12 @@ export default class ReviewTable extends Component {
     };
 
     get_reviews = () =>{
-        axios.get("http://127.0.0.1:8000/api/review").then(res => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        axios.get("http://127.0.0.1:8000/api/review", {headers: options}).then(res => {
             this.setState({
                 reviews: res.data
             });

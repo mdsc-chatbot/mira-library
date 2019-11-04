@@ -1,9 +1,14 @@
 from rest_framework import viewsets, mixins
 
 from resource.models import Resource
-from .serializers import ResourceSerializer, RetrieveResourceSerializer
+from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
+from rest_framework.generics import (
+    RetrieveUpdateAPIView
+)
+
+from rest_framework import permissions
 
 class ResourceViewSet(viewsets.ModelViewSet):
     """
@@ -20,3 +25,10 @@ class ResourceRetrieveView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = Resource.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['created_by_user']
+
+class ResourceUpdateView(RetrieveUpdateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)  
+    queryset = Resource.objects.all()
+    serializer_class = ResourceUpdateSerializer
+
+
