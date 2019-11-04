@@ -24,5 +24,10 @@ npm install
 npm run-script build
 ```
 
+# How to test (Selenium)
+Change TEST=True in settings.py
+rerun all migrations, runserver
+
+```python3 manage.py test resource.tests -v 2```
 
 
