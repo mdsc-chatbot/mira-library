@@ -8,8 +8,9 @@ import SearchPage from "./SearchPage";
 import LoginPage from "../authentication/LoginPage";
 import {Redirect} from "react-router";
 import {baseRoute} from "../App";
-import {Header, Icon} from "semantic-ui-react";
+import {Header, Icon, Image} from "semantic-ui-react";
 import {Link} from "react-router-dom";
+import UserPage from "./UserPage";
 
 /**
  * This component has a regular view for showing all the users by repeatedly loading data
@@ -35,7 +36,8 @@ class SearchTable extends Component {
             rowHeight: 0,
             loadedData: [],
             // loadedData: this.props.loadedData
-            redirectToUserProfile: false
+            redirectToUserProfile: false,
+            rowData: ''
         }
     }
 
@@ -121,10 +123,11 @@ class SearchTable extends Component {
         }
     };
 
-    handleRowClick = ({index}) => {
-        console.log("I am clicking row");
+    handleRowClick = ({index, rowData}) => {
+        console.log(rowData);
         this.setState({
-            redirectToUserProfile: true
+            redirectToUserProfile: true,
+            rowData: rowData
         });
 
     };
@@ -161,8 +164,8 @@ class SearchTable extends Component {
                                     <Table
                                         ref={registerChild}
                                         onRowsRendered={onRowsRendered}
-                                        sortBy={'first_name'}
-                                        sortDirection={SortDirection.ASC}
+                                        //sortBy={'first_name'}
+                                        //sortDirection={SortDirection.ASC}
                                         rowClassName='table-row'
                                         // The height of the table header
                                         headerHeight={40}
@@ -186,6 +189,22 @@ class SearchTable extends Component {
                                             dataKey='id'
                                             // The width of the column
                                             width={width * 0.1}
+                                        />
+                                        <Column
+                                            label='Photo'
+                                            // The key name of the row object used to retrieve the value inserted in the cell
+                                            dataKey='profile_picture'
+                                            // The width of the column
+                                            width={width * 0.1}
+                                            cellRenderer={({cellData}) => (cellData ?
+                                                (<img
+                                                    src={`/static/${cellData.split('/')[cellData.split('/').length - 1]}`}
+                                                    // style='height: 100%; width: 100%; object-fit: contain'
+                                                    width={'100%'}
+                                                    height={'100%'}
+                                                    alt={'Profile Picture'}
+                                                />)
+                                                : cellData)}
                                         />
                                         <Column
                                             label='Email'
@@ -237,13 +256,23 @@ class SearchTable extends Component {
                                             dataKey='affiliation'
                                             width={width * 0.1}
                                         />
+                                        <Column
+                                            label='Submissions'
+                                            dataKey='submissions'
+                                            width={width * 0.1}
+                                        />
+                                        <Column
+                                            label='Points'
+                                            dataKey='points'
+                                            width={width * 0.1}
+                                        />
                                     </Table>}
                             </AutoSizer>)
                     }
                 </InfiniteLoader>
 
                 {this.state.redirectToUserProfile ? (
-                    <Redirect to={baseRoute}/>
+                    <UserPage rowData={this.state.rowData}/>
                 ) : null}
             </div>
         );

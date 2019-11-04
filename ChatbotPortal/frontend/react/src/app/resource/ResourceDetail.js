@@ -124,6 +124,15 @@ export default class ResourceDetail extends Component {
                             </Grid.Column>
                         </Grid.Row>
 
+                        <Grid.Row {...gridRowProps}>
+                            <Grid.Column {...gridKeyColumnProps}>
+                                Review status:
+                            </Grid.Column>
+                            <Grid.Column {...gridValueColumnProps}>
+                                {this.state.resource.final_review}
+                            </Grid.Column>
+                        </Grid.Row>
+
                         {this.state.resource.tags &&
                         this.state.resource.tags.length > 0 ? (
                             <Grid.Row {...gridRowProps}>
