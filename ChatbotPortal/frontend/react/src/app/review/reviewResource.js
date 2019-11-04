@@ -29,8 +29,14 @@ export default class ResourceDetail extends Component {
 
     get_resource_details = () =>{
         const resourceID = this.props.match.params.resourceID;
+
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
         axios
-            .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`)
+            .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`, {headers:options})
             .then(res => {
                 this.setState({
                     resource: res.data
@@ -44,9 +50,15 @@ export default class ResourceDetail extends Component {
 
     approve = (data) => {
         const review = this.format_data(data, true);
+        console.log("HERE APRRRRRRRRRRRRRRRRRRRRRRR")
         console.log(review)
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review)
+            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
     };
@@ -54,8 +66,13 @@ export default class ResourceDetail extends Component {
     reject = (data) => {
         const review = this.format_data(data, false);
         console.log(review)
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review)
+            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
     }
@@ -87,8 +104,13 @@ export default class ResourceDetail extends Component {
     };
 
     downloadAttachment = () => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
         axios
-            .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`)
+            .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`, {headers: options})
             .then(response => {
                 const fileName = response.headers['content-disposition'].split('\"')[1];
                 fileDownload(response.data, fileName)
