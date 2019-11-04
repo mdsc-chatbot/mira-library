@@ -121,30 +121,34 @@ class SearchFilter extends React.Component {
                 {securityContext => (
 
                     <div>
-                        <Checkbox
-                            label="User"
-                            onChange={this.toggle}
-                            checked={this.state.checked_user}
-                            style={{ paddingLeft: 20 }}
-                        />
-                        <Checkbox
-                            label="Review"
-                            onChange={this.toggle}
-                            checked={this.state.checked_review}
-                            style={{ paddingLeft: 20 }}
-                        />
-                        <Checkbox
-                            label="Admin"
-                            onChange={this.toggle}
-                            checked={this.state.checked_admin}
-                            style={{ paddingLeft: 20 }}
-                        />
-                        <Checkbox
-                            label="Active"
-                            onChange={this.toggle}
-                            checked={this.state.checked_active}
-                            style={{ paddingLeft: 20 }}
-                        />
+                        <Form onSubmit={e => this.handle_search(e, this.state)}>
+                        <Grid>
+                            <Grid.Column width={6}>
+                                <Dropdown
+                                    selection
+                                    options={filter_by}
+                                    placeholder='Is Active?'
+                                    onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterBy')}
+                                />
+                            </Grid.Column>
+                            <Grid.Column width={6}>
+                                <Dropdown
+                                    selection
+                                    options={filter_value}
+                                    placeholder='Yes'
+                                    onChange={(e, {value}) => this.handle_change_dropdown(value, 'filterValue')}
+                                />
+                            </Grid.Column>
+
+                            {securityContext.security.is_logged_in ? (
+                                <Button
+                                    color="blue"
+                                    fluid size="large">
+                                    Search
+                                </Button>
+                            ) : null}
+                        </Grid>
+                    </Form>
                     </div>
                 )}
             </SecurityContext.Consumer>

@@ -3,6 +3,8 @@ import axios from "axios";
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import {SecurityContext} from '../security/SecurityContext';
+import {Redirect} from "react-router";
+import {baseRoute} from "../App";
 
 
 class LoginPage extends Component {
@@ -136,11 +138,9 @@ class LoginPage extends Component {
                                 />
                             ) : null
                         }
-                        <h3>
-                            {securityContext.security.is_logged_in
-                                ? `Hello, ${securityContext.security.id}`
-                                : 'Please Log In'}
-                        </h3>
+                        {securityContext.security.is_logged_in ? (
+                            <Redirect to={baseRoute}/>
+                        ) : null}
                     </div>
                 )}
             </SecurityContext.Consumer>

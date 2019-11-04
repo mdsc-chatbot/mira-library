@@ -166,7 +166,6 @@ class ProfilePage extends Component {
                                     {securityContext.security.is_logged_in ?
                                         <Card fluid centered onSubmit={this.props.handle_edit}>
                                             {this.state.profile_picture ? (
-
                                                 <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} />
                                             ) : null}
                                             <Form.Input type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>

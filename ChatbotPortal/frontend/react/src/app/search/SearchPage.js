@@ -4,6 +4,7 @@ import SearchAdvancedOption from "./SearchAdvancedOption";
 import {Header} from "semantic-ui-react";
 import {SecurityContext} from "../security/SecurityContext";
 import axios from "axios";
+import SearchByAnything from "./SearchByAnything";
 
 class SearchPage extends Component {
     constructor(props) {
@@ -38,6 +39,7 @@ class SearchPage extends Component {
                 >
                     Search
                 </Header>
+                <SearchByAnything handle_result_change = {this.handle_result_change}/>
                 <SearchAdvancedOption handle_result_change = {this.handle_result_change}/>
                 <SearchTable loadedData = {this.state.results} is_advance_used = {this.state.is_advance_used}/>
             </div>

@@ -103,7 +103,7 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
-                        {this.context.security.is_logged_in && (
+                        {this.context.security.is_logged_in && this.context.security.is_staff && (
                             <Menu.Item
                                 name="Search"
                                 as={Link}
