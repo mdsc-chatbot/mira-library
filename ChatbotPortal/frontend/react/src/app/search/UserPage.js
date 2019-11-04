@@ -147,8 +147,10 @@ class UserPage extends Component {
                                     {securityContext.security.is_logged_in ?
                                         <Card className={styles.cardBackground} fluid centered
                                               onSubmit={this.props.handle_edit}>
-                                            <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg'
+                                            {this.props.rowData.profile_picture ?
+                                                <Image src={`/static/${this.props.rowData.profile_picture.split('/')[this.props.rowData.profile_picture.split('/').length - 1]}`}
                                                    wrapped ui={true}/>
+                                                : null}
                                             <Card.Content>
                                                 <Card.Header>
 
