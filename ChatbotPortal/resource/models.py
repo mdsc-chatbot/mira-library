@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 from .validators import validate_file_size
 from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator
 
+
 class ResourceManager(models.Manager):
     def create(self, **obj_data):
         try:
@@ -32,6 +33,7 @@ class Tag(models.Model):
     name = models.CharField(max_length=100)
     approved = models.BooleanField(default=False)
 
+
 class Resource(models.Model):
 
     title = models.TextField()
@@ -40,7 +42,8 @@ class Resource(models.Model):
         validators=[MaxValueValidator(5), MinValueValidator(1)])
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
-    attachment = models.FileField(blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
+    attachment = models.FileField(
+        blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 
     created_by_user = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -52,5 +55,8 @@ class Resource(models.Model):
     score = models.DecimalField(
         max_digits=10, decimal_places=1, blank=True, null=True)
 
-    objects = ResourceManager()
+    review_score = models.IntegerField(default=0)
+    number_of_reviews = models.IntegerField(default=0)
+    final_review = models.CharField(max_length=50, default="pending")
 
+    objects = ResourceManager()
