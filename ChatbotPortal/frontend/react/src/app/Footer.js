@@ -11,7 +11,7 @@ export class Footer extends Component {
                             <Grid.Column>About </Grid.Column>
                             <Grid.Column> Contact </Grid.Column>
                         </Grid.Row>
-                        <Grid.Row>© 2019 Powered by Chatbot resources</Grid.Row>
+                        <Grid.Row>© 2019 Powered by Chatbot Resources</Grid.Row>
                     </Grid>
                 </Segment>
             </div>

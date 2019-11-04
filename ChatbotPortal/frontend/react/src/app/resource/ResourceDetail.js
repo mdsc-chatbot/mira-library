@@ -77,7 +77,7 @@ export default class ResourceDetail extends Component {
                                 <div>
                                     <span>
                                         <Icon name="globe" />
-                                        <Header.Content>
+                                        <Header.Content id="title_header">
                                             {this.state.resource.title}
                                         </Header.Content>
                                     </span>
@@ -178,7 +178,9 @@ export default class ResourceDetail extends Component {
                         <Icon name="comment" />
                         <Header.Content>Comment:</Header.Content>
                     </Header>
-                    <p>{this.state.resource.comments}</p>
+                    <p id="comments" style={{ color: "grey", marginTop: -10 }}>
+                        {this.state.resource.comments}
+                    </p>
                 </Container>
             </div>
         );

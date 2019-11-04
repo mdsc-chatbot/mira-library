@@ -30,8 +30,8 @@ export default class ResourceList extends Component {
     get_resources = () => {
         if (this.context.security.email) {
             axios.defaults.headers.common = {
-                 Authorization: `Bearer ${this.context.security.token}`
-             };
+                Authorization: `Bearer ${this.context.security.token}`
+            };
             axios
                 .get("http://127.0.0.1:8000/api/resource", {
                     params: {
@@ -93,7 +93,7 @@ export default class ResourceList extends Component {
                     <ResourceStatistic resources={resources} />
 
                     <Link to={baseRoute + "/resource_submit"}>
-                        <Button positive size="big">
+                        <Button name="submit_a_resource" positive size="big">
                             Submit a resource
                         </Button>
                     </Link>
