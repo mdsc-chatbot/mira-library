@@ -28,7 +28,8 @@ class SearchTable extends Component {
         super(props);
 
         /**
-         * The state of the component
+         * This is the state of the component
+         * @type {{redirectToUserProfile: boolean, rowData: string, loadedData: []}}
          */
         this.state = {
             loadedData: [],
@@ -54,13 +55,19 @@ class SearchTable extends Component {
         // Getting rows from server; upon successful completion, every items in the
         // result is pushed in a temporary variable which in turn is stored in the
         // loadedData state.
-        this.getRowsFromServer({startIndex, stopIndex}).then((result) => {
-            let tempData = this.state.loadedData.slice();
-            result.forEach(returnItem => {
-                tempData.push(returnItem)
-            });
-            this.setState({loadedData: tempData})
-        })
+        this.getRowsFromServer({startIndex, stopIndex})
+            .then((result) => {
+                // state and props should be immutable in react principles,
+                // the slice function just creates a copy of the state loadedData
+                // instead of passing it by reference, so that we can alter the
+                // variable without violating the react principles
+                let tempData = this.state.loadedData.slice();
+                result.forEach(returnItem => {
+                    tempData.push(returnItem)
+                });
+                // Now change the state properly using react principle of setState
+                this.setState({loadedData: tempData})
+            })
     };
 
     /**
@@ -70,7 +77,7 @@ class SearchTable extends Component {
      */
     getRowsFromServer = ({startIndex, stopIndex}) => {
         /**
-         * Creating a promise
+         * Creating a promise to perform asynchronous operation
          */
         return new Promise((resolve, reject) => {
             const url = `http://127.0.0.1:8000/authentication/super/rows/${startIndex}/${stopIndex}/`;
@@ -98,6 +105,8 @@ class SearchTable extends Component {
      * @param index = Index of the row that needs to be loaded
      */
     isRowLoaded = ({index}) => {
+        // If advanced feature is used, then check if props loadedData row is loaded or not,
+        // otherwise check if state loadedData is loaded or not
         if (this.props.is_advance_used) {
             return !!this.props.loadedData[index]
         } else {
@@ -105,13 +114,24 @@ class SearchTable extends Component {
         }
     };
 
+    /**
+     * This function count the number of rows by getting the length of the loadedData
+     */
     rowCount = () => {
+        // If advanced feature is used, then get the props loadedData length,
+        // Otherwise use the state loadedData length
         return this.props.is_advance_used ?
             this.props.loadedData.length :
             this.state.loadedData.length
     };
 
+    /**
+     * This function gets the row from the loadedData
+     * @param index = The position of row to be fetched
+     */
     rowGetter = ({index}) => {
+        // If advanced feature is used, then get the row from the props loadedData,
+        // Otherwise, get it from the state loadedData
         if (this.props.is_advance_used) {
             return this.props.loadedData[index]
         } else {
@@ -119,22 +139,33 @@ class SearchTable extends Component {
         }
     };
 
-    handleRowClick = ({index, rowData}) => {
-        console.log(rowData);
+    /**
+     * This function handles the events after clicking a row on the table
+     * @param index = The position of row on the table
+     * @param rowData = The data that is stored in the row by key:value pair
+     */
+    handleRowClick = ({rowData}) => {
         this.setState({
             redirectToUserProfile: true,
             rowData: rowData
         });
-
     };
 
-
+    /**
+     * This function gets back to the table from the modal after clicking the dimmed region.
+     */
     modalClose = () => {
         this.setState({
             redirectToUserProfile: false
-        })
+        });
+
+        // Reloading the page after modal closes
+        // window.location.reload();
     };
 
+    /**
+     * This function renders the infinite loader containing table.
+     */
     render() {
         return (
             <div className="container">
@@ -173,11 +204,10 @@ class SearchTable extends Component {
                                         // The height of the rows
                                         rowHeight={40}
                                         // The number of rows (real time is expensive operation)
-                                        // rowCount={this.props.loadedData.length}
                                         rowCount={this.rowCount()}
                                         // A function that given the row index returns the rwo object
-                                        // rowGetter={({index}) => this.props.loadedData[index]}
                                         rowGetter={this.rowGetter}
+                                        // Triggers the modal after clicking the a row
                                         onRowClick={this.handleRowClick}
                                     >
                                         <Column
@@ -268,8 +298,11 @@ class SearchTable extends Component {
                     }
                 </InfiniteLoader>
 
-
-                <Modal open={this.state.redirectToUserProfile} onClose={this.modalClose}>
+                {/* The modal to be shown for user profile */}
+                <Modal
+                    open={this.state.redirectToUserProfile}
+                    onClose={this.modalClose}
+                >
                     <Modal.Content>
                         <UserPage rowData={this.state.rowData}/>
                     </Modal.Content>
