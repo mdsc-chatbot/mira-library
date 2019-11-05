@@ -369,7 +369,7 @@ class SearchByAnythingView(generics.ListAPIView):
     GET uper/search/by_anything/
     Lists all users based on a search string (not case sensitive)
     """
-    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    permission_classes = (permissions.AllowAny,)  # Only admin can perform this operation
 
     # Get all the instance of the model
     queryset = CustomUser.objects.all()
@@ -387,6 +387,8 @@ class SearchByAnythingView(generics.ListAPIView):
         'first_name',
         'last_name',
         'affiliation',
+        'submissions',
+        'points',
     ]
 
 
@@ -460,7 +462,6 @@ class RangeOfUsersView(generics.ListAPIView):
         queryset = CustomUser.objects.all().order_by('id')[start_row:end_row]
 
         return queryset
-
 
 
 """
