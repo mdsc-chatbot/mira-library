@@ -1,17 +1,10 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from "../security/SecurityContext";
-import {AutoSizer, Column, SortDirection, Table, InfiniteLoader} from 'react-virtualized';
+import {AutoSizer, Column, InfiniteLoader, Table} from 'react-virtualized';
 import 'react-virtualized/styles.css';
-import {render} from "react-dom";
-import SearchPage from "./SearchPage";
-import LoginPage from "../authentication/LoginPage";
-import {Redirect} from "react-router";
-import {baseRoute} from "../App";
-import {Header, Icon, Image} from "semantic-ui-react";
-import {Link} from "react-router-dom";
+import {Modal} from "semantic-ui-react";
 import UserPage from "./UserPage";
-import { Modal } from 'semantic-ui-react'
 
 
 /**
@@ -27,7 +20,10 @@ class SearchTable extends Component {
 
     BASE_URL = 'http://127.0.0.1:8000/authentication/';
 
-
+    /**
+     * This is the constructor that initializes the state
+     * @param props : properties passed from the parent component
+     */
     constructor(props) {
         super(props);
 
@@ -35,12 +31,9 @@ class SearchTable extends Component {
          * The state of the component
          */
         this.state = {
-            rowHeight: 0,
             loadedData: [],
-            // loadedData: this.props.loadedData
-            redirectToUserProfile: false,
             rowData: '',
-            modal_open: true,
+            redirectToUserProfile: false,
         }
     }
 
@@ -114,7 +107,7 @@ class SearchTable extends Component {
 
     rowCount = () => {
         return this.props.is_advance_used ?
-            this.props.loadedData.length:
+            this.props.loadedData.length :
             this.state.loadedData.length
     };
 
@@ -136,12 +129,12 @@ class SearchTable extends Component {
     };
 
 
-    // sortDirection = () => {
-    // }
-    // sortBy = () => {
-    // }
+    modalClose = () => {
+        this.setState({
+            redirectToUserProfile: false
+        })
+    };
 
-    close_modal = ()=> this.setState({modal_open:false})
     render() {
         return (
             <div className="container">
@@ -275,13 +268,12 @@ class SearchTable extends Component {
                     }
                 </InfiniteLoader>
 
-                {this.state.redirectToUserProfile ? (
-                    <Modal open={this.state.modal_open} onClose={this.close_modal}>
-                        <Modal.Content>
-                    <UserPage rowData={this.state.rowData}/>
-                        </Modal.Content>
-                    </Modal>
-                ) : null}
+
+                <Modal open={this.state.redirectToUserProfile} onClose={this.modalClose}>
+                    <Modal.Content>
+                        <UserPage rowData={this.state.rowData}/>
+                    </Modal.Content>
+                </Modal>
             </div>
         );
     }
