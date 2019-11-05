@@ -84,6 +84,9 @@ class UserUpdateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
     profile_picture = serializers.ImageField(required=False)
+    is_active = serializers.BooleanField(required=False)
+    is_reviewer = serializers.BooleanField(required=False)
+    is_staff = serializers.BooleanField(required=False)
 
     # password = serializers.CharField(max_length=255)
 

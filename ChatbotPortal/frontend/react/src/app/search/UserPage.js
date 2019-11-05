@@ -20,53 +20,28 @@ class UserPage extends Component {
          */
         super(props);
         this.state = {
-            is_logged_in: '',
-            is_edited: '',
+            id: '',
             first_name: '',
-            last_name: ''
+            last_name: '',
+            email: '',
+            is_active: '',
+            is_reviewer: '',
+            is_staff: '',
+            // profile_picture: ''
         };
     };
 
     componentDidMount() {
-        // /**
-        //  * Upon mounting the component, it checks the login state from the security context,
-        //  * if the login state is gone due to refresh, then the current user is retrieved,
-        //  * and required information is stored in the props.
-        //  */
-        // if (!this.context.security.is_logged_in) {
-        //     axios
-        //         .get(this.BASE_AUTH_URL + 'currentuser/')
-        //         .then(
-        //             response => {
-        //                 if (response.data !== '') {
-        //                     this.setState({
-        //                         first_name: response.data['first_name'],
-        //                         last_name: response.data['last_name'],
-        //                         is_logged_in: true,
-        //                         is_edited: false
-        //                     })
-        //                 } else {
-        //                     this.setState({
-        //                         is_logged_in: false
-        //                     });
-        //                 }
-        //             },
-        //             error => {
-        //                 console.log(error);
-        //             }
-        //         );
-        // } else {
-        //     /**
-        //      * If the context says that the user is already logged in,
-        //      * then set the props using the security context data
-        //      */
-        //     this.setState({
-        //         is_logged_in: this.context.security.is_logged_in,
-        //         is_edited: false,
-        //         first_name: this.context.security.first_name,
-        //         last_name: this.context.security.last_name
-        //     });
-        // }
+        this.setState({
+            id: this.props.rowData.id,
+            first_name: this.props.rowData.first_name,
+            last_name: this.props.rowData.last_name,
+            email: this.props.rowData.email,
+            is_active: this.props.rowData.is_active,
+            is_reviewer: this.props.rowData.is_reviewer,
+            is_staff: this.props.rowData.is_staff,
+            // profile_picture: this.props.rowData.profile_picture
+        })
     };
 
     /**
@@ -112,15 +87,56 @@ class UserPage extends Component {
                         last_name: response.data['last_name'],
                         is_edited: true,
                     });
-                    this.context.security.first_name = this.state.first_name;
-                    this.context.security.last_name = this.state.last_name;
-                    console.log(this.context.security)
-                    console.log("Saved Changes")
                 },
                 error => {
                     console.log(error);
                 }
             );
+    };
+
+    /**
+     * This function handles the delete operation
+     * @param e : event
+     */
+    handle_delete = (e) => {
+        e.preventDefault();
+
+        // Defining header and content-type for accessing authenticated information
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+
+        /**
+         * Perform a delete request for deleting the user.
+         * Upon successful response, returns 204 not found.
+         * Otherwise, send an error is thrown."
+         */
+        axios
+            .delete(`http://127.0.0.1:8000/authentication/auth/delete/${this.state.id}/`, {headers: options})
+            .then(
+                response => {
+                    console.log(response.status)
+                },
+                error => {
+                    console.log(error);
+                }
+            );
+
+    };
+
+    /**
+     * This function handles the checkbox change options, and set the state accordingly
+     * @param e : event
+     * @param name : name of the checkbox field
+     * @param value : value of the checkbox field
+     */
+    handle_toggle = (e, {name, value}) => {
+        this.setState(prevState => {
+            const newState = {...prevState};
+            newState[name] = !value;
+            return newState;
+        });
     };
 
     /**
@@ -131,112 +147,133 @@ class UserPage extends Component {
         return (
             <React.Fragment>
                 <Container>
-                    <SecurityContext.Consumer>
-                        {(securityContext) => (
+                    <Form className={styles.centeredForm}>
+                        <Segment className={styles.segmentBackground}>
+                            <Label
+                                size='big'
+                                as='h1'
+                                icon='user'
+                                color='red'
+                                content='Sample Profile'
+                                ribbon>
+                            </Label>
+                            <Card className={styles.cardBackground}
+                                  fluid
+                                  centered
+                            >
 
-                            <Form className={styles.centeredForm} onSubmit={e => this.handle_edit(e, this.state)}>
-                                <Segment className={styles.segmentBackground}>
-                                    <Label
-                                        size='big'
-                                        as='h1'
-                                        icon='user'
-                                        color='red'
-                                        content='Sample Profile'
-                                        ribbon>
-                                    </Label>
-                                    {securityContext.security.is_logged_in ?
-                                        <Card className={styles.cardBackground} fluid centered
-                                              onSubmit={this.props.handle_edit}>
-                                            {this.props.rowData.profile_picture ?
-                                                <Image src={`/static/${this.props.rowData.profile_picture.split('/')[this.props.rowData.profile_picture.split('/').length - 1]}`}
-                                                   wrapped ui={true}/>
-                                                : null}
-                                            <Card.Content>
-                                                <Card.Header>
+                                {this.props.rowData.profile_picture ?
+                                    <Image
+                                        src={`/static/${this.props.rowData.profile_picture.split('/')[this.props.rowData.profile_picture.split('/').length - 1]}`}
+                                        wrapped ui={true}
+                                    />
+                                    : null}
 
-                                                    <Form.Group widths='equal'>
-
-                                                        <Form.Input
-                                                            className={styles.fixedInputHeight}
-                                                            fluid
-                                                            label='First name'
-                                                            name='first_name'
-                                                            onChange={this.handle_change}
-                                                            value={this.props.rowData.first_name}
-                                                        />
-                                                        <Form.Input
-                                                            className={styles.fixedInputHeight}
-                                                            fluid
-                                                            label='Last name'
-                                                            name='last_name'
-                                                            onChange={this.handle_change}
-                                                            value={this.props.rowData.last_name}
-                                                        />
-
-                                                    </Form.Group>
-
-
-                                                </Card.Header>
-                                            </Card.Content>
-
-
-                                            <Card.Content extra>
-                                                {/*<h3 style={{ color: 'green' }}>*/}
-                                                <h3>
-                                                    <Icon color='red' name='mail'/>
-                                                    {this.props.rowData.email}
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
-                                                    <Icon color='red' name='certificate'/>
-                                                    Newbie
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
-                                                    <Icon color='red' name='pencil alternate'/>
-                                                    # Submissions = 25
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
-                                                    <Icon color='red' name='trophy'/>
-                                                    Points = 56
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <Segment.Group horizontal>
-                                                    <Segment color='red'>
-                                                        <Checkbox label='Staff' slider/>
-                                                    </Segment>
-                                                    <Segment color='red'>
-                                                        <Checkbox label='Reviewer' slider/>
-                                                    </Segment>
-                                                </Segment.Group>
-                                            </Card.Content>
-
-
-                                            <Button
-                                                color='red'
+                                <Card.Content>
+                                    <Card.Header>
+                                        <Form.Group widths='equal'>
+                                            <Form.Input
+                                                className={styles.fixedInputHeight}
                                                 fluid
-                                                size='huge'
-                                            >
-                                                <Icon name='delete'/>Delete User
-                                            </Button>
+                                                label='First name'
+                                                name='first_name'
+                                                onChange={this.handle_change}
+                                                value={this.state.first_name}
+                                            />
+                                            <Form.Input
+                                                className={styles.fixedInputHeight}
+                                                fluid
+                                                label='Last name'
+                                                name='last_name'
+                                                onChange={this.handle_change}
+                                                value={this.state.last_name}
+                                            />
+                                        </Form.Group>
+                                    </Card.Header>
+                                </Card.Content>
 
+                                <Card.Content extra>
+                                    <h3>
+                                        <Icon color='red' name='mail'/>
+                                        {this.state.email}
+                                    </h3>
+                                </Card.Content>
 
-                                        </Card>
-                                        : null}
-                                </Segment>
-                            </Form>
+                                <Card.Content extra>
+                                    <h3>
+                                        <Icon color='red' name='certificate'/>
+                                        Newbie
+                                    </h3>
+                                </Card.Content>
 
-                        )}
-                    </SecurityContext.Consumer>
+                                <Card.Content extra>
+                                    <h3>
+                                        <Icon color='red' name='pencil alternate'/>
+                                        # Submissions = 25
+                                    </h3>
+                                </Card.Content>
+
+                                <Card.Content extra>
+                                    <h3>
+                                        <Icon color='red' name='trophy'/>
+                                        Points = 56
+                                    </h3>
+                                </Card.Content>
+
+                                <Card.Content extra>
+                                    <Segment.Group horizontal>
+                                        <Segment color='red'>
+                                            <Checkbox
+                                                checked={this.state.is_active}
+                                                label='Active'
+                                                name='is_active'
+                                                value={this.state.is_active}
+                                                onChange={this.handle_toggle}
+                                                slider
+                                            />
+                                        </Segment>
+                                        <Segment color='red'>
+                                            <Checkbox
+                                                checked={this.state.is_reviewer}
+                                                label='Reviewer'
+                                                name='is_reviewer'
+                                                value={this.state.is_reviewer}
+                                                onChange={this.handle_toggle}
+                                                slider
+                                            />
+                                        </Segment>
+                                        <Segment color='red'>
+                                            <Checkbox
+                                                checked={this.state.is_staff}
+                                                label='Staff'
+                                                name='is_staff'
+                                                value={this.state.is_staff}
+                                                onChange={this.handle_toggle}
+                                                slider
+                                            />
+                                        </Segment>
+                                    </Segment.Group>
+                                </Card.Content>
+
+                                <Button
+                                    color='green'
+                                    fluid
+                                    size='huge'
+                                    onClick={e => this.handle_edit(e, this.state)}
+                                >
+                                    <Icon name='save'/>Save
+                                </Button>
+                                <Button
+                                    color='red'
+                                    fluid
+                                    size='huge'
+                                    onClick={e => this.handle_delete(e)}
+                                >
+                                    <Icon name='delete'/>Delete User
+                                </Button>
+                            </Card>
+                        </Segment>
+                    </Form>
                 </Container>
             </React.Fragment>
         );

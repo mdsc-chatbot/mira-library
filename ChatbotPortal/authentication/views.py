@@ -158,8 +158,7 @@ class DeleteUserView(generics.DestroyAPIView):
         :return: Response of serialized data or status
         """
         try:
-            pk = request.data.get('id', )  # getting the ID of the user to be deleted
-            instance = CustomUser.objects.get(id=pk)  # getting the User from the database
+            instance = CustomUser.objects.get(id=kwargs['pk'])  # getting the User from the database
             instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -11,6 +11,8 @@ import {baseRoute} from "../App";
 import {Header, Icon, Image} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import UserPage from "./UserPage";
+import { Modal } from 'semantic-ui-react'
+
 
 /**
  * This component has a regular view for showing all the users by repeatedly loading data
@@ -37,7 +39,8 @@ class SearchTable extends Component {
             loadedData: [],
             // loadedData: this.props.loadedData
             redirectToUserProfile: false,
-            rowData: ''
+            rowData: '',
+            modal_open: true,
         }
     }
 
@@ -138,6 +141,7 @@ class SearchTable extends Component {
     // sortBy = () => {
     // }
 
+    close_modal = ()=> this.setState({modal_open:false})
     render() {
         return (
             <div className="container">
@@ -188,14 +192,14 @@ class SearchTable extends Component {
                                             // The key name of the row object used to retrieve the value inserted in the cell
                                             dataKey='id'
                                             // The width of the column
-                                            width={width * 0.1}
+                                            width={width * 0.02}
                                         />
                                         <Column
                                             label='Photo'
                                             // The key name of the row object used to retrieve the value inserted in the cell
                                             dataKey='profile_picture'
                                             // The width of the column
-                                            width={width * 0.1}
+                                            width={width * 0.05}
                                             cellRenderer={({cellData}) => (cellData ?
                                                 (<img
                                                     src={`/static/${cellData.split('/')[cellData.split('/').length - 1]}`}
@@ -209,7 +213,7 @@ class SearchTable extends Component {
                                         <Column
                                             label='Email'
                                             dataKey='email'
-                                            width={width * 0.1}
+                                            width={width * 0.3}
                                         />
                                         <Column
                                             label='First Name'
@@ -234,37 +238,37 @@ class SearchTable extends Component {
                                         <Column
                                             label='Activated'
                                             dataKey='is_active'
-                                            width={width * 0.1}
+                                            width={width * 0.05}
                                         />
                                         <Column
                                             label='Reviewer'
                                             dataKey='is_reviewer'
-                                            width={width * 0.1}
+                                            width={width * 0.05}
                                         />
                                         <Column
                                             label='Staff'
                                             dataKey='is_staff'
-                                            width={width * 0.1}
+                                            width={0}
                                         />
                                         <Column
                                             label='Admin'
                                             dataKey='is_superuser'
-                                            width={width * 0.1}
+                                            width={0}
                                         />
                                         <Column
                                             label='Affiliation'
                                             dataKey='affiliation'
-                                            width={width * 0.1}
+                                            width={width * 0.5}
                                         />
                                         <Column
                                             label='Submissions'
                                             dataKey='submissions'
-                                            width={width * 0.1}
+                                            width={0}
                                         />
                                         <Column
                                             label='Points'
                                             dataKey='points'
-                                            width={width * 0.1}
+                                            width={0}
                                         />
                                     </Table>}
                             </AutoSizer>)
@@ -272,7 +276,11 @@ class SearchTable extends Component {
                 </InfiniteLoader>
 
                 {this.state.redirectToUserProfile ? (
+                    <Modal open={this.state.modal_open} onClose={this.close_modal}>
+                        <Modal.Content>
                     <UserPage rowData={this.state.rowData}/>
+                        </Modal.Content>
+                    </Modal>
                 ) : null}
             </div>
         );
