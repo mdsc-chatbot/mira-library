@@ -210,14 +210,14 @@ class ProfilePage extends Component {
                                             <Card.Content extra>
                                                 <h3>
                                                     <Icon color='blue' name='pencil alternate'/>
-                                                    {securityContext.security.submissions}
+                                                    # of Submissions = {securityContext.security.submissions}
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
                                                     <Icon color='blue' name='trophy'/>
-                                                    {securityContext.security.points}
+                                                    Points = {securityContext.security.points}
                                                 </h3>
                                             </Card.Content>
 

@@ -68,7 +68,8 @@ export default class ResourceList extends Component {
                 style={{
                     paddingTop: 30,
                     paddingLeft: 100,
-                    paddingRight: 100
+                    paddingRight: 100,
+                    paddingBottom: 30,
                 }}
             >
                 <Container

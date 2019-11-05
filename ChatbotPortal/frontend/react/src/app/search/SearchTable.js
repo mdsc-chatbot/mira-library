@@ -8,7 +8,7 @@ import SearchPage from "./SearchPage";
 import LoginPage from "../authentication/LoginPage";
 import {Redirect} from "react-router";
 import {baseRoute} from "../App";
-import {Header, Icon, Image} from "semantic-ui-react";
+import {Header, Icon, Image, Modal} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import UserPage from "./UserPage";
 
@@ -271,9 +271,19 @@ class SearchTable extends Component {
                     }
                 </InfiniteLoader>
 
-                {this.state.redirectToUserProfile ? (
-                    <UserPage rowData={this.state.rowData}/>
-                ) : null}
+                {/*{this.state.redirectToUserProfile ? (*/}
+                {/*    <Modal open={!!redirectToUserProfile}>*/}
+                {/*        <Modal.Content>*/}
+                {/*            <UserPage rowData={this.state.rowData}/>*/}
+                {/*        </Modal.Content>*/}
+                {/*    </Modal>*/}
+                {/*) : null}*/}
+
+                <Modal open={!!this.state.redirectToUserProfile} onClose={() => this.setState({redirectToUserProfile : false})}>
+                    <Modal.Content>
+                        <UserPage rowData={this.state.rowData}/>
+                    </Modal.Content>
+                </Modal>
             </div>
         );
     }

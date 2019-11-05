@@ -117,7 +117,7 @@ export default class ResourceSubmitForm extends Component {
     render() {
         return (
             <div
-                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
+                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30, }}
             >
                 <Container vertical>
                     <Header
