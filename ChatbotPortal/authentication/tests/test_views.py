@@ -551,9 +551,10 @@ class TestAllUsersView(BaseViewTest):
         response = self.client.get(self.url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
-        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
+        self.assertIsNone(response.data['next'])
+        self.assertIsNone(response.data['previous'])
+        self.assertEqual(response.data['count'], 3)
 
 
 class TestSearchByDateRangeView(BaseViewTest):
@@ -628,9 +629,10 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The length of response data should be 2 since 2 users were logged in
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 2)
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
+        self.assertEqual(response.data['results'][1]['email'], 'regular1@user.ca')
 
         # logging in another user
         self.login_client('regular2@user.ca', '4321')
@@ -640,10 +642,11 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The length of response data should be 3 since 3 users were logged in
-        self.assertEqual(len(response.data), 3)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
-        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 3)
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
+        self.assertEqual(response.data['results'][1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data['results'][2]['email'], 'regular2@user.ca')
 
         # Last login test using valid url, when no login in formation was found
         url = reverse(
@@ -658,7 +661,7 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The length of response data should be 0
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data['results']), 0)
 
         # Last login test using invalid date
         url = reverse(
@@ -674,7 +677,7 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The query returns nothing
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data['results']), 0)
 
         # date_joined test using valid url
         url = reverse(
@@ -690,10 +693,10 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The response data should have length of 3, since 3 users were created
-        self.assertEqual(len(response.data), 3)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
-        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+        self.assertEqual(len(response.data['results']), 3)
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
+        self.assertEqual(response.data['results'][1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data['results'][2]['email'], 'regular2@user.ca')
 
         # date_joined test using valid url, when no account was created
         url = reverse(
@@ -708,7 +711,7 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The length of response data should be 0
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data['results']), 0)
 
         # date_joined test using invalid date
         url = reverse(
@@ -724,7 +727,7 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The response data should have length of 0
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data['results']), 0)
 
         # testing invalid search option, search option must be either, date_joined or last_login
         url = reverse(
@@ -740,7 +743,7 @@ class TestSearchByDateRangeView(BaseViewTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # The response data should have length of 0
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data['results']), 0)
 
 
 class TestSearchByIdRangeView(BaseViewTest):
@@ -808,10 +811,11 @@ class TestSearchByIdRangeView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 3)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
-        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 3)
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
+        self.assertEqual(response.data['results'][1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data['results'][2]['email'], 'regular2@user.ca')
 
         # Search with a valid id range that do not have users
         url = reverse(
@@ -824,7 +828,8 @@ class TestSearchByIdRangeView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
         # start_id = 0
         url = reverse(
@@ -837,7 +842,8 @@ class TestSearchByIdRangeView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
         # end_id = 0
         url = reverse(
@@ -850,7 +856,8 @@ class TestSearchByIdRangeView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
         # start_id < end_id
         url = reverse(
@@ -863,7 +870,8 @@ class TestSearchByIdRangeView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
         # start_id = end_id
         url = reverse(
@@ -876,8 +884,9 @@ class TestSearchByIdRangeView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['email'], 'regular1@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['email'], 'regular1@user.ca')
 
         # start_id < 0, end_id < 0
         try:
@@ -946,22 +955,23 @@ class TestSearchByAnythingView(BaseViewTest):
         response = self.client.get(url, data={'search': 'Test'})
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['email'], 'regular1@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular2@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(response.data['results'][0]['email'], 'regular1@user.ca')
 
         # Search for a valid item, that exists
         response = self.client.get(url, data={'search': 'regular1'})
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['email'], 'regular1@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['email'], 'regular1@user.ca')
 
         # Search for a valid item, that does not exist
         response = self.client.get(url, data={'search': 'regular11'})
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
 
 class TestSearchFilterUserView(BaseViewTest):
@@ -1030,10 +1040,11 @@ class TestSearchFilterUserView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 3)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
-        self.assertEqual(response.data[1]['email'], 'regular1@user.ca')
-        self.assertEqual(response.data[2]['email'], 'regular2@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 3)
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
+        self.assertEqual(response.data['results'][1]['email'], 'regular1@user.ca')
+        self.assertEqual(response.data['results'][2]['email'], 'regular2@user.ca')
 
         # Search for valid filter_by option with valid filter_value
         url = reverse(
@@ -1047,8 +1058,9 @@ class TestSearchFilterUserView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['email'], 'super@user.ca')
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 1)
+        self.assertEqual(response.data['results'][0]['email'], 'super@user.ca')
 
         # Search for invalid filter_by option with valid filter_value
         url = reverse(
@@ -1062,7 +1074,8 @@ class TestSearchFilterUserView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
         # Search for valid filter_by option with invalid filter_value
         url = reverse(
@@ -1076,7 +1089,8 @@ class TestSearchFilterUserView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
         # Search for invalid filter_by option with invalid filter_value
         url = reverse(
@@ -1090,7 +1104,8 @@ class TestSearchFilterUserView(BaseViewTest):
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 4)
+        self.assertEqual(len(response.data['results']), 0)
 
 
 class TestTotalNumberOfUserView(BaseViewTest):
