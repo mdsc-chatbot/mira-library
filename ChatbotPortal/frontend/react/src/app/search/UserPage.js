@@ -20,10 +20,10 @@ class UserPage extends Component {
          */
         super(props);
         this.state = {
-            id: '',
+            // id: '',
             first_name: '',
             last_name: '',
-            email: '',
+            // email: '',
             is_active: '',
             is_reviewer: '',
             is_staff: '',
@@ -33,10 +33,10 @@ class UserPage extends Component {
 
     componentDidMount() {
         this.setState({
-            id: this.props.rowData.id,
+            // id: this.props.rowData.id,
             first_name: this.props.rowData.first_name,
             last_name: this.props.rowData.last_name,
-            email: this.props.rowData.email,
+            // email: this.props.rowData.email,
             is_active: this.props.rowData.is_active,
             is_reviewer: this.props.rowData.is_reviewer,
             is_staff: this.props.rowData.is_staff,
@@ -79,7 +79,7 @@ class UserPage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', editedData, {headers: options})
+            .put(`http://127.0.0.1:8000/authentication/auth/${this.props.rowData.id}/update/`, editedData, {headers: options})
             .then(
                 response => {
                     this.setState({
