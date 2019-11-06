@@ -32,6 +32,8 @@ class SearchTable extends Component {
          * @type {{redirectToUserProfile: boolean, rowData: string, loadedData: []}}
          */
         this.state = {
+            totalPage: 1,
+            nextPage: 'http://127.0.0.1:8000/authentication/super/search/alluser/?page=1',
             loadedData: [],
             rowData: '',
             redirectToUserProfile: false,
@@ -43,7 +45,7 @@ class SearchTable extends Component {
      * and stored in the state
      */
     componentDidMount() {
-        this.loadMoreRows({startIndex: 0, stopIndex: 1});
+        this.loadMoreRows({startIndex: 0});
     }
 
     /**
@@ -52,22 +54,32 @@ class SearchTable extends Component {
      * @param stopIndex = the ending row to be fetched from the database
      */
     loadMoreRows = ({startIndex, stopIndex}) => {
+        console.log({startIndex, stopIndex})
         // Getting rows from server; upon successful completion, every items in the
         // result is pushed in a temporary variable which in turn is stored in the
         // loadedData state.
-        this.getRowsFromServer({startIndex, stopIndex})
-            .then((result) => {
-                // state and props should be immutable in react principles,
-                // the slice function just creates a copy of the state loadedData
-                // instead of passing it by reference, so that we can alter the
-                // variable without violating the react principles
-                let tempData = this.state.loadedData.slice();
-                result.forEach(returnItem => {
-                    tempData.push(returnItem)
-                });
-                // Now change the state properly using react principle of setState
-                this.setState({loadedData: tempData})
-            })
+        // if (startIndex%this.state.totalPage === 0){
+        if (!!this.state.nextPage) {
+            console.log(startIndex)
+            this.getRowsFromServer(this.state.nextPage)
+                .then((result) => {
+                    // state and props should be immutable in react principles,
+                    // the slice function just creates a copy of the state loadedData
+                    // instead of passing it by reference, so that we can alter the
+                    // variable without violating the react principles
+                    let tempData = this.state.loadedData.slice();
+                    result['results'].forEach(returnItem => {
+                        tempData.push(returnItem)
+                    });
+                    // Now change the state properly using react principle of setState
+                    this.setState({
+                        totalPage: result['count'],
+                        nextPage: result['next'],
+                        loadedData: tempData,
+                    })
+                })
+        }
+
     };
 
     /**
@@ -75,12 +87,14 @@ class SearchTable extends Component {
      * @param startIndex = the starting row to be fetched from the database
      * @param stopIndex = the ending row to be fetched from the database
      */
-    getRowsFromServer = ({startIndex, stopIndex}) => {
+    getRowsFromServer = (nextPage) => {
+        console.log(nextPage)
         /**
          * Creating a promise to perform asynchronous operation
          */
         return new Promise((resolve, reject) => {
-            const url = `http://127.0.0.1:8000/authentication/super/rows/${startIndex}/${stopIndex}/`;
+
+            // const url = `http://127.0.0.1:8000/authentication/super/search/alluser/?page=${startIndex+1}`;
 
             // Having the permission header loaded
             const options = {
@@ -89,7 +103,7 @@ class SearchTable extends Component {
             };
 
             axios
-                .get(url, {headers: options})
+                .get(nextPage, {headers: options})
                 .then(response => {
                     // Resolving the promise
                     resolve(response.data)
@@ -120,8 +134,13 @@ class SearchTable extends Component {
     rowCount = () => {
         // If advanced feature is used, then get the props loadedData length,
         // Otherwise use the state loadedData length
-        return this.props.is_advance_used ?
-            this.props.loadedData.length :
+        // return this.props.is_advance_used ?
+        //     this.props.loadedData.length :
+        //     this.state.loadedData.length
+        console.log('Rowcount')
+        console.log(this.state.loadedData.length)
+        return !!this.state.nextPage?
+            this.state.loadedData.length:
             this.state.loadedData.length
     };
 
@@ -200,7 +219,7 @@ class SearchTable extends Component {
                                         // The width of the table
                                         width={width}
                                         // The height of the table
-                                        height={400}
+                                        height={200}
                                         // The height of the rows
                                         rowHeight={40}
                                         // The number of rows (real time is expensive operation)
