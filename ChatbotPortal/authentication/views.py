@@ -17,6 +17,7 @@ from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
 from .api.serializers import CustomUserSerializer, CustomUserTokenSerializer, UserUpdateSerializer
+from .api.paginators import ChatBotPaginator
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
@@ -278,12 +279,13 @@ class LogoutView(generics.RetrieveAPIView):
 
 class AllUsersView(generics.ListAPIView):
     """
-    GET super/alluser/
+    GET super/search/alluser/
     Lists all users
     """
-    permission_classes = (permissions.IsAdminUser,)  # Only admin can have access
-    queryset = CustomUser.objects.all()
+    permission_classes = (permissions.IsAdminUser, )  # Only admin can have access
+    queryset = CustomUser.objects.all().order_by('id')
     serializer_class = CustomUserSerializer
+    pagination_class = ChatBotPaginator
 
 
 class SearchByDateRangeView(generics.ListAPIView):
@@ -293,6 +295,7 @@ class SearchByDateRangeView(generics.ListAPIView):
     """
     permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
     serializer_class = CustomUserSerializer
+    pagination_class = ChatBotPaginator
 
     def get_queryset(self):
         """
@@ -320,11 +323,11 @@ class SearchByDateRangeView(generics.ListAPIView):
 
         # Filter based on last logged in attributes
         if search_option == 'last_login':
-            return queryset.filter(last_login__range=(start_date, end_date))
+            return queryset.filter(last_login__range=(start_date, end_date)).order_by('id')
 
         # Filter based on date_joined attributes
         elif search_option == 'date_joined':
-            return queryset.filter(date_joined__range=(start_date, end_date))
+            return queryset.filter(date_joined__range=(start_date, end_date)).order_by('id')
 
         # If the search option was invalid, return empty queryset
         else:
@@ -339,6 +342,7 @@ class SearchByIdRangeView(generics.ListAPIView):
 
     permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
     serializer_class = CustomUserSerializer
+    pagination_class = ChatBotPaginator
 
     def get_queryset(self):
         """
@@ -358,7 +362,7 @@ class SearchByIdRangeView(generics.ListAPIView):
 
         # Checking if the start_id <= end_id and both the ids are greater than 0
         if 0 < start_id <= end_id and end_id > 0:
-            return queryset.filter(id__range=(start_id, end_id))
+            return queryset.filter(id__range=(start_id, end_id)).order_by('id')
         else:
             # Otherwise return empty query
             return queryset.none()
@@ -369,13 +373,15 @@ class SearchByAnythingView(generics.ListAPIView):
     GET uper/search/by_anything/
     Lists all users based on a search string (not case sensitive)
     """
-    permission_classes = (permissions.AllowAny,)  # Only admin can perform this operation
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
 
     # Get all the instance of the model
-    queryset = CustomUser.objects.all()
+    queryset = CustomUser.objects.all().order_by('id')
 
     # Declare the serializer
     serializer_class = CustomUserSerializer
+
+    pagination_class = ChatBotPaginator
 
     # Define backend search filter for drf
     filter_backends = (filters.SearchFilter,)
@@ -399,6 +405,7 @@ class SearchFilterUserView(generics.ListAPIView):
     """
     permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
     serializer_class = CustomUserSerializer
+    pagination_class = ChatBotPaginator
 
     def get_queryset(self):
         """
@@ -419,7 +426,7 @@ class SearchFilterUserView(generics.ListAPIView):
         # If the filter_by value exists in filter_field, the filter the query
         if filter_by in filter_fields:
             try:
-                return queryset.filter(**{filter_by: eval(filter_value)})
+                return queryset.filter(**{filter_by: eval(filter_value)}).order_by('id')
             except NameError:
                 # eval raises name error if the string is no exactly either 'True' or 'False'
                 return queryset.none()
