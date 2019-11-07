@@ -1,7 +1,6 @@
 import React from 'react';
 import {DatesRangeInput} from 'semantic-ui-calendar-react';
-import {Button, Dropdown, Form} from 'semantic-ui-react'
-import axios from "axios";
+import {Dropdown, Form} from 'semantic-ui-react'
 import {SecurityContext} from "../security/SecurityContext";
 
 const dateOption = [
@@ -28,76 +27,14 @@ class SearchByDateRange extends React.Component {
          * @type {{datesRange: string, value: string}}
          */
         this.state = {
-            is_logged_in: false,
             value: 'last_login',
             datesRange: ''
         };
     }
 
-    /**
-     * This function gets called when the the component gets mounted
-     */
     componentDidMount() {
-        this.updateStateFromSecurityContext();
+        this.props.set_date_option_params(this.state.value);
     }
-
-    /**
-     * This function is called when either the state or the props or both get updated
-     */
-    componentDidUpdate() {
-        this.updateStateFromSecurityContext();
-
-    }
-
-    /**
-     * This function updates the state from the security context
-     */
-    updateStateFromSecurityContext = () => {
-        if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
-            this.setState({
-                is_logged_in: this.context.security.is_logged_in
-            });
-        }
-    };
-
-    /**
-     * This function executes the query by calling backend controller (API),
-     * which returns the users who have the defined date characteristics.
-     * @param e = event
-     * @param searchFormData = Data received from search form
-     */
-    handle_search = (e, searchFormData) => {
-        // prevent the browser to reload itself (Ask Henry if it is necessary)
-        e.preventDefault();
-        if (this.context.security.is_logged_in) {
-            // Split the datesRanges into two dates
-            const date_range = searchFormData.datesRange.split(' - ');
-
-            // The backend URL
-            const url = `http://127.0.0.1:8000/authentication/super/search/date_range/${searchFormData.value}/${date_range[0]}/${date_range[1]}/`;
-
-            // Having the permission header loaded
-            const options = {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.context.security.token}`
-            };
-
-            /**
-             * Calling the backend API
-             */
-            axios
-                .get(url, {headers: options})
-                .then(
-                    response => {
-                        // console.log(response.data);
-                        this.props.handle_result_change(response.data);
-                    },
-                    error => {
-                        console.log(error);
-                    }
-                )
-        }
-    };
 
     /**
      * This function handles the changes that happen to in the date range field of the form.
@@ -105,10 +42,14 @@ class SearchByDateRange extends React.Component {
      * @param name = Name of the state
      * @param value = Value of the state
      */
-    handle_change_dateRange = (event, {name, value}) => {
+    handle_change_daterange = (event, {name, value}) => {
         if (this.state.hasOwnProperty(name)) {
             this.setState({[name]: value});
         }
+
+        const date_range = value.split(' - ');
+
+        this.props.set_date_range_params(date_range[0], date_range[1])
     };
 
     /**
@@ -117,7 +58,8 @@ class SearchByDateRange extends React.Component {
      * @param value = The value from the drop down form that will be stored in the state
      */
     handle_change_dropdown = (e, {value}) => {
-        this.setState({value})
+        this.setState({value});
+        this.props.set_date_option_params(value);
     };
 
     /**
@@ -126,37 +68,25 @@ class SearchByDateRange extends React.Component {
      */
     render() {
         return (
-            <SecurityContext.Consumer>
-                {(securityContext) => (
-                    <Form onSubmit={e => this.handle_search(e, this.state)}>
-                        <DatesRangeInput
-                            name="datesRange"
-                            placeholder="From - To"
-                            value={this.state.datesRange}
-                            iconPosition="left"
-                            onChange={this.handle_change_dateRange}
-                            dateFormat={"YYYY-MM-DD"}
-                        />
+            <Form onSubmit={e => this.handle_search(e, this.state)}>
+                <DatesRangeInput
+                    name="datesRange"
+                    placeholder="From - To"
+                    value={this.state.datesRange}
+                    iconPosition="left"
+                    onChange={this.handle_change_daterange}
+                    dateFormat={"YYYY-MM-DD"}
+                />
 
-                        <Dropdown
-                            placeholder='By Last Login'
-                            fluid
-                            search
-                            selection
-                            onChange={this.handle_change_dropdown}
-                            options={dateOption}
-                        />
-
-                        {securityContext.security.is_logged_in ? (
-                            <Button
-                                color="blue"
-                                fluid size="large">
-                                Search
-                            </Button>
-                        ) : null}
-                    </Form>
-                )}
-            </SecurityContext.Consumer>
+                <Dropdown
+                    placeholder='By Last Login'
+                    fluid
+                    search
+                    selection
+                    onChange={this.handle_change_dropdown}
+                    options={dateOption}
+                />
+            </Form>
         );
     }
 }
