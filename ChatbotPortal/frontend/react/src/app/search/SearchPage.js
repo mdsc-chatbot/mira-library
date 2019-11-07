@@ -9,6 +9,7 @@ class SearchPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            search_clicked: false,
             loadedData: [],
 
             is_active: "''",
@@ -18,7 +19,7 @@ class SearchPage extends Component {
 
             search_option: "''",
             start_date: "''",
-            end_data: "''",
+            end_date: "''",
 
             start_id: "''",
             end_id: "''",
@@ -27,6 +28,15 @@ class SearchPage extends Component {
 
             url: "http://127.0.0.1:8000/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/search_value/?search="
         };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("In the searchPage Update.")
+        if (this.state.search_clicked) {
+            this.setState({
+                search_clicked: false
+            });
+        }
     }
 
     set_date_range_params = (start_date, end_date) => {
@@ -57,6 +67,7 @@ class SearchPage extends Component {
     submit_query = (e) => {
         e.preventDefault();
         this.setState({
+            search_clicked: true,
             url: `http://127.0.0.1:8000/authentication/super/search/status/${this.state.is_active}/${this.state.is_reviewer}/${this.state.is_staff}/${this.state.is_superuser}/date_range/${this.state.search_option}/${this.state.start_date}/${this.state.end_date}/id_range/${this.state.start_id}/${this.state.end_id}/search_value/?search=${this.state.search_string}`
         });
     };
@@ -84,7 +95,7 @@ class SearchPage extends Component {
                                       set_status_search_params={this.set_status_search_params}
                                       set_id_search_params={this.set_id_search_params}/>
                 <Button color="blue" fluid size="large" onClick={this.submit_query}>Search</Button>
-                <SearchTable url={this.state.url}/>
+                <SearchTable url={this.state.url} search_clicked={this.state.search_clicked}/>
             </div>
         );
     }
