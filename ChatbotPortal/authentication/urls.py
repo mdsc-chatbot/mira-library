@@ -15,6 +15,7 @@ from .views import (LoginView,
                     SearchFilterUserView,
                     TotalNumberOfUserView,
                     RangeOfUsersView,
+                    SearchByAnythingWithFilterDateIdView,
                     )
 
 urlpatterns = [
@@ -40,4 +41,8 @@ urlpatterns = [
     path('super/search/filter/<str:filter_by>/<str:filter_value>/', SearchFilterUserView.as_view(), name='search-filter-user'),
     path('super/total/users/', TotalNumberOfUserView.as_view(), name='get-total-user'),
     path('super/rows/<int:start_row>/<int:end_row>/', RangeOfUsersView.as_view(), name='get-rows'),
+
+    # path('super/search/filter/<str:filter_by>/<str:filter_value>/date_range/<str:search_option>/<slug:start_date>/<slug:end_date>/id_range/<str:start_id>/<str:end_id>/search_value/', SearchByAnythingWithFilterDateIdView.as_view(), name='search-anything-by-filter-date-id'),
+
+    path('super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<slug:start_date>/<slug:end_date>/id_range/<str:start_id>/<str:end_id>/search_value/', SearchByAnythingWithFilterDateIdView.as_view(), name='search-anything-by-filter-date-id'),
 ]
