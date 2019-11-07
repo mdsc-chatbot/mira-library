@@ -33,7 +33,7 @@ class SearchTable extends Component {
          */
         this.state = {
             totalPage: 1,
-            nextPage: 'http://127.0.0.1:8000/authentication/super/search/alluser/?page=1',
+            nextPage: this.props.url,
             loadedData: [],
             rowData: '',
             redirectToUserProfile: false,
@@ -45,9 +45,14 @@ class SearchTable extends Component {
      * and stored in the state
      */
     componentDidMount() {
+        // console.log(this.props.url);
+        // this.setState({nextPage: this.props.url});
         this.loadMoreRows({startIndex: 0});
     }
 
+    updateNextPageFromProps() {
+        this.setState({nextPage: this.props.url})
+    }
     /**
      * This function loads more rows upon scrolling down
      * @param startIndex = the starting row to be fetched from the database
@@ -60,7 +65,6 @@ class SearchTable extends Component {
         // loadedData state.
         // if (startIndex%this.state.totalPage === 0){
         if (!!this.state.nextPage) {
-            console.log(startIndex)
             this.getRowsFromServer(this.state.nextPage)
                 .then((result) => {
                     // state and props should be immutable in react principles,
@@ -94,8 +98,6 @@ class SearchTable extends Component {
          */
         return new Promise((resolve, reject) => {
 
-            // const url = `http://127.0.0.1:8000/authentication/super/search/alluser/?page=${startIndex+1}`;
-
             // Having the permission header loaded
             const options = {
                 'Content-Type': 'application/json',
@@ -106,6 +108,7 @@ class SearchTable extends Component {
                 .get(nextPage, {headers: options})
                 .then(response => {
                     // Resolving the promise
+                    console.log(response.data)
                     resolve(response.data)
                 }, error => {
                     // Rejecting the promise
@@ -119,26 +122,15 @@ class SearchTable extends Component {
      * @param index = Index of the row that needs to be loaded
      */
     isRowLoaded = ({index}) => {
-        // If advanced feature is used, then check if props loadedData row is loaded or not,
-        // otherwise check if state loadedData is loaded or not
-        if (this.props.is_advance_used) {
-            return !!this.props.loadedData[index]
-        } else {
-            return !!this.state.loadedData[index]
-        }
+        return !!this.state.loadedData[index]
     };
 
     /**
      * This function count the number of rows by getting the length of the loadedData
      */
     rowCount = () => {
-        // If advanced feature is used, then get the props loadedData length,
-        // Otherwise use the state loadedData length
-        // return this.props.is_advance_used ?
-        //     this.props.loadedData.length :
-        //     this.state.loadedData.length
-        console.log('Rowcount')
-        console.log(this.state.loadedData.length)
+        // console.log('Rowcount')
+        // console.log(this.state.loadedData.length)
         return !!this.state.nextPage?
             this.state.loadedData.length:
             this.state.loadedData.length
@@ -149,13 +141,7 @@ class SearchTable extends Component {
      * @param index = The position of row to be fetched
      */
     rowGetter = ({index}) => {
-        // If advanced feature is used, then get the row from the props loadedData,
-        // Otherwise, get it from the state loadedData
-        if (this.props.is_advance_used) {
-            return this.props.loadedData[index]
-        } else {
-            return this.state.loadedData[index]
-        }
+        return this.state.loadedData[index]
     };
 
     /**
