@@ -50,6 +50,22 @@ class SearchTable extends Component {
         this.loadMoreRows({startIndex: 0});
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log("In the searchTable update")
+        if (this.props.search_clicked) {
+            console.log("search is clicked")
+            this.setState({
+                totalPage: 1,
+                nextPage: this.props.url,
+                loadedData: [],
+                rowData: '',
+            });
+            console.log(this.state.nextPage)
+            console.log(this.props.url)
+            this.loadMoreRows({startIndex: 0});
+        }
+    }
+
     updateNextPageFromProps() {
         this.setState({nextPage: this.props.url})
     }
