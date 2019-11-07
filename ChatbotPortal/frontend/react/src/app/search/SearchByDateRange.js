@@ -27,7 +27,7 @@ class SearchByDateRange extends React.Component {
          * @type {{datesRange: string, value: string}}
          */
         this.state = {
-            value: 'last_login',
+            value: "''",
             datesRange: ''
         };
     }
@@ -79,7 +79,7 @@ class SearchByDateRange extends React.Component {
                 />
 
                 <Dropdown
-                    placeholder='By Last Login'
+                    placeholder='Date of ...'
                     fluid
                     search
                     selection
