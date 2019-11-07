@@ -13,7 +13,7 @@ export class SearchAdvancedOption extends Component {
                 content: {
                     content: (
                         <div>
-                            <SearchByDateRange handle_result_change = {this.props.handle_result_change}/>
+                            <SearchByDateRange set_date_range_params={this.props.set_date_range_params} set_date_option_params={this.props.set_date_option_params}/>
                         </div>
                     )
                 }
@@ -24,7 +24,7 @@ export class SearchAdvancedOption extends Component {
                 content: {
                     content: (
                         <div>
-                            <SearchFilter handle_result_change = {this.props.handle_result_change}/>
+                            <SearchFilter set_status_search_params = {this.props.set_status_search_params}/>
                         </div>
                     )
                 }
@@ -35,7 +35,7 @@ export class SearchAdvancedOption extends Component {
                 content: {
                     content: (
                         <div>
-                            <SearchByIdrange handle_result_change = {this.props.handle_result_change}/>
+                            <SearchByIdrange set_id_search_params={this.set_id_search_params}/>
                         </div>
                     )
                 }
