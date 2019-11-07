@@ -198,6 +198,7 @@ class SearchTable extends Component {
                     // loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
                     rowCount={1000000}
+                    threshold={2}
                 >
                     {/*onRowsRender: This function should be passed as the child's onRowsRender property,
                     it informs loader when the user is scrolling*/}
