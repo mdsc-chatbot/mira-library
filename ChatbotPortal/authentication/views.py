@@ -373,7 +373,7 @@ class SearchByAnythingView(generics.ListAPIView):
     GET uper/search/by_anything/
     Lists all users based on a search string (not case sensitive)
     """
-    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    permission_classes = (permissions.AllowAny,)  # Only admin can perform this operation
 
     # Get all the instance of the model
     queryset = CustomUser.objects.all().order_by('id')
@@ -398,12 +398,13 @@ class SearchByAnythingView(generics.ListAPIView):
     ]
 
 
+
 class SearchFilterUserView(generics.ListAPIView):
     """
     GET super/search/filter/<str:filter_by>/<str:filter_value>/
     Lists all the filtered users based on either is_active, is_reviewer, is_staff, is_superuser
     """
-    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    permission_classes = (permissions.AllowAny,)  # Only admin can perform this operation
     serializer_class = CustomUserSerializer
     pagination_class = ChatBotPaginator
 
@@ -470,6 +471,120 @@ class RangeOfUsersView(generics.ListAPIView):
 
         return queryset
 
+
+
+
+
+
+
+
+class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
+    """
+    GET uper/search/by_anything/
+    Lists all users based on a search string (not case sensitive)
+    """
+    permission_classes = (permissions.AllowAny,)  # Only admin can perform this operation
+
+    # Get all the instance of the model
+    # queryset = CustomUser.objects.all().order_by('id')
+
+    # Declare the serializer
+    serializer_class = CustomUserSerializer
+
+    pagination_class = ChatBotPaginator
+
+    # Define backend search filter for drf
+    filter_backends = (filters.SearchFilter,)
+
+    # Define the attribute fields to be searched, must be present in the model
+    search_fields = [
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'affiliation',
+        'submissions',
+        'points',
+    ]
+
+    def get_queryset(self):
+        """
+        This overrides the built-in get_queryset, in order to perform filtering operations.
+        :return: filtered queryset
+        """
+
+        # Get all the instance of the model
+        queryset = CustomUser.objects.all()
+
+        is_active = self.kwargs['is_active']
+        is_reviewer = self.kwargs['is_reviewer']
+        is_staff = self.kwargs['is_staff']
+        is_superuser = self.kwargs['is_superuser']
+
+        search_option = self.kwargs['search_option']
+        start_date = self.kwargs['start_date']
+        end_date = self.kwargs['end_date']
+
+        start_id = self.kwargs['start_id']
+        end_id = self.kwargs['end_id']
+
+        if is_active != "''":
+            print("ACTTTTTTTTTTTTTT")
+            try:
+                queryset = queryset.filter(is_active=eval(is_active.capitalize()))
+            except NameError:
+                return queryset.none()
+
+        if is_reviewer != "''":
+            try:
+                queryset = queryset.filter(is_reviewer=eval(is_reviewer.capitalize()))
+            except NameError:
+                return queryset.none()
+
+        if is_staff != "''":
+            try:
+                queryset = queryset.filter(is_staff=eval(is_staff.capitalize()))
+            except NameError:
+                return queryset.none()
+
+        if is_superuser != "''":
+            try:
+                queryset = queryset.filter(is_superuser=eval(is_superuser.capitalize()))
+            except NameError:
+                return queryset.none()
+
+        if search_option != "''":
+            try:
+                start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+                # To get rid of run time warning of naive datetime incorporate current time zone
+                current_timezone = timezone.get_current_timezone()
+                start_date = current_timezone.localize(start_date)
+                end_date = current_timezone.localize(end_date)
+
+            except ValueError:
+                return queryset.none()
+
+            # Filter based on last logged in attributes
+            if search_option == 'last_login':
+                queryset = queryset.filter(last_login__range=(start_date, end_date))
+
+                # Filter based on date_joined attributes
+            elif search_option == 'date_joined':
+                queryset = queryset.filter(date_joined__range=(start_date, end_date))
+
+        if start_id != "''":
+            try:
+                start_id = int(start_id)
+                end_id = int(end_id)
+            except ValueError:
+                return queryset.none()
+
+            # Checking if the start_id <= end_id and both the ids are greater than 0
+            if 0 < start_id <= end_id and end_id > 0:
+                queryset = queryset.filter(id__range=(start_id, end_id))
+
+        return queryset
 
 """
 References:
