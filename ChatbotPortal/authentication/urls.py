@@ -16,6 +16,8 @@ from .views import (LoginView,
                     TotalNumberOfUserView,
                     RangeOfUsersView,
                     SearchByAnythingWithFilterDateIdView,
+                    UpdateSubmissionsView,
+                    UpdatePointsView,
                     )
 
 urlpatterns = [
@@ -31,6 +33,9 @@ urlpatterns = [
     path('auth/retrieve/', RetriveUserView.as_view(), name='auth-retrieve'),
     path('auth/logout/', LogoutView.as_view(), name='auth-logout'),
     path('auth/currentuser/', CurrentUserView.as_view(), name='auth-current-user'),
+
+    path('auth/<pk>/update/submissions/', UpdateSubmissionsView.as_view(), name='auth-update'),
+    path('auth/<pk>/update/points/', UpdatePointsView.as_view(), name='auth-update'),
 
     path('activate/<uidb64>/<token>/', activate, name='activate'),
 

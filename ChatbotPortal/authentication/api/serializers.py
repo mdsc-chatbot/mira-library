@@ -108,6 +108,56 @@ class UserUpdateSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+
 class customUserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
+
+
+class UserUpdateSubmissionSerializer(serializers.Serializer):
+    """
+    This serializer will serialize the update submission
+    """
+    submissions = serializers.IntegerField()
+
+    def update(self, instance, validated_data):
+        """
+        This update definition updates the instance with the validated_data
+        :param instance: CustomUser model instance
+        :param validated_data: data to be updated in the instance
+        :return: Updated instance
+        """
+        # pop the password out since we need to hash it
+        # password = validated_data.pop('password')
+        # update the instance with the rest of the validated data fields
+        instance.__dict__.update(validated_data)
+        # if password:
+        #     # update password if the password field was not empty
+        #     instance.set_password(password)
+        # Save the updated instance
+        instance.save()
+        return instance
+
+class UserUpdatePointSerializer(serializers.Serializer):
+    """
+    This serializer will serialize the update submission
+    """
+    points = serializers.IntegerField()
+
+    def update(self, instance, validated_data):
+        """
+        This update definition updates the instance with the validated_data
+        :param instance: CustomUser model instance
+        :param validated_data: data to be updated in the instance
+        :return: Updated instance
+        """
+        # pop the password out since we need to hash it
+        # password = validated_data.pop('password')
+        # update the instance with the rest of the validated data fields
+        instance.__dict__.update(validated_data)
+        # if password:
+        #     # update password if the password field was not empty
+        #     instance.set_password(password)
+        # Save the updated instance
+        instance.save()
+        return instance

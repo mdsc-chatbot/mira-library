@@ -16,7 +16,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
-from .api.serializers import CustomUserSerializer, CustomUserTokenSerializer, UserUpdateSerializer
+from .api.serializers import CustomUserSerializer, CustomUserTokenSerializer, UserUpdateSerializer, UserUpdateSubmissionSerializer, UserUpdatePointSerializer
 from .api.paginators import ChatBotPaginator
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
@@ -140,6 +140,24 @@ class UpdateUserView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
     queryset = CustomUser.objects.all()
     serializer_class = UserUpdateSerializer
+
+class UpdateSubmissionsView(generics.RetrieveUpdateAPIView):
+    """
+    PUT auth/<pk>/update/submissions/
+    Update User API
+    """
+    permission_classes = (permissions.AllowAny,)  # Only authenticated users can update their own account
+    queryset = CustomUser.objects.all()
+    serializer_class = UserUpdateSubmissionSerializer
+
+class UpdatePointsView(generics.RetrieveUpdateAPIView):
+    """
+    PUT auth/<pk>/update/submissions/
+    Update User API
+    """
+    permission_classes = (permissions.AllowAny,)  # Only authenticated users can update their own account
+    queryset = CustomUser.objects.all()
+    serializer_class = UserUpdatePointSerializer
 
 
 class DeleteUserView(generics.DestroyAPIView):
