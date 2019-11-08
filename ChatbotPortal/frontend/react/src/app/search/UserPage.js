@@ -195,28 +195,21 @@ class UserPage extends Component {
                                 <Card.Content extra>
                                     <h3>
                                         <Icon color='red' name='mail'/>
-                                        {this.state.email}
-                                    </h3>
-                                </Card.Content>
-
-                                <Card.Content extra>
-                                    <h3>
-                                        <Icon color='red' name='certificate'/>
-                                        Newbie
+                                        {this.props.rowData.email}
                                     </h3>
                                 </Card.Content>
 
                                 <Card.Content extra>
                                     <h3>
                                         <Icon color='red' name='pencil alternate'/>
-                                        # Submissions = 25
+                                        # Submissions = {this.props.rowData.submissions}
                                     </h3>
                                 </Card.Content>
 
                                 <Card.Content extra>
                                     <h3>
                                         <Icon color='red' name='trophy'/>
-                                        Points = 56
+                                        Points = {this.props.rowData.points}
                                     </h3>
                                 </Card.Content>
 

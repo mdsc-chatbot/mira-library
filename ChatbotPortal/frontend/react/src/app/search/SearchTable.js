@@ -51,17 +51,17 @@ class SearchTable extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("In the searchTable update")
+        console.log("In the searchTable update");
         if (this.props.search_clicked) {
-            console.log("search is clicked")
+            console.log("search is clicked");
             this.setState({
                 totalPage: 1,
                 nextPage: this.props.url,
                 loadedData: [],
                 rowData: '',
             });
-            console.log(this.state.nextPage)
-            console.log(this.props.url)
+            console.log(this.state.nextPage);
+            console.log(this.props.url);
             this.loadMoreRows({startIndex: 0});
         }
     }
@@ -69,13 +69,14 @@ class SearchTable extends Component {
     updateNextPageFromProps() {
         this.setState({nextPage: this.props.url})
     }
+
     /**
      * This function loads more rows upon scrolling down
      * @param startIndex = the starting row to be fetched from the database
      * @param stopIndex = the ending row to be fetched from the database
      */
     loadMoreRows = ({startIndex, stopIndex}) => {
-        console.log({startIndex, stopIndex})
+        console.log({startIndex, stopIndex});
         // Getting rows from server; upon successful completion, every items in the
         // result is pushed in a temporary variable which in turn is stored in the
         // loadedData state.
@@ -104,11 +105,10 @@ class SearchTable extends Component {
 
     /**
      * This function calls the backend API to fetch a range of rows asynchronously
-     * @param startIndex = the starting row to be fetched from the database
-     * @param stopIndex = the ending row to be fetched from the database
+     * @param nextPage = the page to fetched from the backend
      */
     getRowsFromServer = (nextPage) => {
-        console.log(nextPage)
+        console.log(nextPage);
         /**
          * Creating a promise to perform asynchronous operation
          */
@@ -124,7 +124,7 @@ class SearchTable extends Component {
                 .get(nextPage, {headers: options})
                 .then(response => {
                     // Resolving the promise
-                    console.log(response.data)
+                    console.log(response.data);
                     resolve(response.data)
                 }, error => {
                     // Rejecting the promise
@@ -147,8 +147,8 @@ class SearchTable extends Component {
     rowCount = () => {
         // console.log('Rowcount')
         // console.log(this.state.loadedData.length)
-        return !!this.state.nextPage?
-            this.state.loadedData.length:
+        return !!this.state.nextPage ?
+            this.state.loadedData.length :
             this.state.loadedData.length
     };
 
@@ -196,8 +196,7 @@ class SearchTable extends Component {
                     isRowLoaded={this.isRowLoaded}
                     // A function that receives a start index and a stop index and should return a promise that
                     // should be resolved once the new data area loaded
-                    loadMoreRows={this.props.is_advance_used ? () => null : this.loadMoreRows}
-                    // loadMoreRows={this.loadMoreRows}
+                    loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
                     rowCount={1000000}
                     threshold={2}

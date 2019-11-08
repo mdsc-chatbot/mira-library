@@ -31,7 +31,7 @@ class SearchPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("In the searchPage Update.")
+        console.log("In the searchPage Update.");
         if (this.state.search_clicked) {
             this.setState({
                 search_clicked: false

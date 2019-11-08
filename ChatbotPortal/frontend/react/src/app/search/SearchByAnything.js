@@ -32,7 +32,7 @@ class SearchByAnything extends React.Component {
         let name = e.target.name;
         let value = e.target.value;
 
-        this.props.set_search_string({name, value})
+        this.props.set_search_string({name, value});
 
         this.setState(prevstate => {
             const newState = {...prevstate};
