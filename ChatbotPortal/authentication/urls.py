@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_auth.views import PasswordResetView, PasswordResetConfirmView
 
 from .views import (LoginView,
                     RegisterUsersView,
@@ -12,7 +13,7 @@ from .views import (LoginView,
                     SearchByAnythingWithFilterDateIdView,
                     UpdateSubmissionsView,
                     UpdatePointsView,
-                    )
+                    UpdatePasswordView)
 
 urlpatterns = [
 
@@ -28,6 +29,11 @@ urlpatterns = [
     path('auth/<pk>/update/', UpdateUserView.as_view(), name='auth-update'),
     path('auth/<pk>/update/submissions/', UpdateSubmissionsView.as_view(), name='auth-update-submissions'),
     path('auth/<pk>/update/points/', UpdatePointsView.as_view(), name='auth-update-points'),
+
+    path('auth/<pk>/update/password/', UpdatePasswordView.as_view(), name='auth-update-password'),
+    path('auth/password/reset/', PasswordResetView.as_view(), name='password-reset'),
+    path('auth/password/reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(),
+         name='password_reset_confirm'),
 
     path('auth/delete/<pk>/', DeleteUserView.as_view(), name='auth-delete'),
     path('auth/retrieve/', RetriveUserView.as_view(), name='auth-retrieve'),
