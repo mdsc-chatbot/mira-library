@@ -21,7 +21,7 @@ from .api.serializers import (CustomUserSerializer,
                               CustomUserTokenSerializer,
                               UserUpdateSerializer,
                               UserUpdateSubmissionSerializer,
-                              UserUpdatePointSerializer)
+                              UserUpdatePointSerializer, UserUpdatePasswordSerializer)
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
@@ -440,6 +440,16 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
                 return queryset.none()
 
         return queryset.order_by('id')
+
+
+class UpdatePasswordView(generics.RetrieveUpdateAPIView):
+    """
+    PUT auth/<pk>/update/password/
+    Update User API
+    """
+    permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
+    queryset = CustomUser.objects.all()
+    serializer_class = UserUpdatePasswordSerializer
 
 
 """
