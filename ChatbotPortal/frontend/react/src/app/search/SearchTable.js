@@ -305,7 +305,6 @@ class SearchTable extends Component {
                             </AutoSizer>)
                     }
                 </InfiniteLoader>
-
                 {/* The modal to be shown for user profile */}
                 <Modal
                     open={this.state.redirectToUserProfile}

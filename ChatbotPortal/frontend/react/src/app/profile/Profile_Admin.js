@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label, Input} from 'semantic-ui-react';
+import {Button, Container, Form, Icon, Card, Image, Segment, Label, Checkbox} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
@@ -14,42 +14,57 @@ class ProfilePage extends Component {
     BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
 
 
-
     constructor(props) {
         /**
          * This constructor sets up the primary state for the props
          */
         super(props);
         this.state = {
-            is_logged_in: false,
+            is_logged_in: '',
             is_edited: '',
             first_name: '',
-            last_name: '',
-            profile_picture: null,
-            submissions:'',
-            points:'',
+            last_name: ''
         };
     };
 
     componentDidMount() {
-        this.updateStateFromSecurityContext();
-    }
-
-    componentDidUpdate() {
-        this.updateStateFromSecurityContext();
-
-    }
-
-    updateStateFromSecurityContext =() => {
-        if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
+        /**
+         * Upon mounting the component, it checks the login state from the security context,
+         * if the login state is gone due to refresh, then the current user is retrieved,
+         * and required information is stored in the props.
+         */
+        if (!this.context.security.is_logged_in) {
+            axios
+                .get(this.BASE_AUTH_URL + 'currentuser/')
+                .then(
+                    response => {
+                        if (response.data !== '') {
+                            this.setState({
+                                first_name: response.data['first_name'],
+                                last_name: response.data['last_name'],
+                                is_logged_in: true,
+                                is_edited: false
+                            })
+                        } else {
+                            this.setState({
+                                is_logged_in: false
+                            });
+                        }
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
+        } else {
+            /**
+             * If the context says that the user is already logged in,
+             * then set the props using the security context data
+             */
             this.setState({
                 is_logged_in: this.context.security.is_logged_in,
                 is_edited: false,
                 first_name: this.context.security.first_name,
-                last_name: this.context.security.last_name,
-                profile_picture: this.context.security.profile_picture,
-                submissions: this.context.security.submissions,
-                points: this.context.security.points,
+                last_name: this.context.security.last_name
             });
         }
     };
@@ -69,27 +84,6 @@ class ProfilePage extends Component {
         });
     };
 
-    handleImageChange = event => {
-        this.setState({
-            // [event.nativeEvent.target.name]: event.nativeEvent.target.files[0],
-            // imagePath: event.nativeEvent.target.value
-            imagePath: event.target.files[0]
-        })
-    };
-
-
-    saveFunction = () => {
-        alert("Your changes were saved!");
-    };
-
-    cancelFunction = () => {
-        alert("No changes were saved!");
-    };
-
-    deleteFunction = () => {
-        alert("A request has been sent to the admin!");
-    };
-
     /**
      * This function handles the overall edit operations
      * @param e : event
@@ -97,21 +91,11 @@ class ProfilePage extends Component {
      */
     handle_edit = (e, editedData) => {
         e.preventDefault();
-        let formData = new FormData();
-        if (this.state.imagePath) formData.append('profile_picture', this.state.imagePath);
-        formData.append('first_name', this.state.first_name);
-        formData.append('last_name', this.state.last_name);
-        // Object.values(editedData).forEach((formField) => {
-        //     if (formField[0] !== 'imagePath') {
-        //         formData.append(formField[2], formField[3]);
-        //     }
-        // });
 
         // Defining header and content-type for accessing authenticated information
         const options = {
-            'Authorization': `Bearer ${this.context.security.token}`,
-            // "Content-Type":"multipart/form-data"
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
         };
 
         /**
@@ -120,19 +104,16 @@ class ProfilePage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', formData, {headers: options})
+            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', editedData, {headers: options})
             .then(
                 response => {
-                    console.log(response.data);
                     this.setState({
                         first_name: response.data['first_name'],
                         last_name: response.data['last_name'],
-                        profile_picture:response.data['profile_picture'],
                         is_edited: true,
                     });
                     this.context.security.first_name = this.state.first_name;
                     this.context.security.last_name = this.state.last_name;
-                    this.context.security.profile_picture = this.state.profile_picture;
                     console.log(this.context.security)
                     console.log("Saved Changes")
                 },
@@ -154,21 +135,18 @@ class ProfilePage extends Component {
                         {(securityContext) => (
 
                             <Form className={styles.centeredForm} onSubmit={e => this.handle_edit(e, this.state)}>
-                                <Segment>
+                                <Segment className={styles.segmentBackground}>
                                     <Label
                                         size='big'
                                         as='h1'
                                         icon='user'
-                                        color='blue'
-                                        content='My Profile'
+                                        color='red'
+                                        content='Sample Profile'
                                         ribbon>
                                     </Label>
                                     {securityContext.security.is_logged_in ?
-                                        <Card fluid centered onSubmit={this.props.handle_edit}>
-                                            {this.state.profile_picture ? (
-                                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} />
-                                            ) : null}
-                                            <Form.Input type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                                        <Card className={styles.cardBackground} fluid centered onSubmit={this.props.handle_edit}>
+                                            <Image src='https://react.semantic-ui.com/images/avatar/large/daniel.jpg' wrapped ui={true} />
                                             <Card.Content>
                                                 <Card.Header>
 
@@ -202,66 +180,50 @@ class ProfilePage extends Component {
                                             <Card.Content extra>
                                                 {/*<h3 style={{ color: 'green' }}>*/}
                                                 <h3>
-                                                    <Icon color='blue' name='mail'/>
+                                                    <Icon color='red' name='mail'/>
                                                     {securityContext.security.email}
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='pencil alternate'/>
-                                                    # of Submissions = {securityContext.security.submissions}
+                                                    <Icon color='red' name='certificate'/>
+                                                    Newbie
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='trophy'/>
-                                                    Points = {securityContext.security.points}
+                                                    <Icon color='red' name='pencil alternate'/>
+                                                    # Submissions = 25
                                                 </h3>
                                             </Card.Content>
 
                                             <Card.Content extra>
                                                 <h3>
-                                                    <Icon color='blue' name='certificate'/>
-                                                    { securityContext.security.is_staff ? (
-                                                        'Staff'
-                                                    ) : securityContext.security.is_reviewer ? (
-                                                        'Reviewer'
-                                                    ) : 'Newbie'
-                                                    }
+                                                    <Icon color='red' name='trophy'/>
+                                                    Points = 56
                                                 </h3>
                                             </Card.Content>
 
-                                            <Button.Group fluid size='big'>
-                                                <Button animated='fade' negative onClick={this.cancelFunction}>
-                                                    <Button.Content visible>
-                                                        <Icon name='cancel' />
-                                                        Cancel Changes
-                                                    </Button.Content>
-                                                    <Button.Content hidden>No changes will be made</Button.Content>
-                                                </Button>
-                                                <Button.Or />
-                                                <Button animated='fade' positive onClick={this.saveFunction}>
-                                                    <Button.Content visible>
-                                                        <Icon name='sync' />
-                                                        Save Changes
-                                                    </Button.Content>
-                                                    <Button.Content hidden>Changes made will be saved</Button.Content>
-                                                </Button>
-                                            </Button.Group>
+                                            <Card.Content extra>
+                                                <Segment.Group horizontal>
+                                                    <Segment color='red'>
+                                                        <Checkbox label='Staff' slider />
+                                                    </Segment>
+                                                    <Segment color='red'>
+                                                        <Checkbox label='Reviewer' slider />
+                                                    </Segment>
+                                                </Segment.Group>
+                                            </Card.Content>
+
 
                                             <Button
-                                                animated='fade'
-                                                icon
-                                                basic
                                                 color='red'
                                                 fluid
-                                                size='big'
-                                                onClick={this.deleteFunction}
+                                                size='huge'
                                             >
-                                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
-                                                <Button.Content hidden>Send Request To Admin</Button.Content>
+                                                <Icon name='delete' />Delete User
                                             </Button>
 
 
