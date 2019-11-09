@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+import {baseRoute} from "../App";
 
 class LoginForm extends React.Component {
     /**
@@ -74,6 +75,12 @@ class LoginForm extends React.Component {
                         New to us?{" "}
                         <a href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
                             Sign Up
+                        </a>
+                    </Message>
+                    <Message>
+                        Forgot your password?{" "}
+                        <a href="#" onClick={() => {window.location = `${baseRoute}/password/reset`;}}>
+                            Reset Password
                         </a>
                     </Message>
                 </Grid.Column>
