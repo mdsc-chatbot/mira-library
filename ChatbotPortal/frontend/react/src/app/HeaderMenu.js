@@ -53,6 +53,13 @@ export class HeaderMenu extends Component {
                             onClick={this.handleItemClick}
                         />
 
+                        <Menu.Item
+                            name="Passchange"
+                            as={Link}
+                            to={baseRoute + "/password"}
+                            active={activeItem === "Passchange"}
+                            onClick={this.handleItemClick}
+                        />
                         {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="My Profile"

@@ -2,7 +2,8 @@ import React, {Component} from "react";
 import {Accordion} from "semantic-ui-react";
 import SearchByDateRange from "./SearchByDateRange";
 import SearchFilter from "./SearchFilter";
-import SearchByIdrange from "./SearchByIdRange";
+import SearchByIdRange from "./SearchByIdRange";
+import SearchBySubmissionRange from "./SearchBySubmissionRange";
 
 export class SearchAdvancedOption extends Component {
     render() {
@@ -13,7 +14,8 @@ export class SearchAdvancedOption extends Component {
                 content: {
                     content: (
                         <div>
-                            <SearchByDateRange handle_result_change = {this.props.handle_result_change}/>
+                            <SearchByDateRange set_date_range_params={this.props.set_date_range_params}
+                                               set_date_option_params={this.props.set_date_option_params}/>
                         </div>
                     )
                 }
@@ -24,7 +26,7 @@ export class SearchAdvancedOption extends Component {
                 content: {
                     content: (
                         <div>
-                            <SearchFilter handle_result_change = {this.props.handle_result_change}/>
+                            <SearchFilter set_status_search_params={this.props.set_status_search_params}/>
                         </div>
                     )
                 }
@@ -35,11 +37,23 @@ export class SearchAdvancedOption extends Component {
                 content: {
                     content: (
                         <div>
-                            <SearchByIdrange handle_result_change = {this.props.handle_result_change}/>
+                            <SearchByIdRange set_id_search_params={this.props.set_id_search_params}/>
                         </div>
                     )
                 }
-            }
+            },
+            {
+                key: "submission_range",
+                title: "Submission range",
+                content: {
+                    content: (
+                        <div>
+                            <SearchBySubmissionRange
+                                set_submission_search_params={this.props.set_submission_search_params}/>
+                        </div>
+                    )
+                }
+            },
         ];
 
         const advanced_search = [

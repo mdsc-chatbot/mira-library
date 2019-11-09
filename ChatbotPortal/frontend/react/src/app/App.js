@@ -15,6 +15,9 @@ import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResource from "./public/PublicResource";
 import SearchPage from "./search/SearchPage";
 import FAQ from "./FAQ.js";
+import PasswordResetPage from "./password/PasswordResetPage"
+import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
+import PasswordChangeForm from "./password/PasswordChangeForm"
 import UserPage from "./search/UserPage";
 import { Divider } from "semantic-ui-react";
 
@@ -61,9 +64,23 @@ export default function App() {
                     <Route exact path={baseRoute + "/faq"}>
                         <FAQ />
                     </Route>
+
+                    <Route
+                        exact path={baseRoute + "/password"}
+                        component={PasswordChangeForm}
+                    />
+                    <Route
+                        exact path={baseRoute + "/password/reset"}
+                        component={PasswordResetRequestPage}
+                    />
+                    <Route
+                        exact path={baseRoute + "/password/reset/:uid/:token"}
+                        component={PasswordResetPage}
+                    />
                     <Route>
                         <Homepage />
                     </Route>
+
                 </Switch>
                 <Footer />
             </SecurityContextProvider>
