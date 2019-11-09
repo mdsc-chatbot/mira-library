@@ -4,6 +4,7 @@ import {AutoSizer, Column, InfiniteLoader, Table} from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import {Modal} from "semantic-ui-react";
 import UserPage from "./UserPage";
+import {SecurityContext} from "../security/SecurityContext";
 
 
 /**
@@ -13,6 +14,12 @@ import UserPage from "./UserPage";
  * maximum performance through providing infinite scroll to the user (admin).
  */
 class SearchTable extends Component {
+
+    /**
+     * The security context that has the permission token and other user credential details.
+     * @type {React.Context<*>}
+     */
+    static contextType = SecurityContext;
 
     /**
      * This is the constructor that initializes the state
