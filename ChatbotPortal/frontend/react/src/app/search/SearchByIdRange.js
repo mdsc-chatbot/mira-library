@@ -8,43 +8,19 @@ import {Form} from 'semantic-ui-react'
 class SearchByIdRange extends React.Component {
 
     /**
-     * This is the constructor that declare the initial state with default values.
-     * @param props = Properties that will be used in the constructor
-     */
-    constructor(props) {
-        super(props);
-
-        /**
-         * The state of this component
-         * @type {{start_id: string, end_id: string}}
-         */
-        this.state = {
-            start_id: "''",
-            end_id: "''",
-        };
-    }
-
-    /**
      * This function handles any changes that happens to the form fields
-     * and store the changes to the state
+     * and alters the parent props.
      * @param e = event
      */
     handle_change = e => {
         let name = e.target.name;
         let value = e.target.value;
-
-        if (!!value){
+        if (!!value) {
             this.props.set_id_search_params({name, value})
         } else {
             value = "''";
             this.props.set_id_search_params({name, value})
         }
-
-        this.setState(prevstate => {
-            const newState = {...prevstate};
-            newState[name] = value;
-            return newState;
-        });
     };
 
     /**

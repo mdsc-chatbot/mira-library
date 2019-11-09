@@ -16,7 +16,7 @@ class SearchByAnything extends React.Component {
 
         /**
          * The state of this component
-         * @type {{item: string, is_logged_in: boolean}}
+         * @type {{item: string}}
          */
         this.state = {
             search_string: "''"

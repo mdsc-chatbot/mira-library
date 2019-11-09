@@ -1,9 +1,9 @@
 import React from 'react';
 import {DatesRangeInput} from 'semantic-ui-calendar-react';
 import {Dropdown, Form} from 'semantic-ui-react'
-import {SecurityContext} from "../security/SecurityContext";
 
 const dateOption = [
+    {key: 'unselected', value: "''", text: 'Unselected'},
     {key: 'last_login', value: 'last_login', text: 'By Last Login'},
     {key: 'date_joined', value: 'date_joined', text: 'By Creation Date'}
 ];
@@ -12,8 +12,6 @@ const dateOption = [
  * This class helps searching the users by a range of dates
  */
 class SearchByDateRange extends React.Component {
-
-    static contextType = SecurityContext;
 
     /**
      * This is the constructor that declare the initial state with default values.
@@ -27,13 +25,8 @@ class SearchByDateRange extends React.Component {
          * @type {{datesRange: string, value: string}}
          */
         this.state = {
-            value: "''",
             datesRange: ''
         };
-    }
-
-    componentDidMount() {
-        this.props.set_date_option_params(this.state.value);
     }
 
     /**
@@ -43,13 +36,15 @@ class SearchByDateRange extends React.Component {
      * @param value = Value of the state
      */
     handle_change_daterange = (event, {name, value}) => {
-        if (this.state.hasOwnProperty(name)) {
-            this.setState({[name]: value});
+        this.setState({[name]: value});
+        if (!!value) {
+            const date_range = value.split(' - ');
+            this.props.set_date_range_params(date_range[0], date_range[1])
+        } else {
+            value = "'' - ''";
+            const date_range = value.split(' - ');
+            this.props.set_date_range_params(date_range[0], date_range[1])
         }
-
-        const date_range = value.split(' - ');
-
-        this.props.set_date_range_params(date_range[0], date_range[1])
     };
 
     /**
@@ -58,7 +53,7 @@ class SearchByDateRange extends React.Component {
      * @param value = The value from the drop down form that will be stored in the state
      */
     handle_change_dropdown = (e, {value}) => {
-        this.setState({value});
+        // this.setState({value});
         this.props.set_date_option_params(value);
     };
 
@@ -68,7 +63,7 @@ class SearchByDateRange extends React.Component {
      */
     render() {
         return (
-            <Form onSubmit={e => this.handle_search(e, this.state)}>
+            <Form>
                 <DatesRangeInput
                     name="datesRange"
                     placeholder="From - To"
@@ -79,7 +74,7 @@ class SearchByDateRange extends React.Component {
                 />
 
                 <Dropdown
-                    placeholder='Date of ...'
+                    placeholder='Unselected'
                     fluid
                     search
                     selection

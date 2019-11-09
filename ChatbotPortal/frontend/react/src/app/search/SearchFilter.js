@@ -1,32 +1,28 @@
 import React from "react";
-import {Checkbox} from "semantic-ui-react";
+import {Dropdown} from "semantic-ui-react";
+
+const options = [
+    {key: 1, text: 'Yes', value: true},
+    {key: 2, text: 'No', value: false},
+];
 
 /**
- * This class helps filtering users based on either is_active or is_reviewer or is_staff or is_superuser
+ * This class helps filtering users based on either is_active or is_reviewer or is_staff
  */
 class SearchFilter extends React.Component {
-    constructor(props) {
-        super(props);
 
-        /**
-         * The state of this component
-         * @type {{is_logged_in: boolean, filterValue: string, filterBy: string}}
-         */
-        this.state = {
-            is_active: false,
-            is_reviewer: false,
-            is_staff: false,
-            is_superuser: false
-        };
-    }
-
-    handle_toggle = (e, {name, value}) => {
-        this.setState(prevState => {
-            const newState = {...prevState};
-            newState[name] = !value;
-            return newState;
-        });
-        this.props.set_status_search_params({name, value});
+    /**
+     * This function handles the changes in the drop down and alters the parent props
+     * @param name = name of the drop down
+     * @param value = value from the options
+     */
+    handle_change_dropdown = ({name, value}) => {
+        if (!!value) {
+            this.props.set_status_search_params({name, value});
+        } else {
+            value = "''";
+            this.props.set_status_search_params({name, value});
+        }
     };
 
     /**
@@ -35,40 +31,43 @@ class SearchFilter extends React.Component {
      */
     render() {
         return (
-
             <div>
-                <Checkbox
-                    checked={this.state.is_active}
-                    label='Active'
-                    name='is_active'
-                    value={this.state.is_active}
-                    onChange={this.handle_toggle}
-                    style={{paddingLeft: 20}}
-                />
-                <Checkbox
-                    checked={this.state.is_reviewer}
-                    label='Reviewer'
-                    name='is_reviewer'
-                    value={this.state.is_reviewer}
-                    onChange={this.handle_toggle}
-                    style={{paddingLeft: 20}}
-                />
-                <Checkbox
-                    checked={this.state.is_staff}
-                    label='Staff'
-                    name='is_staff'
-                    value={this.state.is_staff}
-                    onChange={this.handle_toggle}
-                    style={{paddingLeft: 20}}
-                />
-                <Checkbox
-                    checked={this.state.is_superuser}
-                    label='Superuser'
-                    name='is_superuser'
-                    value={this.state.is_superuser}
-                    onChange={this.handle_toggle}
-                    style={{paddingLeft: 20}}
-                />
+                <span>
+                    <p>Active</p>
+                    <Dropdown
+                        clearable
+                        name='is_active'
+                        onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
+                        options={options}
+                        placeholder='None'
+                        selection
+                    >
+                    </Dropdown>
+                </span>
+                <span>
+                    <p>Reviewer</p>
+                    <Dropdown
+                        clearable
+                        name='is_reviewer'
+                        onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
+                        options={options}
+                        placeholder='None'
+                        selection
+                    >
+                    </Dropdown>
+                </span>
+                <span>
+                    <p>Staff</p>
+                    <Dropdown
+                        clearable
+                        name='is_staff'
+                        onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
+                        options={options}
+                        placeholder='None'
+                        selection
+                    >
+                    </Dropdown>
+                </span>
             </div>
         );
     }

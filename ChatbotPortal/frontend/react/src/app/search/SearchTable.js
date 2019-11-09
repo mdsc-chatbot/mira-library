@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {SecurityContext} from "../security/SecurityContext";
 import {AutoSizer, Column, InfiniteLoader, Table} from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import {Modal} from "semantic-ui-react";
@@ -15,11 +14,6 @@ import UserPage from "./UserPage";
  */
 class SearchTable extends Component {
 
-    // The security context
-    static contextType = SecurityContext;
-
-    BASE_URL = 'http://127.0.0.1:8000/authentication/';
-
     /**
      * This is the constructor that initializes the state
      * @param props : properties passed from the parent component
@@ -29,7 +23,7 @@ class SearchTable extends Component {
 
         /**
          * This is the state of the component
-         * @type {{redirectToUserProfile: boolean, rowData: string, loadedData: []}}
+         * @type {{redirectToUserProfile: boolean, totalPage: number, nextPage: *, rowData: string, loadedData: []}}
          */
         this.state = {
             totalPage: 1,
@@ -45,29 +39,32 @@ class SearchTable extends Component {
      * and stored in the state
      */
     componentDidMount() {
-        // console.log(this.props.url);
-        // this.setState({nextPage: this.props.url});
         this.loadMoreRows({startIndex: 0});
     }
 
+    /**
+     * As the state changes, this function is called.
+     * It only gets executed upon clicking the search button.
+     * @param prevProps
+     * @param prevState
+     * @param snapshot
+     */
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log("In the searchTable update");
         if (this.props.search_clicked) {
-            console.log("search is clicked");
+            /**
+             * Since state change is asynchronous,
+             * the callback function assures that load more row is performed
+             * after the asynchronous operation is over.
+             */
             this.setState({
                 totalPage: 1,
                 nextPage: this.props.url,
                 loadedData: [],
                 rowData: '',
+            }, () => {
+                this.loadMoreRows({startIndex: 0});
             });
-            console.log(this.state.nextPage);
-            console.log(this.props.url);
-            this.loadMoreRows({startIndex: 0});
         }
-    }
-
-    updateNextPageFromProps() {
-        this.setState({nextPage: this.props.url})
     }
 
     /**
@@ -80,7 +77,6 @@ class SearchTable extends Component {
         // Getting rows from server; upon successful completion, every items in the
         // result is pushed in a temporary variable which in turn is stored in the
         // loadedData state.
-        // if (startIndex%this.state.totalPage === 0){
         if (!!this.state.nextPage) {
             this.getRowsFromServer(this.state.nextPage)
                 .then((result) => {
@@ -108,7 +104,6 @@ class SearchTable extends Component {
      * @param nextPage = the page to fetched from the backend
      */
     getRowsFromServer = (nextPage) => {
-        console.log(nextPage);
         /**
          * Creating a promise to perform asynchronous operation
          */
@@ -124,7 +119,6 @@ class SearchTable extends Component {
                 .get(nextPage, {headers: options})
                 .then(response => {
                     // Resolving the promise
-                    console.log(response.data);
                     resolve(response.data)
                 }, error => {
                     // Rejecting the promise
@@ -145,11 +139,7 @@ class SearchTable extends Component {
      * This function count the number of rows by getting the length of the loadedData
      */
     rowCount = () => {
-        // console.log('Rowcount')
-        // console.log(this.state.loadedData.length)
-        return !!this.state.nextPage ?
-            this.state.loadedData.length :
-            this.state.loadedData.length
+        return this.state.loadedData.length
     };
 
     /**
@@ -179,7 +169,6 @@ class SearchTable extends Component {
         this.setState({
             redirectToUserProfile: false
         });
-
         // Reloading the page after modal closes
         // window.location.reload();
     };
@@ -213,8 +202,6 @@ class SearchTable extends Component {
                                     <Table
                                         ref={registerChild}
                                         onRowsRendered={onRowsRendered}
-                                        //sortBy={'first_name'}
-                                        //sortDirection={SortDirection.ASC}
                                         rowClassName='table-row'
                                         // The height of the table header
                                         headerHeight={40}
