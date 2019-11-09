@@ -1,5 +1,6 @@
 from django.test import SimpleTestCase
 from django.urls import reverse, resolve
+from rest_auth.views import PasswordResetView, PasswordResetConfirmView
 
 from ..views import (LoginView,
                      RegisterUsersView,
@@ -10,7 +11,7 @@ from ..views import (LoginView,
                      LogoutView,
                      activate,
                      UpdateSubmissionsView, UpdatePointsView, TotalNumberOfUserView,
-                     SearchByAnythingWithFilterDateIdView)
+                     SearchByAnythingWithFilterDateIdView, UpdatePasswordView)
 
 
 class TestUrls(SimpleTestCase):
@@ -81,6 +82,30 @@ class TestUrls(SimpleTestCase):
         """
         url = reverse('auth-update-points', args=['some-pk'])
         self.assertEquals(resolve(url).func.view_class, UpdatePointsView)
+
+    def test_update_password_url(self):
+        """
+        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/password/ url.
+        :return: None
+        """
+        url = reverse('auth-update-password', args=['some-pk'])
+        self.assertEquals(resolve(url).func.view_class, UpdatePasswordView)
+
+    def test_PasswordResetView_url(self):
+        """
+        Tests the http://127.0.0.1:8000/authorization/auth/password/reset/ url.
+        :return: None
+        """
+        url = reverse('password-reset')
+        self.assertEquals(resolve(url).func.view_class, PasswordResetView)
+
+    def test_PasswordResetConfirmView_url(self):
+        """
+        Tests the http://127.0.0.1:8000/authorization/auth/password/reset/confirm/<uidb64>/<token>/ url.
+        :return: None
+        """
+        url = reverse('password_reset_confirm', args=['MO', 'adsa654sdft4532esdhfg'])
+        self.assertEquals(resolve(url).func.view_class, PasswordResetConfirmView)
 
     def test_delete_url(self):
         """
