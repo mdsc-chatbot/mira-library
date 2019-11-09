@@ -321,7 +321,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
     GET uper/search/by_anything/
     Lists all users based on a search string (not case sensitive)
     """
-    permission_classes = (permissions.AllowAny,)  # Only admin can perform this operation
+    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
 
     # Get all the instance of the model
     # queryset = CustomUser.objects.all().order_by('id')
@@ -370,7 +370,6 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
         end_submission = self.kwargs['end_submission']
 
         if is_active != "''":
-            print("ACTTTTTTTTTTTTTT")
             try:
                 queryset = queryset.filter(is_active=eval(is_active.capitalize()))
             except NameError:
@@ -424,6 +423,8 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             # Checking if the start_id <= end_id and both the ids are greater than 0
             if 0 < start_id <= end_id and end_id > 0:
                 queryset = queryset.filter(id__range=(start_id, end_id))
+            else:
+                return queryset.none()
 
         if start_submission != "''":
             try:
@@ -435,8 +436,10 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             # Checking if the start_id <= end_id and both the ids are greater than 0
             if 0 <= start_submission <= end_submission:
                 queryset = queryset.filter(submissions__range=(start_submission, end_submission))
+            else:
+                return queryset.none()
 
-        return queryset
+        return queryset.order_by('id')
 
 
 """
