@@ -124,6 +124,7 @@ class RegisterUsersView(generics.CreateAPIView):
             to=[user.email, ]
         )
 
+        email.content_subtype= "html" # Main content is now text/html instead of plain text
         email.send()
 
         return Response(
@@ -546,6 +547,9 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
         start_id = self.kwargs['start_id']
         end_id = self.kwargs['end_id']
 
+        start_submission = self.kwargs['start_submission']
+        end_submission = self.kwargs['end_submission']
+
         if is_active != "''":
             print("ACTTTTTTTTTTTTTT")
             try:
@@ -602,7 +606,21 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             if 0 < start_id <= end_id and end_id > 0:
                 queryset = queryset.filter(id__range=(start_id, end_id))
 
+
+        if start_submission != "''":
+            try:
+                start_submission = int(start_submission)
+                end_submission = int(end_submission)
+            except ValueError:
+                return queryset.none()
+
+            # Checking if the start_id <= end_id and both the ids are greater than 0
+            if 0 <= start_submission <= end_submission:
+                queryset = queryset.filter(submissions__range=(start_submission, end_submission))
+
         return queryset
+
+
 
 """
 References:
