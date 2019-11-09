@@ -507,6 +507,77 @@ class UpdateUserPointsTest(BaseViewTest):
         self.assertNotEqual(self.user.points, 0)
 
 
+class UpdateUserPasswordTest(BaseViewTest):
+    """
+    Tests for auth/<pk>/update/password endpoint
+    """
+
+    def setUp(self):
+        """
+        This constructor creates a regular user
+        :return: None
+        """
+        self.user = CustomUser.objects.create_user(
+            email='user@update.com',
+            password='1234',
+            first_name='BeforeUpdate',
+            last_name='BeforeUpdate',
+            affiliation='UpdateTester'
+        )
+
+    def test_update_user(self):
+        """
+        This definition tests for various user update scenarios.
+        :return: None
+        """
+
+        # Checking authorization, login a user without setting authorization token
+        self.login_a_user('user@update.com', '1234')
+
+        # primary key of the user to be updated
+        pk = self.user.id
+        url = reverse(
+            'auth-update-password',
+            kwargs={
+                'pk': pk
+            }
+        )
+
+        # Performing PUT request to update a user's submissions.
+        response = self.client.put(
+            url,
+            data=json.dumps({
+                'password': 5678
+            }),
+            content_type='application/json'
+        )
+        # assert status code is 401_UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Checking authorization, login a user and setting authorization token
+        self.login_client('user@update.com', '1234')
+
+        # Performing PUT request to update a user's submissions.
+        response = self.client.put(
+            url,
+            data=json.dumps({
+                'password': 5678
+            }),
+            content_type='application/json'
+        )
+
+        # assert status code is 200_OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Trying to login using previous password
+        response = self.login_a_user('user@update.com', '1234')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # Trying to login using updated password
+        response = self.login_a_user('user@update.com', '5678')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class DeleteUserTest(BaseViewTest):
     """
     Tests for auth/delete/<pk>/ endpoint
