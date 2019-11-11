@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "manifest_version": 2,
+  "name": "Submit Resources to ChatbotPortal",
+  "short_name": "submit-resources",
+  "background": {
+    "page": "lib/chrome/background.html"
+  },
+  "homepage_url": "http://127.0.0.1:8000/chatbotportal/app/",
+  "description": "This extension helps submitting resources directly to ChatbotPortal",
+  "permissions": [
+    "tabs",
+    "storage",
+    "<all_urls>",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+  "browser_action": {
+    "default_title": "Submit Resources",
+    "default_popup": "data/popup/popup.html"
+  },
+  "web_accessible_resources":[
+    "http,://127.0.0.1:8000/chatbotportal/resources/js/app-ed15c9d24e75f0da75a4.js/"
+  ]
+}
