@@ -1,3 +1,4 @@
+/* Style for the body tag */
 body {
     border: 0;
     margin: 0;
@@ -9,10 +10,14 @@ body {
     visibility: visible !important;
 }
 
+/* Style for the iframe tag */
 iframe {
     border: 0;
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Allows auto scrolling */
     position: absolute;
     background: #0000FF;
 }
