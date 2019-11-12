@@ -18,8 +18,5 @@
   "browser_action": {
     "default_title": "Submit Resources",
     "default_popup": "data/popup/popup.html"
-  },
-  "web_accessible_resources":[
-    "http,://127.0.0.1:8000/chatbotportal/resources/js/app-ed15c9d24e75f0da75a4.js/"
-  ]
+  }
 }
