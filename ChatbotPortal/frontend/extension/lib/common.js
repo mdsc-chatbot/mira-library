@@ -1,13 +1,23 @@
 let LOG = false;
 
-let popupsend = function (e) {
+/**
+ * Setting up the storage data
+ * @param event
+ */
+let popupsend = function (event) {
     app.popup.send("storage-data", {
-        "force": e,
+        "force": event,
         "url": config.popup.url,
         "iframe": config.popup.iframe
     });
 };
 
+/**
+ * Fires each time that an HTTP(S) response header is received.
+ * Due to redirects and authentication requests this can happen multiple times per request.
+ * This event is intended to allow extensions to add, modify, and delete response headers, such as incoming Content-Type headers.
+ * @param callback = Being called after asynchronous operation (A function)
+ */
 app.onHeadersReceived(function (top, current, headers) {
     for (let i = 0; i < headers.length; i++) {
         let name = headers[i].name.toLowerCase();
@@ -19,10 +29,16 @@ app.onHeadersReceived(function (top, current, headers) {
     }
 });
 
+/**
+ * Fires when a request is about to occur and the initial headers have been prepared.
+ * The event is intended to allow extensions to add, modify, and delete request headers.
+ * @param callback = Being called after asynchronous operation (A function)
+ */
 app.onBeforeSendHeaders(function (top, current, headers) {
     for (let i = 0; i < headers.length; i++) {
         let name = headers[i].name.toLowerCase();
         if (name === "user-agent") {
+            // Checking for mobile configuration
             let id = parseInt(config.popup.mobile);
             if (id < 5) {
                 let value = "Mozilla/5.0 (Linux; Android 8.0.0; SM-G930F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.101 Mobile Safari/537.36";
@@ -32,7 +48,7 @@ app.onBeforeSendHeaders(function (top, current, headers) {
                 if (id === 3) value = "Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0)";
                 if (id === 4) value = "Mozilla/5.0 (Linux; U; Tizen 2.0; en-us) AppleWebKit/537.1 (KHTML, like Gecko) Mobile TizenBrowser/2.0";
                 headers[i].value = value;
-                /*  */
+
                 if (LOG) console.error("> UA", value);
                 return {"requestHeaders": headers};
             }
@@ -40,9 +56,16 @@ app.onBeforeSendHeaders(function (top, current, headers) {
     }
 });
 
+/**
+ * Getting the storage data set by popup upon being initialized
+ */
 app.popup.receive("storage-data", function () {
     popupsend(false)
 });
+
+/**
+ * Getting the resize parameters according the to popup width and height
+ */
 app.popup.receive("resize", function () {
     app.popup.send("resize", {"width": config.popup.width, "height": config.popup.height})
 });
