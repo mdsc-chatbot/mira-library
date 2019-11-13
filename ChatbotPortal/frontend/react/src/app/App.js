@@ -55,9 +55,11 @@ export default function App() {
                         path={baseRoute + "/review/:resourceID"}
                         component={reviewResource}
                     ></Route>
-                    <Route exact path={baseRoute + "/resource_submit"}>
-                        <ResourceSubmitForm />
-                    </Route>
+
+                    <Route
+                        exact path={baseRoute + "/resource_submit/:url"}
+                        component={ResourceSubmitForm}
+                    />
                     <Route exact path={baseRoute + "/public_resource"}>
                         <PublicResource />
                     </Route>
