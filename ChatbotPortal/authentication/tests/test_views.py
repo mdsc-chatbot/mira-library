@@ -277,6 +277,18 @@ class AuthRegisterUserTest(BaseViewTest):
         # assert status code is 400 BAD_REQUEST
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        # register with same email credentials
+        response = self.register_a_user(
+            email='new@user.com',
+            password='1234',
+            first_name='NewTestUser',
+            last_name='NewTestUser',
+            affiliation='Tester'
+        )
+
+        # assert status code is 226 IM_USED
+        self.assertEqual(response.status_code, status.HTTP_226_IM_USED)
+
 
 class UpdateUserTest(BaseViewTest):
     """
