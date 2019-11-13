@@ -19,7 +19,9 @@ class SignupForm extends React.Component {
         first_name: "",
         last_name: "",
         affiliation: "",
-        password: ""
+        password: "",
+        password2: '',
+        password_matched: false
     };
 
     /**
@@ -35,6 +37,33 @@ class SignupForm extends React.Component {
             newState[name] = value;
             return newState;
         });
+    };
+
+    /**
+     * This function handles the changes that happens to the second password field.
+     * @param e = event
+     */
+    handle_password2 = e => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(prevstate => {
+            const newState = {...prevstate};
+            newState[name] = value;
+            return newState;
+        });
+
+        /**
+         * Matching both the field to enable reset call
+         */
+        if (value !== null && value === this.state.password) {
+            this.setState({
+                password_matched: true
+            })
+        } else {
+            this.setState({
+                password_matched: false
+            })
+        }
     };
 
     render() {
@@ -93,10 +122,20 @@ class SignupForm extends React.Component {
                                 value={this.state.password}
                                 onChange={this.handle_change}
                             />
+                            <Form.Input
+                                fluid
+                                icon="lock"
+                                iconPosition="left"
+                                placeholder="Confirm Password * (Required)"
+                                type="password"
+                                name="password2"
+                                value={this.state.password2}
+                                onChange={this.handle_password2}
+                            />
                             <Button
                                 color="blue"
                                 fluid size="large"
-                                disabled={!this.state.email || !this.state.password}
+                                disabled={!this.state.email || !(this.state.password.length >= 8 && this.state.password_matched)}
                             >
                                 Signup
                             </Button>
