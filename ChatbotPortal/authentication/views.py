@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.core.validators import validate_email
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -183,14 +185,34 @@ class RegisterUsersView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        user = CustomUser.objects.create_user(
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            affiliation=affiliation,
-            is_active=False
-        )
+        # Checking if the email address was in valid format
+        try:
+            validate_email(email)
+        except Exception:
+            return Response(
+                data={
+                    'message': 'Not a valid email address.'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+
+            user = CustomUser.objects.create_user(
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                affiliation=affiliation,
+                is_active=False
+            )
+        except IntegrityError:
+            return Response(
+                data={
+                    'message': 'Email already exists. Please try a new email address.'
+                },
+                status=status.HTTP_226_IM_USED
+            )
 
         # get the current site
         current_site = get_current_site(request)
@@ -221,7 +243,8 @@ class RegisterUsersView(generics.CreateAPIView):
         email.send()
 
         return Response(
-            data={'message': 'To activate your portal, please confirm your email address.'},
+            data={
+                'message': 'An activation email has been sent to your email address. Please check your email. Thank you!'},
             status=status.HTTP_201_CREATED
         )
 
