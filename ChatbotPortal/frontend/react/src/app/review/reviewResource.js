@@ -79,36 +79,26 @@ export default class ResourceDetail extends Component {
         this.update_resource("rejected");
     };
 
-    put_resource = resource => {
-        const options = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.context.security.token}`
-        };
-        const resourceID = this.props.match.params.resourceID;
-        axios
-            .put(
-                "/chatbotportal/resource/" + resourceID + "/update/",
-                resource,
-                { headers: options }
-            )
-            .then(
-                response => {},
-                error => {
-                    console.log(error);
-                }
-            );
-    };
-
     update_resource = review_status => {
-        this.get_resource_details();
-        const resource = this.state.resource;
-        if (resource.review_status === "pending") {
-            resource.review_status = review_status;
-            console.log("changeing");
-            this.put_resource(resource);
-        }
-        console.log(resource);
 
+        this.get_resource_details();
+        if (this.state.resource.review_status === "pending") {
+
+            const options = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.context.security.token}`
+            };
+            axios
+                .put(
+                    "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
+                    {"review_status":review_status},
+                    { headers: options }
+                )
+                .then(
+                    response => {},
+                    error => {console.log(error);}
+                );
+        }
     };
 
     format_data = (data, approval) => {
