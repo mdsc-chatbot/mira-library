@@ -22,7 +22,7 @@ export default class ResourceSubmitForm extends Component {
         super(props);
         this.state = {
             title: "Unknown title",
-            url: "",
+            url:this.props.match.params.url==="''" ? null : decodeURIComponent(this.props.match.params.url),
             rating: 1,
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
