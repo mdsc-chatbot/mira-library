@@ -12,7 +12,9 @@ class ResourceTest(TestCase):
             url="https://www.ualberta.ca/",
             rating=1,
             comments="",
-            created_by_user="Unknown user"
+            created_by_user="Unknown user",
+            created_by_user_id=0
+
         )
         resource.save()
         db_resource = Resource.objects.get(pk=1)
@@ -25,7 +27,8 @@ class ResourceTest(TestCase):
             url="https://www.ualberta.ca/",
             rating=1,
             comments="",
-            created_by_user="Unknown user"
+            created_by_user="Unknown user",
+            created_by_user_id=0
         )
         resource.full_clean()
 
