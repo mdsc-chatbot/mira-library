@@ -1,8 +1,10 @@
 import datetime
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.core.validators import validate_email
 from django.db import IntegrityError
@@ -188,7 +190,18 @@ class RegisterUsersView(generics.CreateAPIView):
         # Checking if the email address was in valid format
         try:
             validate_email(email)
-        except Exception:
+        except ValidationError:
+            return Response(
+                data={
+                    'message': 'Not a valid email address.'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify if the password is at least 8 characters long
+        try:
+            validate_password(password)
+        except ValidationError:
             return Response(
                 data={
                     'message': 'Not a valid email address.'
