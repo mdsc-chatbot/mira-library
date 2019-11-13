@@ -1,13 +1,10 @@
 from rest_framework import serializers
-
-from resource.models import Resource
-
+from .models import Resource
 
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
         fields = '__all__'
-
 
 class RetrieveResourceSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(
@@ -19,7 +16,6 @@ class RetrieveResourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resource
         fields = '__all__'
-
 
 class ResourceUpdateSerializer(serializers.Serializer):
     review_score = serializers.IntegerField(default=0)

@@ -71,7 +71,7 @@ export default class ResourceSubmitForm extends Component {
         };
 
         axios
-            .post("http://127.0.0.1:8000/api/resource/", resourceFormData)
+            .post("/chatbotportal/resource/", resourceFormData)
             .then(res => {})
             .catch(error => {
                 console.error(error);

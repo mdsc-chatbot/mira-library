@@ -48,10 +48,6 @@ class Resource(models.Model):
     created_by_user = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    website_summary_metadata = models.TextField(blank=True, null=True)
-    website_readtime_metadata = models.DateTimeField(blank=True, null=True)
-    website_metadata = models.TextField(blank=True, null=True)
-    website_title = models.TextField(blank=True, null=True)
     score = models.DecimalField(
         max_digits=10, decimal_places=1, blank=True, null=True)
 

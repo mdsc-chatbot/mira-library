@@ -33,7 +33,7 @@ export default class ResourceList extends Component {
                 Authorization: `Bearer ${this.context.security.token}`
             };
             axios
-                .get("http://127.0.0.1:8000/api/resource", {
+                .get("/chatbotportal/resource", {
                     params: {
                         created_by_user: this.context.security.email
                     }
