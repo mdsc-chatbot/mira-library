@@ -45,7 +45,8 @@ class Resource(models.Model):
     attachment = models.FileField(
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 
-    created_by_user = models.CharField(max_length=100)
+    created_by_user = models.CharField(max_length=100, default="Unknown user")
+    created_by_user_id = models.IntegerField(default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     score = models.DecimalField(

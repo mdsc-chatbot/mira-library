@@ -6,6 +6,7 @@ from .models import Resource, Tag
 import json
 import mimetypes
 
+
 def create_tags(request):
     form_data = json.loads(request.body.decode('utf-8'))
 
@@ -13,7 +14,7 @@ def create_tags(request):
     # Name of tag must be unique (case insensitive)
     if (Tag.objects.filter(name__iexact=form_data['name']).count() != 0):
         return JsonResponse({
-            'name' : 'Tag already exists.'
+            'name': 'Tag already exists.'
         }, status=400)
 
     # Saving it
@@ -22,8 +23,8 @@ def create_tags(request):
 
     # Return tag so that frontend can dynamically add it to the dropdown
     return JsonResponse({
-        'id' : tag.id,
-        'name' : tag.name,
+        'id': tag.id,
+        'name': tag.name,
     })
 
 
@@ -37,6 +38,8 @@ def fetch_tags(request):
         return HttpResponse()
 
 # Downloads request attachment
+
+
 def download_attachment(request, resource_id):
     resource = Resource.objects.get(pk=int(resource_id))
 
@@ -57,7 +60,7 @@ class ResourceViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
     queryset = Resource.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['created_by_user']
+    filterset_fields = ['created_by_user_id']
 
 
 class ResourceRetrieveView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -65,7 +68,7 @@ class ResourceRetrieveView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = RetrieveResourceSerializer
     queryset = Resource.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['created_by_user']
+    filterset_fields = ['created_by_user_id']
 
 
 class ResourceUpdateView(generics.RetrieveUpdateAPIView):
