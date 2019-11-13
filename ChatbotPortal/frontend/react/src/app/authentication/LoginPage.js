@@ -5,6 +5,7 @@ import SignupForm from './SignupForm';
 import {SecurityContext} from '../security/SecurityContext';
 import {Redirect} from "react-router";
 import {baseRoute} from "../App";
+import {Message} from "semantic-ui-react";
 
 
 class LoginPage extends Component {
@@ -30,7 +31,10 @@ class LoginPage extends Component {
          *          }
          */
         this.state = {
-            displayed_form: 'login'
+            displayed_form: 'login',
+            message: '',
+            success: false,
+            error: false
         };
     }
 
@@ -97,7 +101,19 @@ class LoginPage extends Component {
             .post(this.BASE_AUTH_URL + 'register/', signupFormData)
             .then(
                 response => {
-                    console.log(response.status + ": User got created.")
+                    if (response.status === 201) {
+                        this.setState({
+                            message: response.data.message,
+                            success: true,
+                            error: false
+                        });
+                    } else if (response.status === 226) {
+                        this.setState({
+                            message: response.data.message,
+                            success: false,
+                            error: true
+                        });
+                    }
                 },
                 error => {
                     console.log(error + ": User did not get created.")
@@ -126,6 +142,16 @@ class LoginPage extends Component {
                 {(securityContext) => (
                     <div className="App">
                         {
+                            this.state.error === true && this.state.success === false ? (
+                                <Message
+                                    error
+                                    header='Already exists!'
+                                    content={this.state.message}
+                                />
+                            ) : null
+                        }
+
+                        {
                             this.state.displayed_form === 'login' ? (
                                 <LoginForm
                                     handle_login={(event, data) => this.handle_login(event, data)}
@@ -138,9 +164,23 @@ class LoginPage extends Component {
                                 />
                             ) : null
                         }
-                        {securityContext.security.is_logged_in ? (
-                            <Redirect to={baseRoute}/>
-                        ) : null}
+
+                        {
+                            this.state.error === false && this.state.success === true ? (
+                                <Redirect
+                                    to={{
+                                        pathname: baseRoute + '/validate/email',
+                                        state: {message: this.state.message}
+                                    }}
+                                />
+                            ) : null
+                        }
+
+                        {
+                            securityContext.security.is_logged_in ? (
+                                <Redirect to={baseRoute}/>
+                            ) : null
+                        }
                     </div>
                 )}
             </SecurityContext.Consumer>
