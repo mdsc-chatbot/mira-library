@@ -66,7 +66,14 @@ class LoginForm extends React.Component {
                                 value={this.state.password}
                                 onChange={this.handle_change}
                             />
-                            <Button color="blue" fluid size="large" name="login_button">
+                            <Button
+                                color="blue"
+                                fluid size="large"
+                                name="login_button"
+                                disabled={
+                                    !this.state.email || !this.state.password
+                                }
+                            >
                                 Login
                             </Button>
                         </Segment>
