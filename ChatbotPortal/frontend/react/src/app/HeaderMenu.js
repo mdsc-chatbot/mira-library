@@ -21,7 +21,7 @@ export class HeaderMenu extends Component {
         return (
             <div>
                 <Segment inverted>
-                    <Menu inverted pointing secondary size="large">
+                    <Menu inverted pointing secondary size="small">
                         <Menu.Item
                             as="a"
                             style={{ paddingLeft: 50 }}
@@ -31,7 +31,7 @@ export class HeaderMenu extends Component {
                             <Link to={baseRoute}>
                                 <Header as="h2" style={{ color: "#3075c9" }}>
                                     <Icon name="qq" />
-                                    Chatbot Portal
+                                    Chatbot Resources
                                 </Header>
                             </Link>
                         </Menu.Item>
@@ -45,6 +45,21 @@ export class HeaderMenu extends Component {
                             onClick={this.handleItemClick}
                         />
 
+                         <Menu.Item
+                            name="FAQ"
+                            as={Link}
+                            to={baseRoute + "/faq"}
+                            active={activeItem === "FAQ"}
+                            onClick={this.handleItemClick}
+                        />
+
+                        <Menu.Item
+                            name="Passchange"
+                            as={Link}
+                            to={baseRoute + "/password"}
+                            active={activeItem === "Passchange"}
+                            onClick={this.handleItemClick}
+                        />
                         {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="My Profile"
@@ -75,11 +90,21 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
+                        {this.context.security.is_logged_in && this.context.security.is_staff && (
+                            <Menu.Item
+                                name="Search"
+                                as={Link}
+                                to={baseRoute + "/search"}
+                                active={activeItem === "Search"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
                         {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="Logout"
                                 as={Link}
-                                to={baseRoute + "/login"}
+                                to={baseRoute + "/logout"}
                                 active={activeItem === "Logout"}
                                 onClick={this.handleItemClick}
                             />
@@ -91,16 +116,6 @@ export class HeaderMenu extends Component {
                                 as={Link}
                                 to={baseRoute + "/login"}
                                 active={activeItem === "Login"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
-
-                        {this.context.security.is_logged_in && (
-                            <Menu.Item
-                                name="Search"
-                                as={Link}
-                                to={baseRoute + "/search"}
-                                active={activeItem === "Search"}
                                 onClick={this.handleItemClick}
                             />
                         )}

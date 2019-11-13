@@ -24,6 +24,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/resource/', include('resource.api.urls')),
     path('', include('review.urls')),
+    path('chatbotportal/review/', include('review.urls')),
     path('api/public/', include('public.urls')),
 
     # For authentication

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+import {baseRoute} from "../App";
 
 class LoginForm extends React.Component {
     /**
@@ -65,7 +66,7 @@ class LoginForm extends React.Component {
                                 value={this.state.password}
                                 onChange={this.handle_change}
                             />
-                            <Button color="blue" fluid size="large">
+                            <Button color="blue" fluid size="large" name="login_button">
                                 Login
                             </Button>
                         </Segment>
@@ -74,6 +75,12 @@ class LoginForm extends React.Component {
                         New to us?{" "}
                         <a href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
                             Sign Up
+                        </a>
+                    </Message>
+                    <Message>
+                        Forgot your password?{" "}
+                        <a href="#" onClick={() => {window.location = `${baseRoute}/password/reset`;}}>
+                            Reset Password
                         </a>
                     </Message>
                 </Grid.Column>

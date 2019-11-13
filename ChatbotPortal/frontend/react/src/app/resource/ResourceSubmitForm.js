@@ -8,7 +8,7 @@ import {
     Segment,
     Header,
     Message,
-    Input,
+    Input
 } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
@@ -22,7 +22,7 @@ export default class ResourceSubmitForm extends Component {
         super(props);
         this.state = {
             title: "Unknown title",
-            url: "",
+            url:this.props.match.params.url==="''" ? null : decodeURIComponent(this.props.match.params.url),
             rating: 1,
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
@@ -49,14 +49,16 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
-        this.state.attachment !== null ? resourceFormData.append("attachment", this.state.attachment) : null;
+        this.state.attachment !== null
+            ? resourceFormData.append("attachment", this.state.attachment)
+            : null;
 
         // Submission for tags
         // Lists have to be submitted in a certain way in order for the server to recognize it
         if (this.state.tags && this.state.tags.length) {
-            this.state.tags.forEach((value) => {
-                resourceFormData.append(`tags`, value)
-            })
+            this.state.tags.forEach(value => {
+                resourceFormData.append(`tags`, value);
+            });
         }
 
         return resourceFormData;
@@ -115,7 +117,7 @@ export default class ResourceSubmitForm extends Component {
     render() {
         return (
             <div
-                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
+                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30, }}
             >
                 <Container vertical>
                     <Header
@@ -155,7 +157,7 @@ export default class ResourceSubmitForm extends Component {
                             />
                         )}
                         <Form.Field>
-                            <label>Resource Quality</label>
+                            <label>Resource Usefulness Rating</label>
                             <Rating
                                 name="rating"
                                 onRate={this.handleRate}
@@ -188,7 +190,12 @@ export default class ResourceSubmitForm extends Component {
 
                         <Form.Field>
                             <label>Upload an attachment</label>
-                            <Input type="file" name="attachment" value={this.state.attachmentPath} onChange={this.handleFileChange} />
+                            <Input
+                                type="file"
+                                name="attachment"
+                                value={this.state.attachmentPath}
+                                onChange={this.handleFileChange}
+                            />
                         </Form.Field>
 
                         <div>
@@ -213,7 +220,7 @@ export default class ResourceSubmitForm extends Component {
                             })()}
                         </div>
 
-                        <Form.Button content="Submit" color="green" />
+                        <Form.Button name="submit" content="Submit" color="green" />
                     </Form>
                 </Container>
             </div>

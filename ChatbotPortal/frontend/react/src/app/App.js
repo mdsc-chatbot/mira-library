@@ -4,15 +4,20 @@ import { Switch, Route } from "react-router-dom";
 import { ProfilePage } from "./profile";
 import ResourcePage from "./resource/ResourcePage";
 import ResourceDetail from "./resource/ResourceDetail";
+import reviewResource from "./review/reviewResource";
 import { ReviewPage } from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
+import LogoutPage from "./authentication/LogoutPage";
 import { SecurityContextProvider } from "./security/SecurityContext";
-import { Divider } from "semantic-ui-react";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResourcePage from "./public/PublicResourcePage";
-import SearchPage from "./search/SearchPage"
+import SearchPage from "./search/SearchPage";
+import FAQ from "./FAQ.js";
+import PasswordResetPage from "./password/PasswordResetPage"
+import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
+import PasswordChangeForm from "./password/PasswordChangeForm"
 
 export default function App() {
     return (
@@ -32,6 +37,9 @@ export default function App() {
                     <Route exact path={baseRoute + "/login"}>
                         <LoginPage />
                     </Route>
+                    <Route exact path={baseRoute + "/logout"}>
+                        <LogoutPage />
+                    </Route>
                     <Route exact path={baseRoute + "/search"}>
                         <SearchPage />
                     </Route>
@@ -39,19 +47,41 @@ export default function App() {
                         exact
                         path={baseRoute + "/resource/:resourceID"}
                         component={ResourceDetail}
-                    >
-                    </Route>
-                    <Route exact path={baseRoute + "/resource_submit"}>
-                        <ResourceSubmitForm />
-                    </Route>
+                    ></Route>
+                    <Route
+                        exact
+                        path={baseRoute + "/review/:resourceID"}
+                        component={reviewResource}
+                    ></Route>
+
+                    <Route
+                        exact path={baseRoute + "/resource_submit/:url"}
+                        component={ResourceSubmitForm}
+                    />
                     <Route exact path={baseRoute + "/public_resource"}>
                         <PublicResourcePage />
                     </Route>
+                    <Route exact path={baseRoute + "/faq"}>
+                        <FAQ />
+                    </Route>
+
+                    <Route
+                        exact path={baseRoute + "/password"}
+                        component={PasswordChangeForm}
+                    />
+                    <Route
+                        exact path={baseRoute + "/password/reset"}
+                        component={PasswordResetRequestPage}
+                    />
+                    <Route
+                        exact path={baseRoute + "/password/reset/:uid/:token"}
+                        component={PasswordResetPage}
+                    />
                     <Route>
                         <Homepage />
                     </Route>
+
                 </Switch>
-                <Divider />
                 <Footer />
             </SecurityContextProvider>
         </div>

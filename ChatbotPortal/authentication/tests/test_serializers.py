@@ -25,7 +25,10 @@ class TestSerializers(TestCase):
             'is_active',
             'is_reviewer',
             'is_staff',
-            'is_superuser'
+            'is_superuser',
+            'profile_picture',
+            'submissions',
+            'points'
         ]
         self.user_attributes = {
             'id': 1,
@@ -77,7 +80,7 @@ class TestSerializers(TestCase):
         data = self.user_update_serializer.data
         # Serialized fields are not same as the fields in key_attributes
         self.assertNotEqual(set(data.keys()), set(self.key_attributes))
-        self.assertEqual(set(data.keys()), {'first_name', 'last_name'})
+        self.assertEqual(set(data.keys()), {'first_name', 'last_name', 'profile_picture', 'is_active', 'is_reviewer', 'is_staff'})
 
     def test_field_content(self):
         """

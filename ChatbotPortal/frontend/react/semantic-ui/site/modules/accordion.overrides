@@ -1,3 +1,8 @@
 /*******************************
         User Overrides
 *******************************/
+
+.ui.styled.accordion .title:hover,
+.ui.styled.accordion .accordion .title:hover {
+  font-weight : bold;
+}

@@ -3,6 +3,8 @@ import axios from "axios";
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import {SecurityContext} from '../security/SecurityContext';
+import {Redirect} from "react-router";
+import {baseRoute} from "../App";
 
 
 class LoginPage extends Component {
@@ -104,29 +106,6 @@ class LoginPage extends Component {
     };
 
     /**
-     * This function handles logout operation
-     */
-    handle_logout = () => {
-        /**
-         * This function handles the logout by setting
-         */
-        axios
-            .get(this.BASE_AUTH_URL + 'logout/')
-            .then(
-                response => {
-                    if (response.data['user'] === 'AnonymousUser') {
-                        this.context.setSecurity({
-                            is_logged_in: false
-                        });
-                    }
-                },
-                error => {
-                    console.log(error);
-                }
-            )
-    };
-
-    /**
      * This function sets the display_form state
      * to navigate to different forms.
      * @param form : String
@@ -159,11 +138,9 @@ class LoginPage extends Component {
                                 />
                             ) : null
                         }
-                        <h3>
-                            {securityContext.security.is_logged_in
-                                ? `Hello, ${securityContext.security.id}`
-                                : 'Please Log In'}
-                        </h3>
+                        {securityContext.security.is_logged_in ? (
+                            <Redirect to={baseRoute}/>
+                        ) : null}
                     </div>
                 )}
             </SecurityContext.Consumer>

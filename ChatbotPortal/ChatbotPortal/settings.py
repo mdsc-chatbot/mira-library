@@ -23,6 +23,7 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+TEST = False    # Set to True to run test db, rerun all migrations
 
 ALLOWED_HOSTS = []
 
@@ -85,12 +86,39 @@ WSGI_APPLICATION = 'ChatbotPortal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+DATABASES_AVAILABLE = {
+    'main': {
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'db',
+        # 'USER': 'user',
+        # 'PASSWORD': 'password',
+        # 'HOST': '',
+        # 'PORT': '',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    },
+    'test': {
+        # Create a separate db for testing, assign itself to its own test db
+        # This is dangerous but since the test db is trival, it's ok?
+        # note: delete all objects before test
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
+        'TEST': {
+            'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3')
+        }
+    },
 }
+
+# IMPORTANT: Change DJANGO_DATABASE_TEST to main when not testing, need rerun all migrations
+if TEST:
+    database = os.environ.get('DJANGO_DATABASE_TEST', 'test')
+else:
+    database = os.environ.get('DJANGO_DATABASE_TEST', 'main')
+
+DATABASES = {
+    'default': DATABASES_AVAILABLE[database]
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -112,6 +140,10 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'media', 'profile_pics'),
+)
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         # Unauthenticated users will have readonly access (by default)
@@ -122,6 +154,10 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}
+
+REST_AUTH_SERIALIZERS = {
+    'PASSWORD_RESET_SERIALIZER': 'authentication.api.serializers.PasswordResetSerializer',
 }
 
 
