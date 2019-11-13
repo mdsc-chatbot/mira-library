@@ -22,14 +22,12 @@ urlpatterns = [
     path('user_profile/', include('user_profile.urls')),
     path('chatbotportal/', include('frontend.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/resource/', include('resource.api.urls')),
     path('', include('review.urls')),
     path('chatbotportal/review/', include('review.urls')),
+    path('chatbotportal/resource/', include('resource.urls')),
 
     # For authentication
     path('authentication/', include('authentication.urls')),
-    path('chatbotportal/resource/', include('resource.urls')),
-
 
     # path to get token, it uses a built in view
     path('api-token-auth/', obtain_jwt_token, name='create-token'),

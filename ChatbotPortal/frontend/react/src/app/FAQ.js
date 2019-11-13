@@ -3,8 +3,11 @@ import { Container, Header, Accordion } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import styles from "./resource/ResourceDetail.css";
+import { SecurityContext } from "./security/SecurityContext";
 
 export class FAQ extends Component {
+    static contextType = SecurityContext;
+
     render() {
         const panels = [];
         const faq_title_content = {
@@ -100,9 +103,15 @@ export class FAQ extends Component {
             "What happens after I submit a resource?": (
                 <p>
                     After you submit a resource, it will show up on your{" "}
-                    <Link to={baseRoute + "/resource"} className={styles.link}>
-                        My resources{" "}
-                    </Link>
+                    {this.context.security.is_logged_in ? (
+                        <Link to={baseRoute + "/resource"} className={styles.link}>
+                            My Resources{" "}
+                        </Link>
+                    ):(
+                        <Link to={baseRoute + "/login"} className={styles.link}>
+                            My Resources{" "}
+                        </Link>
+                    )}
                     page. This is the page where all your submitted resources
                     are shown. You can track whether your submitted resource is
                     approved or rejected by clicking on a specific one.
@@ -130,9 +139,15 @@ export class FAQ extends Component {
                     <br />
                     <br /> Reviewer can see pending resources they need to
                     review under{" "}
-                    <Link to={baseRoute + "/review"} className={styles.link}>
-                        My reviews{" "}
-                    </Link>
+                    {this.context.security.is_logged_in ? (
+                        <Link to={baseRoute + "/review"} className={styles.link}>
+                            My Reviews{" "}
+                        </Link>
+                    ) : (
+                        <Link to={baseRoute + "/login"} className={styles.link}>
+                            My Reviews{" "}
+                        </Link>
+                    )}
                 </p>
             ),
 

@@ -26,7 +26,7 @@ export default class ResourceDetail extends Component {
     componentDidMount() {
         const resourceID = this.props.match.params.resourceID;
         axios
-            .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`)
+            .get(`/chatbotportal/resource/retrieve/${resourceID}`)
             .then(res => {
                 this.setState({
                     resource: res.data

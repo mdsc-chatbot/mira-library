@@ -27,7 +27,7 @@ export default class ReviewTable extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("http://127.0.0.1:8000/api/resource", {headers: options}).then(res => {
+        axios.get("/chatbotportal/resource", {headers: options}).then(res => {
             this.setState({
                 resources: res.data
             });
