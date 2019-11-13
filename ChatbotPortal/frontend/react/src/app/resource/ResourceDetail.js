@@ -129,7 +129,7 @@ export default class ResourceDetail extends Component {
                                 Review status:
                             </Grid.Column>
                             <Grid.Column {...gridValueColumnProps}>
-                                {this.state.resource.final_review}
+                                {this.state.resource.review_status}
                             </Grid.Column>
                         </Grid.Row>
 

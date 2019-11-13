@@ -61,7 +61,7 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource(1);
+        this.update_resource("approved");
     };
 
     reject = data => {
@@ -76,7 +76,7 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource(-1);
+        this.update_resource("rejected");
     };
 
     put_resource = resource => {
@@ -99,35 +99,16 @@ export default class ResourceDetail extends Component {
             );
     };
 
-    update_resource = score => {
-        const required_approvals_rejections = 2;
+    update_resource = review_status => {
         this.get_resource_details();
         const resource = this.state.resource;
-
-        if (resource.final_review === "pending") {
-            resource.review_score += score;
-            resource.number_of_reviews += 1;
-
-            if (resource.review_score === required_approvals_rejections) {
-                resource.final_review = "approved";
-            } else if (
-                resource.review_score ===
-                -1 * required_approvals_rejections
-            ) {
-                resource.final_review = "rejected";
-            } else if (
-                resource.number_of_reviews > required_approvals_rejections
-            ) {
-                if (resource.review_score > 0) {
-                    resource.final_review = "approved";
-                } else if (resource.review_score < 0) {
-                    resource.final_review = "rejected";
-                }
-            }
-
-            console.log(resource);
+        if (resource.review_status === "pending") {
+            resource.review_status = review_status;
+            console.log("changeing");
             this.put_resource(resource);
         }
+        console.log(resource);
+
     };
 
     format_data = (data, approval) => {

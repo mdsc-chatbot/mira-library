@@ -55,8 +55,6 @@ class Resource(models.Model):
     score = models.DecimalField(
         max_digits=10, decimal_places=1, blank=True, null=True)
 
-    review_score = models.IntegerField(default=0)
-    number_of_reviews = models.IntegerField(default=0)
-    final_review = models.CharField(max_length=50, default="pending")
+    review_status = models.CharField(max_length=50, default="pending")
 
     objects = ResourceManager()
