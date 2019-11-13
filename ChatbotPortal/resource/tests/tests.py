@@ -13,7 +13,7 @@ class ResourceTest(TestCase):
             rating=1,
             comments="",
             created_by_user="Unknown user",
-            created_by_user_id=0
+            created_by_user_pk=""
 
         )
         resource.save()
@@ -28,7 +28,7 @@ class ResourceTest(TestCase):
             rating=1,
             comments="",
             created_by_user="Unknown user",
-            created_by_user_id=0
+            created_by_user_pk=""
         )
         resource.full_clean()
 

@@ -60,7 +60,7 @@ class ResourceViewSet(viewsets.ModelViewSet):
     serializer_class = ResourceSerializer
     queryset = Resource.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['created_by_user_id']
+    filterset_fields = ['created_by_user_pk']
 
 
 class ResourceRetrieveView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -68,7 +68,7 @@ class ResourceRetrieveView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     serializer_class = RetrieveResourceSerializer
     queryset = Resource.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['created_by_user_id']
+    filterset_fields = ['created_by_user_pk']
 
 
 class ResourceUpdateView(generics.RetrieveUpdateAPIView):

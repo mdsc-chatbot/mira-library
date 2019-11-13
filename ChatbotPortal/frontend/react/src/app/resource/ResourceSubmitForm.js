@@ -30,11 +30,11 @@ export default class ResourceSubmitForm extends Component {
 
     create_resource = () => {
         // Get current logged in user
-        let created_by_user = "Unknown user";
-        let created_by_user_id = null;
+        let created_by_user = null;
+        let created_by_user_pk = null;
         if (this.context.security.is_logged_in) {
             created_by_user = this.context.security.first_name;
-            created_by_user_id = this.context.security.id;
+            created_by_user_pk = this.context.security.email;
         }
         const resourceFormData = new FormData();
 
@@ -43,7 +43,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
-        resourceFormData.append("created_by_user_id", created_by_user_id);
+        resourceFormData.append("created_by_user_pk", created_by_user_pk);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
