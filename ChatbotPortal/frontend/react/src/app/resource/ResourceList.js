@@ -93,7 +93,7 @@ export default class ResourceList extends Component {
 
                     <ResourceStatistic resources={resources} />
 
-                    <Link to={baseRoute + "/resource_submit/kjhkj"}>
+                    <Link to={baseRoute + "/resource_submit/''"}>
                         <Button name="submit_a_resource" positive size="big">
                             Submit a resource
                         </Button>
