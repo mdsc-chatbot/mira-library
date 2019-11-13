@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+import {Button, Form, FormField, Grid, Header, Message, Segment} from "semantic-ui-react";
 
 class SignupForm extends React.Component {
     /**
@@ -69,8 +69,9 @@ class SignupForm extends React.Component {
                             <Form.Input
                                 fluid
                                 icon="user"
+                                type="email"
                                 iconPosition="left"
-                                placeholder="E-mail address"
+                                placeholder="E-mail address * (Required)"
                                 name="email"
                                 value={this.state.email}
                                 onChange={this.handle_change}
@@ -86,13 +87,17 @@ class SignupForm extends React.Component {
                                 fluid
                                 icon="lock"
                                 iconPosition="left"
-                                placeholder="Password"
+                                placeholder="Password * (Required)"
                                 type="password"
                                 name="password"
                                 value={this.state.password}
                                 onChange={this.handle_change}
                             />
-                            <Button color="blue" fluid size="large">
+                            <Button
+                                color="blue"
+                                fluid size="large"
+                                disabled={!this.state.email || !this.state.password}
+                            >
                                 Signup
                             </Button>
                         </Segment>
