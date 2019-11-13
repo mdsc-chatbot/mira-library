@@ -1,0 +1,96 @@
+import React from "react";
+import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+import axios from "axios";
+
+/**
+ * This class sends the password change request to a respective email
+ */
+class PasswordResetRequestPage extends React.Component {
+
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            'email': '',
+            'email_sent': false
+        }
+    }
+
+    /**
+     * This function sends the password change request email by calling the backend API
+     * @param e = event
+     * @param emailFormData = Data procured from the email form
+     */
+    handle_email = (e, emailFormData) => {
+
+        const url = `${this.BASE_AUTH_URL}password/reset/`;
+
+        axios
+            .post(url, emailFormData)
+            .then(
+                response => {
+                    console.log(response);
+                    this.setState({
+                        'email_sent': true
+                    })
+                },
+                error => {
+                    console.log(error)
+                }
+            );
+    };
+
+    /**
+     * This function handles the changes that happens to the email form
+     * @param e = event
+     */
+    handle_email_change = e => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(prevstate => {
+            const newState = {...prevstate};
+            newState[name] = value;
+            return newState;
+        });
+    };
+
+    render() {
+        return (
+            <Grid
+                onSubmit={e => this.handle_email(e, this.state)}
+                textAlign="center"
+                style={{height: "100vh"}}
+                verticalAlign="middle"
+            >
+                <Grid.Column style={{maxWidth: 450}}>
+                    <Header as="h2" color="blue" textAlign="center">
+                        {/*<Image src='/logo.png'/> */}
+                        Password Reset
+                    </Header>
+                    <Form size="large">
+                        <Segment stacked>
+                            <Form.Input
+                                fluid
+                                icon="user"
+                                iconPosition="left"
+                                placeholder="E-mail address"
+                                name="email"
+                                value={this.state.email}
+                                onChange={this.handle_email_change}
+                            />
+                            <Button color="blue" fluid size="large" name="login_button">
+                                Request
+                            </Button>
+                            <Message>
+                                {this.state.email_sent ? "An email is sent with a password change link, Please check your email." : "Email was not sent."}
+                            </Message>
+                        </Segment>
+                    </Form>
+                </Grid.Column>
+            </Grid>
+        )
+    }
+}
+
+export default PasswordResetRequestPage;

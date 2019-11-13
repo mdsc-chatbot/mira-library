@@ -53,6 +53,13 @@ export class HeaderMenu extends Component {
                             onClick={this.handleItemClick}
                         />
 
+                        <Menu.Item
+                            name="Passchange"
+                            as={Link}
+                            to={baseRoute + "/password"}
+                            active={activeItem === "Passchange"}
+                            onClick={this.handleItemClick}
+                        />
                         {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="My Profile"
@@ -83,6 +90,16 @@ export class HeaderMenu extends Component {
                             />
                         )}
 
+                        {this.context.security.is_logged_in && this.context.security.is_staff && (
+                            <Menu.Item
+                                name="Search"
+                                as={Link}
+                                to={baseRoute + "/search"}
+                                active={activeItem === "Search"}
+                                onClick={this.handleItemClick}
+                            />
+                        )}
+
                         {this.context.security.is_logged_in && (
                             <Menu.Item
                                 name="Logout"
@@ -99,16 +116,6 @@ export class HeaderMenu extends Component {
                                 as={Link}
                                 to={baseRoute + "/login"}
                                 active={activeItem === "Login"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
-
-                        {this.context.security.is_logged_in && this.context.security.is_staff && (
-                            <Menu.Item
-                                name="Search"
-                                as={Link}
-                                to={baseRoute + "/search"}
-                                active={activeItem === "Search"}
                                 onClick={this.handleItemClick}
                             />
                         )}
