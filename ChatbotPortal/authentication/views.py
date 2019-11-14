@@ -91,15 +91,16 @@ class LoginView(generics.CreateAPIView):
 
         # authenticate the user
         user = authenticate(request, email=email, password=password)
-
+        print("Here")
         if user is not None:
+            print("There")
             # login saves the user's ID in the session
             login(request, user)
             # ***************Use of context is a big question here!!!*************
             serializer = CustomUserTokenSerializer(user, context={'request': request}).data
             return Response(serializer)
 
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data={'message': 'Incorrect Email or Password! Please try again.'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
 class LogoutView(generics.RetrieveAPIView):

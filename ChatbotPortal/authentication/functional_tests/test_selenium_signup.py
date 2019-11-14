@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 # The base url
-from ..models import CustomUser
+from ChatbotPortal.authentication.models import CustomUser
 
 BASE_URL = 'http://127.0.0.1:8000'
 
@@ -112,7 +112,7 @@ class TestSignup(LiveServerTestCase):
         submit_button.click()
 
         # Waiting until next page gets loaded
-        time.sleep(5)
+        time.sleep(10)
 
         # Checking the url of the next page
         self.assertURLEqual(self.browser.current_url, validate_email_url)
