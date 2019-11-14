@@ -170,7 +170,7 @@ class AuthLoginUserTest(BaseViewTest):
         # test login with invalid credentials
         response = self.login_a_user('anonymous', 'whoareyou')
         # assert status code is 401 UNAUTHORIZED
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
     def test_login_of_registed_user(self):
         """
@@ -191,7 +191,7 @@ class AuthLoginUserTest(BaseViewTest):
         # Login before email verification
         response = self.login_a_user('new@user.com', '1234')
         # assert status code is 401 UNAUTHORIZED
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
         # Assuming the email is verified
         user.is_active = True
@@ -592,7 +592,7 @@ class UpdateUserPasswordTest(BaseViewTest):
 
         # Trying to login using previous password
         response = self.login_a_user('user@update.com', '12345678')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
         # Trying to login using updated password
         response = self.login_a_user('user@update.com', '56781234')
