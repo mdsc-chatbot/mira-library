@@ -7,6 +7,11 @@ import {Form} from 'semantic-ui-react'
  */
 class SearchBySubmissionRange extends React.Component {
 
+    state ={
+        pending: false,
+        approved:false,
+    }
+
     /**
      * This function handles any changes that happens to the form fields
      * and store the changes to the parent state
@@ -23,6 +28,14 @@ class SearchBySubmissionRange extends React.Component {
             this.props.set_submission_search_params({name, value})
         }
     };
+
+    handle_pending_change = () => {
+        this.setState(({ pending }) => ({ pending: !pending }));
+    }
+
+    handle_approved_change = () => {
+        this.setState(({ approved }) => ({ approved: !approved }));
+    }
 
     /**
      * This function renders the form containing the input fields
@@ -42,6 +55,21 @@ class SearchBySubmissionRange extends React.Component {
                     placeholder="End Submission Number"
                     name="end_submission"
                     onChange={this.handle_change_submission_range}
+                />
+                <Form.Checkbox
+                    fluid
+                    label="Pending resource submission"
+                    name="pending"
+                    checked={this.state.pending}
+                    onChange={this.handle_pending_change}
+                />
+                <Form.Checkbox
+                    fluid
+                    label="Approved resource submission"
+                    name="approved"
+                    checked={this.state.approved}
+                    onChange={this.handle_approved_change}
+                    style={{paddingBottom:30}}
                 />
             </Form>
         );

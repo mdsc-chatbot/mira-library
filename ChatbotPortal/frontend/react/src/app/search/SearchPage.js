@@ -133,7 +133,7 @@ class SearchPage extends Component {
     render() {
         return (
             <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, height: 600}}
+                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, minHeight: 600}}
             >
                 <Header
                     as="h3"

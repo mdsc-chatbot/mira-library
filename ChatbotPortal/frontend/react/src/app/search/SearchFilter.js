@@ -32,7 +32,7 @@ class SearchFilter extends React.Component {
     render() {
         return (
             <div>
-                <span>
+                <div style={{float:"left", paddingRight:20}}>
                     <p>Active</p>
                     <Dropdown
                         clearable
@@ -43,8 +43,8 @@ class SearchFilter extends React.Component {
                         selection
                     >
                     </Dropdown>
-                </span>
-                <span>
+                </div>
+                <div style={{ float: "left", paddingRight:20}}>
                     <p>Reviewer</p>
                     <Dropdown
                         clearable
@@ -55,8 +55,8 @@ class SearchFilter extends React.Component {
                         selection
                     >
                     </Dropdown>
-                </span>
-                <span>
+                </div>
+                <div>
                     <p>Staff</p>
                     <Dropdown
                         clearable
@@ -67,7 +67,7 @@ class SearchFilter extends React.Component {
                         selection
                     >
                     </Dropdown>
-                </span>
+                </div>
             </div>
         );
     }
