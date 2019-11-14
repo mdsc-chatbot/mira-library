@@ -128,7 +128,7 @@ class TestLogin(LiveServerTestCase):
         self.assertTrue(login_button.is_enabled())
         login_button.click()
 
-        time.sleep(5)
+        time.sleep(15)
 
         # A successful login redirects to the homepage
         self.assertURLEqual(self.browser.current_url, homepage)
