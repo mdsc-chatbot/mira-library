@@ -14,6 +14,7 @@ package-lock.json
 
 ### Backend ###
 /ChatbotPortal/db.sqlite3
+/ChatbotPortal/test_db.sqlite3
 /ChatbotPortal/media
 migrations/
 
