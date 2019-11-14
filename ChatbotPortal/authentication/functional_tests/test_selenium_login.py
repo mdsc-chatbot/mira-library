@@ -174,3 +174,36 @@ class TestLogin(LiveServerTestCase):
         self.assertEqual(message_field.get_attribute('innerHTML'),
                          'Incorrect Email or Password! Please try again.')
         self.assertIsNotNone(message_field)
+
+
+    def test_invalid_email_attempted_login(self):
+        """
+        Test if the login button is disabled if both email and password fields are empty.
+        :return: None
+        """
+
+        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
+        self.browser.get(url)
+        time.sleep(1)
+
+        # Finding the email field
+        email = self.browser.find_element_by_name('email')
+        self.assertIsNotNone(email)
+        email.send_keys('InvalidEmail')
+
+        time.sleep(1)
+
+        # Finding the password field
+        password = self.browser.find_element_by_name('password')
+        self.assertIsNotNone(password)
+        password.send_keys(self.active_user_password)
+
+        time.sleep(1)
+
+        # Finding the login button
+        login_button = self.browser.find_element_by_name('login_button')
+        self.assertIsNotNone(login_button)
+        self.assertTrue(login_button.is_enabled())
+        login_button.click()
+
+        time.sleep(5)
