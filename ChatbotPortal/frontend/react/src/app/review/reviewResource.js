@@ -103,9 +103,10 @@ export default class ResourceDetail extends Component {
 
             // User
             const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+            console.log(this.state.resource)
             axios
                 .put(
-                    `${BASE_AUTH_URL}${1}/update/points/`,
+                    `${BASE_AUTH_URL}${this.state.resource.created_by_user_pk}/update/points/`,
                     { "points": points }, { headers: options }
                 )
                 .then(
@@ -118,8 +119,8 @@ export default class ResourceDetail extends Component {
     format_data = (data, approval) => {
         const resourceID = this.props.match.params.resourceID;
         // Get current logged in user
-        const reviewer = this.context.security.email
-            ? this.context.security.email
+        const reviewer = this.context.security.is_logged_in
+            ? this.context.security.id
             : "Unknown user";
 
         const formatted_review = {

@@ -34,7 +34,7 @@ export default class ResourceSubmitForm extends Component {
         let created_by_user_pk = null;
         if (this.context.security.is_logged_in) {
             created_by_user = this.context.security.first_name;
-            created_by_user_pk = this.context.security.email;
+            created_by_user_pk = this.context.security.id;
         }
         const resourceFormData = new FormData();
 
