@@ -36,7 +36,7 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .get(`http://127.0.0.1:8000/api/resource/retrieve/${resourceID}`, {headers:options})
+            .get(`/chatbotportal/resource/retrieve/${resourceID}`, {headers:options})
             .then(res => {
                 this.setState({
                     resource: res.data
@@ -87,7 +87,7 @@ export default class ResourceDetail extends Component {
         const resourceID = this.props.match.params.resourceID;
         axios
             .put(
-                "http://127.0.0.1:8000/api/resource/" + resourceID + "/update/",
+                "/chatbotportal/resource/" + resourceID + "/update/",
                 resource,
                 { headers: options }
             )
