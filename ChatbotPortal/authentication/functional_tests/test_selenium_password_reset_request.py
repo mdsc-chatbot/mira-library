@@ -12,7 +12,8 @@ url = BASE_URL + '/chatbotportal/app/login'
 password_reset_page = BASE_URL + '/chatbotportal/app/password/reset'
 homepage = BASE_URL + '/chatbotportal/app'
 
-class TestPasswordReset(LiveServerTestCase):
+
+class TestPasswordResetRequest(LiveServerTestCase):
     """
     This class tests for signup related matters
     """
@@ -234,7 +235,6 @@ class TestPasswordReset(LiveServerTestCase):
 
         time.sleep(2)
 
-
     def test_successful_email_sent_message(self):
         """
         Test email not sent message as the initial condition of the form
@@ -285,4 +285,3 @@ class TestPasswordReset(LiveServerTestCase):
         self.assertIsNotNone(message_field)
 
         time.sleep(2)
-
