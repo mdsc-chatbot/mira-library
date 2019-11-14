@@ -9,7 +9,8 @@ import {
     Container,
     Input,
     Checkbox,
-    Button, Rating
+    Button,
+    Rating,
 } from "semantic-ui-react";
 import axios from 'axios';
 import {SecurityContext} from '../security/SecurityContext';
@@ -24,28 +25,39 @@ export class PublicResourcePage extends Component {
         this.state = {
             resources : [],
             tags : [],
-            selected_tags : [],
-            loadingResources : true
+            selectedTags : [],
+            categories : [],
+            loadingResources : true,
+            resourcePage : 1,
+            search : ''
         };
     }
 
     // Fetch resources and tags initially
     componentDidMount() {
-        this.fetchResources();
+        this.fetchResources(1);
         this.fetchTags();
+        this.fetchCategories();
     }
 
-    fetchResources = () => {
+    fetchResources = (currentPage) => {
         this.setState({
+            resourcePage : currentPage,
             loadingResources : false
         });
 
-        axios.get('/api/public/resources')
+        axios.get(`/api/public/resources`, {
+            params : {
+                page : currentPage,
+                search : this.state.search,
+                tags : this.state.selectedTags.toString(),
+            },
+        })
             .then(res => {
                 this.setState({
-                    resources : res.data || [],
+                    resources : res.data.results || [],
                     loadingResources : false
-                })
+                });
             });
     };
 
@@ -58,20 +70,74 @@ export class PublicResourcePage extends Component {
             });
     };
 
+    fetchCategories = () => {
+        //TODO: Axios get categories
+    };
+
+    handleSearchChange = (e, {value}) => {
+        this.setState({
+            search : value
+        });
+    };
+
+    handleTagSelected = (event, {id, checked}) => {
+        // Remove or add id depending on whether checkbox was checked
+        this.setState((prevState) => {
+            let selectedTags = prevState.selectedTags.slice();
+
+            if (checked) {
+                selectedTags.push(id);
+            } else {
+                selectedTags = selectedTags.filter(value => value !== id);
+            }
+
+            return {
+                selectedTags
+            };
+        }, () => {
+            // Fetch new resources when new tags were selected
+            this.fetchResources(this.state.resourcePage)
+        });
+    };
+
+    showResourceSearchBar = () => {
+        return (
+            <form className={styles.searchBarContainer} onSubmit={(event) => {event.preventDefault(); this.fetchResources(1);}}>
+                <Input className={styles.searchBarFlex} size="huge" placeholder='Search for resources...' value={this.state.search} onChange={this.handleSearchChange}/>
+                <Button size="huge">Search</Button>
+            </form>
+        );
+    };
+
     // Render code for showing tags
-    showTags = (tags) => {
+    showTagsAndCategories = (tags, categories) => {
         if (tags.length > 0) {
             return (
                 <React.Fragment>
-                    <span className={styles.searchBarMargin}>
-                        <Input placeholder='Search for tags...' className={styles.flexInput} />
-                    </span>
-                    <List>
-                        {tags.map(tag => (
-                            <List.Item>
-                                <Checkbox label={tag.name}/>
-                            </List.Item>
-                        ))}
+                    {/*<span className={styles.searchBarMargin}>*/}
+                        {/*<Input placeholder='Search for tags...' className={styles.flexInput} />*/}
+                    {/*</span>*/}
+                    <List className={styles.nonCenteredText}>
+                        <List.Item>
+                            <List.Header>Categories</List.Header>
+                            <List.Content>
+                                {categories.map(category => (
+                                    <List.Item>
+                                        <Checkbox label={category.name}/>
+                                    </List.Item>
+                                ))}
+                            </List.Content>
+                        </List.Item>
+                        <List.Item>
+                            <List.Header>Tags</List.Header>
+                            <List.Content>
+                                {tags.map(tag => (
+                                    <List.Item>
+                                        <Checkbox label={tag.name} id={tag.id} onChange={this.handleTagSelected}/>
+                                    </List.Item>
+                                ))}
+                            </List.Content>
+                        </List.Item>
                     </List>
                 </React.Fragment>
             );
@@ -94,18 +160,10 @@ export class PublicResourcePage extends Component {
          * CASE 3: Resources is loaded, and there are resources found.
          */
 
-        const searchBar = (
-            <span className={styles.searchBarMargin}>
-                <Input placeholder='Search for tags...' />
-                <Button>Search</Button>
-            </span>
-        );
-
         if (loadingResources === true) {
             // CASE 1
             return (
                 <React.Fragment>
-                    {searchBar}
                     <Loader active inline />
                     Loading Resources...
                 </React.Fragment>
@@ -113,16 +171,12 @@ export class PublicResourcePage extends Component {
         } else if (resources.length === 0) {
             // CASE 2
             return (
-                <React.Fragment>
-                    {searchBar}
-                    <p>No resources found. Try a different query?</p>
-                </React.Fragment>
+                <p>No resources found. Try a different query?</p>
             );
         } else {
             // CASE 3
             return (
                 <React.Fragment>
-                    {searchBar}
                     <Card.Group>
                         {resources.map(resource => (
                             <Card>
@@ -156,21 +210,14 @@ export class PublicResourcePage extends Component {
                     textAlign="center"
                     vertical
                 >
-                    <Header
-                        as="h3"
-                        style={{
-                            fontSize: "2em"
-                        }}
-                        color="blue"
-                    >
-                        Public Resources
-                    </Header>
-
                     <Grid>
+                        <Grid.Row>
+                            {this.showResourceSearchBar()}
+                        </Grid.Row>
                         <Grid.Row columns="2">
                             <Grid.Column width="3">
                                 <Segment>
-                                    {this.showTags(this.state.tags)}
+                                    {this.showTagsAndCategories(this.state.tags, this.state.categories)}
                                 </Segment>
                             </Grid.Column>
 

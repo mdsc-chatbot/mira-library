@@ -6,3 +6,16 @@
 :global(.ui.input).flexInput {
     display: flex;
 }
+
+.searchBarFlex {
+    flex: 1 0 auto;
+}
+
+.searchBarContainer {
+    flex: 1 1 auto;
+    display : flex;
+}
+
+.nonCenteredText {
+    text-align : start;
+}
