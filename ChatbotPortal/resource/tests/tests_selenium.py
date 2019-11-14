@@ -78,7 +78,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.user_password = "test"
         user = CustomUser.objects.create_user(
             email=self.user_email,
-            password=self.user_password
+            password=self.user_password,
         )
         user.save()
 
@@ -138,7 +138,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.submit_a_resource(actual_resource_detail)
         test_invalid_text = self.driver.find_element(
             By.XPATH, ("//form/div/div")).text
-        assert "Please enter a url" == test_invalid_text
+        assert "Please enter a valid url" == test_invalid_text
 
     def valid_resource_submission(self, actual_resource_detail, test_resource_path, test_tags=False):
         self.submit_a_resource(actual_resource_detail)
@@ -147,10 +147,10 @@ class TestResourceSubmission(LiveServerTestCase):
         test_resource_detail = self.get_resource_detail(
             test_resource_path, test_tags=test_tags)
 
-        assert "You've submitted a resource!" == test_valid_text
+        assert "Congratulations! You've submitted a resource!" == test_valid_text
         actual_resource_detail[2] = actual_resource_detail[2].replace(
             ",", "")  # Get rid of commas for tags comparision
-        # print(actual_resource_detail, test_resource_detail)
+        print(actual_resource_detail, test_resource_detail)
         assert actual_resource_detail == test_resource_detail
 
     def submit_a_resource(self, actual_resource_detail):

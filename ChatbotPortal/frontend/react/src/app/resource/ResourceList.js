@@ -1,14 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {
-    List,
-    Header,
-    Segment,
-    Button,
-    Grid,
-    Card,
-    Container
-} from "semantic-ui-react";
+import { List, Header, Segment, Button, Grid, Card, Container } from "semantic-ui-react";
 
 import ResourceListItem from "./ResourceListItem.js";
 import { SecurityContext } from "../security/SecurityContext";
@@ -28,14 +20,14 @@ export default class ResourceList extends Component {
     }
 
     get_resources = () => {
-        if (this.context.security.email) {
+        if (this.context.security.is_logged_in) {
             axios.defaults.headers.common = {
                 Authorization: `Bearer ${this.context.security.token}`
             };
             axios
-                .get("http://127.0.0.1:8000/api/resource", {
+                .get("/chatbotportal/resource", {
                     params: {
-                        created_by_user: this.context.security.email
+                        created_by_user_pk: this.context.security.email
                     }
                 })
                 .then(res => {
@@ -69,14 +61,10 @@ export default class ResourceList extends Component {
                     paddingTop: 30,
                     paddingLeft: 100,
                     paddingRight: 100,
-                    paddingBottom: 30,
+                    paddingBottom: 30
                 }}
             >
-                <Container
-                    style={{ paddingBottom: 50 }}
-                    textAlign="center"
-                    vertical
-                >
+                <Container style={{ paddingBottom: 50 }} textAlign="center" vertical>
                     <Header
                         as="h3"
                         style={{
