@@ -61,7 +61,7 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource("approved");
+        this.update_resource("approved",1);
     };
 
     reject = data => {
@@ -76,10 +76,10 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource("rejected");
+        this.update_resource("rejected",0);
     };
 
-    update_resource = review_status => {
+    update_resource = (review_status, points) => {
 
         this.get_resource_details();
         if (this.state.resource.review_status === "pending") {
@@ -88,6 +88,8 @@ export default class ResourceDetail extends Component {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${this.context.security.token}`
             };
+
+            // Resource
             axios
                 .put(
                     "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
@@ -98,6 +100,18 @@ export default class ResourceDetail extends Component {
                     response => {},
                     error => {console.log(error);}
                 );
+
+            // User
+            const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+            axios
+                .put(
+                    `${BASE_AUTH_URL}${1}/update/points/`,
+                    { "points": points }, { headers: options }
+                )
+                .then(
+                    response => { },
+                    error => { console.log(error); }
+                ); 
         }
     };
 

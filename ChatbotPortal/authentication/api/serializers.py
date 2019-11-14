@@ -146,7 +146,7 @@ class UserUpdatePointSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        instance.__dict__.update(validated_data)
+        instance.points = instance.points + validated_data.pop('points')
         instance.save()
         return instance
 
