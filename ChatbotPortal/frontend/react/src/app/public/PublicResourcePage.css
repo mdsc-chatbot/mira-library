@@ -15,3 +15,9 @@
     flex: 1 1 auto;
     display : flex;
 }
+
+.topBarContainer {
+    display: flex;
+    padding-bottom: 1em;
+    justify-content: space-between;
+}

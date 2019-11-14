@@ -4,8 +4,10 @@ from rest_framework.pagination import PageNumberPagination
 from resource.models import Resource, Tag
 from .serializers import ResourceSerializer, TagSerializer
 
+
 class StandardResultSetPagination(PageNumberPagination):
     page_size = 100
+
 
 class ResourceView(generics.ListAPIView):
     """
@@ -38,6 +40,25 @@ class ResourceView(generics.ListAPIView):
             tag_list = tag_param.split(',')
             queryset = queryset.filter(tags__id__in=tag_list)
 
+        # Sort query
+        # 0, 3 : Recency (desc, asc)
+        # 1, 4 : Popularity (desc, asc)
+        # 2, 5 : Rating (desc, asc)
+        # Reference on how to do complex sorting: https://stackoverflow.com/questions/19623311/how-to-order-django-queryset-by-a-specified-match-and-then-default-to-the-origin
+        sort_param = int(self.request.query_params.get('sort'))
+        if (sort_param == None or sort_param == "" or sort_param == 0 or sort_param == 3 or sort_param == 1 or sort_param == 4):
+            # By default, popularity is also recency
+            # TODO: Figure out how to do popularity sort...
+            if (sort_param == 0):
+                queryset = queryset.order_by('-timestamp')
+            else:
+                queryset = queryset.order_by('timestamp')
+        elif (sort_param == 2 or sort_param == 5):
+            if (sort_param == 2):
+                queryset = queryset.order_by('-rating')
+            else:
+                queryset = queryset.order_by('rating')
+
         return queryset
 
 class TagView(generics.ListAPIView):
@@ -45,6 +66,6 @@ class TagView(generics.ListAPIView):
     permission_classes = {permissions.AllowAny}
 
     def get_queryset(self):
-        #TODO: Only approved tags?? Waiting for client confirmation
-        #TODO: Tag sorting? (Sort desc by most used)
+        # TODO: Only approved tags?? Waiting for client confirmation
+        # TODO: Tag sorting? (Sort desc by most used)
         return Tag.objects.all()

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import {Segment, Checkbox, Loader, List} from 'semantic-ui-react';
 import styles from './FilterList.css';
 
@@ -41,3 +42,9 @@ export function FilterList({tags, categories, handleTagSelected}) {
         );
     }
 }
+
+FilterList.propTypes = {
+    tags : PropTypes.array,
+    categories : PropTypes.array,
+    handleTagSelected : PropTypes.func,
+};

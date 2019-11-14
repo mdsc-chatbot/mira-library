@@ -26,7 +26,7 @@ export function ResourceTable({resources, loadingResources}) {
         // CASE 3
         return (
             <React.Fragment>
-                <Card.Group>
+                <Card.Group itemsPerRow="2">
                     {resources.map(resource => (
                         <Card>
                             <Card.Content>

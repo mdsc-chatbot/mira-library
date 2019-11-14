@@ -5,6 +5,8 @@ import {
     Container,
     Input,
     Button,
+    Dropdown,
+    Pagination,
 } from "semantic-ui-react";
 import axios from 'axios';
 import {SecurityContext} from '../security/SecurityContext';
@@ -14,6 +16,16 @@ import {ResourceTable} from './ResourceTable';
 
 export class PublicResourcePage extends Component {
     static contextType = SecurityContext;
+    // Static list of sort options
+    // This list is reflected in the back-end code as well. Check out the view for retrieving resources.
+    static resourceDropdownOptions = [
+        {key : 'By Most Recent', value: 0, text: 'By Most Recent'},
+        {key : 'By Most Popular', value: 1, text: 'By Most Popular'},
+        {key : 'By Highest Rated', value: 2, text: 'By Highest Rated'},
+        {key : 'By Least Recent', value: 3, text: 'By Least Recent'},
+        {key : 'By Least Popular', value: 4, text: 'By Least Popular'},
+        {key : 'By Lowest Rated', value: 5, text: 'By Lowest Rated'},
+    ];
 
     constructor(props) {
         super(props);
@@ -25,7 +37,9 @@ export class PublicResourcePage extends Component {
             categories : [],
             loadingResources : true,
             resourcePage : 1,
-            search : ''
+            search : '',
+            totalResourceCount : 0,
+            sortOption : 0,
         };
     }
 
@@ -47,11 +61,13 @@ export class PublicResourcePage extends Component {
                 page : currentPage,
                 search : this.state.search,
                 tags : this.state.selectedTags.toString(),
+                sort : this.state.sortOption
             },
         })
             .then(res => {
                 this.setState({
                     resources : res.data.results || [],
+                    totalResourceCount : res.data.count || 0,
                     loadingResources : false
                 });
             });
@@ -96,6 +112,18 @@ export class PublicResourcePage extends Component {
         });
     };
 
+    handleSortDropdownChange = (event, {value}) => {
+        this.setState({
+            sortOption : value
+        }, () => {
+            this.fetchResources(this.state.resourcePage);
+        });
+    };
+
+    handlePageChange = (event, {activePage}) => {
+        this.fetchResources(activePage)
+    };
+
     render() {
         return (
             <Segment vertical>
@@ -121,10 +149,20 @@ export class PublicResourcePage extends Component {
                             </Grid.Column>
 
                             <Grid.Column width="13">
-                                <ResourceTable
-                                    resources={this.state.resources}
-                                    loadingResources={this.state.loadingResources}
-                                />
+                                <Segment>
+                                    <span className={styles.topBarContainer}>
+                                        <Dropdown selection placeholder={"Sort by"} value={this.state.sortOption} onChange={this.handleSortDropdownChange} options={PublicResourcePage.resourceDropdownOptions} />
+                                        <Pagination
+                                            activePage={this.state.resourcePage}
+                                            totalPages={Math.ceil(this.state.totalResourceCount / 100)}
+                                            onPageChange={this.handlePageChange}
+                                        />
+                                    </span>
+                                    <ResourceTable
+                                        resources={this.state.resources}
+                                        loadingResources={this.state.loadingResources}
+                                    />
+                                </Segment>
                             </Grid.Column>
                         </Grid.Row>
                     </Grid>
