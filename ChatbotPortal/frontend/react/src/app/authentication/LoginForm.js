@@ -47,6 +47,7 @@ class LoginForm extends React.Component {
                     </Header>
                     <Form size="large">
                         <Segment stacked>
+
                             <Form.Input
                                 fluid
                                 icon="user"
