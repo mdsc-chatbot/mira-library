@@ -1,7 +1,7 @@
-import React from "react";
-import {Button, Form, Grid, Header, Segment} from "semantic-ui-react";
-import axios from "axios";
-import {baseRoute} from "../App";
+import React from 'react';
+import {Button, Form, Grid, Header, Segment} from 'semantic-ui-react';
+import axios from 'axios';
+import {baseRoute} from '../App';
 
 /**
  * This class performs the password change operation after a password change request.
@@ -21,11 +21,12 @@ class PasswordResetPage extends React.Component {
          * @type {{uid: number, new_password1: string, new_password2: string, password_matched: boolean, token: *}}
          */
         this.state = {
-            'uid': this.props.match.params.uid,
-            'token': this.props.match.params.token,
-            'new_password1': '',
-            'new_password2': '',
-            'password_matched': false
+            uid: this.props.match.params.uid,
+            token: this.props.match.params.token,
+            new_password1: '',
+            new_password2: '',
+            password_matched: false,
+            reset_error: false
         }
     }
 
@@ -48,11 +49,13 @@ class PasswordResetPage extends React.Component {
                 .then(
                     response => {
                         console.log(response);
+                        this.setState({reset_error: false});
                         // Upon successful changing of password, redirect the user to the login page
                         window.location = `${baseRoute}/login`;
                     },
                     error => {
-                        console.log(error)
+                        console.log(error);
+                        this.setState({reset_error: true});
                     }
                 );
         }
@@ -102,42 +105,62 @@ class PasswordResetPage extends React.Component {
     render() {
         return (
             <Grid
-                onSubmit={e => this.handle_password(e, this.state)}
-                textAlign="center"
-                style={{height: "100vh"}}
-                verticalAlign="middle"
+                // onSubmit={e => this.handle_password(e, this.state)}
+                textAlign='center'
+                style={{height: '100vh'}}
+                verticalAlign='middle'
             >
                 <Grid.Column style={{maxWidth: 450}}>
-                    <Header as="h2" color="blue" textAlign="center">
+                    <Header as='h2' color='blue' textAlign='center'>
                         {/*<Image src='/logo.png'/> */}
                         Password Reset
                     </Header>
-                    <Form size="large">
+
+                    <Form size='large'>
                         <Segment stacked>
                             <Form.Input
                                 fluid
-                                icon="lock"
-                                iconPosition="left"
-                                placeholder="Password"
-                                type="password"
-                                name="new_password1"
+                                icon='lock'
+                                iconPosition='left'
+                                placeholder='Password (must be at least 8 characters)'
+                                type='password'
+                                name='new_password1'
                                 value={this.state.new_password1}
                                 onChange={this.handle_password1}
                             />
                             <Form.Input
                                 fluid
-                                icon="lock"
-                                iconPosition="left"
-                                placeholder="Confirm Password"
-                                type="password"
-                                name="new_password2"
+                                icon='lock'
+                                iconPosition='left'
+                                placeholder='Confirm Password'
+                                type='password'
+                                name='new_password2'
                                 value={this.state.new_password2}
                                 onChange={this.handle_password2}
                             />
-                            <Button color="blue" fluid size="large" name="login_button">
-                                {this.state.password_matched ? "Click" : "Password does not match"}
-                            </Button>
+
+                            {
+                                this.state.reset_error === true ?
+                                    <Button
+                                        color='red'
+                                        fluid size='medium'
+                                        name='password_reset_request_page_button'
+                                        content='Unable to reset! Please request password reset email again.'
+                                        onClick={() => {
+                                            window.location = `${baseRoute}/password/reset`
+                                        }}
+                                    /> :
+                                    <Button
+                                        color='blue'
+                                        fluid size='medium'
+                                        name='password_reset_button'
+                                        content='Submit'
+                                        disabled={!(this.state.new_password1.length >= 8) || !this.state.password_matched}
+                                        onClick={e => this.handle_password(e, this.state)}
+                                    />
+                            }
                         </Segment>
+
                     </Form>
                 </Grid.Column>
             </Grid>
