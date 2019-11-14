@@ -18,3 +18,7 @@
 .greyColumn {
     color : grey;
 }
+
+.inline {
+    display:flex; flex-direction:row;
+}
