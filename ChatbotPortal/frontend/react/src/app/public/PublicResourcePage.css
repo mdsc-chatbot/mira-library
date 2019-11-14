@@ -15,7 +15,3 @@
     flex: 1 1 auto;
     display : flex;
 }
-
-.nonCenteredText {
-    text-align : start;
-}
