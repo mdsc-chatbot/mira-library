@@ -74,17 +74,23 @@ class PasswordResetRequestPage extends React.Component {
                                 fluid
                                 icon="user"
                                 iconPosition="left"
-                                placeholder="E-mail address"
+                                type="email"
                                 name="email"
+                                placeholder="E-mail address"
                                 value={this.state.email}
                                 onChange={this.handle_email_change}
                             />
-                            <Button color="blue" fluid size="large" name="login_button">
+                            <Button
+                                color="blue"
+                                fluid size="large"
+                                name="password_reset_button"
+                                disabled={!this.state.email}
+                            >
                                 Request
                             </Button>
-                            <Message>
-                                {this.state.email_sent ? "An email is sent with a password change link, Please check your email." : "Email was not sent."}
-                            </Message>
+                            <Message
+                                content={this.state.email_sent ? "An email is sent with a password change link, Please check your email." : "Email is not sent yet."}
+                            />
                         </Segment>
                     </Form>
                 </Grid.Column>
