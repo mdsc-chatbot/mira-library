@@ -80,7 +80,9 @@ class LoginForm extends React.Component {
                     </Form>
                     <Message>
                         New to us?{" "}
-                        <a href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
+                        <a
+                            id="signup_link"
+                            href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
                             Sign Up
                         </a>
                     </Message>
