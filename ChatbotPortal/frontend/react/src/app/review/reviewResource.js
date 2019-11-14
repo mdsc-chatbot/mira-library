@@ -61,7 +61,7 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource(1);
+        this.update_resource("approved",1);
     };
 
     reject = data => {
@@ -76,65 +76,51 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource(-1);
+        this.update_resource("rejected",0);
     };
 
-    put_resource = resource => {
-        const options = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.context.security.token}`
-        };
-        const resourceID = this.props.match.params.resourceID;
-        axios
-            .put(
-                "/chatbotportal/resource/" + resourceID + "/update/",
-                resource,
-                { headers: options }
-            )
-            .then(
-                response => {},
-                error => {
-                    console.log(error);
-                }
-            );
-    };
+    update_resource = (review_status, points) => {
 
-    update_resource = score => {
-        const required_approvals_rejections = 2;
         this.get_resource_details();
-        const resource = this.state.resource;
+        if (this.state.resource.review_status === "pending") {
 
-        if (resource.final_review === "pending") {
-            resource.review_score += score;
-            resource.number_of_reviews += 1;
+            const options = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.context.security.token}`
+            };
 
-            if (resource.review_score === required_approvals_rejections) {
-                resource.final_review = "approved";
-            } else if (
-                resource.review_score ===
-                -1 * required_approvals_rejections
-            ) {
-                resource.final_review = "rejected";
-            } else if (
-                resource.number_of_reviews > required_approvals_rejections
-            ) {
-                if (resource.review_score > 0) {
-                    resource.final_review = "approved";
-                } else if (resource.review_score < 0) {
-                    resource.final_review = "rejected";
-                }
-            }
+            // Resource
+            axios
+                .put(
+                    "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
+                    {"review_status":review_status},
+                    { headers: options }
+                )
+                .then(
+                    response => {},
+                    error => {console.log(error);}
+                );
 
-            console.log(resource);
-            this.put_resource(resource);
+            // User
+            const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+            console.log(this.state.resource)
+            axios
+                .put(
+                    `${BASE_AUTH_URL}${this.state.resource.created_by_user_pk}/update/points/`,
+                    { "points": points }, { headers: options }
+                )
+                .then(
+                    response => { },
+                    error => { console.log(error); }
+                ); 
         }
     };
 
     format_data = (data, approval) => {
         const resourceID = this.props.match.params.resourceID;
         // Get current logged in user
-        const reviewer = this.context.security.email
-            ? this.context.security.email
+        const reviewer = this.context.security.is_logged_in
+            ? this.context.security.id
             : "Unknown user";
 
         const formatted_review = {

@@ -27,7 +27,7 @@ export default class ResourceList extends Component {
             axios
                 .get("/chatbotportal/resource", {
                     params: {
-                        created_by_user_pk: this.context.security.email
+                        created_by_user_pk: this.context.security.id
                     }
                 })
                 .then(res => {

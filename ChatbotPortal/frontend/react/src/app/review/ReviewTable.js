@@ -172,8 +172,8 @@ export default class ReviewTable extends Component {
     }
     render() {    
         // Get current logged in user, take this function out of format_data and consolidate it later
-        const reviewer = this.context.security.email
-        ? this.context.security.email
+        const reviewer = this.context.security.is_logged_in
+        ? this.context.security.id
         : "Unknown user";
 
         const reviewsI = this.state.reviews.filter(review => review.reviewer_user_email === reviewer);

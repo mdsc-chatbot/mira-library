@@ -46,14 +46,12 @@ class Resource(models.Model):
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 
     created_by_user = models.CharField(max_length=100, default="Unknown user")
-    created_by_user_pk = models.CharField(max_length=100, default="Unknown user")
+    created_by_user_pk = models.IntegerField(default=-1)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     score = models.DecimalField(
         max_digits=10, decimal_places=1, blank=True, null=True)
 
-    review_score = models.IntegerField(default=0)
-    number_of_reviews = models.IntegerField(default=0)
-    final_review = models.CharField(max_length=50, default="pending")
+    review_status = models.CharField(max_length=50, default="pending")
 
     objects = ResourceManager()
