@@ -23,8 +23,8 @@ class LoginPage extends Component {
          * A constructor that defines state with properties
          */
         super(props);
-        /**
-         * State displayed_form determines which form to display
+
+        /** State displayed_form determines which form to display
          * @type {{
          *      signup_error: boolean,
          *      login_error: boolean,
