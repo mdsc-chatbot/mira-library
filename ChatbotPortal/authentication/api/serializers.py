@@ -128,7 +128,7 @@ class UserUpdateSubmissionSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        instance.__dict__.update(validated_data)
+        instance.submissions = instance.submissions + validated_data.pop('submissions')
         instance.save()
         return instance
 
