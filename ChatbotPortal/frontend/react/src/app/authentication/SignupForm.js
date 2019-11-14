@@ -133,6 +133,7 @@ class SignupForm extends React.Component {
                                 onChange={this.handle_password2}
                             />
                             <Button
+
                                 color="blue"
                                 fluid size="large"
                                 disabled={!this.state.email || !(this.state.password.length >= 8 && this.state.password_matched)}
@@ -143,7 +144,9 @@ class SignupForm extends React.Component {
                     </Form>
                     <Message>
                         Already have an account?{" "}
-                        <a href="#" onClick={() => this.props.handleLoginClicked('signup')}>
+                        <a
+                            href="#"
+                            onClick={() => this.props.handleLoginClicked('signup')}>
                             Login
                         </a>
                     </Message>
