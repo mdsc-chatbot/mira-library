@@ -35,24 +35,25 @@ class TestLogin(LiveServerTestCase):
         self.browser.close()
         # self.reset_db()
 
-    def setUp_db(self):
-        """
-        Setting up the database
-        :return: None
-        """
-        CustomUser.objects.all().delete()
-        # self.active_user_email = 'test@test.ca'
-        # self.active_user_password = '12345678'
-        # self.active_user = CustomUser.objects.create_user(
-        #     email='test@login.ca',
-        #     password='12345678',
-        #     is_active=True
-        # )
-        # self.active_user.save()
-
     def reset_db(self):
         """
         Resetting up the database
+        :return: None
+        """
+        CustomUser.objects.all().delete()
+        self.active_user_email = 'test@test.ca'
+        self.active_user_password = '12345678'
+        self.active_user = CustomUser.objects.create_user(
+            email=self.active_user_email,
+            password=self.active_user_password,
+            is_active=True
+        )
+        self.active_user.save()
+
+    @staticmethod
+    def clear_db():
+        """
+        Clearing up the database
         :return: None
         """
         CustomUser.objects.all().delete()

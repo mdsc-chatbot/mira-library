@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 
 # The base url
-from ChatbotPortal.authentication.models import CustomUser
+from ..models import CustomUser
 
 BASE_URL = 'http://127.0.0.1:8000'
 
@@ -24,8 +24,10 @@ class TestSignup(LiveServerTestCase):
         Defining the web driver.
         :return: None
         """
+        self.active_user_email = 'test@test.ca'
+        self.active_user_password = '12345678'
         self.browser = webdriver.Chrome()
-        CustomUser.objects.all().delete()
+        # self.setUp_db()
 
     def tearDown(self):
         """
@@ -33,8 +35,32 @@ class TestSignup(LiveServerTestCase):
         :return: None
         """
         self.browser.close()
+        # self.reset_db()
 
-    def test_signup_new_user(self):
+    def reset_db(self):
+        """
+        Resetting up the database
+        :return: None
+        """
+        CustomUser.objects.all().delete()
+        self.active_user_email = 'test@test.ca'
+        self.active_user_password = '12345678'
+        self.active_user = CustomUser.objects.create_user(
+            email=self.active_user_email,
+            password=self.active_user_password,
+            is_active=True
+        )
+        self.active_user.save()
+
+    @staticmethod
+    def clear_db():
+        """
+        Clearing up the database
+        :return: None
+        """
+        CustomUser.objects.all().delete()
+
+    def test_signup_a_new_user(self):
         """
         Testing for successful signing up of a new user
         :return: None
@@ -71,7 +97,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the email field
         email_field = self.browser.find_element_by_name('email')
         self.assertIsNotNone(email_field)
-        email_field.send_keys('test@test.ca')
+        email_field.send_keys(self.active_user_email)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -84,7 +110,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password field
         password_field = self.browser.find_element_by_name('password')
         self.assertIsNotNone(password_field)
-        password_field.send_keys('12345678')
+        password_field.send_keys(self.active_user_password)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -92,7 +118,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password confirm field
         password_confirm_field = self.browser.find_element_by_name('password2')
         self.assertIsNotNone(password_confirm_field)
-        password_confirm_field.send_keys('12345678')
+        password_confirm_field.send_keys(self.active_user_password)
 
         # Finding consent form checkbox
         consentform_checkbox = self.browser.find_element_by_name('consent')
@@ -112,7 +138,7 @@ class TestSignup(LiveServerTestCase):
         submit_button.click()
 
         # Waiting until next page gets loaded
-        time.sleep(10)
+        time.sleep(15)
 
         # Checking the url of the next page
         self.assertURLEqual(self.browser.current_url, validate_email_url)
@@ -128,7 +154,7 @@ class TestSignup(LiveServerTestCase):
         # Waiting for tester's experience
         time.sleep(1)
 
-    def test_signup_existing_user(self):
+    def test_signup_an_existing_user(self):
         """
         Testing for signing up a user with an existing email address
         :return: None
@@ -165,7 +191,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the email field
         email_field = self.browser.find_element_by_name('email')
         self.assertIsNotNone(email_field)
-        email_field.send_keys('test@test.ca')
+        email_field.send_keys(self.active_user_email)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -178,7 +204,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password field
         password_field = self.browser.find_element_by_name('password')
         self.assertIsNotNone(password_field)
-        password_field.send_keys('12345678')
+        password_field.send_keys(self.active_user_password)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -186,7 +212,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password confirm field
         password_confirm_field = self.browser.find_element_by_name('password2')
         self.assertIsNotNone(password_confirm_field)
-        password_confirm_field.send_keys('12345678')
+        password_confirm_field.send_keys(self.active_user_password)
 
         # Finding consent form checkbox
         consentform_checkbox = self.browser.find_element_by_name('consent')
@@ -253,7 +279,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the email field
         email_field = self.browser.find_element_by_name('email')
         self.assertIsNotNone(email_field)
-        email_field.send_keys('testtestca')
+        email_field.send_keys('InvalidEmail')
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -266,7 +292,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password field
         password_field = self.browser.find_element_by_name('password')
         self.assertIsNotNone(password_field)
-        password_field.send_keys('12345678')
+        password_field.send_keys(self.active_user_password)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -274,7 +300,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password confirm field
         password_confirm_field = self.browser.find_element_by_name('password2')
         self.assertIsNotNone(password_confirm_field)
-        password_confirm_field.send_keys('12345678')
+        password_confirm_field.send_keys(self.active_user_password)
 
         # Finding consent form checkbox
         consentform_checkbox = self.browser.find_element_by_name('consent')
