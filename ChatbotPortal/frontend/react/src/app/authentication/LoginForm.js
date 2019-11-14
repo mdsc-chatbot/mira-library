@@ -53,6 +53,7 @@ class LoginForm extends React.Component {
                                 icon="user"
                                 iconPosition="left"
                                 placeholder="E-mail address"
+                                type="email"
                                 name="email"
                                 value={this.state.email}
                                 onChange={this.handle_change}
@@ -89,7 +90,9 @@ class LoginForm extends React.Component {
                     </Message>
                     <Message>
                         Forgot your password?{" "}
-                        <a href="#" onClick={() => {window.location = `${baseRoute}/password/reset`;}}>
+                        <a
+                            id="password_reset_link"
+                            href="#" onClick={() => {window.location = `${baseRoute}/password/reset`;}}>
                             Reset Password
                         </a>
                     </Message>
