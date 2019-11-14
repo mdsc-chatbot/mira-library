@@ -2,6 +2,7 @@ import time
 
 from django.test import LiveServerTestCase
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 # The base url
 from ..models import CustomUser
@@ -93,6 +94,19 @@ class TestSignup(LiveServerTestCase):
         self.assertIsNotNone(password_confirm_field)
         password_confirm_field.send_keys('12345678')
 
+        # Finding consent form checkbox
+        consentform_checkbox = self.browser.find_element_by_name('consent')
+        self.assertIsNotNone(consentform_checkbox)
+        # The checkbox should be unchecked
+        self.assertFalse(consentform_checkbox.get_property('checked'))
+        # Finding the checkbox and clicking it using Javascript
+        self.browser.execute_script("document.getElementsByName('consent')[0].click()")
+        # The checkbox should be checked
+        self.assertTrue(consentform_checkbox.get_property('checked'))
+
+        # Waiting for tester's experience
+        time.sleep(2)
+
         # Checking if the button is active
         self.assertTrue(submit_button.is_enabled())
         submit_button.click()
@@ -174,6 +188,16 @@ class TestSignup(LiveServerTestCase):
         self.assertIsNotNone(password_confirm_field)
         password_confirm_field.send_keys('12345678')
 
+        # Finding consent form checkbox
+        consentform_checkbox = self.browser.find_element_by_name('consent')
+        self.assertIsNotNone(consentform_checkbox)
+        # The checkbox should be unchecked
+        self.assertFalse(consentform_checkbox.get_property('checked'))
+        # Finding the checkbox and clicking it using Javascript
+        self.browser.execute_script("document.getElementsByName('consent')[0].click()")
+        # The checkbox should be checked
+        self.assertTrue(consentform_checkbox.get_property('checked'))
+
         # Checking if the button is active
         self.assertTrue(submit_button.is_enabled())
         submit_button.click()
@@ -251,6 +275,16 @@ class TestSignup(LiveServerTestCase):
         password_confirm_field = self.browser.find_element_by_name('password2')
         self.assertIsNotNone(password_confirm_field)
         password_confirm_field.send_keys('12345678')
+
+        # Finding consent form checkbox
+        consentform_checkbox = self.browser.find_element_by_name('consent')
+        self.assertIsNotNone(consentform_checkbox)
+        # The checkbox should be unchecked
+        self.assertFalse(consentform_checkbox.get_property('checked'))
+        # Finding the checkbox and clicking it using Javascript
+        self.browser.execute_script("document.getElementsByName('consent')[0].click()")
+        # The checkbox should be checked
+        self.assertTrue(consentform_checkbox.get_property('checked'))
 
         # Checking if the button is active
         self.assertTrue(submit_button.is_enabled())
