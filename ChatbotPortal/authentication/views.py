@@ -91,9 +91,8 @@ class LoginView(generics.CreateAPIView):
 
         # authenticate the user
         user = authenticate(request, email=email, password=password)
-        print("Here")
+
         if user is not None:
-            print("There")
             # login saves the user's ID in the session
             login(request, user)
             # ***************Use of context is a big question here!!!*************
