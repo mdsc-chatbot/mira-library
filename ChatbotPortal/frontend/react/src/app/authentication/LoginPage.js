@@ -25,16 +25,19 @@ class LoginPage extends Component {
         super(props);
         /**
          * State displayed_form determines which form to display
-         * @type {
-         *          {
-         *              displayed_form: string}
-         *          }
+         * @type {{
+         *      signup_error: boolean,
+         *      login_error: boolean,
+         *      displayed_form: string,
+         *      message: string,
+         *      signup_success: boolean}}
          */
         this.state = {
             displayed_form: 'login',
             message: '',
-            success: false,
-            error: false
+            signup_success: false,
+            signup_error: false,
+            login_error: false
         };
     }
 
@@ -73,9 +76,14 @@ class LoginPage extends Component {
             .post(this.BASE_AUTH_URL + 'login/', loginFormData)
             .then(
                 response => {
-                    response.data['is_logged_in'] = true;
-                    this.context.setSecurity(response.data);
-                    console.log(this.context.security);
+                    if (response.status === 200) {
+                        response.data['is_logged_in'] = true;
+                        this.context.setSecurity(response.data);
+                        this.setState({login_error: false});
+                        console.log(this.context.security);
+                    } else if (response.status === 203) {
+                        this.setState({message: response.data.message, login_error: true});
+                    }
                 },
                 error => {
                     console.log(error)
@@ -104,14 +112,14 @@ class LoginPage extends Component {
                     if (response.status === 201) {
                         this.setState({
                             message: response.data.message,
-                            success: true,
-                            error: false
+                            signup_success: true,
+                            signup_error: false
                         });
                     } else if (response.status === 226) {
                         this.setState({
                             message: response.data.message,
-                            success: false,
-                            error: true
+                            signup_success: false,
+                            signup_error: true
                         });
                     }
                 },
@@ -142,10 +150,19 @@ class LoginPage extends Component {
                 {(securityContext) => (
                     <div className="App">
                         {
-                            this.state.error === true && this.state.success === false ? (
+                            this.state.signup_error === true && this.state.signup_success === false ? (
                                 <Message
                                     error
                                     header='Already exists!'
+                                    content={this.state.message}
+                                />
+                            ) : null
+                        }
+                        {
+                            this.state.login_error === true ? (
+                                <Message
+                                    error
+                                    header='Unsuccessful Login!'
                                     content={this.state.message}
                                 />
                             ) : null
@@ -166,7 +183,7 @@ class LoginPage extends Component {
                         }
 
                         {
-                            this.state.error === false && this.state.success === true ? (
+                            this.state.signup_error === false && this.state.signup_success === true ? (
                                 <Redirect
                                     to={{
                                         pathname: baseRoute + '/validate/email',
