@@ -28,8 +28,11 @@ class ResourceView(generics.ListAPIView):
         search_param = self.request.query_params.get('search')
         if (search_param != None and search_param != ""):
             matching_titles = Resource.objects.filter(title__icontains=search_param)
-            matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
-            queryset = queryset.union(matching_titles, matching_summary)
+            matching_url = Resource.objects.filter(url__icontains=search_param)
+            #TODO Uncomment this when summary comes back? (if it comes baCk)
+            # matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
+            # queryset = queryset.intersection(matching_titles.union(matching_url, matching_summary))
+            queryset = queryset.intersection(matching_titles.union(matching_url))
 
         # Filter resources by tags
         tag_param = self.request.query_params.get('tags')
