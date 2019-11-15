@@ -98,8 +98,7 @@ export default class ResourceSubmitForm extends Component {
         };
         axios
             .put(
-                `${BASE_AUTH_URL}${this.context.security.id}/update/submissions/`,
-                { "submissions": 1 },{ headers: options })
+                `${BASE_AUTH_URL}${this.context.security.id}/update/submissions/`,{ headers: options })
             .then(
                 response => { },
                 error => { console.log(error); }

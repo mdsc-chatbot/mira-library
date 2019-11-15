@@ -21,7 +21,8 @@ from .api.serializers import (CustomUserSerializer,
                               CustomUserTokenSerializer,
                               UserUpdateSerializer,
                               UserUpdateSubmissionSerializer,
-                              UserUpdatePointSerializer, UserUpdatePasswordSerializer)
+                              UserUpdateApprovedSubmissionSerializer,
+                              UserUpdatePasswordSerializer)
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
@@ -246,14 +247,14 @@ class UpdateSubmissionsView(generics.RetrieveUpdateAPIView):
     serializer_class = UserUpdateSubmissionSerializer
 
 
-class UpdatePointsView(generics.RetrieveUpdateAPIView):
+class UpdateApprovedSubmissionsView(generics.RetrieveUpdateAPIView):
     """
-    PUT auth/<pk>/update/submissions/
+    PUT auth/<pk>/update/approved_submissions/
     Update User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
     queryset = CustomUser.objects.all()
-    serializer_class = UserUpdatePointSerializer
+    serializer_class = UserUpdateApprovedSubmissionSerializer
 
 
 class DeleteUserView(generics.DestroyAPIView):

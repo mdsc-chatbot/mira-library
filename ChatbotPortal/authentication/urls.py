@@ -12,7 +12,7 @@ from .views import (LoginView,
                     TotalNumberOfUserView,
                     SearchByAnythingWithFilterDateIdView,
                     UpdateSubmissionsView,
-                    UpdatePointsView,
+                    UpdateApprovedSubmissionsView,
                     UpdatePasswordView)
 
 urlpatterns = [
@@ -28,7 +28,7 @@ urlpatterns = [
 
     path('auth/<pk>/update/', UpdateUserView.as_view(), name='auth-update'),
     path('auth/<pk>/update/submissions/', UpdateSubmissionsView.as_view(), name='auth-update-submissions'),
-    path('auth/<pk>/update/points/', UpdatePointsView.as_view(), name='auth-update-points'),
+    path('auth/<pk>/update/approved_submissions/',UpdateApprovedSubmissionsView.as_view(), name='auth-update-approved-submissions'),
 
     path('auth/<pk>/update/password/', UpdatePasswordView.as_view(), name='auth-update-password'),
     path('auth/password/reset/', PasswordResetView.as_view(), name='password-reset'),

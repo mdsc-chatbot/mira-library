@@ -10,7 +10,7 @@ from ..views import (LoginView,
                      CurrentUserView,
                      LogoutView,
                      activate,
-                     UpdateSubmissionsView, UpdatePointsView, TotalNumberOfUserView,
+                     UpdateSubmissionsView, UpdateApprovedSubmissionsView, TotalNumberOfUserView,
                      SearchByAnythingWithFilterDateIdView, UpdatePasswordView)
 
 
@@ -75,13 +75,14 @@ class TestUrls(SimpleTestCase):
         url = reverse('auth-update-submissions', args=['some-pk'])
         self.assertEquals(resolve(url).func.view_class, UpdateSubmissionsView)
 
-    def test_update_points_url(self):
+    def test_update_approved_submissions_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/points url.
+        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/approved_submissions url.
         :return: None
         """
-        url = reverse('auth-update-points', args=['some-pk'])
-        self.assertEquals(resolve(url).func.view_class, UpdatePointsView)
+        url = reverse('auth-update-approved-submissions', args=['some-pk'])
+        self.assertEquals(resolve(url).func.view_class,
+                          UpdateApprovedSubmissionsView)
 
     def test_update_password_url(self):
         """

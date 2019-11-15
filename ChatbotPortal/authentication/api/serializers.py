@@ -119,8 +119,7 @@ class UserUpdateSubmissionSerializer(serializers.Serializer):
     """
     This serializer will serialize the update submission
     """
-    submissions = serializers.IntegerField()
-
+    
     def update(self, instance, validated_data):
         """
         This update definition updates the instance with the validated_data
@@ -128,16 +127,16 @@ class UserUpdateSubmissionSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        instance.submissions = instance.submissions + validated_data.pop('submissions')
+        instance.submissions += 1
+        instance.pending_submissions += 1
         instance.save()
         return instance
 
 
-class UserUpdatePointSerializer(serializers.Serializer):
+class UserUpdateApprovedSubmissionSerializer(serializers.Serializer):
     """
     This serializer will serialize the update submission
     """
-    points = serializers.IntegerField()
 
     def update(self, instance, validated_data):
         """
@@ -146,7 +145,9 @@ class UserUpdatePointSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        instance.points = instance.points + validated_data.pop('points')
+        instance.points += 5
+        instance.approved_submissions += 1
+        instance.pending_submissions -= 1
         instance.save()
         return instance
 
