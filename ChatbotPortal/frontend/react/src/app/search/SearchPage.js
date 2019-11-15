@@ -35,10 +35,11 @@ class SearchPage extends Component {
 
             start_submission: "''",
             end_submission: "''",
+            submission_range_option: '',
 
             search_string: '',
 
-            url: "http://127.0.0.1:8000/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/search_value/?search="
+            url: "http://127.0.0.1:8000/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search="
         };
     }
 
@@ -119,10 +120,11 @@ class SearchPage extends Component {
      * @param e = event
      */
     submit_query = (e) => {
+        console.log(this.state)
         e.preventDefault();
         this.setState({
             search_clicked: true,
-            url: `http://127.0.0.1:8000/authentication/super/search/status/${this.state.is_active}/${this.state.is_reviewer}/${this.state.is_staff}/${this.state.is_superuser}/date_range/${this.state.search_option}/${this.state.start_date}/${this.state.end_date}/id_range/${this.state.start_id}/${this.state.end_id}/submission_range/${this.state.start_submission}/${this.state.end_submission}/search_value/?search=${this.state.search_string}`
+            url: `http://127.0.0.1:8000/authentication/super/search/status/${this.state.is_active}/${this.state.is_reviewer}/${this.state.is_staff}/${this.state.is_superuser}/date_range/${this.state.search_option}/${this.state.start_date}/${this.state.end_date}/id_range/${this.state.start_id}/${this.state.end_id}/submission_range/${this.state.start_submission}/${this.state.end_submission}/${this.state.submission_range_option}/search_value/?search=${this.state.search_string}`
         });
     };
 
@@ -133,7 +135,7 @@ class SearchPage extends Component {
     render() {
         return (
             <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, height: 600}}
+                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, minHeight: 600}}
             >
                 <Header
                     as="h3"

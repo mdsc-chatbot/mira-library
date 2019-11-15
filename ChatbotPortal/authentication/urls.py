@@ -12,7 +12,7 @@ from .views import (LoginView,
                     TotalNumberOfUserView,
                     SearchByAnythingWithFilterDateIdView,
                     UpdateSubmissionsView,
-                    UpdatePointsView,
+                    UpdateApprovedSubmissionsView,
                     UpdatePasswordView)
 
 urlpatterns = [
@@ -28,7 +28,7 @@ urlpatterns = [
 
     path('auth/<pk>/update/', UpdateUserView.as_view(), name='auth-update'),
     path('auth/<pk>/update/submissions/', UpdateSubmissionsView.as_view(), name='auth-update-submissions'),
-    path('auth/<pk>/update/points/', UpdatePointsView.as_view(), name='auth-update-points'),
+    path('auth/<pk>/update/approved_submissions/',UpdateApprovedSubmissionsView.as_view(), name='auth-update-approved-submissions'),
 
     path('auth/<pk>/update/password/', UpdatePasswordView.as_view(), name='auth-update-password'),
     path('auth/password/reset/', PasswordResetView.as_view(), name='password-reset'),
@@ -40,6 +40,6 @@ urlpatterns = [
 
     path('super/total/users/', TotalNumberOfUserView.as_view(), name='get-total-users'),
     path(
-        'super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/search_value/',
+        'super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/',
         SearchByAnythingWithFilterDateIdView.as_view(), name='search-anything-by-filter-date-id'),
 ]

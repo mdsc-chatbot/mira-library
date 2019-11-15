@@ -61,7 +61,7 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource("approved",1);
+        this.update_resource_user("approved");
     };
 
     reject = data => {
@@ -76,10 +76,10 @@ export default class ResourceDetail extends Component {
             .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
             .then(res => {})
             .catch(error => console.error(error));
-        this.update_resource("rejected",0);
+        this.update_resource_user("rejected");
     };
 
-    update_resource = (review_status, points) => {
+    update_resource_user = (review_status) => {
 
         this.get_resource_details();
         if (this.state.resource.review_status === "pending") {
@@ -102,17 +102,19 @@ export default class ResourceDetail extends Component {
                 );
 
             // User
-            const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
-            console.log(this.state.resource)
-            axios
-                .put(
-                    `${BASE_AUTH_URL}${this.state.resource.created_by_user_pk}/update/points/`,
-                    { "points": points }, { headers: options }
-                )
-                .then(
-                    response => { },
-                    error => { console.log(error); }
-                ); 
+            console.log(this.state.resource);
+            console.log(review_status);
+            if (review_status === "approved"){
+                const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+                axios
+                    .put(
+                        `${BASE_AUTH_URL}${this.state.resource.created_by_user_pk}/update/approved_submissions/`,{ headers: options }
+                    )
+                    .then(
+                        response => { },
+                        error => { console.log(error); }
+                    ); 
+            }
         }
     };
 
