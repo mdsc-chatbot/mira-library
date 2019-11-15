@@ -18,7 +18,7 @@ class ResourceTest(TestCase):
         )
         resource.save()
         db_resource = Resource.objects.get(pk=1)
-        self.assertEqual(db_resource.title.strip(), "University of Alberta")
+        self.assertTrue("University of Alberta" in db_resource.title.strip())
 
     def test_validations(self):
         Resource.objects.all().delete()
