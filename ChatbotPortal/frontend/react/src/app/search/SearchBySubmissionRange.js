@@ -78,6 +78,15 @@ class SearchBySubmissionRange extends React.Component {
                     value="approved"
                     checked={this.state.submission_range_option === "approved"}
                     onChange={this.handle_change_submission_range_option}
+                    radio
+                />
+                <Form.Checkbox
+                    fluid
+                    label="reset"
+                    name="submission_range_option"
+                    value="''"
+                    checked={this.state.submission_range_option === "''"}
+                    onChange={this.handle_change_submission_range_option}
                     style={{paddingBottom:30}}
                     radio
                 />
