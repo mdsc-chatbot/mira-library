@@ -6,7 +6,7 @@ services:
 install:
   - pip install -r requirements.txt
 before-script:
-- mysql -e 'drop database if exists main_db; create database main_db;' -u root
+- mysql -e 'drop database if exists test; create database test;' -u root
 script:
   # First, delete all migration scripts
   - find . -path "*/migrations/*.py" -delete
