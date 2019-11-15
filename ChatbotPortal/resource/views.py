@@ -1,4 +1,4 @@
-from rest_framework import permissions, generics, viewsets, mixins
+from rest_framework import permissions, generics, viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer
@@ -75,3 +75,11 @@ class ResourceUpdateView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ResourceUpdateSerializer
     queryset = Resource.objects.all()
+
+
+class ResourceSearchView(generics.ListAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = ResourceSerializer
+    queryset = Resource.objects.filter(review_status="approved")
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ['title', 'url']
