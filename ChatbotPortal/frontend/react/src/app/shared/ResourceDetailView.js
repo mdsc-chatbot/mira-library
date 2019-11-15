@@ -81,14 +81,16 @@ export function ResourceDetailView({resource}) {
                 <Divider className={styles.dividerPadding} />
 
                 <Grid>
-                    <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>
-                            Submitted by:
-                        </Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>
-                            {resource.created_by_user}
-                        </Grid.Column>
-                    </Grid.Row>
+                    {resource.created_by_user ? (
+                        <Grid.Row {...gridRowProps}>
+                            <Grid.Column {...gridKeyColumnProps}>
+                                Submitted by:
+                            </Grid.Column>
+                            <Grid.Column {...gridValueColumnProps}>
+                                {resource.created_by_user}
+                            </Grid.Column>
+                        </Grid.Row>
+                    ) : null}
 
                     <Grid.Row {...gridRowProps}>
                         <Grid.Column {...gridKeyColumnProps}>

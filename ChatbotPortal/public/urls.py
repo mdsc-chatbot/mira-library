@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ResourceView, TagView, DetailedResourceView
+from .views import ResourceView, TagView, DetailedResourceView, DetailedResourceAdminView
 
 urlpatterns = [
     # path('current_user/', current_user, name='current_user'),
@@ -9,5 +9,6 @@ urlpatterns = [
     # URLs that would be redirected from http://127.0.0.1:8000/authentication/
     path('resources', ResourceView.as_view(), name='resources'),
     path('tags', TagView.as_view(), name='tags'),
-    path('retrieve/<int:pk>', DetailedResourceView.as_view(), name='detailed_resource')
+    path('retrieve/<int:pk>', DetailedResourceView.as_view(), name='detailed_resource'),
+    path('retrieve-admin/<int:pk>', DetailedResourceAdminView.as_view(), name='detailed_resource')
 ]

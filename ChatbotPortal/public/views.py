@@ -2,7 +2,8 @@ from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
 
 from resource.models import Resource, Tag
-from .serializers import ResourceSerializer, TagSerializer
+from resource.api.serializers import RetrieveResourceSerializer
+from .serializers import ResourceSerializer, TagSerializer, RetrievePublicResourceSerializer
 
 
 class StandardResultSetPagination(PageNumberPagination):
@@ -13,7 +14,7 @@ class ResourceView(generics.ListAPIView):
     """
     A viewset for viewing and editing user instances (list, create, retrieve, delete, update, partial_update, destroy).
     """
-    serializer_class = ResourceSerializer
+    serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
     pagination_class = StandardResultSetPagination
 
@@ -72,5 +73,10 @@ class TagView(generics.ListAPIView):
 
 class DetailedResourceView(generics.RetrieveAPIView):
     queryset = Resource.objects.all()
-    serializer_class = ResourceSerializer
+    serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
+
+class DetailedResourceAdminView(generics.RetrieveAPIView):
+    queryset = Resource.objects.all()
+    serializer_class = RetrieveResourceSerializer
+    permissions_classes = {permissions.IsAdminUser}
