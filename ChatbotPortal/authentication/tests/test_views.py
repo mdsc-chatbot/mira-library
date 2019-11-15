@@ -170,7 +170,7 @@ class AuthLoginUserTest(BaseViewTest):
         # test login with invalid credentials
         response = self.login_a_user('anonymous', 'whoareyou')
         # assert status code is 401 UNAUTHORIZED
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
     def test_login_of_registed_user(self):
         """
@@ -191,7 +191,7 @@ class AuthLoginUserTest(BaseViewTest):
         # Login before email verification
         response = self.login_a_user('new@user.com', '1234')
         # assert status code is 401 UNAUTHORIZED
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
         # Assuming the email is verified
         user.is_active = True
@@ -264,7 +264,7 @@ class AuthRegisterUserTest(BaseViewTest):
         # register with valid credentials
         response = self.register_a_user(
             email='new@user.com',
-            password='1234',
+            password='12345678',
             first_name='NewTestUser',
             last_name='NewTestUser',
             affiliation='Tester'
@@ -274,6 +274,29 @@ class AuthRegisterUserTest(BaseViewTest):
 
         # test register with invalid credentials
         response = self.register_a_user('', '', '', '', '')
+        # assert status code is 400 BAD_REQUEST
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # register with same email credentials
+        response = self.register_a_user(
+            email='new@user.com',
+            password='12345678',
+            first_name='NewTestUser',
+            last_name='NewTestUser',
+            affiliation='Tester'
+        )
+
+        # assert status code is 226 IM_USED
+        self.assertEqual(response.status_code, status.HTTP_226_IM_USED)
+
+        # register with user with a password less than 8 characters
+        response = self.register_a_user(
+            email='new2@user.com',
+            password='1234',
+            first_name='NewTestUser',
+            last_name='NewTestUser',
+            affiliation='Tester'
+        )
         # assert status code is 400 BAD_REQUEST
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -290,7 +313,7 @@ class UpdateUserTest(BaseViewTest):
         """
         self.user = CustomUser.objects.create_user(
             email='user@update.com',
-            password='1234',
+            password='12345678',
             first_name='BeforeUpdate',
             last_name='BeforeUpdate',
             affiliation='UpdateTester'
@@ -310,7 +333,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertNotEqual(self.user.last_name, 'AfterUpdate')
 
         # Checking authorization, login a user without setting authorization token
-        self.login_a_user('user@update.com', '1234')
+        self.login_a_user('user@update.com', '12345678')
 
         # primary key of the user to be updated
         pk = self.user.id
@@ -327,7 +350,6 @@ class UpdateUserTest(BaseViewTest):
             data=json.dumps({
                 'first_name': 'AfterUpdate',
                 'last_name': 'AfterUpdate',
-                'password': '5678'
             }),
             content_type='application/json'
         )
@@ -335,7 +357,7 @@ class UpdateUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # Checking authorization, login a user and setting authorization token
-        self.login_client('user@update.com', '1234')
+        self.login_client('user@update.com', '12345678')
 
         # Performing PUT request to update a user.
         response = self.client.put(
@@ -343,7 +365,6 @@ class UpdateUserTest(BaseViewTest):
             data=json.dumps({
                 'first_name': 'AfterUpdate',
                 'last_name': 'AfterUpdate',
-                'password': '5678'
             }),
             content_type='application/json'
         )
@@ -373,7 +394,7 @@ class UpdateUserSubmissionsTest(BaseViewTest):
         """
         self.user = CustomUser.objects.create_user(
             email='user@update.com',
-            password='1234',
+            password='12345678',
             first_name='BeforeUpdate',
             last_name='BeforeUpdate',
             affiliation='UpdateTester'
@@ -390,7 +411,7 @@ class UpdateUserSubmissionsTest(BaseViewTest):
         self.assertNotEqual(self.user.submissions, 10)
 
         # Checking authorization, login a user without setting authorization token
-        self.login_a_user('user@update.com', '1234')
+        self.login_a_user('user@update.com', '12345678')
 
         # primary key of the user to be updated
         pk = self.user.id
@@ -413,7 +434,7 @@ class UpdateUserSubmissionsTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # Checking authorization, login a user and setting authorization token
-        self.login_client('user@update.com', '1234')
+        self.login_client('user@update.com', '12345678')
 
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
@@ -446,7 +467,7 @@ class UpdateUserPointsTest(BaseViewTest):
         """
         self.user = CustomUser.objects.create_user(
             email='user@update.com',
-            password='1234',
+            password='12345678',
             first_name='BeforeUpdate',
             last_name='BeforeUpdate',
             affiliation='UpdateTester'
@@ -463,7 +484,7 @@ class UpdateUserPointsTest(BaseViewTest):
         self.assertNotEqual(self.user.points, 1000)
 
         # Checking authorization, login a user without setting authorization token
-        self.login_a_user('user@update.com', '1234')
+        self.login_a_user('user@update.com', '12345678')
 
         # primary key of the user to be updated
         pk = self.user.id
@@ -486,7 +507,7 @@ class UpdateUserPointsTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # Checking authorization, login a user and setting authorization token
-        self.login_client('user@update.com', '1234')
+        self.login_client('user@update.com', '12345678')
 
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
@@ -519,7 +540,7 @@ class UpdateUserPasswordTest(BaseViewTest):
         """
         self.user = CustomUser.objects.create_user(
             email='user@update.com',
-            password='1234',
+            password='12345678',
             first_name='BeforeUpdate',
             last_name='BeforeUpdate',
             affiliation='UpdateTester'
@@ -532,7 +553,7 @@ class UpdateUserPasswordTest(BaseViewTest):
         """
 
         # Checking authorization, login a user without setting authorization token
-        self.login_a_user('user@update.com', '1234')
+        self.login_a_user('user@update.com', '12345678')
 
         # primary key of the user to be updated
         pk = self.user.id
@@ -547,7 +568,7 @@ class UpdateUserPasswordTest(BaseViewTest):
         response = self.client.put(
             url,
             data=json.dumps({
-                'password': 5678
+                'password': 56781234
             }),
             content_type='application/json'
         )
@@ -555,13 +576,13 @@ class UpdateUserPasswordTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # Checking authorization, login a user and setting authorization token
-        self.login_client('user@update.com', '1234')
+        self.login_client('user@update.com', '12345678')
 
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
             url,
             data=json.dumps({
-                'password': 5678
+                'password': 56781234
             }),
             content_type='application/json'
         )
@@ -570,11 +591,11 @@ class UpdateUserPasswordTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Trying to login using previous password
-        response = self.login_a_user('user@update.com', '1234')
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response = self.login_a_user('user@update.com', '12345678')
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
         # Trying to login using updated password
-        response = self.login_a_user('user@update.com', '5678')
+        response = self.login_a_user('user@update.com', '56781234')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -590,18 +611,18 @@ class DeleteUserTest(BaseViewTest):
         """
         self.super_user = CustomUser.objects.create_superuser(
             email='super@user.ca',
-            password='1234'
+            password='12345678'
         )
         self.regular_user1 = CustomUser.objects.create_user(
             email='regular1@user.ca',
-            password='5678',
+            password='56781234',
             first_name='regular1',
             last_name='regular1',
             affiliation='DeleteTesterAsRegularUserToDelete',
         )
         self.regular_user2 = CustomUser.objects.create_user(
             email='regular2@user.ca',
-            password='4321',
+            password='43218765',
             first_name='regular2',
             last_name='regular2',
             affiliation='DeleteTesterAsRegularUserToBeDeleted'
@@ -612,7 +633,7 @@ class DeleteUserTest(BaseViewTest):
         This definition tests if a regular user can delete other users.
         :return: None
         """
-        self.login_client('regular1@user.ca', '5678')
+        self.login_client('regular1@user.ca', '56781234')
 
         # primary key of the user to be deleted
         pk_to_delete = self.regular_user2.id
@@ -643,7 +664,7 @@ class DeleteUserTest(BaseViewTest):
         :return: None
         """
 
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
 
         pk_to_delete = self.regular_user2.id
 
@@ -689,7 +710,7 @@ class RetrieveUserTest(BaseViewTest):
     def setUp(self):
         self.regular_user = CustomUser.objects.create_user(
             email='regular@user.ca',
-            password='5678',
+            password='56781234',
             first_name='regular',
             last_name='regular',
             affiliation='RetrieveTester',
@@ -708,7 +729,7 @@ class RetrieveUserTest(BaseViewTest):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # trying to retrieve after logging in
-        self.login_client('regular@user.ca', '5678')
+        self.login_client('regular@user.ca', '56781234')
         response = self.client.get(self.url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -730,11 +751,11 @@ class TestTotalNumberOfUserView(BaseViewTest):
         """
         self.super_user = CustomUser.objects.create_superuser(
             email='super@user.ca',
-            password='1234'
+            password='12345678'
         )
         self.regular_user1 = CustomUser.objects.create_user(
             email='regular1@user.ca',
-            password='5678',
+            password='56781234',
             first_name='regular1',
             last_name='regular1',
             affiliation='TestGettingFilteredUser',
@@ -752,7 +773,7 @@ class TestTotalNumberOfUserView(BaseViewTest):
         This function tests whether a regular user can perform a search operation.
         :return: None
         """
-        self.login_client('regular1@user.ca', '5678')
+        self.login_client('regular1@user.ca', '56781234')
         url = reverse('get-total-users')
 
         response = self.client.get(url)
@@ -764,7 +785,7 @@ class TestTotalNumberOfUserView(BaseViewTest):
         This function tests whether a super user can perform a search operation.
         :return: None
         """
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
 
         url = reverse('get-total-users')
 
@@ -787,18 +808,18 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         """
         self.super_user = CustomUser.objects.create_superuser(
             email='super@user.ca',
-            password='1234'
+            password='12345678'
         )
         self.regular_user1 = CustomUser.objects.create_user(
             email='regular1@user.ca',
-            password='5678',
+            password='56781234',
             first_name='regular1',
             last_name='regular1',
             affiliation='TestGettingUsersByIdRange',
         )
         self.regular_user2 = CustomUser.objects.create_user(
             email='regular2@user.ca',
-            password='4321',
+            password='43218765',
             first_name='regular2',
             last_name='regular2',
             affiliation='TestGettingUsersByIdRange'
@@ -826,7 +847,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         This function tests whether a regular user can view all the user details.
         :return: None
         """
-        self.login_client('regular1@user.ca', '5678')
+        self.login_client('regular1@user.ca', '56781234')
         response = self.client.get(self.url)
         # assert status code is 403 FORBIDDEN
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -836,7 +857,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         This function tests whether a super user can view all the user details.
         :return: None
         """
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
         response = self.client.get(self.url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -850,7 +871,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         This function tests whether a regular user can perform a search operation.
         :return: None
         """
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
 
         # Search for valid filter_by option with valid filter_value
         url = reverse(
@@ -913,9 +934,9 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         """
 
         # Having another user logged in so that we can have more than one user in the search list
-        self.login_client('regular1@user.ca', '5678')
+        self.login_client('regular1@user.ca', '56781234')
         # Logging in super user
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
 
         # Last login test using valid url
         url = reverse(
@@ -944,9 +965,9 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         self.assertEqual(response.data['results'][1]['email'], 'regular1@user.ca')
 
         # logging in another user
-        self.login_client('regular2@user.ca', '4321')
+        self.login_client('regular2@user.ca', '43218765')
         # logging in super user
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1108,7 +1129,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         This function tests whether a super user can search users based on a range of ids.
         :return: None
         """
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
 
         # Search with a valid id range that have users
         url = reverse(
@@ -1282,7 +1303,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         This function tests whether a super user can search users based on a range of ids.
         :return: None
         """
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
 
         # Search with a valid id range that have users
         url = reverse(
@@ -1408,7 +1429,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         This function tests whether a regular user can perform a search operation.
         :return: None
         """
-        self.login_client('super@user.ca', '1234')
+        self.login_client('super@user.ca', '12345678')
         url = reverse(
             'search-anything-by-filter-date-id',
             kwargs={

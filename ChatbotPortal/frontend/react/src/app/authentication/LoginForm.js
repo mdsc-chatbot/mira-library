@@ -47,11 +47,13 @@ class LoginForm extends React.Component {
                     </Header>
                     <Form size="large">
                         <Segment stacked>
+
                             <Form.Input
                                 fluid
                                 icon="user"
                                 iconPosition="left"
                                 placeholder="E-mail address"
+                                type="email"
                                 name="email"
                                 value={this.state.email}
                                 onChange={this.handle_change}
@@ -66,20 +68,31 @@ class LoginForm extends React.Component {
                                 value={this.state.password}
                                 onChange={this.handle_change}
                             />
-                            <Button color="blue" fluid size="large" name="login_button">
+                            <Button
+                                color="blue"
+                                fluid size="large"
+                                name="login_button"
+                                disabled={
+                                    !this.state.email || !this.state.password
+                                }
+                            >
                                 Login
                             </Button>
                         </Segment>
                     </Form>
                     <Message>
                         New to us?{" "}
-                        <a href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
+                        <a
+                            id="signup_link"
+                            href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
                             Sign Up
                         </a>
                     </Message>
                     <Message>
                         Forgot your password?{" "}
-                        <a href="#" onClick={() => {window.location = `${baseRoute}/password/reset`;}}>
+                        <a
+                            id="password_reset_link"
+                            href="#" onClick={() => {window.location = `${baseRoute}/password/reset`;}}>
                             Reset Password
                         </a>
                     </Message>

@@ -74,6 +74,7 @@ class SearchByDateRange extends React.Component {
                 />
 
                 <Dropdown
+                    name='date_option_dropdown'
                     placeholder='Unselected'
                     fluid
                     search

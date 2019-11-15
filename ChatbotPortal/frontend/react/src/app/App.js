@@ -20,6 +20,7 @@ import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
 import UserPage from "./search/UserPage";
 import { Divider } from "semantic-ui-react";
+import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 
 export default function App() {
     return (
@@ -42,6 +43,10 @@ export default function App() {
                     <Route exact path={baseRoute + "/logout"}>
                         <LogoutPage />
                     </Route>
+                    <Route
+                        exact path={baseRoute + "/validate/email"}
+                        component={EmailValidationRequestPage}
+                    />
                     <Route exact path={baseRoute + "/search"}>
                         <SearchPage />
                     </Route>
@@ -49,12 +54,12 @@ export default function App() {
                         exact
                         path={baseRoute + "/resource/:resourceID"}
                         component={ResourceDetail}
-                    ></Route>
+                    />
                     <Route
                         exact
                         path={baseRoute + "/review/:resourceID"}
                         component={reviewResource}
-                    ></Route>
+                    />
 
                     <Route
                         exact path={baseRoute + "/resource_submit/:url"}
