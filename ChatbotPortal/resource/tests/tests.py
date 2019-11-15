@@ -9,7 +9,7 @@ class ResourceTest(TestCase):
         Resource.objects.all().delete()
         resource = Resource.objects.create(
             title="Unknown title",
-            url="http://127.0.0.1:8000/chatbotportal/app/",
+            url="https://www.ualberta.ca/",
             rating=1,
             comments="",
             created_by_user="Unknown user",
@@ -18,7 +18,7 @@ class ResourceTest(TestCase):
         )
         resource.save()
         db_resource = Resource.objects.get(pk=1)
-        self.assertEqual(db_resource.title.strip(), "Chatbot Portal")
+        self.assertTrue("University of Alberta" in db_resource.title.strip())
 
     def test_validations(self):
         Resource.objects.all().delete()
