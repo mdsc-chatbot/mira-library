@@ -369,6 +369,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
 
         start_submission = self.kwargs['start_submission']
         end_submission = self.kwargs['end_submission']
+        submission_range_option = self.kwargs['submission_range_option']
 
         if is_active != "''":
             try:
@@ -436,7 +437,12 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
 
             # Checking if the start_id <= end_id and both the ids are greater than 0
             if 0 <= start_submission <= end_submission:
-                queryset = queryset.filter(submissions__range=(start_submission, end_submission))
+                if submission_range_option == "total":
+                    queryset = queryset.filter(submissions__range=(start_submission, end_submission))
+                elif submission_range_option == "pending":
+                    queryset = queryset.filter(pending_submissions__range=(start_submission, end_submission))
+                elif submission_range_option == "approved":
+                    queryset = queryset.filter(approved_submissions__range=(start_submission, end_submission))
             else:
                 return queryset.none()
 

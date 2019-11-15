@@ -134,7 +134,7 @@ class TestUrls(SimpleTestCase):
 
     def test_search_user_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/search_value/ url.
+        Tests the http://127.0.0.1:8000/authorization/super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/ url.
         :return: None
         """
         url = reverse('search-anything-by-filter-date-id',
@@ -149,7 +149,8 @@ class TestUrls(SimpleTestCase):
                           "start_id",
                           "end_id",
                           "start_submission",
-                          "end_submission"
+                          "end_submission",
+                          "submission_range_option",
                       ]
                       )
         self.assertEquals(resolve(url).func.view_class, SearchByAnythingWithFilterDateIdView)

@@ -8,8 +8,7 @@ import {Form} from 'semantic-ui-react'
 class SearchBySubmissionRange extends React.Component {
 
     state ={
-        pending: false,
-        approved:false,
+        submission_range_option:"",
     }
 
     /**
@@ -29,12 +28,10 @@ class SearchBySubmissionRange extends React.Component {
         }
     };
 
-    handle_pending_change = () => {
-        this.setState(({ pending }) => ({ pending: !pending }));
-    }
-
-    handle_approved_change = () => {
-        this.setState(({ approved }) => ({ approved: !approved }));
+    handle_change_submission_range_option = (e, { value }) => {
+        this.setState({ submission_range_option: value })
+        let name = "submission_range_option"
+        this.props.set_submission_search_params({ name, value })
     }
 
     /**
@@ -58,18 +55,31 @@ class SearchBySubmissionRange extends React.Component {
                 />
                 <Form.Checkbox
                     fluid
-                    label="Pending resource submission"
-                    name="pending"
-                    checked={this.state.pending}
-                    onChange={this.handle_pending_change}
+                    label="total"
+                    name="submission_range_option"
+                    value="total"
+                    checked={this.state.submission_range_option === "total"}
+                    onChange={this.handle_change_submission_range_option}
+                    radio
                 />
                 <Form.Checkbox
                     fluid
-                    label="Approved resource submission"
-                    name="approved"
-                    checked={this.state.approved}
-                    onChange={this.handle_approved_change}
+                    label="pending"
+                    name="submission_range_option"
+                    value="pending"
+                    checked={this.state.submission_range_option === "pending"}
+                    onChange={this.handle_change_submission_range_option}
+                    radio
+                />
+                <Form.Checkbox
+                    fluid
+                    label="approved"
+                    name="submission_range_option"
+                    value="approved"
+                    checked={this.state.submission_range_option === "approved"}
+                    onChange={this.handle_change_submission_range_option}
                     style={{paddingBottom:30}}
+                    radio
                 />
             </Form>
         );
