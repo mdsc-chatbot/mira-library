@@ -449,7 +449,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             elif search_option == 'date_joined':
                 queryset = queryset.filter(date_joined__range=(start_date, end_date))
 
-        if start_id != "''":
+        if start_id != "''" or end_id != "''":
             try:
                 start_id = int(start_id)
                 end_id = int(end_id)
@@ -462,7 +462,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             else:
                 return queryset.none()
 
-        if start_submission != "''":
+        if start_submission != "''" or end_submission != "''":
             try:
                 start_submission = int(start_submission)
                 end_submission = int(end_submission)
