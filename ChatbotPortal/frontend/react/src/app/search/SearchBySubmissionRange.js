@@ -7,6 +7,10 @@ import {Form} from 'semantic-ui-react'
  */
 class SearchBySubmissionRange extends React.Component {
 
+    state ={
+        submission_range_option:"",
+    }
+
     /**
      * This function handles any changes that happens to the form fields
      * and store the changes to the parent state
@@ -23,6 +27,12 @@ class SearchBySubmissionRange extends React.Component {
             this.props.set_submission_search_params({name, value})
         }
     };
+
+    handle_change_submission_range_option = (e, { value }) => {
+        this.setState({ submission_range_option: value })
+        let name = "submission_range_option"
+        this.props.set_submission_search_params({ name, value })
+    }
 
     /**
      * This function renders the form containing the input fields
@@ -42,6 +52,34 @@ class SearchBySubmissionRange extends React.Component {
                     placeholder="End Submission Number"
                     name="end_submission"
                     onChange={this.handle_change_submission_range}
+                />
+                <Form.Checkbox
+                    fluid
+                    label="total"
+                    name="submission_range_option"
+                    value="total"
+                    checked={this.state.submission_range_option === "total"}
+                    onChange={this.handle_change_submission_range_option}
+                    radio
+                />
+                <Form.Checkbox
+                    fluid
+                    label="pending"
+                    name="submission_range_option"
+                    value="pending"
+                    checked={this.state.submission_range_option === "pending"}
+                    onChange={this.handle_change_submission_range_option}
+                    radio
+                />
+                <Form.Checkbox
+                    fluid
+                    label="approved"
+                    name="submission_range_option"
+                    value="approved"
+                    checked={this.state.submission_range_option === "approved"}
+                    onChange={this.handle_change_submission_range_option}
+                    style={{paddingBottom:30}}
+                    radio
                 />
             </Form>
         );

@@ -79,6 +79,9 @@ export default class ResourceSubmitForm extends Component {
     };
 
     set_submitted_state = (submitted_value, submitted_message) => {
+        if (submitted_value === 1) {
+            this.update_user_submissions();
+        }
         this.setState({ submitted: submitted_value }, () => {
             setTimeout(() => {
                 this.setState(this.baseState);
@@ -86,6 +89,21 @@ export default class ResourceSubmitForm extends Component {
         });
         console.log(submitted_message);
     };
+
+    update_user_submissions = () =>{
+        const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+        const options = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.context.security.token}`
+        };
+        axios
+            .put(
+                `${BASE_AUTH_URL}${this.context.security.id}/update/submissions/`,{ headers: options })
+            .then(
+                response => { },
+                error => { console.log(error); }
+            ); 
+    }
 
     handleRate = (event, data) => {
         this.setState({ rating: data.rating });

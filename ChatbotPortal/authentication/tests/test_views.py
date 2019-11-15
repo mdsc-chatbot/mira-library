@@ -425,9 +425,6 @@ class UpdateUserSubmissionsTest(BaseViewTest):
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
             url,
-            data=json.dumps({
-                'submissions': 10
-            }),
             content_type='application/json'
         )
         # assert status code is 401_UNAUTHORIZED
@@ -439,9 +436,6 @@ class UpdateUserSubmissionsTest(BaseViewTest):
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
             url,
-            data=json.dumps({
-                'submissions': 10
-            }),
             content_type='application/json'
         )
 
@@ -451,13 +445,13 @@ class UpdateUserSubmissionsTest(BaseViewTest):
         # getting the user from the database using primary key
         self.user = CustomUser.objects.get(id=pk)
         # checking the user's information after updating
-        self.assertEqual(self.user.submissions, 10)
+        self.assertEqual(self.user.submissions, 1)
         self.assertNotEqual(self.user.submissions, 0)
 
 
-class UpdateUserPointsTest(BaseViewTest):
+class UpdateUserApproveSubmissionsTest(BaseViewTest):
     """
-    Tests for auth/<pk>/update/points endpoint
+    Tests for auth/<pk>/update/approved_submissions endpoint
     """
 
     def setUp(self):
@@ -489,7 +483,7 @@ class UpdateUserPointsTest(BaseViewTest):
         # primary key of the user to be updated
         pk = self.user.id
         url = reverse(
-            'auth-update-points',
+            'auth-update-approved-submissions',
             kwargs={
                 'pk': pk
             }
@@ -498,9 +492,6 @@ class UpdateUserPointsTest(BaseViewTest):
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
             url,
-            data=json.dumps({
-                'points': 1000
-            }),
             content_type='application/json'
         )
         # assert status code is 401_UNAUTHORIZED
@@ -512,9 +503,6 @@ class UpdateUserPointsTest(BaseViewTest):
         # Performing PUT request to update a user's submissions.
         response = self.client.put(
             url,
-            data=json.dumps({
-                'points': 1000
-            }),
             content_type='application/json'
         )
 
@@ -524,7 +512,9 @@ class UpdateUserPointsTest(BaseViewTest):
         # getting the user from the database using primary key
         self.user = CustomUser.objects.get(id=pk)
         # checking the user's information after updating
-        self.assertEqual(self.user.points, 1000)
+        self.assertEqual(self.user.points, 5)
+        self.assertEqual(self.user.approved_submissions, 1)
+        self.assertEqual(self.user.pending_submissions, -1)
         self.assertNotEqual(self.user.points, 0)
 
 
@@ -798,7 +788,7 @@ class TestTotalNumberOfUserView(BaseViewTest):
 
 class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
     """
-    Tests for super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/search_value/ endpoint
+    Tests for super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/ endpoint
     """
 
     def setUp(self):
@@ -838,7 +828,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -888,7 +879,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -916,7 +908,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -952,7 +945,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
         response = self.client.get(url)
@@ -993,7 +987,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
         response = self.client.get(url)
@@ -1016,7 +1011,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1040,7 +1036,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1067,7 +1064,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
         response = self.client.get(url)
@@ -1090,7 +1088,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1114,7 +1113,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1145,7 +1145,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "1",
                 'end_id': "10",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
         response = self.client.get(url)
@@ -1171,7 +1172,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "5",
                 'end_id': "10",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
         response = self.client.get(url)
@@ -1194,7 +1196,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "0",
                 'end_id': "10",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
         response = self.client.get(url)
@@ -1217,7 +1220,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "0",
                 'end_id': "0",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1241,7 +1245,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "3",
                 'end_id': "2",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1265,7 +1270,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "2",
                 'end_id': "2",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
@@ -1291,7 +1297,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                     'start_id': "-2",
                     'end_id': "-2",
                     'start_submission': "''",
-                    'end_submission': "''"
+                    'end_submission': "''",
+                    'submission_range_option': "''",
                 }
             )
         except NoReverseMatch:
@@ -1319,7 +1326,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "0",
-                'end_submission': "10"
+                'end_submission': "10",
+                'submission_range_option': "total",
             }
         )
         response = self.client.get(url)
@@ -1345,7 +1353,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "5",
-                'end_submission': "10"
+                'end_submission': "10",
+                'submission_range_option': "total",
             }
         )
         response = self.client.get(url)
@@ -1368,7 +1377,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "0",
-                'end_submission': "0"
+                'end_submission': "0",
+                'submission_range_option': "total",
             }
         )
 
@@ -1392,7 +1402,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "3",
-                'end_submission': "2"
+                'end_submission': "2",
+                'submission_range_option': "total",
             }
         )
 
@@ -1417,7 +1428,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                     'start_id': "''",
                     'end_id': "''",
                     'start_submission': "-2",
-                    'end_submission': "-2"
+                    'end_submission': "-2",
+                    'submission_range_option': "total",
                 }
             )
         except NoReverseMatch:
@@ -1443,7 +1455,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_id': "''",
                 'end_id': "''",
                 'start_submission': "''",
-                'end_submission': "''"
+                'end_submission': "''",
+                'submission_range_option': "''",
             }
         )
 
