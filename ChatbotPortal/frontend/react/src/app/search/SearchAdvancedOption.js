@@ -13,7 +13,7 @@ export class SearchAdvancedOption extends Component {
                 title: "Date",
                 content: {
                     content: (
-                        <div>
+                        <div id='search_by_date'>
                             <SearchByDateRange set_date_range_params={this.props.set_date_range_params}
                                                set_date_option_params={this.props.set_date_option_params}/>
                         </div>
@@ -25,7 +25,7 @@ export class SearchAdvancedOption extends Component {
                 title: "Status filtered",
                 content: {
                     content: (
-                        <div>
+                        <div id='search_by_filter'>
                             <SearchFilter set_status_search_params={this.props.set_status_search_params}/>
                         </div>
                     )
@@ -36,7 +36,7 @@ export class SearchAdvancedOption extends Component {
                 title: "Id range",
                 content: {
                     content: (
-                        <div>
+                        <div id='search_by_id'>
                             <SearchByIdRange set_id_search_params={this.props.set_id_search_params}/>
                         </div>
                     )
@@ -47,7 +47,7 @@ export class SearchAdvancedOption extends Component {
                 title: "Submission range",
                 content: {
                     content: (
-                        <div>
+                        <div id='search_by_submission'>
                             <SearchBySubmissionRange
                                 set_submission_search_params={this.props.set_submission_search_params}/>
                         </div>
@@ -74,7 +74,7 @@ export class SearchAdvancedOption extends Component {
         ];
 
         return (
-            <div>
+            <div id='advanced_search_accordian'>
                 <Accordion defaultActiveIndex={1} panels={advanced_search}/>
             </div>
         );

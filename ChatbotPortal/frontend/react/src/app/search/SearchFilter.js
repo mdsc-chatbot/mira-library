@@ -2,8 +2,8 @@ import React from "react";
 import {Dropdown} from "semantic-ui-react";
 
 const options = [
-    {key: 1, text: 'Yes', value: true},
-    {key: 2, text: 'No', value: false},
+    {key: 1, text: 'Yes', value: 'true'},
+    {key: 2, text: 'No', value: 'false'},
 ];
 
 /**
