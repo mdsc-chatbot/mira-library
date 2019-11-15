@@ -26,8 +26,8 @@ class TestSignup(LiveServerTestCase):
         """
         self.active_user_email = 'test@test.ca'
         self.active_user_password = '12345678'
+        # self.reset_db()
         self.browser = webdriver.Chrome()
-        # self.setUp_db()
 
     def tearDown(self):
         """
@@ -35,7 +35,7 @@ class TestSignup(LiveServerTestCase):
         :return: None
         """
         self.browser.close()
-        # self.reset_db()
+        # self.clear_db()
 
     def reset_db(self):
         """
