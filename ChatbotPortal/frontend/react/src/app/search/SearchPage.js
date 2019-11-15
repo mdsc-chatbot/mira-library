@@ -84,7 +84,7 @@ class SearchPage extends Component {
      * @param value
      */
     set_status_search_params = ({name, value}) => {
-        this.setState({[name]: !value});
+        this.setState({[name]: value});
     };
 
     /**
@@ -150,7 +150,12 @@ class SearchPage extends Component {
                                       set_status_search_params={this.set_status_search_params}
                                       set_id_search_params={this.set_id_search_params}
                                       set_submission_search_params={this.set_submission_search_params}/>
-                <Button color="blue" fluid size="large" onClick={this.submit_query}>Search</Button>
+                <Button
+                    color="blue"
+                    fluid size="large"
+                    onClick={this.submit_query}
+                >Search
+                </Button>
                 <SearchTable url={this.state.url} search_clicked={this.state.search_clicked}/>
             </div>
         );
