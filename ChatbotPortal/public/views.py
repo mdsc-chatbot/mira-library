@@ -19,8 +19,8 @@ class ResourceView(generics.ListAPIView):
     pagination_class = StandardResultSetPagination
 
     def get_queryset(self):
-        #TODO We should NOT get all resources, only approved ones.
-        queryset = None
+        # Taken from PR #164
+        queryset = Resource.objects.filter(review_status="approved")
 
         # Search parameters is matched between two fields currently:
         #   - title
@@ -29,9 +29,7 @@ class ResourceView(generics.ListAPIView):
         if (search_param != None and search_param != ""):
             matching_titles = Resource.objects.filter(title__icontains=search_param)
             matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
-            queryset = matching_titles.union(matching_summary)
-        else:
-            queryset = Resource.objects.all()
+            queryset = queryset.union(matching_titles, matching_summary)
 
         # Filter resources by tags
         tag_param = self.request.query_params.get('tags')
