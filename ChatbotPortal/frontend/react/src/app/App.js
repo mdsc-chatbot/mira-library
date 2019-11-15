@@ -58,8 +58,10 @@ export default function App() {
                         exact path={baseRoute + "/resource_submit/:url"}
                         component={ResourceSubmitForm}
                     />
-                    <Route exact path={baseRoute + "/public_resource"}>
-                        <PublicResourcePage />
+                    <Route exact path={baseRoute + "/public_resource*"}>
+                        {({match}) => (
+                            <PublicResourcePage match={match}/>
+                        )}
                     </Route>
                     <Route exact path={baseRoute + "/faq"}>
                         <FAQ />

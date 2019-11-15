@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Container, Header, Accordion } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
-import styles from "./resource/ResourceDetail.css";
+import styles from "./shared/Link.css";
 
 export class FAQ extends Component {
     render() {

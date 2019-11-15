@@ -1,8 +1,10 @@
-import React, { Component } from "react";
-import axios from "axios";
+import React from 'react';
+import axios from 'axios';
+import PropTypes from 'prop-types';
 import {ResourceDetailView} from '../shared';
 
-export default class ResourceDetail extends Component {
+export default class DetailedPublicResource extends React.Component {
+
     constructor(props) {
         super(props);
 
@@ -12,9 +14,9 @@ export default class ResourceDetail extends Component {
     }
 
     componentDidMount() {
-        const resourceID = this.props.match.params.resourceID;
+        const resourceId = this.props.resourceId;
         axios
-            .get(`/api/resource/retrieve/${resourceID}`)
+            .get(`/api/public/retrieve/${resourceId}`)
             .then(res => {
                 this.setState({
                     resource: res.data
@@ -28,3 +30,7 @@ export default class ResourceDetail extends Component {
         );
     }
 }
+
+DetailedPublicResource.propTypes = {
+    resourceId : PropTypes.string,
+};

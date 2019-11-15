@@ -69,3 +69,8 @@ class TagView(generics.ListAPIView):
         # TODO: Only approved tags?? Waiting for client confirmation
         # TODO: Tag sorting? (Sort desc by most used)
         return Tag.objects.all()
+
+class DetailedResourceView(generics.RetrieveAPIView):
+    queryset = Resource.objects.all()
+    serializer_class = ResourceSerializer
+    permission_classes = {permissions.AllowAny}

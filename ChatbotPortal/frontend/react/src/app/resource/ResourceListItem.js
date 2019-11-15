@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { List, Rating, Card, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { baseRoute } from "../App";
-import styles from "./ResourceDetail.css";
+import styles from "../shared/Link.css";
 
 export default class ResourceListItem extends Component {
     render() {
