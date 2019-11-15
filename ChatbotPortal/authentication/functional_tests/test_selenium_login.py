@@ -7,7 +7,6 @@ from ..models import CustomUser
 
 # The base url
 BASE_URL = 'http://127.0.0.1:8000'
-
 url = BASE_URL + '/chatbotportal/app/login'
 homepage = BASE_URL + '/chatbotportal/app'
 
@@ -24,8 +23,8 @@ class TestLogin(LiveServerTestCase):
         """
         self.active_user_email = 'test@test.ca'
         self.active_user_password = '12345678'
+        self.reset_db()
         self.browser = webdriver.Chrome()
-        # self.setUp_db()
 
     def tearDown(self):
         """
@@ -33,7 +32,7 @@ class TestLogin(LiveServerTestCase):
         :return: None
         """
         self.browser.close()
-        # self.reset_db()
+        self.clear_db()
 
     def reset_db(self):
         """
@@ -175,7 +174,6 @@ class TestLogin(LiveServerTestCase):
         self.assertEqual(message_field.get_attribute('innerHTML'),
                          'Incorrect Email or Password! Please try again.')
         self.assertIsNotNone(message_field)
-
 
     def test_invalid_email_attempted_login(self):
         """
