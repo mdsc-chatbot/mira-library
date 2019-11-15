@@ -84,6 +84,7 @@ class SearchTable extends Component {
         // Getting rows from server; upon successful completion, every items in the
         // result is pushed in a temporary variable which in turn is stored in the
         // loadedData state.
+        console.log(this.state.nextPage)
         if (!!this.state.nextPage) {
             this.getRowsFromServer(this.state.nextPage)
                 .then((result) => {
