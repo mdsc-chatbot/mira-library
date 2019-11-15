@@ -106,7 +106,7 @@ export function ResourceDetailView({resource}) {
                             Review status:
                         </Grid.Column>
                         <Grid.Column {...gridValueColumnProps}>
-                            {resource.final_review}
+                            {resource.review_status}
                         </Grid.Column>
                     </Grid.Row>
 

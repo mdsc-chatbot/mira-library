@@ -2,7 +2,7 @@ from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
 
 from resource.models import Resource, Tag
-from resource.api.serializers import RetrieveResourceSerializer
+from resource.serializers import RetrieveResourceSerializer
 from .serializers import ResourceSerializer, TagSerializer, RetrievePublicResourceSerializer
 
 

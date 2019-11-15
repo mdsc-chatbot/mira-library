@@ -2,8 +2,8 @@ import React from "react";
 import {Dropdown} from "semantic-ui-react";
 
 const options = [
-    {key: 1, text: 'Yes', value: true},
-    {key: 2, text: 'No', value: false},
+    {key: 1, text: 'Yes', value: 'true'},
+    {key: 2, text: 'No', value: 'false'},
 ];
 
 /**
@@ -32,7 +32,7 @@ class SearchFilter extends React.Component {
     render() {
         return (
             <div>
-                <span>
+                <div style={{float:"left", paddingRight:20}}>
                     <p>Active</p>
                     <Dropdown
                         clearable
@@ -43,8 +43,8 @@ class SearchFilter extends React.Component {
                         selection
                     >
                     </Dropdown>
-                </span>
-                <span>
+                </div>
+                <div style={{ float: "left", paddingRight:20}}>
                     <p>Reviewer</p>
                     <Dropdown
                         clearable
@@ -55,8 +55,8 @@ class SearchFilter extends React.Component {
                         selection
                     >
                     </Dropdown>
-                </span>
-                <span>
+                </div>
+                <div>
                     <p>Staff</p>
                     <Dropdown
                         clearable
@@ -67,7 +67,7 @@ class SearchFilter extends React.Component {
                         selection
                     >
                     </Dropdown>
-                </span>
+                </div>
             </div>
         );
     }

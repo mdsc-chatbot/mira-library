@@ -1,9 +1,13 @@
 import datetime
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.sessions.models import Session
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
+from django.core.validators import validate_email
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -21,7 +25,8 @@ from .api.serializers import (CustomUserSerializer,
                               CustomUserTokenSerializer,
                               UserUpdateSerializer,
                               UserUpdateSubmissionSerializer,
-                              UserUpdatePointSerializer, UserUpdatePasswordSerializer)
+                              UserUpdateApprovedSubmissionSerializer,
+                              UserUpdatePasswordSerializer)
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
@@ -95,7 +100,7 @@ class LoginView(generics.CreateAPIView):
             serializer = CustomUserTokenSerializer(user, context={'request': request}).data
             return Response(serializer)
 
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data={'message': 'Incorrect Email or Password! Please try again.'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
 class LogoutView(generics.RetrieveAPIView):
@@ -183,14 +188,45 @@ class RegisterUsersView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        user = CustomUser.objects.create_user(
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            affiliation=affiliation,
-            is_active=False
-        )
+        # Checking if the email address was in valid format
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response(
+                data={
+                    'message': 'Not a valid email address.'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Verify if the password is at least 8 characters long
+        try:
+            validate_password(password)
+        except ValidationError:
+            return Response(
+                data={
+                    'message': 'Not a valid email address.'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+
+            user = CustomUser.objects.create_user(
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                affiliation=affiliation,
+                is_active=False
+            )
+        except IntegrityError:
+            return Response(
+                data={
+                    'message': 'Email already exists. Please try a new email address.'
+                },
+                status=status.HTTP_226_IM_USED
+            )
 
         # get the current site
         current_site = get_current_site(request)
@@ -221,7 +257,8 @@ class RegisterUsersView(generics.CreateAPIView):
         email.send()
 
         return Response(
-            data={'message': 'To activate your portal, please confirm your email address.'},
+            data={
+                'message': 'An activation email has been sent to your email address. Please check your email. Thank you!'},
             status=status.HTTP_201_CREATED
         )
 
@@ -246,14 +283,14 @@ class UpdateSubmissionsView(generics.RetrieveUpdateAPIView):
     serializer_class = UserUpdateSubmissionSerializer
 
 
-class UpdatePointsView(generics.RetrieveUpdateAPIView):
+class UpdateApprovedSubmissionsView(generics.RetrieveUpdateAPIView):
     """
-    PUT auth/<pk>/update/submissions/
+    PUT auth/<pk>/update/approved_submissions/
     Update User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
     queryset = CustomUser.objects.all()
-    serializer_class = UserUpdatePointSerializer
+    serializer_class = UserUpdateApprovedSubmissionSerializer
 
 
 class DeleteUserView(generics.DestroyAPIView):
@@ -368,6 +405,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
 
         start_submission = self.kwargs['start_submission']
         end_submission = self.kwargs['end_submission']
+        submission_range_option = self.kwargs['submission_range_option']
 
         if is_active != "''":
             try:
@@ -413,7 +451,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             elif search_option == 'date_joined':
                 queryset = queryset.filter(date_joined__range=(start_date, end_date))
 
-        if start_id != "''":
+        if start_id != "''" or end_id != "''":
             try:
                 start_id = int(start_id)
                 end_id = int(end_id)
@@ -426,7 +464,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
             else:
                 return queryset.none()
 
-        if start_submission != "''":
+        if start_submission != "''" or end_submission != "''":
             try:
                 start_submission = int(start_submission)
                 end_submission = int(end_submission)
@@ -435,7 +473,12 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
 
             # Checking if the start_id <= end_id and both the ids are greater than 0
             if 0 <= start_submission <= end_submission:
-                queryset = queryset.filter(submissions__range=(start_submission, end_submission))
+                if submission_range_option == "total":
+                    queryset = queryset.filter(submissions__range=(start_submission, end_submission))
+                elif submission_range_option == "pending":
+                    queryset = queryset.filter(pending_submissions__range=(start_submission, end_submission))
+                elif submission_range_option == "approved":
+                    queryset = queryset.filter(approved_submissions__range=(start_submission, end_submission))
             else:
                 return queryset.none()
 

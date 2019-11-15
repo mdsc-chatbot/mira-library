@@ -1,15 +1,7 @@
 import React, { Component, useContext } from "react";
 import axios from "axios";
 import validator from "validator";
-import {
-    Container,
-    Form,
-    Rating,
-    Segment,
-    Header,
-    Message,
-    Input
-} from "semantic-ui-react";
+import { Container, Form, Rating, Segment, Header, Message, Input } from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
 import { SecurityContext } from "../security/SecurityContext";
@@ -29,7 +21,7 @@ export default class ResourceSubmitForm extends Component {
             comments: "",
 
             tags: [],
-            validated: true,
+            url_validated: true,
             currentTags: null,
             submitted: 0
         };
@@ -38,10 +30,12 @@ export default class ResourceSubmitForm extends Component {
 
     create_resource = () => {
         // Get current logged in user
-        const created_by_user = this.context.security.is_logged_in
-            ? this.context.security.email
-            : "Unknown user";
-
+        let created_by_user = null;
+        let created_by_user_pk = null;
+        if (this.context.security.is_logged_in) {
+            created_by_user = this.context.security.first_name;
+            created_by_user_pk = this.context.security.id;
+        }
         const resourceFormData = new FormData();
 
         resourceFormData.append("title", "Unknown title");
@@ -49,6 +43,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
+        resourceFormData.append("created_by_user_pk", created_by_user_pk);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -66,20 +61,49 @@ export default class ResourceSubmitForm extends Component {
 
     post_resource = () => {
         const resourceFormData = this.create_resource();
+        let submitted = 1;
+
         axios.defaults.headers.common = {
             Authorization: `Bearer ${this.context.security.token}`
         };
 
         axios
-            .post("http://127.0.0.1:8000/api/resource/", resourceFormData)
+            .post("/chatbotportal/resource/", resourceFormData)
             .then(res => {})
             .catch(error => {
                 console.error(error);
-                return -1;
+                this.set_submitted_state(-1, "POST FAILURE");
             });
 
-        return 1;
+        this.set_submitted_state(1, "POST SUCESS");
     };
+
+    set_submitted_state = (submitted_value, submitted_message) => {
+        if (submitted_value === 1) {
+            this.update_user_submissions();
+        }
+        this.setState({ submitted: submitted_value }, () => {
+            setTimeout(() => {
+                this.setState(this.baseState);
+            }, 1000);
+        });
+        console.log(submitted_message);
+    };
+
+    update_user_submissions = () =>{
+        const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+        const options = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.context.security.token}`
+        };
+        axios
+            .put(
+                `${BASE_AUTH_URL}${this.context.security.id}/update/submissions/`,{ headers: options })
+            .then(
+                response => { },
+                error => { console.log(error); }
+            ); 
+    }
 
     handleRate = (event, data) => {
         this.setState({ rating: data.rating });
@@ -99,26 +123,17 @@ export default class ResourceSubmitForm extends Component {
 
     handleSubmit = event => {
         // Validations
-        if (!validator.isURL(this.state.url) || !this.state.rating) {
-            this.setState({ validated: false });
-            event.preventDefault();
-            return;
+        if (!validator.isURL(this.state.url) || !this.state.url) {
+            this.setState({ url_validated: false });
         } else {
-            this.setState({ submitted: this.post_resource() }, () => {
-                setTimeout(() => {
-                    this.setState(this.baseState);
-                }, 1000);
-            });
-            event.preventDefault();
-            console.log("POST resource success");
+            this.post_resource();
         }
+        event.preventDefault();
     };
 
     render() {
         return (
-            <div
-                style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30, }}
-            >
+            <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
                 <Container vertical>
                     <Header
                         as="h3"
@@ -130,7 +145,7 @@ export default class ResourceSubmitForm extends Component {
                         Resource submission
                     </Header>
                     <Form onSubmit={this.handleSubmit} success error>
-                        {this.state.validated ? (
+                        {this.state.url_validated ? (
                             <Form.Input
                                 required
                                 name="url"
@@ -143,7 +158,7 @@ export default class ResourceSubmitForm extends Component {
                         ) : (
                             <Form.Input
                                 error={{
-                                    content: "Please enter a url",
+                                    content: "Please enter a valid url",
                                     pointing: "below"
                                 }}
                                 fluid
@@ -205,7 +220,7 @@ export default class ResourceSubmitForm extends Component {
                                         <Message
                                             success
                                             header="Submit success"
-                                            content="You've submitted a resource!"
+                                            content="Congratulations! You've submitted a resource!"
                                         />
                                     );
                                 else if (this.state.submitted === -1)
@@ -213,7 +228,7 @@ export default class ResourceSubmitForm extends Component {
                                         <Message
                                             error
                                             header="Submit failure"
-                                            content="Your submission of a resource is not accepted."
+                                            content="Something went wrong! Your resource is not submitted."
                                         />
                                     );
                                 else return <div></div>;

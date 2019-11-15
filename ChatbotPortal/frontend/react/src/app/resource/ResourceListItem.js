@@ -3,6 +3,7 @@ import { List, Rating, Card, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { baseRoute } from "../App";
 import styles from "../shared/Link.css";
+import ResourceReviewStatus from "./ResourceReviewStatus";
 
 export default class ResourceListItem extends Component {
     render() {
@@ -15,8 +16,9 @@ export default class ResourceListItem extends Component {
                         <Icon name="globe" size="large" />
                         {resource.title}
                     </Card.Header>
-                    <Card.Meta>
+                    <Card.Meta className={styles.inline}>
                         Submitted by {resource.created_by_user}
+                        <ResourceReviewStatus resource={resource}/>
                     </Card.Meta>
                     <Card.Description>
                         <a href={resource.url} target="_blank">

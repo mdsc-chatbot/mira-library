@@ -1,3 +1,7 @@
 .link:hover {
     text-decoration: underline;
 }
+
+.inline {
+    display:flex; flex-direction:row;
+}
