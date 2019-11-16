@@ -7,7 +7,8 @@ urlpatterns = [
     re_path(r'^fetch-tags$', views.fetch_tags, name='fetch-tags'),
     re_path(r'^download-attachment/(?P<resource_id>.*)$',
             views.download_attachment, name='download-attachment'),
-    path('<pk>/update/', views.ResourceUpdateView.as_view())
+    path('<pk>/update/', views.ResourceUpdateView.as_view()),
+    path('search/', views.ResourceSearchView.as_view()),
 ]
 
 router = DefaultRouter()

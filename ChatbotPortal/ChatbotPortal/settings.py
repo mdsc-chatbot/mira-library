@@ -88,14 +88,12 @@ WSGI_APPLICATION = 'ChatbotPortal.wsgi.application'
 
 DATABASES_AVAILABLE = {
     'main': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'db',
-        # 'USER': 'user',
-        # 'PASSWORD': 'password',
-        # 'HOST': '',
-        # 'PORT': '',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'main_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     },
     'test': {
         # Create a separate db for testing, assign itself to its own test db

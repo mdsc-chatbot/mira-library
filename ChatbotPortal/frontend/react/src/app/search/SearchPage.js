@@ -35,7 +35,7 @@ class SearchPage extends Component {
 
             start_submission: "''",
             end_submission: "''",
-            submission_range_option: '',
+            submission_range_option: "''",
 
             search_string: '',
 
@@ -135,7 +135,7 @@ class SearchPage extends Component {
     render() {
         return (
             <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, minHeight: 600}}
+                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, minHeight: 3000}}
             >
                 <Header
                     as="h3"

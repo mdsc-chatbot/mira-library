@@ -79,7 +79,7 @@ export default class ResourceList extends Component {
                         A list of all my submitted resources
                     </Header>
 
-                    <ResourceStatistic resources={resources} />
+                    <ResourceStatistic resources={this.state.resources} />
 
                     <Link to={baseRoute + "/resource_submit/''"}>
                         <Button name="submit_a_resource" positive size="big">

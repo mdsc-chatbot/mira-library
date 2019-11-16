@@ -3,6 +3,7 @@ import time
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from django import db
 
 from ..models import CustomUser
 
@@ -23,11 +24,12 @@ class TestSearchById(LiveServerTestCase):
         Defining the web driver.
         :return: None
         """
+        db.close_old_connections()
         self.super_user_email = 'super@test.ca'
         self.super_user_password = '12345678'
         self.regular_user_email = 'regular@test.ca'
         self.regular_user_password = '12345678'
-        # self.reset_db()
+        self.reset_db()
         self.browser = webdriver.Chrome()
 
     def tearDown(self):
@@ -36,7 +38,8 @@ class TestSearchById(LiveServerTestCase):
         :return: None
         """
         self.browser.close()
-        # self.clear_db()
+        self.clear_db()
+        db.close_old_connections()
 
     def reset_db(self):
         """
@@ -132,7 +135,7 @@ class TestSearchById(LiveServerTestCase):
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
 
-        time.sleep(3)
+        time.sleep(10)
 
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
@@ -166,6 +169,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(10)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
