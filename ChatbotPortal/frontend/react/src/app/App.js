@@ -12,7 +12,7 @@ import LogoutPage from "./authentication/LogoutPage";
 import { SecurityContextProvider } from "./security/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
-import PublicResource from "./public/PublicResource";
+import PublicResourcePage from "./public/PublicResourcePage";
 import SearchPage from "./search/SearchPage";
 import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
@@ -65,8 +65,10 @@ export default function App() {
                         exact path={baseRoute + "/resource_submit/:url"}
                         component={ResourceSubmitForm}
                     />
-                    <Route exact path={baseRoute + "/public_resource"}>
-                        <PublicResource />
+                    <Route exact path={baseRoute + "/public_resource*"}>
+                        {({match}) => (
+                            <PublicResourcePage match={match}/>
+                        )}
                     </Route>
                     <Route exact path={baseRoute + "/faq"}>
                         <FAQ />

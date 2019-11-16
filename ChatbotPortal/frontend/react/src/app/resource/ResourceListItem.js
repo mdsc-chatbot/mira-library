@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { List, Rating, Card, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { baseRoute } from "../App";
-import styles from "./ResourceDetail.css";
+import styles from "../shared/Link.css";
 import ResourceReviewStatus from "./ResourceReviewStatus";
 
 export default class ResourceListItem extends Component {
@@ -16,7 +16,7 @@ export default class ResourceListItem extends Component {
                         <Icon name="globe" size="large" />
                         {resource.title}
                     </Card.Header>
-                    <Card.Meta className={styles.inline}> 
+                    <Card.Meta className={styles.inline}>
                         Submitted by {resource.created_by_user}
                         <ResourceReviewStatus resource={resource}/>
                     </Card.Meta>

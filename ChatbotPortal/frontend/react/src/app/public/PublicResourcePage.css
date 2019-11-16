@@ -1,0 +1,23 @@
+.searchBarMargin {
+    display: block;
+    padding-bottom : 1rem;
+}
+
+:global(.ui.input).flexInput {
+    display: flex;
+}
+
+.searchBarFlex {
+    flex: 1 0 auto;
+}
+
+.searchBarContainer {
+    flex: 1 1 auto;
+    display : flex;
+}
+
+.topBarContainer {
+    display: flex;
+    padding-bottom: 1em;
+    justify-content: space-between;
+}
