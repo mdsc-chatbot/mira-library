@@ -1,6 +1,4 @@
 import React from 'react';
-import axios from 'axios';
-import fileDownload from "js-file-download";
 import {Container, Divider, Icon, Label, Rating, Menu, Header, Grid} from 'semantic-ui-react';
 import styles from './ResourceDetailView.css';
 import linkStyles from "../shared/Link.css";
@@ -9,19 +7,6 @@ import linkStyles from "../shared/Link.css";
 // In the shared directory because potentially multiple components can use this view
 // e.g. viewing own resources, public page, review
 export function ResourceDetailView({resource}) {
-
-    const downloadAttachment = () => {
-        axios
-            .get(
-                `/chatbotportal/resource/download-attachment/${resource.id}`
-            )
-            .then(response => {
-                const fileName = response.headers["content-disposition"].split(
-                    '"'
-                )[1];
-                fileDownload(response.data, fileName);
-            });
-    };
 
     // Common props for grid row, columns that are re-usable.
     // If we need this in more than one place, consider re-making this into several components.
@@ -131,8 +116,8 @@ export function ResourceDetailView({resource}) {
                             <Grid.Column>
                                 <Header as="h5" color="grey">
                                     <a
-                                        href="#"
-                                        onClick={downloadAttachment}
+                                        href={`/chatbotportal/resource/download-attachment/${resource.id}`}
+                                        // onClick={downloadAttachment}
                                     >
                                         <Icon name="download" />
                                         <Header.Content>
