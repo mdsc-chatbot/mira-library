@@ -59,8 +59,10 @@ export class SecurityContextProvider extends React.Component {
     };
 
     componentDidMount() {
+
+
         axios
-            .get(this.BASE_AUTH_URL + 'currentuser/')
+            .get(this.BASE_AUTH_URL + 'currentuser/', {withCredentials: true})
             .then(
                 response => {
                     // if response.data !== null
