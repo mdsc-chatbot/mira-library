@@ -1,9 +1,9 @@
 import time
 
+from django import db
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-from django import db
 
 from ..models import CustomUser
 

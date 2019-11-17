@@ -29,7 +29,8 @@ urlpatterns = [
 
     path('<pk>/update/', UpdateUserView.as_view(), name='auth-update'),
     path('<pk>/update/submissions/', UpdateSubmissionsView.as_view(), name='auth-update-submissions'),
-    path('<pk>/update/approved_submissions/',UpdateApprovedSubmissionsView.as_view(), name='auth-update-approved-submissions'),
+    path('<pk>/update/approved_submissions/', UpdateApprovedSubmissionsView.as_view(),
+         name='auth-update-approved-submissions'),
 
     path('<pk>/update/password/', UpdatePasswordView.as_view(), name='auth-update-password'),
     path('password/reset/', PasswordResetView.as_view(), name='password-reset'),

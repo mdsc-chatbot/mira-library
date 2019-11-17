@@ -100,7 +100,8 @@ class LoginView(generics.CreateAPIView):
             serializer = CustomUserTokenSerializer(user, context={'request': request}).data
             return Response(serializer)
 
-        return Response(data={'message': 'Incorrect Email or Password! Please try again.'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        return Response(data={'message': 'Incorrect Email or Password! Please try again.'},
+                        status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
 class LogoutView(generics.RetrieveAPIView):
