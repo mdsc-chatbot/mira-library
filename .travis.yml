@@ -8,9 +8,6 @@ install:
 before-script:
 - mysql -e 'drop database if exists test; create database test;' -u root
 script:
-  # First, delete all migration scripts
-  - find . -path "*/migrations/*.py" -delete
-  - find . -path "*/migrations/*.pyc" -delete
 
   # Build migrations in a proper order
   # Authentication goes first, otherwise module dependencies will break
