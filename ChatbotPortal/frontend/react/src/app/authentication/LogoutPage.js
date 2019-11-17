@@ -12,8 +12,6 @@ class LogoutPage extends Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
-
     componentDidMount() {
         this.handle_logout();
     }
@@ -33,7 +31,7 @@ class LogoutPage extends Component {
          * This function handles the logout by setting
          */
         axios
-            .get(this.BASE_AUTH_URL + 'logout/', {headers: options})
+            .get('/chatbotportal/authentication/logout/', {headers: options})
             .then(
                 response => {
                     if (response.data['user'] === 'AnonymousUser') {

@@ -11,8 +11,6 @@ class PasswordChangeForm extends React.Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
-
     /**
      * This construct initializes the state.
      * @param props
@@ -42,7 +40,7 @@ class PasswordChangeForm extends React.Component {
          */
         if (this.state.password_matched) {
 
-            const url = `${this.BASE_AUTH_URL}${this.context.security.id}/update/password/`;
+            const url = `/chatbotportal/authentication/${this.context.security.id}/update/password/`;
 
             // Defining header and content-type for accessing authenticated information
             const options = {

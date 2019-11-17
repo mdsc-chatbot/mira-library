@@ -8,8 +8,6 @@ import {baseRoute} from '../App';
  */
 class PasswordResetPage extends React.Component {
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
-
     /**
      * This construct initializes the state.
      * @param props
@@ -42,7 +40,7 @@ class PasswordResetPage extends React.Component {
          */
         if (this.state.password_matched) {
 
-            const url = `${this.BASE_AUTH_URL}password/reset/confirm/${this.state.uid}/${this.state.token}/`;
+            const url = `/chatbotportal/authentication/password/reset/confirm/${this.state.uid}/${this.state.token}/`;
 
             axios
                 .post(url, passwordFormData)

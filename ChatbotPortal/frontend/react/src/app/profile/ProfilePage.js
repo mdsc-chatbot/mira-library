@@ -11,10 +11,6 @@ class ProfilePage extends Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
-
-
-
     constructor(props) {
         /**
          * This constructor sets up the primary state for the props
@@ -120,7 +116,7 @@ class ProfilePage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', formData, {headers: options})
+            .put(`/chatbotportal/authentication/${this.context.security.id}/update/`, formData, {headers: options})
             .then(
                 response => {
                     console.log(response.data);

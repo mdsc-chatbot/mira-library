@@ -143,13 +143,12 @@ export default class ResourceSubmitForm extends Component {
      * Upon successful submission, update the submission details in the user's instance by calling backend APIs
      */
     update_user_submissions = () => {
-        const BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
         const options = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.props.match.params.token}`
         };
         axios
-            .put(`${BASE_AUTH_URL}${this.props.match.params.id}/update/submissions/`, {headers: options})
+            .put(`/chatbotportal/authentication/${this.props.match.params.id}/update/submissions/`, {headers: options})
             .then(() => {}, error => {console.log(error);});
     };
 
