@@ -16,7 +16,7 @@ class LoginPage extends Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
 
     constructor(props) {
         /**

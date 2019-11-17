@@ -61,7 +61,7 @@ background.receive("storage-data", function () {
     chrome.tabs.query({active: true, currentWindow: true}, function (tabArray) {
         let iframe = document.querySelector("iframe");
 
-        fetch('http://127.0.0.1:8000/authentication/auth/currentuser/')
+        fetch('http://127.0.0.1:8000/chatbotportal/authentication/currentuser/')
             .then(function (response) {
                 if (!response.ok) {
                     throw Error(response.statusText);

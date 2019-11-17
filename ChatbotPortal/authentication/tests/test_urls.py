@@ -21,7 +21,7 @@ class TestUrls(SimpleTestCase):
 
     def test_currentuser_url(self):
         """
-        Tests the Tests the http://127.0.0.1:8000/authorization/auth/currentuser/ url.
+        Tests the Tests the http://127.0.0.1:8000/chatbotportal/authorization/currentuser/ url.
         :return: None
         """
         url = reverse('auth-current-user')
@@ -29,7 +29,7 @@ class TestUrls(SimpleTestCase):
 
     def test_login_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/login url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/login url.
         :return: None
         """
         url = reverse('auth-login')
@@ -37,7 +37,7 @@ class TestUrls(SimpleTestCase):
 
     def test_logout_url(self):
         """
-        Tests the Tests the http://127.0.0.1:8000/authorization/auth/logout/ url.
+        Tests the Tests the http://127.0.0.1:8000/chatbotportal/authorization/logout/ url.
         :return: None
         """
         url = reverse('auth-logout')
@@ -53,7 +53,7 @@ class TestUrls(SimpleTestCase):
 
     def test_register_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/register url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/register url.
         :return: None
         """
         url = reverse('auth-register')
@@ -61,7 +61,7 @@ class TestUrls(SimpleTestCase):
 
     def test_update_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/ url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/<pk>/update/ url.
         :return: None
         """
         url = reverse('auth-update', args=['some-pk'])
@@ -69,7 +69,7 @@ class TestUrls(SimpleTestCase):
 
     def test_update_submissions_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/submissions/ url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/<pk>/update/submissions/ url.
         :return: None
         """
         url = reverse('auth-update-submissions', args=['some-pk'])
@@ -77,7 +77,7 @@ class TestUrls(SimpleTestCase):
 
     def test_update_approved_submissions_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/approved_submissions url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/<pk>/update/approved_submissions url.
         :return: None
         """
         url = reverse('auth-update-approved-submissions', args=['some-pk'])
@@ -86,7 +86,7 @@ class TestUrls(SimpleTestCase):
 
     def test_update_password_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/<pk>/update/password/ url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/<pk>/update/password/ url.
         :return: None
         """
         url = reverse('auth-update-password', args=['some-pk'])
@@ -94,7 +94,7 @@ class TestUrls(SimpleTestCase):
 
     def test_PasswordResetView_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/password/reset/ url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/password/reset/ url.
         :return: None
         """
         url = reverse('password-reset')
@@ -102,7 +102,7 @@ class TestUrls(SimpleTestCase):
 
     def test_PasswordResetConfirmView_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/auth/password/reset/confirm/<uidb64>/<token>/ url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/password/reset/confirm/<uidb64>/<token>/ url.
         :return: None
         """
         url = reverse('password_reset_confirm', args=['MO', 'adsa654sdft4532esdhfg'])
@@ -110,7 +110,7 @@ class TestUrls(SimpleTestCase):
 
     def test_delete_url(self):
         """
-        Tests the Tests the http://127.0.0.1:8000/authorization/auth/delete/<pk> url.
+        Tests the Tests the http://127.0.0.1:8000/chatbotportal/authorization/delete/<pk> url.
         :return: None
         """
         url = reverse('auth-delete', args=['some-pk'])
@@ -118,7 +118,7 @@ class TestUrls(SimpleTestCase):
 
     def test_retrieve_url(self):
         """
-        Tests the Tests the http://127.0.0.1:8000/authorization/auth/retrieve/ url.
+        Tests the Tests the http://127.0.0.1:8000/chatbotportal/authorization/retrieve/ url.
         :return: None
         """
         url = reverse('auth-retrieve')
@@ -126,7 +126,7 @@ class TestUrls(SimpleTestCase):
 
     def test_total_users_url(self):
         """
-        Tests the Tests the http://127.0.0.1:8000/authorization/super/total/users/ url.
+        Tests the Tests the http://127.0.0.1:8000/chatbotportal/authorization/super/total/users/ url.
         :return: None
         """
         url = reverse('get-total-users')
@@ -134,7 +134,7 @@ class TestUrls(SimpleTestCase):
 
     def test_search_user_url(self):
         """
-        Tests the http://127.0.0.1:8000/authorization/super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/ url.
+        Tests the http://127.0.0.1:8000/chatbotportal/authorization/super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/ url.
         :return: None
         """
         url = reverse('search-anything-by-filter-date-id',

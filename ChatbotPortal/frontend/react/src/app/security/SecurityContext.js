@@ -38,7 +38,7 @@ export class SecurityContextProvider extends React.Component {
      * A security context provider that provides context to every component
      * @param props properties that needs to be passed
      */
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
     constructor(props) {
         /**
          * A constructor that sets the security as state

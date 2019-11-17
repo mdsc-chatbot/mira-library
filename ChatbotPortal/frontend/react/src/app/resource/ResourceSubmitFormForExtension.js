@@ -6,14 +6,36 @@ import TagDropdown from "./TagDropdown";
 import styles from "./ResourceSubmitForm.css";
 // import {SecurityContext} from "../security/SecurityContext";
 
+/**
+ * This component only handles resouce submission directed from the extension
+ */
 export default class ResourceSubmitForm extends Component {
+
     // static contextType = SecurityContext;
 
+    /**
+     * The constructor that initializes the state
+     * @param props
+     */
     constructor(props) {
         super(props);
+        /**
+         * The state of this component
+         * @type {{
+         *      comments: string,
+         *      submitted: number,
+         *      attachment: null,
+         *      currentTags: null,
+         *      rating: number,
+         *      url_validated: boolean,
+         *      title: string,
+         *      attachmentPath: string,
+         *      url: (null|*),
+         *      tags: []}}
+         */
         this.state = {
             title: "Unknown title",
-            url: this.props.match.params.url === "''" ? null : decodeURIComponent(this.props.match.params.url),
+            url: decodeURIComponent(this.props.match.params.url),
             rating: 1,
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
@@ -34,18 +56,27 @@ export default class ResourceSubmitForm extends Component {
     //     this.context.security.is_logged_in = true;
     // }
 
+    /**
+     * This component creates the resource from the form data
+     * @returns {FormData}
+     */
     create_resource = () => {
         // Get current logged in user
         let created_by_user = this.props.match.params.first_name;
         let created_by_user_pk = this.props.match.params.id;
+
+        // Creating form data object
         const resourceFormData = new FormData();
 
+        // Inputting data in the object
         resourceFormData.append("title", "Unknown title");
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
+
+        // If attachment is not null, then append it to the form data
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -61,18 +92,27 @@ export default class ResourceSubmitForm extends Component {
         return resourceFormData;
     };
 
+    /**
+     * This function post the resources by calling backend APIs
+     */
     post_resource = () => {
+        /**
+         * Extracting the resouce form data
+         * @type {FormData}
+         */
         const resourceFormData = this.create_resource();
-        // let submitted = 1;
 
+        /**
+         * Having a common authorization header for backend queries
+         * @type {{Authorization: string}}
+         */
         axios.defaults.headers.common = {
             Authorization: `Bearer ${this.props.match.params.token}`
         };
 
         axios
             .post("/chatbotportal/resource/", resourceFormData)
-            .then(() => {
-            })
+            .then(() => {})
             .catch(error => {
                 console.error(error);
                 this.set_submitted_state(-1, "POST FAILURE");
@@ -81,6 +121,12 @@ export default class ResourceSubmitForm extends Component {
         this.set_submitted_state(1, "POST SUCESS");
     };
 
+    /**
+     * Set submitted state upon requesting to post a resource.
+     * Upon success, set to 1, otherwise -1
+     * @param submitted_value
+     * @param submitted_message
+     */
     set_submitted_state = (submitted_value, submitted_message) => {
         if (submitted_value === 1) {
             this.update_user_submissions();
@@ -93,33 +139,42 @@ export default class ResourceSubmitForm extends Component {
         console.log(submitted_message);
     };
 
+    /**
+     * Upon successful submission, update the submission details in the user's instance by calling backend APIs
+     */
     update_user_submissions = () => {
-        const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+        const BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
         const options = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.props.match.params.token}`
         };
         axios
-            .put(
-                `${BASE_AUTH_URL}${this.props.match.params.id}/update/submissions/`, {headers: options})
-            .then(
-                () => {
-                },
-                error => {
-                    console.log(error);
-                }
-            );
+            .put(`${BASE_AUTH_URL}${this.props.match.params.id}/update/submissions/`, {headers: options})
+            .then(() => {}, error => {console.log(error);});
     };
 
+    /**
+     * This function updates the rating changes in the form
+     * @param event
+     * @param data
+     */
     handleRate = (event, data) => {
         this.setState({rating: data.rating});
     };
 
+    /**
+     * This function handles the changes in the resource submission form field
+     * @param event
+     */
     handleChange = event => {
         this.setState({[event.target.name]: event.target.value});
     };
 
-    // event.target.value holds the pathname of a file
+    /**
+     * This function handles the file changes in form field.
+     * event.target.value holds the pathname of a file
+     * @param event
+     */
     handleFileChange = event => {
         this.setState({
             [event.nativeEvent.target.name]: event.nativeEvent.target.files[0],
@@ -127,6 +182,10 @@ export default class ResourceSubmitForm extends Component {
         });
     };
 
+    /**
+     * This function gets executed upon submitting the form
+     * @param event
+     */
     handleSubmit = event => {
         // Validations
         if (!validator.isURL(this.state.url) || !this.state.url) {
@@ -137,6 +196,10 @@ export default class ResourceSubmitForm extends Component {
         event.preventDefault();
     };
 
+    /**
+     * This renders the resource submission form
+     * @returns {*}
+     */
     render() {
         return (
             <div style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30}}>
@@ -147,8 +210,7 @@ export default class ResourceSubmitForm extends Component {
                             fontSize: "2em"
                         }}
                         color="blue"
-                    >
-                        Resource submission
+                    >Resource submission
                     </Header>
                     <Form onSubmit={this.handleSubmit} success error>
                         {this.state.url_validated ? (
