@@ -13,6 +13,7 @@ def resource_list_display():
 class ResourceAdmin(admin.ModelAdmin):
     model = Resource
     list_display = resource_list_display()
+    search_fields = ['title', 'url']
 
     def get_tags(self, obj):
         return "\n".join([str(t.id) for t in obj.tags.all()])

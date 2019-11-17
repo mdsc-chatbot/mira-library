@@ -1,0 +1,1 @@
+export {ResourceDetailView} from './ResourceDetailView';

@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('review.urls')),
     path('chatbotportal/review/', include('review.urls')),
     path('chatbotportal/resource/', include('resource.urls')),
+    path('api/public/', include('public.urls')),
 
     # For authentication
     path('authentication/', include('authentication.urls')),

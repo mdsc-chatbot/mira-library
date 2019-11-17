@@ -53,5 +53,6 @@ class Resource(models.Model):
         max_digits=10, decimal_places=1, blank=True, null=True)
 
     review_status = models.CharField(max_length=50, default="pending")
+    website_summary_metadata = models.TextField(blank=True, null=True)
 
     objects = ResourceManager()

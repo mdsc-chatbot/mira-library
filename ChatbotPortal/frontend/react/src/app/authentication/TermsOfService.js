@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {Header, Modal} from "semantic-ui-react";
-import styles from "../resource/ResourceDetail.css";
+import styles from "../shared/Link.css";
 
 export class TermsOfService extends Component {
     render() {

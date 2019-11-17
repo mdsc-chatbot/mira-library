@@ -1,55 +1,53 @@
 import React from "react";
 import Homepage from "./Homepage";
-import { Switch, Route } from "react-router-dom";
-import { ProfilePage } from "./profile";
+import {Route, Switch} from "react-router-dom";
+import {ProfilePage} from "./profile";
 import ResourcePage from "./resource/ResourcePage";
 import ResourceDetail from "./resource/ResourceDetail";
 import reviewResource from "./review/reviewResource";
-import { ReviewPage } from "./review";
+import {ReviewPage} from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
 import LogoutPage from "./authentication/LogoutPage";
-import { SecurityContextProvider } from "./security/SecurityContext";
+import {SecurityContextProvider} from "./security/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
-import PublicResource from "./public/PublicResource";
+import PublicResourcePage from "./public/PublicResourcePage";
 import SearchPage from "./search/SearchPage";
 import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
-import UserPage from "./search/UserPage";
-import { Divider } from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 
 export default function App() {
     return (
         <div>
             <SecurityContextProvider>
-                <HeaderMenu />
+                <HeaderMenu/>
                 <Switch>
                     <Route exact path={baseRoute + "/profile"}>
-                        <ProfilePage />
+                        <ProfilePage/>
                     </Route>
                     <Route exact path={baseRoute + "/resource"}>
-                        <ResourcePage />
+                        <ResourcePage/>
                     </Route>
                     <Route exact path={baseRoute + "/review"}>
-                        <ReviewPage />
+                        <ReviewPage/>
                     </Route>
                     <Route exact path={baseRoute + "/login"}>
-                        <LoginPage />
+                        <LoginPage/>
                     </Route>
                     <Route exact path={baseRoute + "/logout"}>
-                        <LogoutPage />
+                        <LogoutPage/>
                     </Route>
                     <Route
                         exact path={baseRoute + "/validate/email"}
                         component={EmailValidationRequestPage}
                     />
                     <Route exact path={baseRoute + "/search"}>
-                        <SearchPage />
+                        <SearchPage/>
                     </Route>
                     <Route
                         exact
@@ -69,11 +67,14 @@ export default function App() {
                         exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
                         component={ResourceSubmitFormForExtension}
                     />
-                    <Route exact path={baseRoute + "/public_resource"}>
-                        <PublicResource />
+
+                    <Route exact path={baseRoute + "/public_resource*"}>
+                        {({match}) => (
+                            <PublicResourcePage match={match}/>
+                        )}
                     </Route>
                     <Route exact path={baseRoute + "/faq"}>
-                        <FAQ />
+                        <FAQ/>
                     </Route>
 
                     <Route
@@ -89,11 +90,11 @@ export default function App() {
                         component={PasswordResetPage}
                     />
                     <Route>
-                        <Homepage />
+                        <Homepage/>
                     </Route>
 
                 </Switch>
-                <Footer />
+                <Footer/>
             </SecurityContextProvider>
         </div>
     );
