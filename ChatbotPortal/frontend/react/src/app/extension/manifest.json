@@ -9,6 +9,8 @@
   "homepage_url": "http://127.0.0.1:8000/chatbotportal/app/",
   "description": "This extension helps submitting resources directly to ChatbotPortal",
   "permissions": [
+    "cookies",
+    "activeTab",
     "tabs",
     "storage",
     "<all_urls>",

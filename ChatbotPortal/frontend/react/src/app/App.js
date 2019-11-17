@@ -12,6 +12,7 @@ import LogoutPage from "./authentication/LogoutPage";
 import { SecurityContextProvider } from "./security/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
+import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import PublicResource from "./public/PublicResource";
 import SearchPage from "./search/SearchPage";
 import FAQ from "./FAQ.js";
@@ -60,10 +61,13 @@ export default function App() {
                         path={baseRoute + "/review/:resourceID"}
                         component={reviewResource}
                     />
-
                     <Route
-                        exact path={baseRoute + "/resource_submit/:url"}
+                        exact path={baseRoute + "/resource_submit"}
                         component={ResourceSubmitForm}
+                    />
+                    <Route
+                        exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
+                        component={ResourceSubmitFormForExtension}
                     />
                     <Route exact path={baseRoute + "/public_resource"}>
                         <PublicResource />
