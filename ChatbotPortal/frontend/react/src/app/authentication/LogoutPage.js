@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
 import HomePage from "../Homepage";
+import {Redirect} from "react-router";
+import {baseRoute} from "../App";
 
 
 class LogoutPage extends Component {
@@ -51,7 +53,7 @@ class LogoutPage extends Component {
      */
     render() {
         return (
-            <HomePage/>
+            <Redirect to={baseRoute}/>
         );
     }
 }
