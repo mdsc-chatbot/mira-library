@@ -21,14 +21,20 @@ export default class ResourceList extends Component {
 
     get_resources = () => {
         if (this.context.security.is_logged_in) {
-            axios.defaults.headers.common = {
-                Authorization: `Bearer ${this.context.security.token}`
+            // axios.defaults.headers.common = {
+            //     Authorization: `Bearer ${this.context.security.token}`
+            // };
+            // Having the permission header loaded
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
             };
             axios
                 .get("/chatbotportal/resource", {
                     params: {
                         created_by_user_pk: this.context.security.id
-                    }
+                    },
+                    headers: options
                 })
                 .then(res => {
                     this.setState({
@@ -81,7 +87,7 @@ export default class ResourceList extends Component {
 
                     <ResourceStatistic resources={this.state.resources} />
 
-                    <Link to={baseRoute + "/resource_submit/''"}>
+                    <Link to={baseRoute + "/resource_submit"}>
                         <Button name="submit_a_resource" positive size="big">
                             Submit a resource
                         </Button>

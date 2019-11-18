@@ -119,7 +119,7 @@ class UserUpdateSubmissionSerializer(serializers.Serializer):
     """
     This serializer will serialize the update submission
     """
-    
+
     def update(self, instance, validated_data):
         """
         This update definition updates the instance with the validated_data

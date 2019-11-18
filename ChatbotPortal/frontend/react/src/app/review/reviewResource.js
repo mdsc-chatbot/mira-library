@@ -104,7 +104,7 @@ export default class ResourceDetail extends Component {
             console.log(this.state.resource);
             console.log(review_status);
             if (review_status === "approved"){
-                const BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+                const BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
                 axios
                     .put(
                         `${BASE_AUTH_URL}${this.state.resource.created_by_user_pk}/update/approved_submissions/`,{ headers: options }

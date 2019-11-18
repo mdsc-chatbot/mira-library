@@ -38,7 +38,7 @@ export class SecurityContextProvider extends React.Component {
      * A security context provider that provides context to every component
      * @param props properties that needs to be passed
      */
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
     constructor(props) {
         /**
          * A constructor that sets the security as state
@@ -59,8 +59,10 @@ export class SecurityContextProvider extends React.Component {
     };
 
     componentDidMount() {
+
+
         axios
-            .get(this.BASE_AUTH_URL + 'currentuser/')
+            .get(this.BASE_AUTH_URL + 'currentuser/', {withCredentials: true})
             .then(
                 response => {
                     // if response.data !== null

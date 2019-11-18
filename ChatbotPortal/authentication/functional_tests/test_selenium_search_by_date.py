@@ -112,13 +112,15 @@ class TestSearchByDate(LiveServerTestCase):
         date_option_dropdown.click()
 
         # Checking the drop down menu values
-        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[0], 'Unselected') # Placeholder/default value
-        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[1], 'Unselected') # Option 1
-        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[2], 'By Last Login') # Option 2
-        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[3], 'By Creation Date') # Option 3
+        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[0],
+                         'Unselected')  # Placeholder/default value
+        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[1], 'Unselected')  # Option 1
+        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[2], 'By Last Login')  # Option 2
+        self.assertEqual(date_option_dropdown.get_attribute('innerText').splitlines()[3],
+                         'By Creation Date')  # Option 3
 
         # Selecting search by last login
-        date_option_dropdown.find_elements_by_class_name('text')[2].click() # Select 'By Last Login'
+        date_option_dropdown.find_elements_by_class_name('text')[2].click()  # Select 'By Last Login'
 
         # Finding the search button
         search_button = self.browser.find_element_by_tag_name('Button')

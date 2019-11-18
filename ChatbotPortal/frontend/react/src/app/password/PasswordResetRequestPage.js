@@ -7,7 +7,7 @@ import axios from "axios";
  */
 class PasswordResetRequestPage extends React.Component {
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
+    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
 
     constructor(props) {
         super(props);

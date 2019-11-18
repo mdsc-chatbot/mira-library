@@ -2,7 +2,6 @@ import time
 
 from django.test import LiveServerTestCase
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 
 # The base url
 from ..models import CustomUser
