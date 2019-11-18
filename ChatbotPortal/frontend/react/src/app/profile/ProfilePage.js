@@ -31,11 +31,16 @@ class ProfilePage extends Component {
         this.updateStateFromSecurityContext();
     }
 
+    /**
+     * Being called whenever state and props gets updated
+     */
     componentDidUpdate() {
         this.updateStateFromSecurityContext();
-
     }
 
+    /**
+     * This function gets called upon being refreshed to keep user seamlessly logged in if the session is not expired
+     */
     updateStateFromSecurityContext =() => {
         if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
             this.setState({

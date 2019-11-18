@@ -243,7 +243,6 @@ export default class ResourceSubmitForm extends Component {
 
                                     <Form.Button name="submit" content="Submit" color="green"/></div> : null}
                             </Form>
-
                         </Container>
                     )}
                 </SecurityContext.Consumer>
