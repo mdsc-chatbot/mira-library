@@ -1,8 +1,9 @@
 import React, {Component} from "react";
-import SearchTable from "./SearchTable";
-import SearchAdvancedOption from "./SearchAdvancedOption";
-import {Button, Header} from "semantic-ui-react";
+import {Header, Button} from "semantic-ui-react";
+import {SecurityContext} from "../security/SecurityContext";
 import SearchByAnything from "./SearchByAnything";
+import SearchAdvancedOption from "./SearchAdvancedOption";
+import SearchTable from "./SearchTable";
 
 class SearchPage extends Component {
 
@@ -120,7 +121,7 @@ class SearchPage extends Component {
      * @param e = event
      */
     submit_query = (e) => {
-        console.log(this.state)
+        console.log(this.state);
         e.preventDefault();
         this.setState({
             search_clicked: true,
@@ -137,28 +138,37 @@ class SearchPage extends Component {
             <div
                 style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, minHeight: 3000}}
             >
-                <Header
-                    as="h3"
-                    style={{
-                        fontSize: "2em"
-                    }}
-                    color="blue"
-                >
-                    Search
-                </Header>
-                <SearchByAnything set_search_string={this.set_search_string}/>
-                <SearchAdvancedOption set_date_range_params={this.set_date_range_params}
-                                      set_date_option_params={this.set_date_option_params}
-                                      set_status_search_params={this.set_status_search_params}
-                                      set_id_search_params={this.set_id_search_params}
-                                      set_submission_search_params={this.set_submission_search_params}/>
-                <Button
-                    color="blue"
-                    fluid size="large"
-                    onClick={this.submit_query}
-                >Search
-                </Button>
-                <SearchTable url={this.state.url} search_clicked={this.state.search_clicked}/>
+                <SecurityContext.Consumer>
+                    {(securityContext) => (
+                        <div>
+                            {securityContext.security.is_logged_in ?
+                                <div>
+                                    <Header
+                                        as="h3"
+                                        style={{
+                                            fontSize: "2em"
+                                        }}
+                                        color="blue"
+                                    >
+                                        Search
+                                    </Header>
+                                    < SearchByAnything set_search_string={this.set_search_string}/>
+                                    <SearchAdvancedOption set_date_range_params={this.set_date_range_params}
+                                                          set_date_option_params={this.set_date_option_params}
+                                                          set_status_search_params={this.set_status_search_params}
+                                                          set_id_search_params={this.set_id_search_params}
+                                                          set_submission_search_params={this.set_submission_search_params}/>
+                                    <Button
+                                        color="blue"
+                                        fluid size="large"
+                                        onClick={this.submit_query}
+                                    >Search
+                                    </Button>
+                                    <SearchTable url={this.state.url} search_clicked={this.state.search_clicked}/>
+                                </div> : null}
+                        </div>
+                    )}
+                </SecurityContext.Consumer>
             </div>
         );
     }
