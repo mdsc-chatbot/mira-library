@@ -137,19 +137,18 @@ export default class ResourceSubmitForm extends Component {
     render() {
         return (
             <div style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30}}>
-                <Container vertical>
-                    <Header
-                        as="h3"
-                        style={{
-                            fontSize: "2em"
-                        }}
-                        color="blue"
-                    >
-                        Resource submission
-                    </Header>
-                    <SecurityContext.Consumer>
-                        {(securityContext) => (
-
+                <SecurityContext.Consumer>
+                    {(securityContext) => (
+                        <Container vertical>
+                            <Header
+                                as="h3"
+                                style={{
+                                    fontSize: "2em"
+                                }}
+                                color="blue"
+                            >
+                                Resource submission
+                            </Header>
                             <Form onSubmit={this.handleSubmit} success error>
                                 {securityContext.security.is_logged_in ? <div>
                                     {this.state.url_validated ? (
@@ -244,9 +243,10 @@ export default class ResourceSubmitForm extends Component {
 
                                     <Form.Button name="submit" content="Submit" color="green"/></div> : null}
                             </Form>
-                        )}
-                    </SecurityContext.Consumer>
-                </Container>
+
+                        </Container>
+                    )}
+                </SecurityContext.Consumer>
             </div>
         );
     }
