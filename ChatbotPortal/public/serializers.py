@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from resource.models import Resource, Tag
+from resource.models import Resource, Tag, Category
 
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,11 @@ class ResourceSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
+        fields = '__all__'
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
         fields = '__all__'
 
 class RetrievePublicResourceSerializer(serializers.ModelSerializer):

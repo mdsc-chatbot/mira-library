@@ -13,6 +13,11 @@ class RetrieveResourceSerializer(serializers.ModelSerializer):
         slug_field='name'
     )
 
+    category = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='name'
+    )
+
     class Meta:
         model = Resource
         fields = '__all__'

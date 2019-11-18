@@ -4,7 +4,7 @@ import {Segment, Checkbox, Loader, List} from 'semantic-ui-react';
 import styles from './FilterList.css';
 
 // Stores tags and categories
-export function FilterList({tags, categories, handleTagSelected}) {
+export function FilterList({tags, categories, handleTagSelected, handleCategorySelected}) {
 
     if (tags.length > 0) {
         return (
@@ -15,7 +15,7 @@ export function FilterList({tags, categories, handleTagSelected}) {
                         <List.Content>
                             {categories.map(category => (
                                 <List.Item>
-                                    <Checkbox label={category.name}/>
+                                    <Checkbox label={category.name} id={category.id} onChange={handleCategorySelected}/>
                                 </List.Item>
                             ))}
                         </List.Content>
@@ -46,5 +46,6 @@ export function FilterList({tags, categories, handleTagSelected}) {
 FilterList.propTypes = {
     tags : PropTypes.array,
     categories : PropTypes.array,
-    handleTagSelected : PropTypes.func,
+    handleTagSelected : PropTypes.func.isRequired,
+    handleCategorySelected : PropTypes.func.isRequired,
 };

@@ -2,7 +2,7 @@ from rest_framework import permissions, generics, viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer
-from .models import Resource, Tag
+from .models import Resource, Tag, Category
 import json
 import mimetypes
 
@@ -37,9 +37,13 @@ def fetch_tags(request):
         # Return empty http response if can't find tags
         return HttpResponse()
 
+
+def fetch_categories(request):
+    category_set = Category.objects.all().values()
+    return JsonResponse(list(category_set), safe=False)
+
+
 # Downloads request attachment
-
-
 def download_attachment(request, resource_id):
     resource = Resource.objects.get(pk=int(resource_id))
 
