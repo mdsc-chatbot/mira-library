@@ -8,6 +8,7 @@ import {
     Dropdown,
     Pagination,
 } from "semantic-ui-react";
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import {SecurityContext} from '../security/SecurityContext';
 import styles from './PublicResourcePage.css';
@@ -27,13 +28,17 @@ export class PublicResourcesView extends Component {
         {key : 'By Lowest Rated', value: 5, text: 'By Lowest Rated'},
     ];
 
+    static propTypes = {
+        tagId : PropTypes.string,
+    };
+
     constructor(props) {
         super(props);
 
         this.state = {
             resources : [],
             tags : [],
-            selectedTags : [],
+            selectedTags : props.tagId ? [parseInt(props.tagId)] : [],
             categories : [],
             selectedCategories : [],
             loadingResources : true,
@@ -171,6 +176,7 @@ export class PublicResourcesView extends Component {
                                 <FilterList
                                     tags={this.state.tags}
                                     categories={this.state.categories}
+                                    selectedTags={this.state.selectedTags}
                                     handleTagSelected={this.handleTagSelected}
                                     handleCategorySelected={this.handleCategorySelected}
                                 />
