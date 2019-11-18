@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label, Input} from 'semantic-ui-react';
+import {Button, Card, Container, Form, Grid, Icon, Image, Label, Segment, Responsive,Item,Divider} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
@@ -12,8 +12,6 @@ class ProfilePage extends Component {
     static contextType = SecurityContext;
 
     BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
-
-
 
     constructor(props) {
         /**
@@ -77,7 +75,6 @@ class ProfilePage extends Component {
         })
     };
 
-
     saveFunction = () => {
         alert("Your changes were saved!");
     };
@@ -90,7 +87,7 @@ class ProfilePage extends Component {
         alert("A request has been sent to the admin!");
     };
 
-    /**
+    /*
      * This function handles the overall edit operations
      * @param e : event
      * @param editedData : data from the EditForm upon submission
@@ -101,11 +98,6 @@ class ProfilePage extends Component {
         if (this.state.imagePath) formData.append('profile_picture', this.state.imagePath);
         formData.append('first_name', this.state.first_name);
         formData.append('last_name', this.state.last_name);
-        // Object.values(editedData).forEach((formField) => {
-        //     if (formField[0] !== 'imagePath') {
-        //         formData.append(formField[2], formField[3]);
-        //     }
-        // });
 
         // Defining header and content-type for accessing authenticated information
         const options = {
@@ -142,138 +134,229 @@ class ProfilePage extends Component {
             );
     };
 
+    /* This function handles the profile page for Tablet/Computer Version */
+    profilePageDataWeb = () => {
+        return(<SecurityContext.Consumer>
+            {(securityContext) => (
+                <Form className={styles.centeredFormWeb} onSubmit={e => this.handle_edit(e, this.state)}>
+                    {securityContext.security.is_logged_in ?
+                        <Card fluid centered onSubmit={this.props.handle_edit}>
+                            {this.state.profile_picture ? (
+                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} size='medium' circular centered/>
+                            ) : null}
+                            <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                            <Card.Content className={styles.nameMobile}>
+                                <Card.Header>
+                                    <Form.Group widths='equal'>
+
+                                        <Form.Input
+                                            // className={styles.fixedInputHeight}
+                                            fluid
+                                            label='First name'
+                                            name='first_name'
+                                            size='large'
+                                            onChange={this.handle_change}
+                                            value={this.state.first_name}
+                                        />
+                                        <Form.Input
+                                            // className={styles.fixedInputHeight}
+                                            fluid
+                                            label='Last name'
+                                            size='large'
+                                            name='last_name'
+                                            onChange={this.handle_change}
+                                            value={this.state.last_name}
+                                        />
+
+                                    </Form.Group>
+                                </Card.Header>
+                            </Card.Content>
+                            <Card.Description>
+                                <Divider fitted />
+                                <h3><Icon color='blue' name='mail'/>
+                                    {securityContext.security.email}</h3><Divider fitted />
+                                <h3>
+                                    <Icon color='blue' name='pencil alternate'/>
+                                    # of Submissions = {securityContext.security.submissions}
+                                </h3><Divider fitted />
+                                <h3>
+                                    <Icon color='blue' name='trophy'/>
+                                    Points = {securityContext.security.points}
+                                </h3><Divider fitted />
+                                <h3>
+                                    <Icon color='blue' name='certificate'/>
+                                    { securityContext.security.is_staff ? (
+                                        'Staff'
+                                    ) : securityContext.security.is_reviewer ? (
+                                        'Reviewer'
+                                    ) : 'Newbie'
+                                    }
+                                </h3><Divider fitted/>
+                            </Card.Description>
+
+                            <Button.Group fluid widths={2} size='big'>
+                                <Button animated='fade' negative onClick={this.cancelFunction}>
+                                    <Button.Content visible>
+                                        Cancel Changes
+                                    </Button.Content>
+                                    <Button.Content hidden><Icon name='cancel' /></Button.Content>
+                                </Button>
+                                <Button.Or />
+                                <Button animated='fade' positive onClick={this.saveFunction}>
+                                    <Button.Content visible>
+                                        Save Changes
+                                    </Button.Content>
+                                    <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                </Button>
+                            </Button.Group>
+                            <Button
+                                animated='fade'
+                                icon
+                                basic
+                                color='red'
+                                fluid
+                                size='big'
+                                onClick={this.deleteFunction}
+                            >
+                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
+                                <Button.Content hidden>Send Request To Admin</Button.Content>
+                            </Button>
+                        </Card>
+                        : null}
+                </Form>
+            )}
+        </SecurityContext.Consumer>);
+    };
+
+    /* This function handles the profile page for Mobile Version */
+    profilePageDataMobile = () => {
+        return(
+            <SecurityContext.Consumer>
+                {(securityContext) => (
+                    <Form className={styles.centeredFormMobile} onSubmit={e => this.handle_edit(e, this.state)}>
+                        {securityContext.security.is_logged_in ?
+                            <Card fluid centered onSubmit={this.props.handle_edit}>
+                                {this.state.profile_picture ? (
+                                    <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} centered size='medium'/>
+                                ) : null}
+                                <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                                <Card.Content className={styles.nameMobile}>
+                                    <Card.Header>
+                                        <Form.Input
+                                            fluid
+                                            size = "small"
+                                            label='First name'
+                                            name='first_name'
+                                            onChange={this.handle_change}
+                                            value={this.state.first_name}
+                                        />
+                                        <Form.Input
+                                            fluid
+                                            size="small"
+                                            label='Last name'
+                                            name='last_name'
+                                            onChange={this.handle_change}
+                                            value={this.state.last_name}
+                                        />
+                                    </Card.Header>
+                                </Card.Content>
+                                <Card.Description>
+                                    <Divider fitted />
+                                    <h3><Icon color='blue' name='mail'/>
+                                        {securityContext.security.email}</h3><Divider fitted /><h3>
+                                    <Icon color='blue' name='pencil alternate'/>
+                                    # of Submissions = {securityContext.security.submissions}
+                                </h3><Divider fitted />
+                                    <h3>
+                                        <Icon color='blue' name='trophy'/>
+                                        Points = {securityContext.security.points}
+                                    </h3><Divider fitted />
+                                    <h3>
+                                        <Icon color='blue' name='certificate'/>
+                                        { securityContext.security.is_staff ? (
+                                            'Staff'
+                                        ) : securityContext.security.is_reviewer ? (
+                                            'Reviewer'
+                                        ) : 'Newbie'
+                                        }
+                                    </h3><Divider fitted/>
+                                </Card.Description>
+                                <Button.Group fluid widths={2} size='large'>
+                                    <Button animated='fade' negative onClick={this.cancelFunction}>
+                                        <Button.Content visible>
+                                            Cancel Changes
+                                        </Button.Content>
+                                        <Button.Content hidden><Icon name='cancel' /></Button.Content>
+                                    </Button>
+                                    <Button.Or />
+                                    <Button animated='fade' positive onClick={this.saveFunction}>
+                                        <Button.Content visible>
+                                            Save Changes
+                                        </Button.Content>
+                                        <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                    </Button>
+                                </Button.Group>
+                                <Button
+                                    animated='fade'
+                                    icon
+                                    basic
+                                    color='red'
+                                    fluid
+                                    size='large'
+                                    onClick={this.deleteFunction}
+                                >
+                                    <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
+                                    <Button.Content hidden>Send Request To Admin</Button.Content>
+                                </Button>
+                            </Card>
+                            : null}
+                    </Form>
+                )}
+            </SecurityContext.Consumer>
+        );
+    };
+
+    /* This function handles the responsiveness for which version to render*/
+    profilePage = () => {
+
+        return (
+
+            <Segment.Group className={styles.segmentWeb}>
+
+                <Responsive minWidth={768}>
+                    {this.profilePageDataWeb()}
+                </Responsive>
+
+                <Responsive maxWidth={767}>
+                    {this.profilePageDataMobile()}
+                </Responsive>
+
+            </Segment.Group>
+
+
+        );
+
+
+    };
+
     /**
      * This renders the ProfileForm
      * @returns {React.Fragment}
      */
     render() {
         return (
-            <React.Fragment>
-                <Container>
-                    <SecurityContext.Consumer>
-                        {(securityContext) => (
+            <Segment.Group className={styles.segmentWeb}>
 
-                            <Form className={styles.centeredForm} onSubmit={e => this.handle_edit(e, this.state)}>
-                                <Segment>
-                                    <Label
-                                        size='big'
-                                        as='h1'
-                                        icon='user'
-                                        color='blue'
-                                        content='My Profile'
-                                        ribbon>
-                                    </Label>
-                                    {securityContext.security.is_logged_in ?
-                                        <Card fluid centered onSubmit={this.props.handle_edit}>
-                                            {this.state.profile_picture ? (
-                                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} />
-                                            ) : null}
-                                            <Form.Input type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
-                                            <Card.Content>
-                                                <Card.Header>
+                <Responsive maxWidth={767}>
+                    {this.profilePage()}
+                </Responsive>
 
-                                                    <Form.Group widths='equal'>
-
-                                                        <Form.Input
-                                                            className={styles.fixedInputHeight}
-                                                            fluid
-                                                            label='First name'
-                                                            name='first_name'
-                                                            onChange={this.handle_change}
-                                                            value={this.state.first_name}
-                                                        />
-                                                        <Form.Input
-                                                            className={styles.fixedInputHeight}
-                                                            fluid
-                                                            label='Last name'
-                                                            name='last_name'
-                                                            onChange={this.handle_change}
-                                                            value={this.state.last_name}
-                                                        />
-
-                                                    </Form.Group>
-
-
-
-                                                </Card.Header>
-                                            </Card.Content>
-
-
-                                            <Card.Content extra>
-                                                {/*<h3 style={{ color: 'green' }}>*/}
-                                                <h3>
-                                                    <Icon color='blue' name='mail'/>
-                                                    {securityContext.security.email}
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
-                                                    <Icon color='blue' name='pencil alternate'/>
-                                                    # of Submissions = {securityContext.security.submissions}
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
-                                                    <Icon color='blue' name='trophy'/>
-                                                    Points = {securityContext.security.points}
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Card.Content extra>
-                                                <h3>
-                                                    <Icon color='blue' name='certificate'/>
-                                                    { securityContext.security.is_staff ? (
-                                                        'Staff'
-                                                    ) : securityContext.security.is_reviewer ? (
-                                                        'Reviewer'
-                                                    ) : 'Newbie'
-                                                    }
-                                                </h3>
-                                            </Card.Content>
-
-                                            <Button.Group fluid size='big'>
-                                                <Button animated='fade' negative onClick={this.cancelFunction}>
-                                                    <Button.Content visible>
-                                                        <Icon name='cancel' />
-                                                        Cancel Changes
-                                                    </Button.Content>
-                                                    <Button.Content hidden>No changes will be made</Button.Content>
-                                                </Button>
-                                                <Button.Or />
-                                                <Button animated='fade' positive onClick={this.saveFunction}>
-                                                    <Button.Content visible>
-                                                        <Icon name='sync' />
-                                                        Save Changes
-                                                    </Button.Content>
-                                                    <Button.Content hidden>Changes made will be saved</Button.Content>
-                                                </Button>
-                                            </Button.Group>
-
-                                            <Button
-                                                animated='fade'
-                                                icon
-                                                basic
-                                                color='red'
-                                                fluid
-                                                size='big'
-                                                onClick={this.deleteFunction}
-                                            >
-                                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
-                                                <Button.Content hidden>Send Request To Admin</Button.Content>
-                                            </Button>
-
-
-                                        </Card>
-                                        : null}
-                                </Segment>
-                            </Form>
-
-                        )}
-                    </SecurityContext.Consumer>
-                </Container>
-            </React.Fragment>
+                <Responsive minWidth={768}>
+                    <Container>
+                        {this.profilePage()}
+                    </Container>
+                </Responsive>
+            </Segment.Group>
         );
     }
 }

@@ -19,81 +19,102 @@ import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
 import UserPage from "./search/UserPage";
-import { Divider } from "semantic-ui-react";
+import {Container, Divider, Responsive, Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
+import styles from "./App.css";
 
 export default function App() {
+    const mainPage = () => {
+        return(<SecurityContextProvider>
+            <HeaderMenu />
+            <Switch>
+                <Route exact path={baseRoute + "/profile"}>
+                    <ProfilePage/>
+                </Route>
+                <Route exact path={baseRoute + "/resource"}>
+                    <ResourcePage />
+                </Route>
+                <Route exact path={baseRoute + "/review"}>
+                    <ReviewPage />
+                </Route>
+                <Route exact path={baseRoute + "/login"}>
+                    <LoginPage />
+                </Route>
+                <Route exact path={baseRoute + "/logout"}>
+                    <LogoutPage />
+                </Route>
+                <Route
+                    exact path={baseRoute + "/validate/email"}
+                    component={EmailValidationRequestPage}
+                />
+                <Route exact path={baseRoute + "/search"}>
+                    <SearchPage />
+                </Route>
+                <Route
+                    exact
+                    path={baseRoute + "/resource/:resourceID"}
+                    component={ResourceDetail}
+                />
+                <Route
+                    exact
+                    path={baseRoute + "/review/:resourceID"}
+                    component={reviewResource}
+                />
+
+                <Route
+                    exact path={baseRoute + "/resource_submit/:url"}
+                    component={ResourceSubmitForm}
+                />
+                <Route exact path={baseRoute + "/public_resource*"}>
+                    {({match}) => (
+                        <PublicResourcePage match={match}/>
+                    )}
+                </Route>
+                <Route exact path={baseRoute + "/faq"}>
+                    <FAQ />
+                </Route>
+
+                <Route
+                    exact path={baseRoute + "/password"}
+                    component={PasswordChangeForm}
+                />
+                <Route
+                    exact path={baseRoute + "/password/reset"}
+                    component={PasswordResetRequestPage}
+                />
+                <Route
+                    exact path={baseRoute + "/password/reset/:uid/:token"}
+                    component={PasswordResetPage}
+                />
+                <Route>
+                    <Homepage />
+                </Route>
+
+            </Switch>
+            <Footer />
+        </SecurityContextProvider>);
+    };
     return (
-        <div>
-            <SecurityContextProvider>
-                <HeaderMenu />
-                <Switch>
-                    <Route exact path={baseRoute + "/profile"}>
-                        <ProfilePage />
-                    </Route>
-                    <Route exact path={baseRoute + "/resource"}>
-                        <ResourcePage />
-                    </Route>
-                    <Route exact path={baseRoute + "/review"}>
-                        <ReviewPage />
-                    </Route>
-                    <Route exact path={baseRoute + "/login"}>
-                        <LoginPage />
-                    </Route>
-                    <Route exact path={baseRoute + "/logout"}>
-                        <LogoutPage />
-                    </Route>
-                    <Route
-                        exact path={baseRoute + "/validate/email"}
-                        component={EmailValidationRequestPage}
-                    />
-                    <Route exact path={baseRoute + "/search"}>
-                        <SearchPage />
-                    </Route>
-                    <Route
-                        exact
-                        path={baseRoute + "/resource/:resourceID"}
-                        component={ResourceDetail}
-                    />
-                    <Route
-                        exact
-                        path={baseRoute + "/review/:resourceID"}
-                        component={reviewResource}
-                    />
 
-                    <Route
-                        exact path={baseRoute + "/resource_submit/:url"}
-                        component={ResourceSubmitForm}
-                    />
-                    <Route exact path={baseRoute + "/public_resource*"}>
-                        {({match}) => (
-                            <PublicResourcePage match={match}/>
-                        )}
-                    </Route>
-                    <Route exact path={baseRoute + "/faq"}>
-                        <FAQ />
-                    </Route>
 
-                    <Route
-                        exact path={baseRoute + "/password"}
-                        component={PasswordChangeForm}
-                    />
-                    <Route
-                        exact path={baseRoute + "/password/reset"}
-                        component={PasswordResetRequestPage}
-                    />
-                    <Route
-                        exact path={baseRoute + "/password/reset/:uid/:token"}
-                        component={PasswordResetPage}
-                    />
-                    <Route>
-                        <Homepage />
-                    </Route>
+        <Segment.Group>
 
-                </Switch>
-                <Footer />
-            </SecurityContextProvider>
-        </div>
+
+            <Responsive minWidth={768}>
+                    <div>
+                        {mainPage()}
+                    </div>
+            </Responsive>
+
+            <Responsive maxWidth={767}>
+                <Container className={styles.noPaddingContainer} fluid>
+                    {mainPage()}
+                </Container>
+            </Responsive>
+
+        </Segment.Group>
+
+
     );
 }
 
