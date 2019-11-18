@@ -1,7 +1,6 @@
 import React from "react";
 import ResourceList from "./ResourceList";
-import ResourceSubmitForm from "./ResourceSubmitForm";
-import { Container } from "semantic-ui-react";
+import {SecurityContext} from "../security/SecurityContext";
 
 export default class ResourcePage extends React.Component {
     constructor(props) {
@@ -11,7 +10,14 @@ export default class ResourcePage extends React.Component {
     render() {
         return (
             <div>
-                <ResourceList />
+                <SecurityContext.Consumer>
+                    {(securityContext) => (
+                        <div>
+                            {securityContext.security.is_logged_in ?
+                                <ResourceList/>
+                                : null}
+                        </div>)}
+                </SecurityContext.Consumer>
             </div>
         );
     }

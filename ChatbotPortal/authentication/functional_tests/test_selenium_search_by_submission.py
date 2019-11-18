@@ -557,6 +557,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         time.sleep(WAIT_SECONDS)
 
+    ####################################################################################
     def test_search_by_Submission_clearing_values_will_resume_regular_search(self):
         """
         Test search by Submission range where start Submission and end Submission are put and then cleared,
