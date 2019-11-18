@@ -4,6 +4,7 @@ import validator from "validator";
 import {Container, Form, Header, Input, Message, Rating} from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
+import CategoryDropdown from './CategoryDropdown';
 import {SecurityContext} from '../security/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
 
@@ -20,6 +21,7 @@ export default class ResourceSubmitForm extends Component {
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
 
+            category: 1,
             tags: [],
             url_validated: true,
             currentTags: null,
@@ -44,6 +46,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
+        resourceFormData.append("category", this.state.category);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -191,6 +194,14 @@ export default class ResourceSubmitForm extends Component {
                                             maxRating={5}
                                             icon="star"
                                             size="massive"
+                                        />
+                                    </Form.Field>
+
+                                    <Form.Field>
+                                        <label>Category</label>
+                                        <CategoryDropdown
+                                            value={this.state.category}
+                                            onChange={category => this.setState({ category })}
                                         />
                                     </Form.Field>
 

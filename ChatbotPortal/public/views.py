@@ -1,9 +1,9 @@
 from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
 
-from resource.models import Resource, Tag
+from resource.models import Resource, Tag, Category
 from resource.serializers import RetrieveResourceSerializer
-from .serializers import ResourceSerializer, TagSerializer, RetrievePublicResourceSerializer
+from .serializers import ResourceSerializer, TagSerializer, CategorySerializer, RetrievePublicResourceSerializer
 
 
 class StandardResultSetPagination(PageNumberPagination):
@@ -29,10 +29,16 @@ class ResourceView(generics.ListAPIView):
         if (search_param != None and search_param != ""):
             matching_titles = Resource.objects.filter(title__icontains=search_param)
             matching_url = Resource.objects.filter(url__icontains=search_param)
-            #TODO Uncomment this when summary comes back? (if it comes baCk)
-            # matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
-            # queryset = queryset.intersection(matching_titles.union(matching_url, matching_summary))
-            queryset = queryset.intersection(matching_titles.union(matching_url))
+            matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
+            queryset = queryset.intersection(matching_titles.union(matching_url, matching_summary))
+
+        # Filter resources by categories
+        category_param = self.request.query_params.get('categories')
+        if (category_param != None and category_param != ""):
+
+            # Assumes that tags are separated via commas in a string
+            category_list = category_param.split(',')
+            queryset = queryset.filter(category__id__in=category_list)
 
         # Filter resources by tags
         tag_param = self.request.query_params.get('tags')
@@ -71,6 +77,14 @@ class TagView(generics.ListAPIView):
         # TODO: Only approved tags?? Waiting for client confirmation
         # TODO: Tag sorting? (Sort desc by most used)
         return Tag.objects.all()
+
+class CategoryView(generics.ListAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = {permissions.AllowAny}
+
+    def get_queryset(self):
+        # TODO: Category sorting? (Sort desc by most used)
+        return Category.objects.all()
 
 class DetailedResourceView(generics.RetrieveAPIView):
     queryset = Resource.objects.all()

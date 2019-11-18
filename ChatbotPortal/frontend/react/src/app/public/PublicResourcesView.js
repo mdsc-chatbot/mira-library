@@ -8,6 +8,7 @@ import {
     Dropdown,
     Pagination,
 } from "semantic-ui-react";
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import {SecurityContext} from '../security/SecurityContext';
 import styles from './PublicResourcePage.css';
@@ -27,14 +28,19 @@ export class PublicResourcesView extends Component {
         {key : 'By Lowest Rated', value: 5, text: 'By Lowest Rated'},
     ];
 
+    static propTypes = {
+        tagId : PropTypes.string,
+    };
+
     constructor(props) {
         super(props);
 
         this.state = {
             resources : [],
             tags : [],
-            selectedTags : [],
+            selectedTags : props.tagId ? [parseInt(props.tagId)] : [],
             categories : [],
+            selectedCategories : [],
             loadingResources : true,
             resourcePage : 1,
             search : '',
@@ -61,6 +67,7 @@ export class PublicResourcesView extends Component {
                 page : currentPage,
                 search : this.state.search,
                 tags : this.state.selectedTags.toString(),
+                categories : this.state.selectedCategories.toString(),
                 sort : this.state.sortOption
             },
         })
@@ -83,7 +90,12 @@ export class PublicResourcesView extends Component {
     };
 
     fetchCategories = () => {
-        //TODO: Axios get categories
+        axios.get('/api/public/categories')
+            .then(res => {
+                this.setState({
+                    categories : res.data || []
+                })
+            });
     };
 
     handleSearchChange = (e, {value}) => {
@@ -108,7 +120,27 @@ export class PublicResourcesView extends Component {
             };
         }, () => {
             // Fetch new resources when new tags were selected
-            this.fetchResources(this.state.resourcePage)
+            this.fetchResources(1)
+        });
+    };
+
+    handleCategorySelected = (event, {id, checked}) => {
+        // Remove or add id depending on whether checkbox was checked
+        this.setState((prevState) => {
+            let selectedCategories = prevState.selectedCategories.slice();
+
+            if (checked) {
+                selectedCategories.push(id);
+            } else {
+                selectedCategories = selectedCategories.filter(value => value !== id);
+            }
+
+            return {
+                selectedCategories
+            };
+        }, () => {
+            // Fetch new resources when new categories were selected
+            this.fetchResources(1)
         });
     };
 
@@ -144,7 +176,9 @@ export class PublicResourcesView extends Component {
                                 <FilterList
                                     tags={this.state.tags}
                                     categories={this.state.categories}
+                                    selectedTags={this.state.selectedTags}
                                     handleTagSelected={this.handleTagSelected}
+                                    handleCategorySelected={this.handleCategorySelected}
                                 />
                             </Grid.Column>
 

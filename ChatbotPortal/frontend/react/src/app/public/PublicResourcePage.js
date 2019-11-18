@@ -13,7 +13,12 @@ export function PublicResourcePage({match}) {
                     <DetailedPublicResource resourceId={match.params.id} />
                 )}
             </Route>
-            <Route>
+            <Route path={`${match.path}/:tagid`}>
+                {({match}) => (
+                    <PublicResourcesView tagId={match.params.tagid}/>
+                )}
+            </Route>
+            <Route >
                 <PublicResourcesView />
             </Route>
         </Switch>

@@ -34,6 +34,11 @@ class Tag(models.Model):
     approved = models.BooleanField(default=False)
 
 
+class Category(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+
+
 class Resource(models.Model):
 
     title = models.TextField()
@@ -42,6 +47,7 @@ class Resource(models.Model):
         validators=[MaxValueValidator(5), MinValueValidator(1)])
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     attachment = models.FileField(
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 
