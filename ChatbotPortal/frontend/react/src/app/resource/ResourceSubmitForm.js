@@ -46,6 +46,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
+        resourceFormData.append("category", this.state.category);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -105,7 +106,7 @@ export default class ResourceSubmitForm extends Component {
                 response => { },
                 error => { console.log(error); }
             ); 
-    }
+    };
 
     handleRate = (event, data) => {
         this.setState({ rating: data.rating });
@@ -189,13 +190,13 @@ export default class ResourceSubmitForm extends Component {
                         </Form.Field>
 
                         <Form.Field>
-
-                        </Form.Field>
-                            <label>Tags</label>
+                            <label>Category</label>
                             <CategoryDropdown
                                 value={this.state.category}
                                 onChange={category => this.setState({ category })}
                             />
+                        </Form.Field>
+
                         <Form.Field>
                             <label>Tags</label>
                             <Form.Group className={styles.dropdownPadding}>

@@ -47,7 +47,7 @@ class Resource(models.Model):
         validators=[MaxValueValidator(5), MinValueValidator(1)])
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
-    categories = models.ManyToManyField(Category)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
     attachment = models.FileField(
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 

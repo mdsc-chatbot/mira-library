@@ -1,8 +1,9 @@
 import React from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import {Dropdown} from 'semantic-ui-react';
 
-export class CategoryDropdown extends React.Component {
+export default class CategoryDropdown extends React.Component {
 
     static propTypes = {
         value : PropTypes.string,
@@ -19,7 +20,14 @@ export class CategoryDropdown extends React.Component {
 
     componentDidMount() {
         // Fetch options for dropdown
-        //TODO:
+        axios.get('/chatbotportal/resource/fetch-categories')
+            .then((response) => {
+                this.setState({options : response.data.map((category) => ({
+                    key : category.id,
+                    value : category.id,
+                    text : category.name,
+                }))})
+            })
     }
 
     handleChange = (event, data) => {
