@@ -11,9 +11,6 @@ class ProfilePage extends Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
-
-
     constructor(props) {
         /**
          * This constructor sets up the primary state for the props
@@ -35,7 +32,7 @@ class ProfilePage extends Component {
          */
         if (!this.context.security.is_logged_in) {
             axios
-                .get(this.BASE_AUTH_URL + 'currentuser/')
+                .get('/chatbotportal/authentication/currentuser/')
                 .then(
                     response => {
                         if (response.data !== '') {
@@ -104,7 +101,7 @@ class ProfilePage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', editedData, {headers: options})
+            .put(`/chatbotportal/authentication/${this.context.security.id}/update/`, editedData, {headers: options})
             .then(
                 response => {
                     this.setState({

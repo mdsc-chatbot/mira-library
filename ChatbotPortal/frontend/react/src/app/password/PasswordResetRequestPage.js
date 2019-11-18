@@ -7,8 +7,6 @@ import axios from "axios";
  */
 class PasswordResetRequestPage extends React.Component {
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
-
     constructor(props) {
         super(props);
         this.state = {
@@ -24,7 +22,7 @@ class PasswordResetRequestPage extends React.Component {
      */
     handle_email = (e, emailFormData) => {
 
-        const url = `${this.BASE_AUTH_URL}password/reset/`;
+        const url = `/chatbotportal/authentication/password/reset/`;
 
         axios
             .post(url, emailFormData)

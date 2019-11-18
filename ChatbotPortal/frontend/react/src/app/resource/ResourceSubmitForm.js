@@ -95,14 +95,13 @@ export default class ResourceSubmitForm extends Component {
     };
 
     update_user_submissions = () => {
-        const BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
         const options = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.context.security.token}`
         };
         axios
             .put(
-                `${BASE_AUTH_URL}${this.context.security.id}/update/submissions/`, {headers: options})
+                `/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, {headers: options})
             .then(
                 () => {
                 },

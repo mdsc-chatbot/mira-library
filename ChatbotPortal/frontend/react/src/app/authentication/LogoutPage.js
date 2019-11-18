@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
 import HomePage from "../Homepage";
+import {Redirect} from "react-router";
+import {baseRoute} from "../App";
 
 
 class LogoutPage extends Component {
@@ -11,8 +13,6 @@ class LogoutPage extends Component {
      * @type {React.Context<*>}
      */
     static contextType = SecurityContext;
-
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/chatbotportal/authentication/';
 
     componentDidMount() {
         this.handle_logout();
@@ -33,7 +33,7 @@ class LogoutPage extends Component {
          * This function handles the logout by setting
          */
         axios
-            .get(this.BASE_AUTH_URL + 'logout/', {headers: options})
+            .get('/chatbotportal/authentication/logout/', {headers: options})
             .then(
                 response => {
                     if (response.data['user'] === 'AnonymousUser') {
@@ -53,7 +53,7 @@ class LogoutPage extends Component {
      */
     render() {
         return (
-            <HomePage/>
+            <Redirect to={baseRoute}/>
         );
     }
 }

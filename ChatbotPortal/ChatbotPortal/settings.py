@@ -23,7 +23,7 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-TEST = False    # Set to True to run test db, rerun all migrations
+TEST = False  # Set to True to run test db, rerun all migrations
 
 ALLOWED_HOSTS = []
 
@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
 
     'corsheaders',
     'django_filters',
@@ -94,6 +93,9 @@ DATABASES_AVAILABLE = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
+        'TEST': {
+            'NAME': 'test_main_db',
+        },
     },
     'test': {
         # Create a separate db for testing, assign itself to its own test db
@@ -117,7 +119,6 @@ DATABASES = {
     'default': DATABASES_AVAILABLE[database]
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -126,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -167,7 +167,6 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     'PASSWORD_RESET_SERIALIZER': 'authentication.api.serializers.PasswordResetSerializer',
 }
-
 
 # JWT settings
 JWT_AUTH = {
