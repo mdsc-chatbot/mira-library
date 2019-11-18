@@ -5,13 +5,12 @@ from selenium import webdriver
 
 from ..models import CustomUser
 
-# The base url
-BASE_URL = 'http://127.0.0.1:8000'
+HOME_PAGE = '/chatbotportal/app'
+LOGIN_PAGE = '/chatbotportal/app/login'
+PASSWORD_RESET_PAGE = '/chatbotportal/app/password/reset'
+PASSWORD_RESET_FORM = '/chatbotportal/app/password/reset/uid/token'
 
-url = BASE_URL + '/chatbotportal/app/login'
-password_reset_page = BASE_URL + '/chatbotportal/app/password/reset'
-password_reset_form = BASE_URL + '/chatbotportal/app/password/reset/uid/token'
-homepage = BASE_URL + '/chatbotportal/app'
+WAIT_SECONDS = 3
 
 
 class TestPasswordResetForm(LiveServerTestCase):
@@ -65,25 +64,24 @@ class TestPasswordResetForm(LiveServerTestCase):
         Test if password reset button is disabled if password fields do not match and are less than 8 characters
         :return: None
         """
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(password_reset_form)
-        time.sleep(1)
+
+        self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset button
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_password_reset_button_is_enabled(self):
         """
         Test if password reset button is enabled if password fields match and are al least 8 characters
         :return: None
         """
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(password_reset_form)
-        time.sleep(1)
+        self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset button
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
@@ -103,16 +101,15 @@ class TestPasswordResetForm(LiveServerTestCase):
         # The password reset button should be enabled now
         self.assertTrue(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_password_reset_button_message_for_unsuccessful_attempt(self):
         """
         Test if password reset button is enabled if password fields match and are al least 8 characters
         :return: None
         """
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(password_reset_form)
-        time.sleep(1)
+        self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset button
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
@@ -133,22 +130,24 @@ class TestPasswordResetForm(LiveServerTestCase):
         self.assertTrue(password_reset_button.is_enabled())
         password_reset_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding password reset request page button
         password_reset_request_page_button = self.browser.find_element_by_name('password_reset_request_page_button')
         self.assertIsNotNone(password_reset_request_page_button)
         self.assertEqual(password_reset_request_page_button.get_attribute('innerHTML'),
                          'Unable to reset! Please request password reset email again.')
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Redirecting to password reset request email field
         password_reset_request_page_button.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
 
 """
