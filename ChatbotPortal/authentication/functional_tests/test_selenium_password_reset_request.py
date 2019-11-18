@@ -8,9 +8,12 @@ from ..models import CustomUser
 # The base url
 BASE_URL = 'http://127.0.0.1:8000'
 
-url = BASE_URL + '/chatbotportal/app/login'
-password_reset_page = BASE_URL + '/chatbotportal/app/password/reset'
-homepage = BASE_URL + '/chatbotportal/app'
+HOME_PAGE = '/chatbotportal/app'
+LOGIN_PAGE = '/chatbotportal/app/login'
+PASSWORD_RESET_PAGE = '/chatbotportal/app/password/reset'
+PASSWORD_RESET_FORM = '/chatbotportal/app/password/reset/uid/token'
+
+WAIT_SECONDS = 3
 
 
 class TestPasswordResetRequest(LiveServerTestCase):
@@ -65,22 +68,20 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-
-        time.sleep(2)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_password_reset_button_is_disabled(self):
         """
@@ -88,22 +89,20 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-
-        time.sleep(2)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
@@ -111,7 +110,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be disabled
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_email_not_sent_message(self):
         """
@@ -119,22 +118,20 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-
-        time.sleep(2)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
@@ -142,7 +139,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be disabled
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Find the message field for the next page
         message_field = self.browser.find_element_by_tag_name('p')
@@ -150,7 +147,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.assertEqual(message_field.get_attribute('innerHTML'), 'Email is not sent yet.')
         self.assertIsNotNone(message_field)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_password_reset_button_is_enabled(self):
         """
@@ -158,22 +155,20 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-
-        time.sleep(2)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
@@ -181,7 +176,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be disabled
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Finding the email field
         email = self.browser.find_element_by_name('email')
@@ -191,7 +186,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be enabled
         self.assertTrue(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_invalid_email_attempted_password_reset(self):
         """
@@ -199,22 +194,20 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-
-        time.sleep(2)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
@@ -222,7 +215,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be disabled
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Finding the email field
         email = self.browser.find_element_by_name('email')
@@ -233,7 +226,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.assertTrue(password_reset_button.is_enabled())
         password_reset_button.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
     def test_successful_email_sent_message(self):
         """
@@ -241,22 +234,21 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.browser.current_url, password_reset_page)
+        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
@@ -264,7 +256,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be disabled
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Finding the email field
         email = self.browser.find_element_by_name('email')
@@ -275,7 +267,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.assertTrue(password_reset_button.is_enabled())
         password_reset_button.click()
 
-        time.sleep(5)
+        time.sleep(WAIT_SECONDS)
 
         # Find the message field for the next page
         message_field = self.browser.find_element_by_tag_name('p')
@@ -284,4 +276,4 @@ class TestPasswordResetRequest(LiveServerTestCase):
                          'An email is sent with a password change link, Please check your email.')
         self.assertIsNotNone(message_field)
 
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
