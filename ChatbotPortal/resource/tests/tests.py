@@ -1,19 +1,21 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from ..models import Resource
+from ..models import Resource, Category
 
 
 class ResourceTest(TestCase):
     def test_webscrape_website_title(self):
         Resource.objects.all().delete()
+        category = Category(id=1, name="website")
         resource = Resource.objects.create(
             title="Unknown title",
             url="https://www.ualberta.ca/",
             rating=1,
             comments="",
             created_by_user="Unknown user",
-            created_by_user_pk=-1
+            created_by_user_pk=-1,
+            category=category,
 
         )
         resource.save()
@@ -22,13 +24,15 @@ class ResourceTest(TestCase):
 
     def test_validations(self):
         Resource.objects.all().delete()
+        category = Category(id=1, name="website")
         resource = Resource.objects.create(
             title="Unknown title",
             url="https://www.ualberta.ca/",
             rating=1,
             comments="",
             created_by_user="Unknown user",
-            created_by_user_pk=-1
+            created_by_user_pk=-1,
+            category=category
         )
         resource.full_clean()
 

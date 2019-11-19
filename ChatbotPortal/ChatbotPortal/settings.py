@@ -23,7 +23,7 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-TEST = False  # Set to True to run test db, rerun all migrations
+TEST = True  # Set to True to run test db, rerun all migrations
 
 ALLOWED_HOSTS = []
 
