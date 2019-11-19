@@ -56,6 +56,7 @@ from selenium import webdriver
 import json
 import time
 import sys
+import os
 from ..models import Resource, Tag
 sys.path.append('...')
 
@@ -151,7 +152,7 @@ class TestResourceSubmission(LiveServerTestCase):
     def valid_resource_submission(self, actual_resource_detail, test_resource_path):
         self.submit_a_resource(actual_resource_detail)
         test_valid_text = self.driver.find_element(By.NAME, ("submit_success")).text
-        time.sleep(1)  # Sleep to wait for changes in db
+        time.sleep(2)  # Sleep to wait for changes in db
         test_resource_detail = self.get_resource_detail(test_resource_path)
 
         assert "Congratulations! You've submitted a resource!" == test_valid_text
@@ -163,7 +164,6 @@ class TestResourceSubmission(LiveServerTestCase):
         [header, url, tags, comments, review_status, category, website_summary] = actual_resource_detail
 
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
-        time.sleep(1)
 
         self.driver.find_element(By.NAME, "submit_a_resource").click()
         self.driver.find_element(By.NAME, "url").send_keys(url)
@@ -175,6 +175,9 @@ class TestResourceSubmission(LiveServerTestCase):
                 By.CSS_SELECTOR, ".fluid:nth-child(2)").click()
             self.driver.find_element(
                 By.CSS_SELECTOR, ".visible > .item:nth-child(3)").click()
+            attachment_path = str(os.path.join(
+                os.path.dirname(__file__), "attachment.pdf"))
+            self.driver.find_element(By.NAME, "attachment").send_keys(attachment_path)
 
         # Tags xpath
         for tag in tags.split(","):
@@ -183,7 +186,6 @@ class TestResourceSubmission(LiveServerTestCase):
             self.driver.find_element(
                 By.CSS_SELECTOR, ".ui > .search").send_keys(Keys.ENTER)
 
-        time.sleep(2)
         self.driver.find_element(By.NAME, "submit").click()
 
     def get_resource_detail(self, resource_xpath):
