@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Container, Form, Icon, Card, Image, Segment, Label, Input} from 'semantic-ui-react';
+import {Button, Card, Container, Form, Icon, Image, Label, Segment} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
@@ -22,8 +22,8 @@ class ProfilePage extends Component {
             first_name: '',
             last_name: '',
             profile_picture: null,
-            submissions:'',
-            points:'',
+            submissions: '',
+            points: ''
         };
     };
 
@@ -41,7 +41,7 @@ class ProfilePage extends Component {
     /**
      * This function gets called upon being refreshed to keep user seamlessly logged in if the session is not expired
      */
-    updateStateFromSecurityContext =() => {
+    updateStateFromSecurityContext = () => {
         if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
             this.setState({
                 is_logged_in: this.context.security.is_logged_in,
@@ -50,9 +50,10 @@ class ProfilePage extends Component {
                 last_name: this.context.security.last_name,
                 profile_picture: this.context.security.profile_picture,
                 submissions: this.context.security.submissions,
-                points: this.context.security.points,
+                points: this.context.security.points
             });
         }
+        console.log(this.state)
     };
 
     /**
@@ -128,7 +129,7 @@ class ProfilePage extends Component {
                     this.setState({
                         first_name: response.data['first_name'],
                         last_name: response.data['last_name'],
-                        profile_picture:response.data['profile_picture'],
+                        profile_picture: response.data['profile_picture'],
                         is_edited: true,
                     });
                     this.context.security.first_name = this.state.first_name;
@@ -167,9 +168,11 @@ class ProfilePage extends Component {
                                     {securityContext.security.is_logged_in ?
                                         <Card fluid centered onSubmit={this.props.handle_edit}>
                                             {this.state.profile_picture ? (
-                                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} />
+                                                <Image
+                                                    src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}/>
                                             ) : null}
-                                            <Form.Input type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                                            <Form.Input type='file' accept="image/png, image/jpeg" id='profile_picture'
+                                                        name='profile_picture' onChange={this.handleImageChange}/>
                                             <Card.Content>
                                                 <Card.Header>
 
@@ -193,7 +196,6 @@ class ProfilePage extends Component {
                                                         />
 
                                                     </Form.Group>
-
 
 
                                                 </Card.Header>
@@ -225,7 +227,7 @@ class ProfilePage extends Component {
                                             <Card.Content extra>
                                                 <h3>
                                                     <Icon color='blue' name='certificate'/>
-                                                    { securityContext.security.is_staff ? (
+                                                    {securityContext.security.is_staff ? (
                                                         'Staff'
                                                     ) : securityContext.security.is_reviewer ? (
                                                         'Reviewer'
@@ -237,15 +239,15 @@ class ProfilePage extends Component {
                                             <Button.Group fluid size='big'>
                                                 <Button animated='fade' negative onClick={this.cancelFunction}>
                                                     <Button.Content visible>
-                                                        <Icon name='cancel' />
+                                                        <Icon name='cancel'/>
                                                         Cancel Changes
                                                     </Button.Content>
                                                     <Button.Content hidden>No changes will be made</Button.Content>
                                                 </Button>
-                                                <Button.Or />
+                                                <Button.Or/>
                                                 <Button animated='fade' positive onClick={this.saveFunction}>
                                                     <Button.Content visible>
-                                                        <Icon name='sync' />
+                                                        <Icon name='sync'/>
                                                         Save Changes
                                                     </Button.Content>
                                                     <Button.Content hidden>Changes made will be saved</Button.Content>
@@ -261,7 +263,8 @@ class ProfilePage extends Component {
                                                 size='big'
                                                 onClick={this.deleteFunction}
                                             >
-                                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
+                                                <Button.Content visible><Icon name='delete'/>Delete
+                                                    Profile?</Button.Content>
                                                 <Button.Content hidden>Send Request To Admin</Button.Content>
                                             </Button>
 
