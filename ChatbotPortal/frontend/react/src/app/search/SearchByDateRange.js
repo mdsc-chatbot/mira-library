@@ -1,6 +1,6 @@
 import React from 'react';
 import {DatesRangeInput} from 'semantic-ui-calendar-react';
-import {Dropdown, Form} from 'semantic-ui-react'
+import {Container, Dropdown, Form} from 'semantic-ui-react'
 
 const dateOption = [
     {key: 'unselected', value: "''", text: 'Unselected'},
@@ -63,16 +63,8 @@ class SearchByDateRange extends React.Component {
      */
     render() {
         return (
-            <Form>
-                <DatesRangeInput
-                    name="datesRange"
-                    placeholder="From - To"
-                    value={this.state.datesRange}
-                    iconPosition="left"
-                    onChange={this.handle_change_daterange}
-                    dateFormat={"YYYY-MM-DD"}
-                />
-
+            <Form size="mini">
+                <Container content="Date option"/>
                 <Dropdown
                     name='date_option_dropdown'
                     placeholder='Unselected'
@@ -81,6 +73,17 @@ class SearchByDateRange extends React.Component {
                     selection
                     onChange={this.handle_change_dropdown}
                     options={dateOption}
+                />
+                <Container content="Date range"/>
+                <DatesRangeInput
+                    popupPosition="bottom left"
+                    name="datesRange"
+                    placeholder="From - To"
+                    value={this.state.datesRange}
+                    iconPosition="left"
+                    onChange={this.handle_change_daterange}
+                    dateFormat={"YYYY-MM-DD"}
+                    size='small'
                 />
             </Form>
         );
