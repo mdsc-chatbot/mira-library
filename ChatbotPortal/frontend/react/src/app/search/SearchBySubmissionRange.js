@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form} from 'semantic-ui-react'
+import {Form, FormGroup, FormInput} from 'semantic-ui-react'
 
 
 /**
@@ -40,19 +40,23 @@ class SearchBySubmissionRange extends React.Component {
      */
     render() {
         return (
-            <Form>
-                <Form.Input
+            <Form size='mini'>
+                <FormGroup>
+                <FormInput
                     fluid
-                    placeholder="Start Submission Number"
+                    placeholder="Start Submission #"
                     name="start_submission"
                     onChange={this.handle_change_submission_range}
+                    size="mini"
                 />
-                <Form.Input
+                <FormInput
                     fluid
-                    placeholder="End Submission Number"
+                    placeholder="End Submission #"
                     name="end_submission"
                     onChange={this.handle_change_submission_range}
+                    size="mini"
                 />
+                </FormGroup>
                 <Form.Checkbox
                     fluid
                     label="total"
