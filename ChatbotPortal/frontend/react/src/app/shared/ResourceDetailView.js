@@ -27,27 +27,20 @@ export function ResourceDetailView({resource}) {
     };
 
     return (
-        <div
-            style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}
-        >
+        <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}>
             <Container>
                 <Menu text>
                     <Menu.Item>
                         <Header as="h2">
                             <div>
-                                    <span>
-                                        <Icon name="globe" />
-                                        <Header.Content id="title_header">
-                                            {resource.title}
-                                        </Header.Content>
-                                    </span>
-                                <a
-                                    href={resource.url}
-                                    target="_blank"
-                                >
-                                    <h4 className={linkStyles.link}>
-                                        {resource.url}
-                                    </h4>
+                                <span>
+                                    <Icon name="globe" />
+                                    <Header.Content id="title_header">
+                                        {resource.title}
+                                    </Header.Content>
+                                </span>
+                                <a href={resource.url} target="_blank" id="url">
+                                    <h4 className={linkStyles.link}>{resource.url}</h4>
                                 </a>
                             </div>
                         </Header>
@@ -68,9 +61,7 @@ export function ResourceDetailView({resource}) {
                 <Grid>
                     {resource.created_by_user ? (
                         <Grid.Row {...gridRowProps}>
-                            <Grid.Column {...gridKeyColumnProps}>
-                                Submitted by:
-                            </Grid.Column>
+                            <Grid.Column {...gridKeyColumnProps}>Submitted by:</Grid.Column>
                             <Grid.Column {...gridValueColumnProps}>
                                 {resource.created_by_user}
                             </Grid.Column>
@@ -78,44 +69,35 @@ export function ResourceDetailView({resource}) {
                     ) : null}
 
                     <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>
-                            Date submitted:
-                        </Grid.Column>
+                        <Grid.Column {...gridKeyColumnProps}>Date submitted:</Grid.Column>
+                        <Grid.Column {...gridValueColumnProps}>{resource.timestamp}</Grid.Column>
+                    </Grid.Row>
+
+                    <Grid.Row {...gridRowProps}>
+                        <Grid.Column {...gridKeyColumnProps}>Review status:</Grid.Column>
                         <Grid.Column {...gridValueColumnProps}>
-                            {resource.timestamp}
+                            <p id="review_status"> {resource.review_status}</p>
                         </Grid.Column>
                     </Grid.Row>
 
                     <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>
-                            Review status:
-                        </Grid.Column>
+                        <Grid.Column {...gridKeyColumnProps}>Category:</Grid.Column>
                         <Grid.Column {...gridValueColumnProps}>
-                            {resource.review_status}
+                            <p id="category"> {resource.category} </p>
                         </Grid.Column>
                     </Grid.Row>
 
-                    <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>
-                            Category:
-                        </Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>
-                            {resource.category}
-                        </Grid.Column>
-                    </Grid.Row>
-
-                    {resource.tags &&
-                    resource.tags.length > 0 ? (
+                    {resource.tags && resource.tags.length > 0 ? (
                         <Grid.Row {...gridRowProps}>
-                            <Grid.Column {...gridKeyColumnProps}>
-                                Tags:
-                            </Grid.Column>
+                            <Grid.Column {...gridKeyColumnProps}>Tags:</Grid.Column>
                             <Grid.Column {...gridValueColumnProps}>
-                                {resource.tags.map(tag => (
-                                    <Label key={tag} size="large">
-                                        {tag}
-                                    </Label>
-                                ))}
+                                <div id="tags">
+                                    {resource.tags.map(tag => (
+                                        <Label key={tag} size="large">
+                                            {tag}
+                                        </Label>
+                                    ))}
+                                </div>
                             </Grid.Column>
                         </Grid.Row>
                     ) : null}
@@ -129,9 +111,7 @@ export function ResourceDetailView({resource}) {
                                         // onClick={downloadAttachment}
                                     >
                                         <Icon name="download" />
-                                        <Header.Content>
-                                            Download attachment
-                                        </Header.Content>
+                                        <Header.Content>Download attachment</Header.Content>
                                     </a>
                                 </Header>
                             </Grid.Column>
@@ -141,11 +121,7 @@ export function ResourceDetailView({resource}) {
 
                 <Divider />
 
-                <Header
-                    as="h5"
-                    color="grey"
-                    className={styles.noMarginHeader}
-                >
+                <Header as="h5" color="grey" className={styles.noMarginHeader}>
                     <Icon name="comment" />
                     <Header.Content>Comment:</Header.Content>
                 </Header>
