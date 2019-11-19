@@ -11,9 +11,6 @@ class UserPage extends Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
-
-
     constructor(props) {
         /**
          * This constructor sets up the primary state for the props
@@ -79,7 +76,7 @@ class UserPage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(`http://127.0.0.1:8000/authentication/auth/${this.props.rowData.id}/update/`, editedData, {headers: options})
+            .put(`/chatbotportal/authentication/super/${this.props.rowData.id}/update/`, editedData, {headers: options})
             .then(
                 response => {
                     this.setState({
@@ -113,7 +110,7 @@ class UserPage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .delete(`http://127.0.0.1:8000/authentication/auth/delete/${this.state.id}/`, {headers: options})
+            .delete(`/chatbotportal/authentication/delete/${this.state.id}/`, {headers: options})
             .then(
                 response => {
                     console.log(response.status)

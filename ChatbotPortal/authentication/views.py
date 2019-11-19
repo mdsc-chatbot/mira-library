@@ -26,7 +26,8 @@ from .api.serializers import (CustomUserSerializer,
                               UserUpdateSerializer,
                               UserUpdateSubmissionSerializer,
                               UserUpdateApprovedSubmissionSerializer,
-                              UserUpdatePasswordSerializer)
+                              UserUpdatePasswordSerializer,
+                              UserUpdateByAdminSerializer)
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
@@ -37,7 +38,7 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
 class CurrentUserView(generics.RetrieveAPIView):
     """
-    GET auth/currentuser
+    GET chatbotportal/authentication/currentuser
     Retrive User API
     """
     permission_classes = (permissions.AllowAny,)  # anyone can have access
@@ -70,7 +71,7 @@ class CurrentUserView(generics.RetrieveAPIView):
 
 class LoginView(generics.CreateAPIView):
     """
-    POST auth/login
+    POST chatbotportal/authentication/login
     Login API
     """
     # This permission class will override the global permission
@@ -100,12 +101,13 @@ class LoginView(generics.CreateAPIView):
             serializer = CustomUserTokenSerializer(user, context={'request': request}).data
             return Response(serializer)
 
-        return Response(data={'message': 'Incorrect Email or Password! Please try again.'}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        return Response(data={'message': 'Incorrect Email or Password! Please try again.'},
+                        status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
 class LogoutView(generics.RetrieveAPIView):
     """
-    GET auth/logout
+    GET chatbotportal/authentication/logout
     Logout User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can have access
@@ -161,7 +163,7 @@ def activate(request, uidb64, token):
 
 class RegisterUsersView(generics.CreateAPIView):
     """
-    POST auth/register/
+    POST chatbotportal/authentication/register/
     Registration API
     """
     permission_classes = (permissions.AllowAny,)  # Anyone can register
@@ -265,7 +267,7 @@ class RegisterUsersView(generics.CreateAPIView):
 
 class UpdateUserView(generics.RetrieveUpdateAPIView):
     """
-    PUT auth/<pk>/update/
+    PUT chatbotportal/authentication/<pk>/update/
     Update User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
@@ -273,9 +275,19 @@ class UpdateUserView(generics.RetrieveUpdateAPIView):
     serializer_class = UserUpdateSerializer
 
 
+class UpdateUserByAdminView(generics.RetrieveUpdateAPIView):
+    """
+    PUT chatbotportal/authentication/<pk>/update/
+    Update User API
+    """
+    permission_classes = (permissions.IsAdminUser,)  # Only authenticated users can update their own account
+    queryset = CustomUser.objects.all()
+    serializer_class = UserUpdateByAdminSerializer
+
+
 class UpdateSubmissionsView(generics.RetrieveUpdateAPIView):
     """
-    PUT auth/<pk>/update/submissions/
+    PUT chatbotportal/authentication/<pk>/update/submissions/
     Update User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
@@ -285,7 +297,7 @@ class UpdateSubmissionsView(generics.RetrieveUpdateAPIView):
 
 class UpdateApprovedSubmissionsView(generics.RetrieveUpdateAPIView):
     """
-    PUT auth/<pk>/update/approved_submissions/
+    PUT chatbotportal/authentication/<pk>/update/approved_submissions/
     Update User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
@@ -295,7 +307,7 @@ class UpdateApprovedSubmissionsView(generics.RetrieveUpdateAPIView):
 
 class DeleteUserView(generics.DestroyAPIView):
     """
-    DELETE auth/delete/<pk>/
+    DELETE chatbotportal/authentication/delete/<pk>/
     Delete User API
     """
     permission_classes = (permissions.IsAdminUser,)  # Only admin/super_user can delete any account
@@ -321,7 +333,7 @@ class DeleteUserView(generics.DestroyAPIView):
 
 class RetriveUserView(generics.RetrieveAPIView):
     """
-    GET auth/retrieve
+    GET chatbotportal/authentication/retrieve
     Retrive User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can have access
@@ -487,7 +499,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
 
 class UpdatePasswordView(generics.RetrieveUpdateAPIView):
     """
-    PUT auth/<pk>/update/password/
+    PUT chatbotportal/authentication/<pk>/update/password/
     Update User API
     """
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account

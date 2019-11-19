@@ -24,8 +24,8 @@ class ProfilePage extends Component {
             first_name: '',
             last_name: '',
             profile_picture: null,
-            submissions:'',
-            points:'',
+            submissions: '',
+            points: ''
         };
     };
 
@@ -33,12 +33,17 @@ class ProfilePage extends Component {
         this.updateStateFromSecurityContext();
     }
 
+    /**
+     * Being called whenever state and props gets updated
+     */
     componentDidUpdate() {
         this.updateStateFromSecurityContext();
-
     }
 
-    updateStateFromSecurityContext =() => {
+    /**
+     * This function gets called upon being refreshed to keep user seamlessly logged in if the session is not expired
+     */
+    updateStateFromSecurityContext = () => {
         if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
             this.setState({
                 is_logged_in: this.context.security.is_logged_in,
@@ -47,9 +52,10 @@ class ProfilePage extends Component {
                 last_name: this.context.security.last_name,
                 profile_picture: this.context.security.profile_picture,
                 submissions: this.context.security.submissions,
-                points: this.context.security.points,
+                points: this.context.security.points
             });
         }
+        console.log(this.state)
     };
 
     /**
@@ -112,14 +118,14 @@ class ProfilePage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(this.BASE_AUTH_URL + this.context.security.id + '/update/', formData, {headers: options})
+            .put(`/chatbotportal/authentication/${this.context.security.id}/update/`, formData, {headers: options})
             .then(
                 response => {
                     console.log(response.data);
                     this.setState({
                         first_name: response.data['first_name'],
                         last_name: response.data['last_name'],
-                        profile_picture:response.data['profile_picture'],
+                        profile_picture: response.data['profile_picture'],
                         is_edited: true,
                     });
                     this.context.security.first_name = this.state.first_name;

@@ -105,7 +105,7 @@ class BaseViewTest(APITestCase):
 
 class TestCurrentUserView(BaseViewTest):
     """
-    Tests for auth/currentuser endpoint
+    Tests for chatbotportal/authentication/currentuser endpoint
     """
 
     def setUp(self):
@@ -151,7 +151,7 @@ class TestCurrentUserView(BaseViewTest):
 
 class AuthLoginUserTest(BaseViewTest):
     """
-    Tests for the auth/login/ endpoint
+    Tests for the chatbotportal/authentication/login/ endpoint
     """
 
     def test_login_user(self):
@@ -204,7 +204,7 @@ class AuthLoginUserTest(BaseViewTest):
 
 class TestLogoutView(BaseViewTest):
     """
-    Tests for auth/logout/ endpoint
+    Tests for chatbotportal/authentication/logout/ endpoint
     """
 
     def setUp(self):
@@ -252,7 +252,7 @@ class TestLogoutView(BaseViewTest):
 
 class AuthRegisterUserTest(BaseViewTest):
     """
-    Tests for auth/register/ endpoint
+    Tests for chatbotportal/authentication/register/ endpoint
     """
 
     def test_register_a_user(self):
@@ -303,7 +303,7 @@ class AuthRegisterUserTest(BaseViewTest):
 
 class UpdateUserTest(BaseViewTest):
     """
-    Tests for auth/<pk>/update/ endpoint
+    Tests for chatbotportal/authentication/<pk>/update/ endpoint
     """
 
     def setUp(self):
@@ -384,7 +384,7 @@ class UpdateUserTest(BaseViewTest):
 
 class UpdateUserSubmissionsTest(BaseViewTest):
     """
-    Tests for auth/<pk>/update/submissions endpoint
+    Tests for chatbotportal/authentication/<pk>/update/submissions endpoint
     """
 
     def setUp(self):
@@ -451,7 +451,7 @@ class UpdateUserSubmissionsTest(BaseViewTest):
 
 class UpdateUserApproveSubmissionsTest(BaseViewTest):
     """
-    Tests for auth/<pk>/update/approved_submissions endpoint
+    Tests for chatbotportal/authentication/<pk>/update/approved_submissions endpoint
     """
 
     def setUp(self):
@@ -520,7 +520,7 @@ class UpdateUserApproveSubmissionsTest(BaseViewTest):
 
 class UpdateUserPasswordTest(BaseViewTest):
     """
-    Tests for auth/<pk>/update/password endpoint
+    Tests for chatbotportal/authentication/<pk>/update/password endpoint
     """
 
     def setUp(self):
@@ -591,7 +591,7 @@ class UpdateUserPasswordTest(BaseViewTest):
 
 class DeleteUserTest(BaseViewTest):
     """
-    Tests for auth/delete/<pk>/ endpoint
+    Tests for chatbotportal/authentication/delete/<pk>/ endpoint
     """
 
     def setUp(self):
@@ -694,7 +694,7 @@ class DeleteUserTest(BaseViewTest):
 
 class RetrieveUserTest(BaseViewTest):
     """
-    Tests for auth/retrieve/ endpoint
+    Tests for chatbotportal/authentication/retrieve/ endpoint
     """
 
     def setUp(self):

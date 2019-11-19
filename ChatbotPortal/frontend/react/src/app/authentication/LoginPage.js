@@ -16,8 +16,6 @@ class LoginPage extends Component {
      */
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
-
     constructor(props) {
         /**
          * A constructor that defines state with properties
@@ -47,7 +45,7 @@ class LoginPage extends Component {
          */
         if (this.context.security.logged_in) {
             axios.get(
-                this.BASE_AUTH_URL + 'retrieve',
+                '/chatbotportal/authentication/retrieve',
                 {
                     headers: {'Authorization': `Bearer ${this.context.security.token}`}
                 }
@@ -73,7 +71,7 @@ class LoginPage extends Component {
          * Otherwise, send an error message saying "Forgot password?"
          */
         axios
-            .post(this.BASE_AUTH_URL + 'login/', loginFormData)
+            .post('/chatbotportal/authentication/login/', loginFormData)
             .then(
                 response => {
                     if (response.status === 200) {
@@ -106,7 +104,7 @@ class LoginPage extends Component {
          * Otherwise, send an error message saying "User was not created. Try again."
          */
         axios
-            .post(this.BASE_AUTH_URL + 'register/', signupFormData)
+            .post('/chatbotportal/authentication/register/', signupFormData)
             .then(
                 response => {
                     if (response.status === 201) {

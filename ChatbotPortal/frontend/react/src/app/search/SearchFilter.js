@@ -1,5 +1,5 @@
 import React from "react";
-import {Dropdown} from "semantic-ui-react";
+import {Form, Container, Dropdown} from "semantic-ui-react";
 
 const options = [
     {key: 1, text: 'Yes', value: 'true'},
@@ -31,44 +31,35 @@ class SearchFilter extends React.Component {
      */
     render() {
         return (
-            <div>
-                <div style={{float:"left", paddingRight:20}}>
-                    <p>Active</p>
-                    <Dropdown
-                        clearable
-                        name='is_active'
-                        onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
-                        options={options}
-                        placeholder='None'
-                        selection
-                    >
-                    </Dropdown>
-                </div>
-                <div style={{ float: "left", paddingRight:20}}>
-                    <p>Reviewer</p>
-                    <Dropdown
-                        clearable
-                        name='is_reviewer'
-                        onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
-                        options={options}
-                        placeholder='None'
-                        selection
-                    >
-                    </Dropdown>
-                </div>
-                <div>
-                    <p>Staff</p>
-                    <Dropdown
-                        clearable
-                        name='is_staff'
-                        onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
-                        options={options}
-                        placeholder='None'
-                        selection
-                    >
-                    </Dropdown>
-                </div>
-            </div>
+            <Form size='mini'>
+                <Container content='Active'/>
+                <Dropdown
+                    clearable
+                    name='is_active'
+                    onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
+                    options={options}
+                    placeholder='None'
+                    selection
+                />
+                <Container content='Reviewer'/>
+                <Dropdown
+                    clearable
+                    name='is_reviewer'
+                    onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
+                    options={options}
+                    placeholder='None'
+                    selection
+                />
+                <Container content='Staff'/>
+                <Dropdown
+                    clearable
+                    name='is_staff'
+                    onChange={(e, {name, value}) => this.handle_change_dropdown({name, value})}
+                    options={options}
+                    placeholder='None'
+                    selection
+                />
+            </Form>
         );
     }
 }

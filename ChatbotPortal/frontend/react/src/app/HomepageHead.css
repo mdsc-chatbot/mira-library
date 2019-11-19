@@ -1,0 +1,4 @@
+:global(.ui.vertical.buttons .button).smallButtonStyle {
+    float: right;
+    width: auto;
+}

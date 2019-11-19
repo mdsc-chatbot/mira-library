@@ -2,16 +2,13 @@ import time
 
 from django.test import LiveServerTestCase
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 
-# The base url
 from ..models import CustomUser
 
-BASE_URL = 'http://127.0.0.1:8000'
+LOGIN_PAGE = '/chatbotportal/app/login'
+VALIDATE_EMAIL_URL = '/chatbotportal/app/validate/email'
 
-url = BASE_URL + '/chatbotportal/app/login'
-
-validate_email_url = BASE_URL + '/chatbotportal/app/validate/email'
+WAIT_SECONDS = 3
 
 
 class TestSignup(LiveServerTestCase):
@@ -26,7 +23,7 @@ class TestSignup(LiveServerTestCase):
         """
         self.active_user_email = 'test@test.ca'
         self.active_user_password = '12345678'
-        # self.reset_db()
+        self.reset_db()
         self.browser = webdriver.Chrome()
 
     def tearDown(self):
@@ -35,7 +32,7 @@ class TestSignup(LiveServerTestCase):
         :return: None
         """
         self.browser.close()
-        # self.clear_db()
+        self.clear_db()
 
     def reset_db(self):
         """
@@ -43,14 +40,13 @@ class TestSignup(LiveServerTestCase):
         :return: None
         """
         CustomUser.objects.all().delete()
-        self.active_user_email = 'test@test.ca'
-        self.active_user_password = '12345678'
-        self.active_user = CustomUser.objects.create_user(
-            email=self.active_user_email,
-            password=self.active_user_password,
-            is_active=True
+        self.regular1_user_email = 'regular1@test.ca'
+        self.regular1_user_password = '12345678'
+        self.regular1_user = CustomUser.objects.create_user(
+            email=self.regular1_user_email,
+            password=self.regular1_user_password
         )
-        self.active_user.save()
+        self.regular1_user.save()
 
     @staticmethod
     def clear_db():
@@ -65,9 +61,8 @@ class TestSignup(LiveServerTestCase):
         Testing for successful signing up of a new user
         :return: None
         """
-        # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-        time.sleep(1)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the signup link on login form
         signup_link = self.browser.find_element_by_id('signup_link')
@@ -131,17 +126,17 @@ class TestSignup(LiveServerTestCase):
         self.assertTrue(consentform_checkbox.get_property('checked'))
 
         # Waiting for tester's experience
-        time.sleep(2)
+        time.sleep(WAIT_SECONDS)
 
         # Checking if the button is active
         self.assertTrue(submit_button.is_enabled())
         submit_button.click()
 
         # Waiting until next page gets loaded
-        time.sleep(15)
+        time.sleep(WAIT_SECONDS)
 
         # Checking the url of the next page
-        self.assertURLEqual(self.browser.current_url, validate_email_url)
+        self.assertURLEqual(self.live_server_url + VALIDATE_EMAIL_URL, self.browser.current_url)
 
         # Find the message field for the next page
         message_field = self.browser.find_element_by_tag_name('p')
@@ -152,7 +147,7 @@ class TestSignup(LiveServerTestCase):
         self.assertIsNotNone(message_field)
 
         # Waiting for tester's experience
-        time.sleep(1)
+        time.sleep(WAIT_SECONDS)
 
     def test_signup_an_existing_user(self):
         """
@@ -160,8 +155,8 @@ class TestSignup(LiveServerTestCase):
         :return: None
         """
         # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-        time.sleep(1)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the signup link on login form
         signup_link = self.browser.find_element_by_id('signup_link')
@@ -191,7 +186,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the email field
         email_field = self.browser.find_element_by_name('email')
         self.assertIsNotNone(email_field)
-        email_field.send_keys(self.active_user_email)
+        email_field.send_keys(self.regular1_user_email)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -204,7 +199,7 @@ class TestSignup(LiveServerTestCase):
         # Finding the password field
         password_field = self.browser.find_element_by_name('password')
         self.assertIsNotNone(password_field)
-        password_field.send_keys(self.active_user_password)
+        password_field.send_keys(self.regular1_user_password)
 
         # Checking if the button field is active
         self.assertFalse(submit_button.is_enabled())
@@ -229,7 +224,7 @@ class TestSignup(LiveServerTestCase):
         submit_button.click()
 
         # Waiting until next page gets loaded
-        time.sleep(5)
+        time.sleep(WAIT_SECONDS)
 
         # Find the message field for the next page
         message_field = self.browser.find_element_by_tag_name('p')
@@ -240,7 +235,7 @@ class TestSignup(LiveServerTestCase):
         self.assertIsNotNone(message_field)
 
         # Waiting for tester's experience
-        time.sleep(1)
+        time.sleep(WAIT_SECONDS)
 
     def test_signup_with_invalid_email(self):
         """
@@ -248,8 +243,8 @@ class TestSignup(LiveServerTestCase):
         :return: None
         """
         # self.browser.get('%s%s' % (self.live_server_url, '/chatbotportal/app/login'))
-        self.browser.get(url)
-        time.sleep(1)
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+        time.sleep(WAIT_SECONDS)
 
         # Finding the signup link on login form
         signup_link = self.browser.find_element_by_id('signup_link')
@@ -317,4 +312,4 @@ class TestSignup(LiveServerTestCase):
         submit_button.click()
 
         # Waiting until next page gets loaded
-        time.sleep(1)
+        time.sleep(WAIT_SECONDS)
