@@ -75,6 +75,6 @@ class Resource(models.Model):
 
     review_status = models.CharField(
         max_length=50, default="pending", blank=True, null=True)
-    website_summary_metadata = models.TextField(blank=True, null=True)
+    website_summary_metadata = models.TextField(default="", blank=True, null=True)
 
     objects = ResourceManager()

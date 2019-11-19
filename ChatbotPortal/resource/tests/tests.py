@@ -14,17 +14,25 @@ class ResourceTest(TestCase):
         )
         return resource
 
+    def compare_resource_webscraped(self, resource_pk, url, title, summary):
+        self.create_resource(url).save()
+        db_resource = Resource.objects.get(pk=resource_pk)
+        test_title = db_resource.title.strip()
+        test_summary = db_resource.website_summary_metadata.strip()
+        # print("title:", test_title, "summary:", test_summary )
+        self.assertTrue(title == test_title and summary == test_summary)
+
     def test_webscrape_website_title(self):
         Resource.objects.all().delete()
-        resource = self.create_resource("https://myhealth.alberta.ca/")
-        resource.save()
-        db_resource = Resource.objects.get(pk=1)
-        self.assertTrue("MyHealth.Alberta.ca" in db_resource.title.strip())
 
-        resource = self.create_resource("https://thisisaninvalid.com/")
-        resource.save()
-        db_resource = Resource.objects.get(pk=1)
-        self.assertTrue("" in db_resource.title.strip())
+        self.compare_resource_webscraped(1,"https://myhealth.alberta.ca/", "MyHealth.Alberta.ca", "")
+
+        self.compare_resource_webscraped(2,"https://thisisaninvalid.com/", "", "")
+
+        self.compare_resource_webscraped(
+            3, "https://caddac.ca/adhd/resources/online-resources/", 
+            "Online Resources - Centre for ADHD Awareness Canada", 
+            "list of canadian and international online resources adhd")
 
     def test_validations(self):
         Resource.objects.all().delete()
