@@ -25,6 +25,22 @@ class ResourceManager(models.Manager):
         except Exception:
             pass
 
+        try:
+            # Get website actual title
+            url = obj_data['url']
+            r = urllib.request.Request(url, headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+            html = urllib.request.urlopen(r).read().decode('utf8')
+
+            soup = BeautifulSoup(html, 'html.parser')
+            meta_tag = soup.find('meta', attrs={'name': 'description'})
+            content = meta_tag['content']
+            if title:
+                obj_data['website_summary_metadata'] = content
+
+        except Exception:
+            pass
+
         return super().create(**obj_data)
 
 
