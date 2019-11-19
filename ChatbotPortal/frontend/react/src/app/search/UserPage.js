@@ -76,7 +76,7 @@ class UserPage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(`/chatbotportal/authentication/${this.props.rowData.id}/update/`, editedData, {headers: options})
+            .put(`/chatbotportal/authentication/super/${this.props.rowData.id}/update/`, editedData, {headers: options})
             .then(
                 response => {
                     this.setState({
