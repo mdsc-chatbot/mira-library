@@ -1,5 +1,17 @@
 import React, {Component} from "react";
-import {Button, Container, Form, FormGroup, Header, Segment, Sidebar} from "semantic-ui-react";
+import {
+    Button,
+    Checkbox,
+    Container,
+    Form,
+    FormGroup,
+    Header,
+    Responsive,
+    Segment,
+    Sidebar,
+    SidebarPushable,
+    SidebarPusher
+} from "semantic-ui-react";
 import {SecurityContext} from "../security/SecurityContext";
 import SearchByAnything from "./SearchByAnything";
 import SearchAdvancedOption from "./SearchAdvancedOption";
@@ -40,8 +52,15 @@ class SearchPage extends Component {
 
             search_string: '',
 
-            url: "/chatbotportal/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search="
+            url: "/chatbotportal/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=",
+
+            sidebar_visible: true,
+            checkbox_visible: false
         };
+    }
+
+    componentDidMount() {
+        this.set_sidebar_visibility();
     }
 
     /**
@@ -129,41 +148,77 @@ class SearchPage extends Component {
         });
     };
 
+    set_sidebar_visibility = () => {
+        if (window.innerWidth <= 760) {
+            this.setState({
+                sidebar_visible: false,
+                checkbox_visible: true
+            })
+        } else {
+            this.setState({
+                sidebar_visible: true,
+                checkbox_visible: false
+            })
+        }
+
+    };
+
+    handle_toggle = (e, {name, value}) => {
+        this.setState(prevState => {
+            const newState = {...prevState};
+            newState[name] = !value;
+            return newState;
+        });
+    };
+
     /**
      * This renders the search related components
      * @returns {*}
      */
     render() {
         return (
-            <Container fluid>
-                <SecurityContext.Consumer>
-                    {(securityContext) => (
-                        <div>
-                            {securityContext.security.is_logged_in ?
-                                <div>
+            <SecurityContext.Consumer>
+                {(securityContext) => (
+                    <Responsive as={SidebarPushable} minWidth={320} onUpdate={this.set_sidebar_visibility}>
 
-                                    <Sidebar.Pushable as={Segment}>
-                                        <Sidebar
-                                            as={Container}
-                                            animation='push'
-                                            icon='labeled'
-                                            inverted
-                                            vertical
-                                            visible
-                                            width='wide'
-                                        >
-                                            <Container>
+                        {securityContext.security.is_logged_in ?
+                            <SidebarPushable as={Segment}>
+                                <Sidebar
+                                    as={Container}
+                                    animation='push'
+                                    icon='labeled'
+                                    inverted
+                                    vertical
+                                    visible={this.state.sidebar_visible}
+                                    width='tiny'
+                                >
+                                    <Responsive as={Container} minWidth={320}>
+
+                                        <Container fluid>
+                                            <div style={{height: "100vh", backgroundColor: "white"}}>
                                                 <SearchAdvancedOption
                                                     set_date_range_params={this.set_date_range_params}
                                                     set_date_option_params={this.set_date_option_params}
                                                     set_status_search_params={this.set_status_search_params}
                                                     set_id_search_params={this.set_id_search_params}
                                                     set_submission_search_params={this.set_submission_search_params}/>
-                                            </Container>
-                                        </Sidebar>
-
-                                        <Sidebar.Pusher>
-                                            <Segment basic>
+</div>
+                                        </Container>
+                                    </Responsive>
+                                </Sidebar>
+                                <Responsive as={SidebarPusher} minWidth={320}>
+                                    <SidebarPusher>
+                                        <Segment basic>
+                                            {this.state.checkbox_visible ?
+                                                <Checkbox
+                                                    checked={this.state.sidebar_visible}
+                                                    name='sidebar_visible'
+                                                    value={this.state.sidebar_visible}
+                                                    onChange={this.handle_toggle}
+                                                    slider
+                                                />
+                                                : null}
+                                            <Responsive as={Header} minWidth={320}>
                                                 <Header
                                                     as="h3"
                                                     style={{
@@ -173,6 +228,8 @@ class SearchPage extends Component {
                                                 >
                                                     Search
                                                 </Header>
+                                            </Responsive>
+                                            <Responsive as={Form} minWidth={320}>
                                                 <Form size="mini">
                                                     <FormGroup>
                                                         <Button
@@ -184,20 +241,20 @@ class SearchPage extends Component {
                                                         < SearchByAnything set_search_string={this.set_search_string}/>
                                                     </FormGroup>
                                                 </Form>
-                                            </Segment>
-                                            <div style={{height: "100vh"}}>
-                                                <SearchTable
-                                                    url={this.state.url}
-                                                    search_clicked={this.state.search_clicked}/>
-                                            </div>
-                                        </Sidebar.Pusher>
-                                    </Sidebar.Pushable>
-                                </div> : null}
-                        </div>
-                    )}
-                </SecurityContext.Consumer>
-            </Container>
-
+                                            </Responsive>
+                                        </Segment>
+                                        <div style={{height: "100vh"}}>
+                                            <SearchTable
+                                                url={this.state.url}
+                                                search_clicked={this.state.search_clicked}/>
+                                        </div>
+                                    </SidebarPusher>
+                                </Responsive>
+                            </SidebarPushable>
+                            : null}
+                    </Responsive>
+                )}
+            </SecurityContext.Consumer>
         );
     }
 }
