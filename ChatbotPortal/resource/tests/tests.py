@@ -53,4 +53,4 @@ class ResourceTest(TestCase):
         Resource.objects.all().delete()
         resource = self.create_resource("https://www.caddra.ca/", rating=4)
         db_resource = Resource.objects.get(pk=1)
-        self.assertTrue(3==db_resource.rating)
+        self.assertTrue(4==db_resource.rating)
