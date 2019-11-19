@@ -76,6 +76,7 @@ class SearchByDateRange extends React.Component {
                 />
                 <Container content="Date range"/>
                 <DatesRangeInput
+                    closeOnMouseLeave
                     popupPosition="bottom left"
                     name="datesRange"
                     placeholder="From - To"
@@ -83,7 +84,7 @@ class SearchByDateRange extends React.Component {
                     iconPosition="left"
                     onChange={this.handle_change_daterange}
                     dateFormat={"YYYY-MM-DD"}
-                    size='small'
+                    pickerWidth={"50px"}
                 />
             </Form>
         );
