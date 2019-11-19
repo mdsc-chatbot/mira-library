@@ -65,23 +65,29 @@ export function ResourceDetailView({resource}) {
 
                     <Grid.Row {...gridRowProps}>
                         <Grid.Column {...gridKeyColumnProps}>Review status:</Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>{resource.review_status}</Grid.Column>
+                        <Grid.Column {...gridValueColumnProps}>
+                            <p id="review_status"> {resource.review_status}</p>
+                        </Grid.Column>
                     </Grid.Row>
 
                     <Grid.Row {...gridRowProps}>
                         <Grid.Column {...gridKeyColumnProps}>Category:</Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>{resource.category}</Grid.Column>
+                        <Grid.Column {...gridValueColumnProps}>
+                            <p id="category"> {resource.category} </p>
+                        </Grid.Column>
                     </Grid.Row>
 
                     {resource.tags && resource.tags.length > 0 ? (
                         <Grid.Row {...gridRowProps}>
                             <Grid.Column {...gridKeyColumnProps}>Tags:</Grid.Column>
                             <Grid.Column {...gridValueColumnProps}>
-                                {resource.tags.map(tag => (
-                                    <Label key={tag} size="large">
-                                        {tag}
-                                    </Label>
-                                ))}
+                                <div id="tags">
+                                    {resource.tags.map(tag => (
+                                        <Label key={tag} size="large">
+                                            {tag}
+                                        </Label>
+                                    ))}
+                                </div>
                             </Grid.Column>
                         </Grid.Row>
                     ) : null}

@@ -32,16 +32,18 @@ class ProfilePage extends Component {
          */
         if (!this.context.security.is_logged_in) {
             axios
-                .get('/chatbotportal/authentication/currentuser/')
+                .get("/chatbotportal/authentication/currentuser/", {
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
+                })
                 .then(
                     response => {
-                        if (response.data !== '') {
+                        if (response.data !== "") {
                             this.setState({
-                                first_name: response.data['first_name'],
-                                last_name: response.data['last_name'],
+                                first_name: response.data["first_name"],
+                                last_name: response.data["last_name"],
                                 is_logged_in: true,
                                 is_edited: false
-                            })
+                            });
                         } else {
                             this.setState({
                                 is_logged_in: false

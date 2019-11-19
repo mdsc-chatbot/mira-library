@@ -9,7 +9,7 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 3
+WAIT_SECONDS = 5
 
 
 class TestSearchByStatusFilter(LiveServerTestCase):
@@ -181,6 +181,8 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -238,6 +240,8 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -294,6 +298,8 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -372,6 +378,8 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -448,6 +456,8 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -541,6 +551,8 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')

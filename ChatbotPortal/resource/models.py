@@ -56,24 +56,25 @@ class Category(models.Model):
 
 class Resource(models.Model):
 
-    title = models.TextField()
+    title = models.TextField(default="",blank=True, null=True)
     url = models.TextField(validators=[URLValidator()])
     rating = models.IntegerField(
-        validators=[MaxValueValidator(5), MinValueValidator(1)])
+        validators=[MaxValueValidator(5), MinValueValidator(1)], default=1, blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     attachment = models.FileField(
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
 
-    created_by_user = models.CharField(max_length=100, default="Unknown user")
-    created_by_user_pk = models.IntegerField(default=-1)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    created_by_user = models.CharField(max_length=100, default="Unknown user",blank=True, null=True)
+    created_by_user_pk = models.IntegerField(default=-1, blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     score = models.DecimalField(
         max_digits=10, decimal_places=1, blank=True, null=True)
 
-    review_status = models.CharField(max_length=50, default="pending")
+    review_status = models.CharField(
+        max_length=50, default="pending", blank=True, null=True)
     website_summary_metadata = models.TextField(blank=True, null=True)
 
     objects = ResourceManager()

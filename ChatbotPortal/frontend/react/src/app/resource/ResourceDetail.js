@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {ResourceDetailView} from '../shared';
+import { SecurityContext } from "../security/SecurityContext";
 
 export default class ResourceDetail extends Component {
+    static contextType = SecurityContext;
+
     constructor(props) {
         super(props);
 
@@ -14,7 +17,9 @@ export default class ResourceDetail extends Component {
     componentDidMount() {
         const resourceID = this.props.match.params.resourceID;
         axios
-            .get(`/chatbotportal/resource/retrieve/${resourceID}`)
+            .get(`/chatbotportal/resource/retrieve/${resourceID}`, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(res => {
                 this.setState({
                     resource: res.data

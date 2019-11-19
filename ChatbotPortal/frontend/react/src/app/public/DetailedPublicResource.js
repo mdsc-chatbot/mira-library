@@ -19,11 +19,10 @@ export default class DetailedPublicResource extends React.Component {
         const resourceId = this.props.resourceId;
         const retrieve_url = this.context.security.is_reviewer || this.context.security.is_superuser ? 'retrieve-admin' : 'retrieve';
 
-        axios.defaults.headers.common = {
-            Authorization: `Bearer ${this.context.security.token}`
-        };
         axios
-            .get(`/api/public/${retrieve_url}/${resourceId}`)
+            .get(`/api/public/${retrieve_url}/${resourceId}`, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(res => {
                 this.setState({
                     resource: res.data
