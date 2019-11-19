@@ -123,7 +123,7 @@ class TestResourceSubmission(LiveServerTestCase):
         actual_resource_detail = ["Unknown title",
                                   "http://127.0.0.1:8000/", "", 
                                   "Even though this resource is not reachable, it is still accepted.",
-                                  "pending", "PDF"]
+                                  "pending", "Website"]
         self.valid_resource_submission(
             actual_resource_detail, "//a[2]/div/div")
 
@@ -181,8 +181,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.find_element(By.XPATH, (resource_xpath)).click()
 
         test_header = self.driver.find_element(By.ID, "title_header").text.strip()
-        test_url = self.driver.find_element(
-            By.CSS_SELECTOR, ".Link__link____2arPN").text
+        test_url = self.driver.find_element(By.ID, "url").text
         test_comments = self.driver.find_element(By.ID, "comments").text
         test_review_status = self.driver.find_element(By.ID, "review_status").text
         test_category = self.driver.find_element(By.ID, "category").text
@@ -197,8 +196,7 @@ class TestResourceSubmission(LiveServerTestCase):
             test_tags = ""
 
         self.vars["window_handles"] = self.driver.window_handles
-        self.driver.find_element(
-            By.CSS_SELECTOR, ".Link__link____2arPN").click()
+        self.driver.find_element(By.ID, "url").click()
         self.vars["win7210"] = self.wait_for_window(2000)
         self.vars["root"] = self.driver.current_window_handle
         self.driver.switch_to.window(self.vars["win7210"])

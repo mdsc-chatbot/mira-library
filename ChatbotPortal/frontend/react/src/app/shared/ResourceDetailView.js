@@ -38,7 +38,7 @@ export function ResourceDetailView({resource}) {
                                     <Header.Content id="title_header">{resource.title}</Header.Content>
                                 </span>
                                 <a href={resource.url} target="_blank">
-                                    <h4 className={linkStyles.link}>{resource.url}</h4>
+                                    <h4 id="url" className={linkStyles.link}>{resource.url}</h4>
                                 </a>
                             </div>
                         </Header>
