@@ -106,12 +106,11 @@ export default class ResourceSubmitForm extends Component {
          * Having a common authorization header for backend queries
          * @type {{Authorization: string}}
          */
-        axios.defaults.headers.common = {
-            Authorization: `Bearer ${this.props.match.params.token}`
-        };
 
         axios
-            .post("/chatbotportal/resource/", resourceFormData)
+            .post("/chatbotportal/resource/", resourceFormData, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(() => {})
             .catch(error => {
                 console.error(error);
