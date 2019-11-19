@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Header, Button} from "semantic-ui-react";
+import {Button, Container, Form, FormGroup, Header, Segment, Sidebar} from "semantic-ui-react";
 import {SecurityContext} from "../security/SecurityContext";
 import SearchByAnything from "./SearchByAnything";
 import SearchAdvancedOption from "./SearchAdvancedOption";
@@ -135,41 +135,69 @@ class SearchPage extends Component {
      */
     render() {
         return (
-            <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, minHeight: 3000}}
-            >
+            <Container fluid>
                 <SecurityContext.Consumer>
                     {(securityContext) => (
                         <div>
                             {securityContext.security.is_logged_in ?
                                 <div>
-                                    <Header
-                                        as="h3"
-                                        style={{
-                                            fontSize: "2em"
-                                        }}
-                                        color="blue"
-                                    >
-                                        Search
-                                    </Header>
-                                    < SearchByAnything set_search_string={this.set_search_string}/>
-                                    <SearchAdvancedOption set_date_range_params={this.set_date_range_params}
-                                                          set_date_option_params={this.set_date_option_params}
-                                                          set_status_search_params={this.set_status_search_params}
-                                                          set_id_search_params={this.set_id_search_params}
-                                                          set_submission_search_params={this.set_submission_search_params}/>
-                                    <Button
-                                        color="blue"
-                                        fluid size="large"
-                                        onClick={this.submit_query}
-                                    >Search
-                                    </Button>
-                                    <SearchTable url={this.state.url} search_clicked={this.state.search_clicked}/>
+
+                                    <Sidebar.Pushable as={Segment}>
+                                        <Sidebar
+                                            as={Container}
+                                            animation='push'
+                                            icon='labeled'
+                                            inverted
+                                            vertical
+                                            visible
+                                            width='wide'
+                                        >
+                                            <Container>
+                                                <SearchAdvancedOption
+                                                    set_date_range_params={this.set_date_range_params}
+                                                    set_date_option_params={this.set_date_option_params}
+                                                    set_status_search_params={this.set_status_search_params}
+                                                    set_id_search_params={this.set_id_search_params}
+                                                    set_submission_search_params={this.set_submission_search_params}/>
+                                            </Container>
+                                        </Sidebar>
+
+                                        <Sidebar.Pusher>
+                                            <Segment basic>
+                                                <Header
+                                                    as="h3"
+                                                    style={{
+                                                        fontSize: "2em"
+                                                    }}
+                                                    color="blue"
+                                                >
+                                                    Search
+                                                </Header>
+                                                <Form size="mini">
+                                                    <FormGroup>
+                                                        <Button
+                                                            icon="search"
+                                                            color="blue"
+                                                            size="mini"
+                                                            onClick={this.submit_query}
+                                                        />
+                                                        < SearchByAnything set_search_string={this.set_search_string}/>
+                                                    </FormGroup>
+                                                </Form>
+                                            </Segment>
+                                            <div style={{height: "100vh"}}>
+                                                <SearchTable
+                                                    url={this.state.url}
+                                                    search_clicked={this.state.search_clicked}/>
+                                            </div>
+                                        </Sidebar.Pusher>
+                                    </Sidebar.Pushable>
                                 </div> : null}
                         </div>
                     )}
                 </SecurityContext.Consumer>
-            </div>
+            </Container>
+
         );
     }
 }
