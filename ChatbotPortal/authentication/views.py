@@ -26,7 +26,8 @@ from .api.serializers import (CustomUserSerializer,
                               UserUpdateSerializer,
                               UserUpdateSubmissionSerializer,
                               UserUpdateApprovedSubmissionSerializer,
-                              UserUpdatePasswordSerializer)
+                              UserUpdatePasswordSerializer,
+                              UserUpdateByAdminSerializer)
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
 
@@ -272,6 +273,16 @@ class UpdateUserView(generics.RetrieveUpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)  # Only authenticated users can update their own account
     queryset = CustomUser.objects.all()
     serializer_class = UserUpdateSerializer
+
+
+class UpdateUserByAdminView(generics.RetrieveUpdateAPIView):
+    """
+    PUT chatbotportal/authentication/<pk>/update/
+    Update User API
+    """
+    permission_classes = (permissions.IsAdminUser,)  # Only authenticated users can update their own account
+    queryset = CustomUser.objects.all()
+    serializer_class = UserUpdateByAdminSerializer
 
 
 class UpdateSubmissionsView(generics.RetrieveUpdateAPIView):
