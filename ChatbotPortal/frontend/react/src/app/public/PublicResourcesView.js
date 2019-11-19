@@ -62,39 +62,52 @@ export class PublicResourcesView extends Component {
             loadingResources : false
         });
 
-        axios.get(`/api/public/resources`, {
-            params : {
-                page : currentPage,
-                search : this.state.search,
-                tags : this.state.selectedTags.toString(),
-                categories : this.state.selectedCategories.toString(),
-                sort : this.state.sortOption
-            },
-        })
+        axios
+            .get(
+                `/api/public/resources`,
+                {
+                    params: {
+                        page: currentPage,
+                        search: this.state.search,
+                        tags: this.state.selectedTags.toString(),
+                        categories: this.state.selectedCategories.toString(),
+                        sort: this.state.sortOption
+                    }
+                },
+                {
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
+                }
+            )
             .then(res => {
                 this.setState({
-                    resources : res.data.results || [],
-                    totalResourceCount : res.data.count || 0,
-                    loadingResources : false
+                    resources: res.data.results || [],
+                    totalResourceCount: res.data.count || 0,
+                    loadingResources: false
                 });
             });
     };
 
     fetchTags = () => {
-        axios.get('/api/public/tags')
+        axios
+            .get("/api/public/tags", {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(res => {
                 this.setState({
-                    tags : res.data || []
-                })
+                    tags: res.data || []
+                });
             });
     };
 
     fetchCategories = () => {
-        axios.get('/api/public/categories')
+        axios
+            .get("/api/public/categories", {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(res => {
                 this.setState({
-                    categories : res.data || []
-                })
+                    categories: res.data || []
+                });
             });
     };
 

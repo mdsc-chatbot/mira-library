@@ -2,8 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import {Button, Form, Input, Popup, Label} from 'semantic-ui-react';
+import { SecurityContext } from "../security/SecurityContext";
 
 export default class TagPopup extends React.Component {
+	static contextType = SecurityContext;
+
 	constructor(props) {
 		super(props);
 
