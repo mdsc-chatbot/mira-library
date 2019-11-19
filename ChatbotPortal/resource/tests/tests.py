@@ -6,11 +6,12 @@ from ..models import Resource, Category
 
 class ResourceTest(TestCase):
 
-    def create_resource(self, url):
+    def create_resource(self, url, rating=1):
         category = Category(id=1,name="website")
         resource = Resource.objects.create(
             url=url,
             category=category,
+            rating=rating,
         )
         return resource
 
@@ -47,3 +48,9 @@ class ResourceTest(TestCase):
 
         resource.rating = 10
         self.assertRaises(ValidationError, resource.full_clean)
+    
+    def test_ratings(self):
+        Resource.objects.all().delete()
+        resource = self.create_resource("https://www.caddra.ca/", rating=4)
+        db_resource = Resource.objects.get(pk=1)
+        self.assertTrue(3==db_resource.rating)
