@@ -3,7 +3,7 @@ import {Menu, Header, Icon, Segment, Responsive, Dropdown, Container} from "sema
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import { SecurityContext } from "./security/SecurityContext";
-import styles from "./profile/ProfilePage.css";
+import styles from "./App.css";
 
 export class HeaderMenu extends Component {
     static contextType = SecurityContext;
@@ -21,7 +21,7 @@ export class HeaderMenu extends Component {
         return(
             <div>
                 <Segment inverted attached = 'top'>
-                    <Menu inverted stackable pointing secondary size="small">
+                    <Menu inverted stackable pointing secondary size="large">
                         <Menu.Item
                             as="a"
                             style={{ paddingLeft: 50 }}
@@ -130,8 +130,8 @@ export class HeaderMenu extends Component {
         const { activeItem } = this.state;
         return(
             //<div>
-              //  {/*    <Segment>*/}
-                <Menu fluid widths = {2} size="small">
+           // {/*<Segment>*/}
+                <Menu inverted pointing fluid widths = {2} size="small">
                     <Menu.Item
                         as="a"
                         style={{ paddingLeft: 50 }}
@@ -149,7 +149,7 @@ export class HeaderMenu extends Component {
 
                         <Dropdown item text='Menu' floating labeled>
 
-                            <Dropdown.Menu>
+                            <Dropdown.Menu className={styles.headerMobile}>
 
                                 <Dropdown.Item>
                                     <Menu.Item
@@ -237,8 +237,8 @@ export class HeaderMenu extends Component {
 
                     </Menu.Menu>
                 </Menu>
-                //     </Segment>
-           // </div>
+           // </Segment>
+            // </div>
 
         );
     };
