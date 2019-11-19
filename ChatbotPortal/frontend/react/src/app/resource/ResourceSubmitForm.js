@@ -66,14 +66,11 @@ export default class ResourceSubmitForm extends Component {
         const resourceFormData = this.create_resource();
         // let submitted = 1;
 
-        axios.defaults.headers.common = {
-            Authorization: `Bearer ${this.context.security.token}`
-        };
-
         axios
-            .post("/chatbotportal/resource/", resourceFormData)
-            .then(() => {
+            .post("/chatbotportal/resource/", resourceFormData, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
             })
+            .then(() => {})
             .catch(error => {
                 console.error(error);
                 this.set_submitted_state(-1, "POST FAILURE");

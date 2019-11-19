@@ -1,18 +1,20 @@
 import React from "react";
 import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
 import axios from "axios";
+import { SecurityContext } from "../security/SecurityContext";
 
 /**
  * This class sends the password change request to a respective email
  */
 class PasswordResetRequestPage extends React.Component {
+    static contextType = SecurityContext;
 
     constructor(props) {
         super(props);
         this.state = {
-            'email': '',
-            'email_sent': false
-        }
+            email: "",
+            email_sent: false
+        };
     }
 
     /**
@@ -21,20 +23,21 @@ class PasswordResetRequestPage extends React.Component {
      * @param emailFormData = Data procured from the email form
      */
     handle_email = (e, emailFormData) => {
-
         const url = `/chatbotportal/authentication/password/reset/`;
 
         axios
-            .post(url, emailFormData)
+            .post(url, emailFormData, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(
                 response => {
                     console.log(response);
                     this.setState({
-                        'email_sent': true
-                    })
+                        email_sent: true
+                    });
                 },
                 error => {
-                    console.log(error)
+                    console.log(error);
                 }
             );
     };
@@ -47,7 +50,7 @@ class PasswordResetRequestPage extends React.Component {
         const name = e.target.name;
         const value = e.target.value;
         this.setState(prevstate => {
-            const newState = {...prevstate};
+            const newState = { ...prevstate };
             newState[name] = value;
             return newState;
         });
@@ -58,10 +61,10 @@ class PasswordResetRequestPage extends React.Component {
             <Grid
                 onSubmit={e => this.handle_email(e, this.state)}
                 textAlign="center"
-                style={{height: "100vh"}}
+                style={{ height: "100vh" }}
                 verticalAlign="middle"
             >
-                <Grid.Column style={{maxWidth: 450}}>
+                <Grid.Column style={{ maxWidth: 450 }}>
                     <Header as="h2" color="blue" textAlign="center">
                         {/*<Image src='/logo.png'/> */}
                         Password Reset
@@ -80,20 +83,25 @@ class PasswordResetRequestPage extends React.Component {
                             />
                             <Button
                                 color="blue"
-                                fluid size="large"
+                                fluid
+                                size="large"
                                 name="password_reset_button"
                                 disabled={!this.state.email}
                             >
                                 Request
                             </Button>
                             <Message
-                                content={this.state.email_sent ? "An email is sent with a password change link, Please check your email." : "Email is not sent yet."}
+                                content={
+                                    this.state.email_sent
+                                        ? "An email is sent with a password change link, Please check your email."
+                                        : "Email is not sent yet."
+                                }
                             />
                         </Segment>
                     </Form>
                 </Grid.Column>
             </Grid>
-        )
+        );
     }
 }
 
