@@ -82,7 +82,7 @@ class TestResourceSubmission(LiveServerTestCase):
         )
         user.save()
 
-        for tag_name in ["university", "alberta", "test", "react"]:
+        for tag_name in ["Alberta", "General Health", "Public"]:
             tag = Tag.objects.create(name=tag_name)
             tag.save()
 
@@ -99,40 +99,31 @@ class TestResourceSubmission(LiveServerTestCase):
             return set(wh_now).difference(set(wh_then)).pop()
 
     def test_resource_submission(self):
-
-        # self.driver.getConnection("jdbc:mysql://http://127.0.0.1:8000//[db]","[user]","[password]")
-        self.driver.get("http://127.0.0.1:8000/chatbotportal/app")
+        
+        self.driver.get('%s%s' % (self.live_server_url, "/chatbotportal/app"))
         self.driver.find_element(By.LINK_TEXT, "Login").click()
         self.driver.find_element(By.NAME, "email").send_keys(self.user_email)
         self.driver.find_element(
             By.NAME, "password").send_keys(self.user_password)
         self.driver.find_element(By.NAME, "login_button").click()
 
-        # Test url and rating
-        actual_resource_detail = ["Google", "https://www.google.com/", "", ""]
-        self.valid_resource_submission(actual_resource_detail, "//a/div/div")
-
-        # Test invalid url and rating
+        # Test invalid url
         actual_resource_detail = ["", "this_is_an_invalid_url", "", ""]
         self.invalid_resource_submission(actual_resource_detail)
 
-        # Test comment and tags (optional)
-        actual_resource_detail = ["University of Alberta", "https://www.ualberta.ca/", "university,alberta,test",
-                                  "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa strong. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede link mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi."]
+        # Test valid url
+        actual_resource_detail = ["MyHealth.Alberta.ca", "https://myhealth.alberta.ca/", "Alberta, General Health, Public",
+                                  "A general resource regarding public health, provided by the Alberta government."
         self.valid_resource_submission(
-            actual_resource_detail, "//a[2]/div/div", test_tags=True)
-
-        # Test attachment (optional)
-        actual_resource_detail = ["React – A JavaScript library for building user interfaces", "https://reactjs.org/",
-                                  "react", "React makes it painless to create interactive UIs. Design simple views for each state in your application, and React will efficiently update and render just the right components when your data changes."]
-        self.valid_resource_submission(
-            actual_resource_detail, "//a[3]/div/div", test_tags=True)
+            actual_resource_detail, "//a[1]/div/div", test_tags=True)
 
         # Test not found url and rating
         actual_resource_detail = ["Unknown title",
                                   "http://127.0.0.1:8000/", "", ""]
         self.valid_resource_submission(
-            actual_resource_detail, "//a[4]/div/div")
+            actual_resource_detail, "//a[3]/div/div")
+
+        # Test attachment (optional)
 
     def invalid_resource_submission(self, actual_resource_detail):
         self.submit_a_resource(actual_resource_detail)
@@ -176,7 +167,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         self.driver.find_element(By.XPATH, (resource_xpath)).click()
 
-        test_header = self.driver.find_element(By.ID, "title_header").text
+        test_header = self.driver.find_element(By.ID, "title_header").text.strip()
         test_url = self.driver.find_element(
             By.CSS_SELECTOR, ".ResourceDetail__link____gFhTH").text
         test_comments = self.driver.find_element(By.ID, "comments").text
