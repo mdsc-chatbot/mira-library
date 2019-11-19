@@ -18,8 +18,7 @@ import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
-import UserPage from "./search/UserPage";
-import {Container, Divider, Responsive, Segment} from "semantic-ui-react";
+import {Container, Responsive, Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 import styles from "./App.css";
 
@@ -96,7 +95,6 @@ export default function App() {
     };
     return (
 
-
         <Segment.Group>
 
 
@@ -113,7 +111,6 @@ export default function App() {
             </Responsive>
 
         </Segment.Group>
-
 
     );
 }

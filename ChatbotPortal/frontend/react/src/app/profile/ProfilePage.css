@@ -10,14 +10,6 @@
     color: Red;
 }
 
-/*:global(.ui.segment).segmentBackground  {*/
-/*    background-color: palegreen;*/
-/*}*/
-
-/*:global(.ui.card).cardBackground {*/
-/*    background-color: lavender;*/
-/*}*/
-
 .centeredFormWeb {
     width: 50%;
     left: 25%;
