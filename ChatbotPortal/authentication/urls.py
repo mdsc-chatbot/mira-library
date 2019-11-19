@@ -14,7 +14,8 @@ from .views import (LoginView,
                     SearchByAnythingWithFilterDateIdView,
                     UpdateSubmissionsView,
                     UpdateApprovedSubmissionsView,
-                    UpdatePasswordView)
+                    UpdatePasswordView,
+                    UpdateUserByAdminView)
 
 urlpatterns = [
 
@@ -28,6 +29,7 @@ urlpatterns = [
     path('register/', RegisterUsersView.as_view(), name='auth-register'),
 
     path('<pk>/update/', UpdateUserView.as_view(), name='auth-update'),
+    path('super/<pk>/update/', UpdateUserByAdminView.as_view(), name='auth-update-by-admin'),
     path('<pk>/update/submissions/', UpdateSubmissionsView.as_view(), name='auth-update-submissions'),
     path('<pk>/update/approved_submissions/', UpdateApprovedSubmissionsView.as_view(),
          name='auth-update-approved-submissions'),

@@ -85,9 +85,6 @@ class UserUpdateSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=100)
     last_name = serializers.CharField(max_length=100)
     profile_picture = serializers.ImageField(required=False)
-    # is_active = serializers.BooleanField()
-    # is_reviewer = serializers.BooleanField()
-    # is_staff = serializers.BooleanField()
 
     # password = serializers.CharField(max_length=255)
 
@@ -110,10 +107,34 @@ class UserUpdateSerializer(serializers.Serializer):
         return instance
 
 
-class customUserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
+class UserUpdateByAdminSerializer(serializers.Serializer):
+    """
+    This serializer will serialize the update data
+    """
+    first_name = serializers.CharField(max_length=100)
+    last_name = serializers.CharField(max_length=100)
+    profile_picture = serializers.ImageField(required=False)
+    is_active = serializers.BooleanField()
+    is_reviewer = serializers.BooleanField()
+    is_staff = serializers.BooleanField()
 
+    def update(self, instance, validated_data):
+        """
+        This update definition updates the instance with the validated_data
+        :param instance: CustomUser model instance
+        :param validated_data: data to be updated in the instance
+        :return: Updated instance
+        """
+        # pop the password out since we need to hash it
+        # password = validated_data.pop('password')
+        # update the instance with the rest of the validated data fields
+        instance.__dict__.update(validated_data)
+        # if password:
+        #     # update password if the password field was not empty
+        #     instance.set_password(password)
+        # Save the updated instance
+        instance.save()
+        return instance
 
 class UserUpdateSubmissionSerializer(serializers.Serializer):
     """
