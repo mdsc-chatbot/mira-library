@@ -101,7 +101,7 @@ export function ResourceDetailView({resource}) {
                                         // onClick={downloadAttachment}
                                     >
                                         <Icon name="download" />
-                                        <Header.Content>Download attachment</Header.Content>
+                                        <Header.Content id="attachment">Download attachment</Header.Content>
                                     </a>
                                 </Header>
                             </Grid.Column>
