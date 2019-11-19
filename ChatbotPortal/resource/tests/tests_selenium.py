@@ -82,7 +82,7 @@ class TestResourceSubmission(LiveServerTestCase):
         )
         user.save()
 
-        for tag_name in ["Alberta", "General_Health", "Public"]:
+        for tag_name in ["Alberta", "General_Health", "Public", "Research"]:
             tag = Tag.objects.create(name=tag_name)
             tag.save()
 
@@ -108,24 +108,34 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.find_element(By.NAME, "login_button").click()
 
         # Test invalid url
-        actual_resource_detail = ["", "this_is_an_invalid_url", "", "", "", ""]
-        self.invalid_resource_submission(actual_resource_detail, "frontend")
-        actual_resource_detail = ["", "www.google.com", "", "", "", ""]
-        self.invalid_resource_submission(actual_resource_detail, "backend")
+        # actual_resource_detail = ["", "this_is_an_invalid_url", "", "", "", "", ""]
+        # self.invalid_resource_submission(actual_resource_detail, "frontend")
+        # actual_resource_detail = ["", "www.google.com", "", "", "", "", ""]
+        # self.invalid_resource_submission(actual_resource_detail, "backend")
 
-        # Test valid url
-        actual_resource_detail = ["MyHealth.Alberta.ca", "https://myhealth.alberta.ca/", "Alberta",
-                                  "A general resource regarding public health, provided by the Alberta government.",
-                                  "pending", "Website"]
+        # # Test valid url
+        # actual_resource_detail = ["MyHealth.Alberta.ca", "https://myhealth.alberta.ca/", "Alberta",
+        #                           "A general resource regarding public health, provided by the Alberta government.",
+        #                           "pending", "Website", ""]
+        # self.valid_resource_submission(
+        #     actual_resource_detail, "//a[1]/div/div")
+
+        # actual_resource_detail = ["Unknown title",
+        #                           "http://127.0.0.1:8000/", "", 
+        #                           "Even though this resource is not reachable, it is still accepted.",
+        #                           "pending", "Website", ""]
+        # self.valid_resource_submission(
+        #     actual_resource_detail, "//a[2]/div/div")
+
+        # Test valid url and PDF attachment
+        actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
+                                  "https://www.autism.org", "Research",
+                                  "An institution dedicated to autism research.",
+                                  "pending", "PDF",
+                                  "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
+                                  ]
         self.valid_resource_submission(
             actual_resource_detail, "//a[1]/div/div")
-
-        actual_resource_detail = ["Unknown title",
-                                  "http://127.0.0.1:8000/", "", 
-                                  "Even though this resource is not reachable, it is still accepted.",
-                                  "pending", "Website"]
-        self.valid_resource_submission(
-            actual_resource_detail, "//a[2]/div/div")
 
 
     def invalid_resource_submission(self, actual_resource_detail,option):
@@ -150,7 +160,7 @@ class TestResourceSubmission(LiveServerTestCase):
         assert actual_resource_detail == test_resource_detail
 
     def submit_a_resource(self, actual_resource_detail):
-        [header, url, tags, comments, review_status, category] = actual_resource_detail
+        [header, url, tags, comments, review_status, category, website_summary] = actual_resource_detail
 
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         time.sleep(1)
@@ -185,6 +195,7 @@ class TestResourceSubmission(LiveServerTestCase):
         test_comments = self.driver.find_element(By.ID, "comments").text
         test_review_status = self.driver.find_element(By.ID, "review_status").text
         test_category = self.driver.find_element(By.ID, "category").text
+        test_website_summary = self.driver.find_element(By.ID, "website_summary_metadata").text
 
         # Tags xpath
         try:
@@ -203,4 +214,4 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.close()
         self.driver.switch_to.window(self.vars["root"])
 
-        return [test_header, test_url, test_tags, test_comments, test_review_status, test_category]
+        return [test_header, test_url, test_tags, test_comments, test_review_status, test_category, test_website_summary]
