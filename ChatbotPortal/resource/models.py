@@ -9,35 +9,34 @@ from django.core.validators import URLValidator, MaxValueValidator, MinValueVali
 
 
 class ResourceManager(models.Manager):
-    def create(self, **obj_data):
-        try:
-            # Get website actual title
-            url = obj_data['url']
-            r = urllib.request.Request(url, headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
-            html = urllib.request.urlopen(r).read().decode('utf8')
 
-            soup = BeautifulSoup(html, 'html.parser')
+    def get_soup(self, url):
+        r = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+        html = urllib.request.urlopen(r).read().decode('utf8')
+        soup = BeautifulSoup(html, 'html.parser')
+        return soup
+
+    def create(self, **obj_data):
+
+        # Get website title
+        try:
+            url = obj_data['url']
+            soup = self.get_soup(url)
             title = soup.find('title').string
             if title:
                 obj_data['title'] = title
-
         except Exception:
             pass
 
+        # Get website description
         try:
-            # Get website actual title
             url = obj_data['url']
-            r = urllib.request.Request(url, headers={
-                'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
-            html = urllib.request.urlopen(r).read().decode('utf8')
-
-            soup = BeautifulSoup(html, 'html.parser')
+            soup = self.get_soup(url)
             meta_tag = soup.find('meta', attrs={'name': 'description'})
             content = meta_tag['content']
             if title:
                 obj_data['website_summary_metadata'] = content
-
         except Exception:
             pass
 
