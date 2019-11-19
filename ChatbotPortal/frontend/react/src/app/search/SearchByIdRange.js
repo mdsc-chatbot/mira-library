@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form} from 'semantic-ui-react'
+import {Form, FormGroup, FormInput} from 'semantic-ui-react'
 
 
 /**
@@ -29,19 +29,23 @@ class SearchByIdRange extends React.Component {
      */
     render() {
         return (
-            <Form>
-                <Form.Input
+            <Form size="mini">
+                <FormGroup>
+                <FormInput
                     fluid
                     placeholder="Start ID"
                     name="start_id"
                     onChange={this.handle_change}
+                    size="mini"
                 />
-                <Form.Input
+                <FormInput
                     fluid
                     placeholder="End ID"
                     name="end_id"
                     onChange={this.handle_change}
+                    size="mini"
                 />
+                </FormGroup>
             </Form>
         );
     }
