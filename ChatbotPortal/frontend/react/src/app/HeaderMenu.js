@@ -14,11 +14,13 @@ export class HeaderMenu extends Component {
     }
     handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+
+
     headerMenuWeb = () => {
         const { activeItem } = this.state;
         return(
             <div>
-                <Segment inverted>
+                <Segment inverted attached = 'top'>
                     <Menu inverted stackable pointing secondary size="small">
                         <Menu.Item
                             as="a"

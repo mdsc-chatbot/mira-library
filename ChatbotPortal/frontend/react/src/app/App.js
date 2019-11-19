@@ -26,70 +26,73 @@ export default function App() {
     const mainPage = () => {
         return(<SecurityContextProvider>
             <HeaderMenu />
-            <Switch>
-                <Route exact path={baseRoute + "/profile"}>
-                    <ProfilePage/>
-                </Route>
-                <Route exact path={baseRoute + "/resource"}>
-                    <ResourcePage />
-                </Route>
-                <Route exact path={baseRoute + "/review"}>
-                    <ReviewPage />
-                </Route>
-                <Route exact path={baseRoute + "/login"}>
-                    <LoginPage />
-                </Route>
-                <Route exact path={baseRoute + "/logout"}>
-                    <LogoutPage />
-                </Route>
-                <Route
-                    exact path={baseRoute + "/validate/email"}
-                    component={EmailValidationRequestPage}
-                />
-                <Route exact path={baseRoute + "/search"}>
-                    <SearchPage />
-                </Route>
-                <Route
-                    exact
-                    path={baseRoute + "/resource/:resourceID"}
-                    component={ResourceDetail}
-                />
-                <Route
-                    exact
-                    path={baseRoute + "/review/:resourceID"}
-                    component={reviewResource}
-                />
+            <Segment attached>
+                <Switch>
+                    <Route exact path={baseRoute + "/profile"}>
+                        <ProfilePage/>
+                    </Route>
+                    <Route exact path={baseRoute + "/resource"}>
+                        <ResourcePage />
+                    </Route>
+                    <Route exact path={baseRoute + "/review"}>
+                        <ReviewPage />
+                    </Route>
+                    <Route exact path={baseRoute + "/login"}>
+                        <LoginPage />
+                    </Route>
+                    <Route exact path={baseRoute + "/logout"}>
+                        <LogoutPage />
+                    </Route>
+                    <Route
+                        exact path={baseRoute + "/validate/email"}
+                        component={EmailValidationRequestPage}
+                    />
+                    <Route exact path={baseRoute + "/search"}>
+                        <SearchPage />
+                    </Route>
+                    <Route
+                        exact
+                        path={baseRoute + "/resource/:resourceID"}
+                        component={ResourceDetail}
+                    />
+                    <Route
+                        exact
+                        path={baseRoute + "/review/:resourceID"}
+                        component={reviewResource}
+                    />
 
-                <Route
-                    exact path={baseRoute + "/resource_submit/:url"}
-                    component={ResourceSubmitForm}
-                />
-                <Route exact path={baseRoute + "/public_resource*"}>
-                    {({match}) => (
-                        <PublicResourcePage match={match}/>
-                    )}
-                </Route>
-                <Route exact path={baseRoute + "/faq"}>
-                    <FAQ />
-                </Route>
+                    <Route
+                        exact path={baseRoute + "/resource_submit/:url"}
+                        component={ResourceSubmitForm}
+                    />
+                    <Route exact path={baseRoute + "/public_resource*"}>
+                        {({match}) => (
+                            <PublicResourcePage match={match}/>
+                        )}
+                    </Route>
+                    <Route exact path={baseRoute + "/faq"}>
+                        <FAQ />
+                    </Route>
 
-                <Route
-                    exact path={baseRoute + "/password"}
-                    component={PasswordChangeForm}
-                />
-                <Route
-                    exact path={baseRoute + "/password/reset"}
-                    component={PasswordResetRequestPage}
-                />
-                <Route
-                    exact path={baseRoute + "/password/reset/:uid/:token"}
-                    component={PasswordResetPage}
-                />
-                <Route>
-                    <Homepage />
-                </Route>
+                    <Route
+                        exact path={baseRoute + "/password"}
+                        component={PasswordChangeForm}
+                    />
+                    <Route
+                        exact path={baseRoute + "/password/reset"}
+                        component={PasswordResetRequestPage}
+                    />
+                    <Route
+                        exact path={baseRoute + "/password/reset/:uid/:token"}
+                        component={PasswordResetPage}
+                    />
+                    <Route>
+                        <Homepage />
+                    </Route>
 
-            </Switch>
+                </Switch>
+            </Segment>
+
             <Footer />
         </SecurityContextProvider>);
     };
@@ -97,11 +100,10 @@ export default function App() {
 
         <Segment.Group>
 
-
             <Responsive minWidth={768}>
-                    <div>
-                        {mainPage()}
-                    </div>
+                <div>
+                    {mainPage()}
+                </div>
             </Responsive>
 
             <Responsive maxWidth={767}>
