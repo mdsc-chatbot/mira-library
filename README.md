@@ -1,4 +1,5 @@
 # ChatbotResources
+[![Build Status](https://travis-ci.com/UAlberta-CMPUT401/ChatbotResources.svg?token=Z5vtfE1m9VBPow8TRogE&branch=master)](https://travis-ci.com/UAlberta-CMPUT401/ChatbotResources)
 
 ChatBot Portal (name tbd) is a place where people with different backgrounds and experiences can share, discuss their resources and their experiences working with individuals suffering from disorders such as ADHD, Autism etc. The portal is used to collect resources that a chatbot can serve to chatters. 
 

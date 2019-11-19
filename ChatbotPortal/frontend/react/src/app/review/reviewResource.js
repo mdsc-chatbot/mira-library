@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import axios from "axios";
 import {Container, Divider, Form, Header, Icon, Label, Rating} from "semantic-ui-react";
 import {SecurityContext} from "../security/SecurityContext";
-import fileDownload from "js-file-download";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
 
@@ -144,18 +143,19 @@ export default class ResourceDetail extends Component {
 
     downloadAttachment = () => {
         // Having the permission header loaded
-        const options = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.context.security.token}`
-        };
-        axios
-            .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`, {headers: options})
-            .then(response => {
-                const fileName = response.headers["content-disposition"].split(
-                    '"'
-                )[1];
-                fileDownload(response.data, fileName);
-            });
+        //TODO: Fix this. This file should be using the shared component for viewing a resource.
+        // const options = {
+        //     'Content-Type': 'application/json',
+        //     'Authorization': `Bearer ${this.context.security.token}`
+        // };
+        // axios
+        //     .get(`/chatbotportal/resource/download-attachment/${this.state.resource.id}`, {headers: options})
+        //     .then(response => {
+        //         const fileName = response.headers["content-disposition"].split(
+        //             '"'
+        //         )[1];
+        //         fileDownload(response.data, fileName);
+        //     });
     };
 
     render() {

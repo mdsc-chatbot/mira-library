@@ -95,6 +95,15 @@ export function ResourceDetailView({resource}) {
                         </Grid.Column>
                     </Grid.Row>
 
+                    <Grid.Row {...gridRowProps}>
+                        <Grid.Column {...gridKeyColumnProps}>
+                            Category:
+                        </Grid.Column>
+                        <Grid.Column {...gridValueColumnProps}>
+                            {resource.category}
+                        </Grid.Column>
+                    </Grid.Row>
+
                     {resource.tags &&
                     resource.tags.length > 0 ? (
                         <Grid.Row {...gridRowProps}>
