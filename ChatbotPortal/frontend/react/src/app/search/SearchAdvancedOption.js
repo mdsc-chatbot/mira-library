@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Accordion} from "semantic-ui-react";
+import {Accordion, Header, Label} from "semantic-ui-react";
 import SearchByDateRange from "./SearchByDateRange";
 import SearchFilter from "./SearchFilter";
 import SearchByIdRange from "./SearchByIdRange";
@@ -22,7 +22,7 @@ export class SearchAdvancedOption extends Component {
             },
             {
                 key: "status_filter",
-                title: "Status filtered",
+                title: "Status",
                 content: {
                     content: (
                         <div id='search_by_filter'>
@@ -33,7 +33,7 @@ export class SearchAdvancedOption extends Component {
             },
             {
                 key: "id_range",
-                title: "Id range",
+                title: "By Id",
                 content: {
                     content: (
                         <div id='search_by_id'>
@@ -44,7 +44,7 @@ export class SearchAdvancedOption extends Component {
             },
             {
                 key: "submission_range",
-                title: "Submission range",
+                title: "By submission",
                 content: {
                     content: (
                         <div id='search_by_submission'>
@@ -75,7 +75,11 @@ export class SearchAdvancedOption extends Component {
 
         return (
             <div id='advanced_search_accordian'>
-                <Accordion defaultActiveIndex={1} panels={advanced_search}/>
+                <Header content='Search Filter' color="blue" size="small"/>
+                <Accordion
+                    panels={advanced_search_option}
+                    exclusive={false}
+                />
             </div>
         );
     }
