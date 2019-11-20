@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../security/SecurityContext';
-import {Button, Card, Container, Form, Icon, Image, Segment, Responsive,Divider, Grid} from 'semantic-ui-react';
+import {Button, Card, Container, Form, Icon, Image, Segment, Responsive,Divider} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 
 class ProfilePage extends Component {
@@ -342,11 +342,7 @@ class ProfilePage extends Component {
                 </Responsive>
 
             </Segment.Group>
-
-
         );
-
-
     };
 
     /**

@@ -18,14 +18,14 @@ import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
-import {Container, Responsive, Segment} from "semantic-ui-react";
+import {Responsive, Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 import styles from "./App.css";
 
 export default function App() {
     const mainPage = () => {
         return(<SecurityContextProvider>
-            <HeaderMenu />
+            <Segment inverted attached = 'top'> <HeaderMenu /></Segment>
             <Segment attached>
                 <Switch>
                     <Route exact path={baseRoute + "/profile"}>
@@ -92,8 +92,9 @@ export default function App() {
 
                 </Switch>
             </Segment>
+            <div></div>
 
-            <Footer />
+            <Segment inverted><Footer /></Segment>
         </SecurityContextProvider>);
     };
     return (
@@ -107,9 +108,7 @@ export default function App() {
             </Responsive>
 
             <Responsive maxWidth={767}>
-                <Container className={styles.noPaddingContainer} fluid>
                     {mainPage()}
-                </Container>
             </Responsive>
 
         </Segment.Group>
