@@ -49,10 +49,22 @@ export function ResourceDetailView({ resource }) {
                                     <h4 className={linkStyles.link}>{resource.url}</h4>
                                 </a>
                             </div>
+                            <Responsive {...Responsive.onlyMobile}>
+                                <Rating
+                                    icon="star"
+                                    rating={resource.rating}
+                                    maxRating={5}
+                                    disabled
+                                    size="massive"
+                                    style={{ paddingTop: 10 }}
+                                />
+                            </Responsive>
                         </Header>
                     </Menu.Item>
                     <Menu.Item position="right">
-                        <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
+                        <Responsive minWidth={768}>
+                            <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
+                        </Responsive>
                     </Menu.Item>
                 </Menu>
 
