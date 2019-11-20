@@ -71,20 +71,6 @@ export default class ResourceList extends Component {
                 }}
             >
                 <Container style={{ paddingBottom: 50 }} textAlign="center" vertical>
-                    <Header
-                        as="h3"
-                        style={{
-                            fontSize: "2em"
-                        }}
-                        color="blue"
-                    >
-                        My Resources
-                    </Header>
-
-                    <Header as="h4" color="grey">
-                        A list of all my submitted resources
-                    </Header>
-
                     <ResourceStatistic resources={this.state.resources} />
 
                     <Link to={baseRoute + "/resource_submit"}>
