@@ -1,15 +1,12 @@
-import React from 'react';
-import {Container, Divider, Icon, Label, Rating, Menu, Header, Grid} from 'semantic-ui-react';
-import styles from './ResourceDetailView.css';
+import React from "react";
+import { Container, Divider, Icon, Label, Rating, Menu, Header, Grid, Responsive } from "semantic-ui-react";
+import styles from "./ResourceDetailView.css";
 import linkStyles from "../shared/Link.css";
 
 // Originally copied from ResourceDetail
 // In the shared directory because potentially multiple components can use this view
 // e.g. viewing own resources, public page, review
-export function ResourceDetailView({resource}) {
-
-    // Common props for grid row, columns that are re-usable.
-    // If we need this in more than one place, consider re-making this into several components.
+function normal_grid_element(grid_key, grid_value) {
     const gridRowProps = {
         className: styles.smallRowPadding,
         columns: "2"
@@ -27,6 +24,17 @@ export function ResourceDetailView({resource}) {
     };
 
     return (
+        <Grid.Row {...gridRowProps}>
+            <Grid.Column {...gridKeyColumnProps}>{grid_key}</Grid.Column>
+            <Grid.Column {...gridValueColumnProps}>{grid_value}</Grid.Column>
+        </Grid.Row>
+    );
+}
+export function ResourceDetailView({ resource }) {
+    // Common props for grid row, columns that are re-usable.
+    // If we need this in more than one place, consider re-making this into several components.
+
+    return (
         <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100 }}>
             <Container>
                 <Menu text>
@@ -35,9 +43,7 @@ export function ResourceDetailView({resource}) {
                             <div>
                                 <span>
                                     <Icon name="globe" />
-                                    <Header.Content id="title_header">
-                                        {resource.title}
-                                    </Header.Content>
+                                    <Header.Content id="title_header">{resource.title}</Header.Content>
                                 </span>
                                 <a href={resource.url} target="_blank" id="url">
                                     <h4 className={linkStyles.link}>{resource.url}</h4>
@@ -46,62 +52,29 @@ export function ResourceDetailView({resource}) {
                         </Header>
                     </Menu.Item>
                     <Menu.Item position="right">
-                        <Rating
-                            icon="star"
-                            rating={resource.rating}
-                            maxRating={5}
-                            disabled
-                            size="massive"
-                        />
+                        <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
                     </Menu.Item>
                 </Menu>
 
                 <Divider className={styles.dividerPadding} />
 
                 <Grid>
-                    {resource.created_by_user ? (
-                        <Grid.Row {...gridRowProps}>
-                            <Grid.Column {...gridKeyColumnProps}>Submitted by:</Grid.Column>
-                            <Grid.Column {...gridValueColumnProps}>
-                                {resource.created_by_user}
-                            </Grid.Column>
-                        </Grid.Row>
-                    ) : null}
-
-                    <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>Date submitted:</Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>{resource.timestamp}</Grid.Column>
-                    </Grid.Row>
-
-                    <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>Review status:</Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>
-                            <p id="review_status"> {resource.review_status}</p>
-                        </Grid.Column>
-                    </Grid.Row>
-
-                    <Grid.Row {...gridRowProps}>
-                        <Grid.Column {...gridKeyColumnProps}>Category:</Grid.Column>
-                        <Grid.Column {...gridValueColumnProps}>
-                            <p id="category"> {resource.category} </p>
-                        </Grid.Column>
-                    </Grid.Row>
-
-                    {resource.tags && resource.tags.length > 0 ? (
-                        <Grid.Row {...gridRowProps}>
-                            <Grid.Column {...gridKeyColumnProps}>Tags:</Grid.Column>
-                            <Grid.Column {...gridValueColumnProps}>
-                                <div id="tags">
-                                    {resource.tags.map(tag => (
-                                        <Label key={tag} size="large">
-                                            {tag}
-                                        </Label>
-                                    ))}
-                                </div>
-                            </Grid.Column>
-                        </Grid.Row>
-                    ) : null}
-
+                    {resource.created_by_user ? normal_grid_element("Submitted by:", resource.created_by_user) : null}
+                    {normal_grid_element("Date submitted:", resource.timestamp)}
+                    {normal_grid_element("Review status:", <p id="review_status"> {resource.review_status}</p>)}
+                    {normal_grid_element("Category:", <p id="category"> {resource.category} </p>)}
+                    {resource.tags && resource.tags.length > 0
+                        ? normal_grid_element(
+                              "Tags:",
+                              <div id="tags">
+                                  {resource.tags.map(tag => (
+                                      <Label key={tag} size="large">
+                                          {tag}
+                                      </Label>
+                                  ))}
+                              </div>
+                          )
+                        : null}
                     {resource.attachment ? (
                         <Grid.Row>
                             <Grid.Column>
