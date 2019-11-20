@@ -106,7 +106,7 @@ export class HomepageHead extends Component {
 
                 <Divider/>
 
-                <Button.Group fluid size ='medium'>
+                <Button.Group fluid widths='2' size ='medium'>
                     <Link to={baseRoute + "/public_resource"}>
                         <Button fluid color="orange">
                             View all our public resources
@@ -120,7 +120,7 @@ export class HomepageHead extends Component {
                     </Link>)}
                 </Button.Group>
 
-                <Button.Group size='tiny'>
+                <Button.Group widths='3' size='tiny'>
                     <Link to={baseRoute + "/public_resource/59"}>
                         <Button  color="google plus">
                             View resources about funding

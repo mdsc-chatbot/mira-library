@@ -19,7 +19,6 @@ export class HeaderMenu extends Component {
     headerMenuWeb = () => {
         const { activeItem } = this.state;
         return(
-            //<div>
             <Menu inverted stackable pointing secondary size="large">
                 <Menu.Item
                     as="a"
@@ -52,13 +51,6 @@ export class HeaderMenu extends Component {
                     onClick={this.handleItemClick}
                 />
 
-                <Menu.Item
-                    name="Passchange"
-                    as={Link}
-                    to={baseRoute + "/password"}
-                    active={activeItem === "Passchange"}
-                    onClick={this.handleItemClick}
-                />
                 {this.context.security.is_logged_in && (
                     <Menu.Item
                         name="My Profile"
@@ -119,15 +111,12 @@ export class HeaderMenu extends Component {
                     />
                 )}
             </Menu>
-            //</div>
-
         );
     };
 
     headerMenuMobile = () => {
         const { activeItem } = this.state;
         return(
-            //<div>
             <Menu inverted pointing fluid widths = {2} size="small">
                 <Menu.Item
                     as="a"
@@ -234,7 +223,6 @@ export class HeaderMenu extends Component {
 
                 </Menu.Menu>
             </Menu>
-            //</div>
 
         );
     };
