@@ -1,14 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {
-    List,
-    Header,
-    Segment,
-    Button,
-    Grid,
-    Card,
-    Container
-} from "semantic-ui-react";
+import { List, Header, Segment, Button, Grid, Card, Container } from "semantic-ui-react";
 
 import ResourceListItem from "./ResourceListItem.js";
 import { SecurityContext } from "../security/SecurityContext";
@@ -28,15 +20,21 @@ export default class ResourceList extends Component {
     }
 
     get_resources = () => {
-        if (this.context.security.email) {
-            axios.defaults.headers.common = {
-                Authorization: `Bearer ${this.context.security.token}`
+        if (this.context.security.is_logged_in) {
+            // axios.defaults.headers.common = {
+            //     Authorization: `Bearer ${this.context.security.token}`
+            // };
+            // Having the permission header loaded
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
             };
             axios
-                .get("http://127.0.0.1:8000/api/resource", {
+                .get("/chatbotportal/resource", {
                     params: {
-                        created_by_user: this.context.security.email
-                    }
+                        created_by_user_pk: this.context.security.id
+                    },
+                    headers: options
                 })
                 .then(res => {
                     this.setState({
@@ -68,14 +66,11 @@ export default class ResourceList extends Component {
                 style={{
                     paddingTop: 30,
                     paddingLeft: 100,
-                    paddingRight: 100
+                    paddingRight: 100,
+                    paddingBottom: 30
                 }}
             >
-                <Container
-                    style={{ paddingBottom: 50 }}
-                    textAlign="center"
-                    vertical
-                >
+                <Container style={{ paddingBottom: 50 }} textAlign="center" vertical>
                     <Header
                         as="h3"
                         style={{
@@ -90,7 +85,7 @@ export default class ResourceList extends Component {
                         A list of all my submitted resources
                     </Header>
 
-                    <ResourceStatistic resources={resources} />
+                    <ResourceStatistic resources={this.state.resources} />
 
                     <Link to={baseRoute + "/resource_submit"}>
                         <Button name="submit_a_resource" positive size="big">

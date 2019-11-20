@@ -1,0 +1,93 @@
+[
+  {
+    "model": "authentication.CustomUser",
+    "pk": 1,
+    "fields": {
+      "email":"super@test.ca",
+      "password":"12345678",
+      "is_active":"True",
+      "is_reviewer":"True",
+      "is_staff":"True",
+      "is_superuser":"True",
+      "submissions": "0"
+    }
+  },
+  {
+    "model": "authentication.CustomUser",
+    "pk": 2,
+    "fields": {
+      "email":"regular1@test.ca",
+      "password":"12345678",
+      "is_active":"True",
+      "is_reviewer":"False",
+      "is_staff":"False",
+      "is_superuser":"False",
+      "submissions": "10"
+    }
+  },
+  {
+    "model": "authentication.CustomUser",
+    "pk": 3,
+    "fields": {
+      "email":"regular2@test.ca",
+      "password":"12345678",
+      "is_active":"False",
+      "is_reviewer":"False",
+      "is_staff":"False",
+      "is_superuser":"False",
+      "submissions": "100"
+    }
+  },
+  {
+    "model": "authentication.CustomUser",
+    "pk": 4,
+    "fields": {
+      "email":"regular3@test.ca",
+      "password":"12345678",
+      "is_active":"True",
+      "is_reviewer":"True",
+      "is_staff":"False",
+      "is_superuser":"False",
+      "submissions": "1000"
+    }
+  },
+  {
+    "model": "authentication.CustomUser",
+    "pk": 5,
+    "fields": {
+      "email":"regular4@test.ca",
+      "password":"12345678",
+      "is_active":"True",
+      "is_reviewer":"False",
+      "is_staff":"False",
+      "is_superuser":"False",
+      "submissions": "0"
+    }
+  },
+  {
+    "model": "authentication.CustomUser",
+    "pk": 6,
+    "fields": {
+      "email":"regular5@test.ca",
+      "password":"12345678",
+      "is_active":"True",
+      "is_reviewer":"False",
+      "is_staff":"True",
+      "is_superuser":"False",
+      "submissions": "0"
+    }
+  },
+  {
+    "model": "authentication.CustomUser",
+    "pk": 7,
+    "fields": {
+      "email":"regular6@test.ca",
+      "password":"12345678",
+      "is_active":"True",
+      "is_reviewer":"False",
+      "is_staff":"False",
+      "is_superuser":"False",
+      "submissions": "0"
+    }
+  }
+]

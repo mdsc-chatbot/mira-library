@@ -2,7 +2,8 @@ import React, {Component} from "react";
 import {Accordion} from "semantic-ui-react";
 import SearchByDateRange from "./SearchByDateRange";
 import SearchFilter from "./SearchFilter";
-import SearchByIdrange from "./SearchByIdRange";
+import SearchByIdRange from "./SearchByIdRange";
+import SearchBySubmissionRange from "./SearchBySubmissionRange";
 
 export class SearchAdvancedOption extends Component {
     render() {
@@ -12,8 +13,9 @@ export class SearchAdvancedOption extends Component {
                 title: "Date",
                 content: {
                     content: (
-                        <div>
-                            <SearchByDateRange handle_result_change = {this.props.handle_result_change}/>
+                        <div id='search_by_date'>
+                            <SearchByDateRange set_date_range_params={this.props.set_date_range_params}
+                                               set_date_option_params={this.props.set_date_option_params}/>
                         </div>
                     )
                 }
@@ -23,8 +25,8 @@ export class SearchAdvancedOption extends Component {
                 title: "Status filtered",
                 content: {
                     content: (
-                        <div>
-                            <SearchFilter handle_result_change = {this.props.handle_result_change}/>
+                        <div id='search_by_filter'>
+                            <SearchFilter set_status_search_params={this.props.set_status_search_params}/>
                         </div>
                     )
                 }
@@ -34,12 +36,24 @@ export class SearchAdvancedOption extends Component {
                 title: "Id range",
                 content: {
                     content: (
-                        <div>
-                            <SearchByIdrange handle_result_change = {this.props.handle_result_change}/>
+                        <div id='search_by_id'>
+                            <SearchByIdRange set_id_search_params={this.props.set_id_search_params}/>
                         </div>
                     )
                 }
-            }
+            },
+            {
+                key: "submission_range",
+                title: "Submission range",
+                content: {
+                    content: (
+                        <div id='search_by_submission'>
+                            <SearchBySubmissionRange
+                                set_submission_search_params={this.props.set_submission_search_params}/>
+                        </div>
+                    )
+                }
+            },
         ];
 
         const advanced_search = [
@@ -60,7 +74,7 @@ export class SearchAdvancedOption extends Component {
         ];
 
         return (
-            <div>
+            <div id='advanced_search_accordian'>
                 <Accordion defaultActiveIndex={1} panels={advanced_search}/>
             </div>
         );

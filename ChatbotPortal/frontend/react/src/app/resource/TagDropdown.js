@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import axios, {CancelToken} from 'axios';
 import {Dropdown} from 'semantic-ui-react';
 import TagPopup from "./TagPopup";
+import { SecurityContext } from "../security/SecurityContext";
 
 
 export default class TagDropdown extends React.Component {
+	static contextType = SecurityContext;
 
 	static mapResponseToDropdownOption = tag => ({
 		key : tag.id,
@@ -64,32 +66,44 @@ export default class TagDropdown extends React.Component {
 		const source = CancelToken.source();
 
 		// Fetch search results
-		axios.get('/chatbotportal/resource/fetch-tags', {
-			params : {
-				name: searchQuery
-			},
-			cancelToken: source.token
-		}).then(response => {
-			// Transform JSON tag into tag that semantic ui's dropdown can read
-			let tagOptions = [];
-			if (response.data) {
-				tagOptions = response.data.map(TagDropdown.mapResponseToDropdownOption);
-			}
+		axios
+            .get(
+                "/chatbotportal/resource/fetch-tags",
+                {
+                    params: {
+                        name: searchQuery
+                    },
+                    cancelToken: source.token
+                },
+                {
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
+                }
+            )
+            .then(response => {
+                // Transform JSON tag into tag that semantic ui's dropdown can read
+                let tagOptions = [];
+                if (response.data) {
+                    tagOptions = response.data.map(TagDropdown.mapResponseToDropdownOption);
+                }
 
-			// Add any options that didn't come back from the server, but is selected in the dropdown
-			// This makes sure that the value is rendered properly in the UI
-			if (this.state.selectedOptions) {
-				for (const selectedOption of this.state.selectedOptions) {
-					if (tagOptions.find(tagOption => tagOption.value === selectedOption.value) === undefined) {
-						tagOptions.push(selectedOption);
-					}
-				}
-			}
+                // Add any options that didn't come back from the server, but is selected in the dropdown
+                // This makes sure that the value is rendered properly in the UI
+                if (this.state.selectedOptions) {
+                    for (const selectedOption of this.state.selectedOptions) {
+                        if (
+                            tagOptions.find(
+                                tagOption => tagOption.value === selectedOption.value
+                            ) === undefined
+                        ) {
+                            tagOptions.push(selectedOption);
+                        }
+                    }
+                }
 
-			this.setState({
-				tagOptions
-			});
-		});
+                this.setState({
+                    tagOptions
+                });
+            });
 
 		this.setState({
 			searchQuery : searchQuery,

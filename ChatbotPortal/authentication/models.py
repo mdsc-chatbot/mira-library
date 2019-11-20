@@ -38,6 +38,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     profile_picture = models.ImageField(blank=True, null=True, upload_to='profile_pics')
 
     submissions = models.IntegerField(blank=True, default=0)
+    pending_submissions = models.IntegerField(blank=True, default=0)
+    approved_submissions = models.IntegerField(blank=True, default=0)
 
     points = models.IntegerField(blank=True, default=0)
 

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
+import sys
 import datetime
 import os
 
@@ -23,7 +24,6 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-TEST = False    # Set to True to run test db, rerun all migrations
 
 ALLOWED_HOSTS = []
 
@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
 
     'corsheaders',
     'django_filters',
@@ -86,39 +85,30 @@ WSGI_APPLICATION = 'ChatbotPortal.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES_AVAILABLE = {
-    'main': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'db',
-        # 'USER': 'user',
-        # 'PASSWORD': 'password',
-        # 'HOST': '',
-        # 'PORT': '',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'test': {
-        # Create a separate db for testing, assign itself to its own test db
-        # This is dangerous but since the test db is trival, it's ok?
-        # note: delete all objects before test
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3'),
-        'TEST': {
-            'NAME': os.path.join(BASE_DIR, 'test_db.sqlite3')
-        }
-    },
-}
-
-# IMPORTANT: Change DJANGO_DATABASE_TEST to main when not testing, need rerun all migrations
-if TEST:
-    database = os.environ.get('DJANGO_DATABASE_TEST', 'test')
-else:
-    database = os.environ.get('DJANGO_DATABASE_TEST', 'main')
-
 DATABASES = {
-    'default': DATABASES_AVAILABLE[database]
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'main_db',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': ''
+    }
 }
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'db.sqlite3'
+    }
 
+# Password validation
+# https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -156,6 +146,9 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
+REST_AUTH_SERIALIZERS = {
+    'PASSWORD_RESET_SERIALIZER': 'authentication.api.serializers.PasswordResetSerializer',
+}
 
 # JWT settings
 JWT_AUTH = {

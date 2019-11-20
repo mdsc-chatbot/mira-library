@@ -78,11 +78,11 @@ class TestResourceSubmission(LiveServerTestCase):
         self.user_password = "test"
         user = CustomUser.objects.create_user(
             email=self.user_email,
-            password=self.user_password
+            password=self.user_password,
         )
         user.save()
 
-        for tag_name in ["university", "alberta", "test", "react"]:
+        for tag_name in ["Alberta", "General_Health", "Public"]:
             tag = Tag.objects.create(name=tag_name)
             tag.save()
 
@@ -99,62 +99,58 @@ class TestResourceSubmission(LiveServerTestCase):
             return set(wh_now).difference(set(wh_then)).pop()
 
     def test_resource_submission(self):
-
-        # self.driver.getConnection("jdbc:mysql://http://127.0.0.1:8000//[db]","[user]","[password]")
-        self.driver.get("http://127.0.0.1:8000/chatbotportal/app")
+        
+        self.driver.get('%s%s' % (self.live_server_url, "/chatbotportal/app"))
         self.driver.find_element(By.LINK_TEXT, "Login").click()
         self.driver.find_element(By.NAME, "email").send_keys(self.user_email)
         self.driver.find_element(
             By.NAME, "password").send_keys(self.user_password)
         self.driver.find_element(By.NAME, "login_button").click()
 
-        # Test url and rating
-        actual_resource_detail = ["Google", "https://www.google.com/", "", ""]
-        self.valid_resource_submission(actual_resource_detail, "//a/div/div")
+        # Test invalid url
+        actual_resource_detail = ["", "this_is_an_invalid_url", "", "", "", ""]
+        self.invalid_resource_submission(actual_resource_detail, "frontend")
+        actual_resource_detail = ["", "www.google.com", "", "", "", ""]
+        self.invalid_resource_submission(actual_resource_detail, "backend")
 
-        # Test invalid url and rating
-        actual_resource_detail = ["", "this_is_an_invalid_url", "", ""]
-        self.invalid_resource_submission(actual_resource_detail)
-
-        # Test comment and tags (optional)
-        actual_resource_detail = ["University of Alberta", "https://www.ualberta.ca/", "university,alberta,test",
-                                  "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa strong. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede link mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi."]
+        # Test valid url
+        actual_resource_detail = ["MyHealth.Alberta.ca", "https://myhealth.alberta.ca/", "Alberta",
+                                  "A general resource regarding public health, provided by the Alberta government.",
+                                  "pending", "Website"]
         self.valid_resource_submission(
-            actual_resource_detail, "//a[2]/div/div", test_tags=True)
+            actual_resource_detail, "//a[1]/div/div")
 
-        # Test attachment (optional)
-        actual_resource_detail = ["React – A JavaScript library for building user interfaces", "https://reactjs.org/",
-                                  "react", "React makes it painless to create interactive UIs. Design simple views for each state in your application, and React will efficiently update and render just the right components when your data changes."]
-        self.valid_resource_submission(
-            actual_resource_detail, "//a[3]/div/div", test_tags=True)
-
-        # Test not found url and rating
         actual_resource_detail = ["Unknown title",
-                                  "http://127.0.0.1:8000/", "", ""]
+                                  "http://127.0.0.1:8000/", "", 
+                                  "Even though this resource is not reachable, it is still accepted.",
+                                  "pending", "PDF"]
         self.valid_resource_submission(
-            actual_resource_detail, "//a[4]/div/div")
+            actual_resource_detail, "//a[2]/div/div")
 
-    def invalid_resource_submission(self, actual_resource_detail):
-        self.submit_a_resource(actual_resource_detail)
-        test_invalid_text = self.driver.find_element(
-            By.XPATH, ("//form/div/div")).text
-        assert "Please enter a url" == test_invalid_text
 
-    def valid_resource_submission(self, actual_resource_detail, test_resource_path, test_tags=False):
+    def invalid_resource_submission(self, actual_resource_detail,option):
         self.submit_a_resource(actual_resource_detail)
-        test_valid_text = self.driver.find_element(By.XPATH, ("//p")).text
+        if option == "frontend":
+            # Invalid xpath
+            test_invalid_text = self.driver.find_element(By.XPATH, ("//form/div/div/div")).text
+            assert "Please enter a valid url" == test_invalid_text
+        elif option == "backend":
+            test_invalid_text = self.driver.find_element(By.NAME, ("submit_failure")).text
+            assert "Something went wrong! Your resource is not submitted." == test_invalid_text
+
+    def valid_resource_submission(self, actual_resource_detail, test_resource_path):
+        self.submit_a_resource(actual_resource_detail)
+        test_valid_text = self.driver.find_element(By.NAME, ("submit_success")).text
         time.sleep(1)  # Sleep to wait for changes in db
-        test_resource_detail = self.get_resource_detail(
-            test_resource_path, test_tags=test_tags)
+        test_resource_detail = self.get_resource_detail(test_resource_path)
 
-        assert "You've submitted a resource!" == test_valid_text
-        actual_resource_detail[2] = actual_resource_detail[2].replace(
-            ",", "")  # Get rid of commas for tags comparision
-        # print(actual_resource_detail, test_resource_detail)
+        assert "Congratulations! You've submitted a resource!" == test_valid_text
+        actual_resource_detail[2] = actual_resource_detail[2].replace(",", "")  # Get rid of commas for tags comparision
+        print(actual_resource_detail, test_resource_detail)
         assert actual_resource_detail == test_resource_detail
 
     def submit_a_resource(self, actual_resource_detail):
-        [header, url, tags, comments] = actual_resource_detail
+        [header, url, tags, comments, review_status, category] = actual_resource_detail
 
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         time.sleep(1)
@@ -162,41 +158,51 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.find_element(By.NAME, "submit_a_resource").click()
         self.driver.find_element(By.NAME, "url").send_keys(url)
         self.driver.find_element(By.NAME, "comments").send_keys(comments)
+
+        # Category xpath
+        if category == "PDF":
+            self.driver.find_element(
+                By.CSS_SELECTOR, ".fluid:nth-child(2)").click()
+            self.driver.find_element(
+                By.CSS_SELECTOR, ".visible > .item:nth-child(3)").click()
+
+        # Tags xpath
         for tag in tags.split(","):
             self.driver.find_element(
-                By.XPATH, "//div[3]/div/div/input").send_keys(tag)
+                By.XPATH, "//div[4]/div/div/input").send_keys(tag)
             self.driver.find_element(
                 By.CSS_SELECTOR, ".ui > .search").send_keys(Keys.ENTER)
-        # self.driver.find_element(By.XPATH, ("//i[2]")).click() # star rating
 
         time.sleep(2)
         self.driver.find_element(By.NAME, "submit").click()
 
-    def get_resource_detail(self, resource_xpath, test_tags=False):
+    def get_resource_detail(self, resource_xpath):
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         self.driver.find_element(By.XPATH, (resource_xpath)).click()
 
-        test_header = self.driver.find_element(By.ID, "title_header").text
+        test_header = self.driver.find_element(By.ID, "title_header").text.strip()
         test_url = self.driver.find_element(
-            By.CSS_SELECTOR, ".ResourceDetail__link____gFhTH").text
+            By.CSS_SELECTOR, ".Link__link____2arPN").text
         test_comments = self.driver.find_element(By.ID, "comments").text
+        test_review_status = self.driver.find_element(By.ID, "review_status").text
+        test_category = self.driver.find_element(By.ID, "category").text
 
-        if test_tags:
-
+        # Tags xpath
+        try:
             test_tags = self.driver.find_element(
-                By.XPATH, ("//div[3]/div[4]")).text
+                By.XPATH, ("//div[4]")).text
             test_tags = test_tags.replace("Tags:\n", "")
             # print("tags", test_tags)
-        else:
+        except:
             test_tags = ""
 
         self.vars["window_handles"] = self.driver.window_handles
         self.driver.find_element(
-            By.CSS_SELECTOR, ".ResourceDetail__link____gFhTH").click()
+            By.CSS_SELECTOR, ".Link__link____2arPN").click()
         self.vars["win7210"] = self.wait_for_window(2000)
         self.vars["root"] = self.driver.current_window_handle
         self.driver.switch_to.window(self.vars["win7210"])
         self.driver.close()
         self.driver.switch_to.window(self.vars["root"])
 
-        return [test_header, test_url, test_tags, test_comments]
+        return [test_header, test_url, test_tags, test_comments, test_review_status, test_category]

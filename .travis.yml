@@ -1,16 +1,13 @@
 language: python
 python:
   - "3.7"
-#services:
-#  - mysql
+services:
+ - mysql
+before_install:
+  - mysql -e 'drop database if exists test; create database test; drop database if exists main_db; create database main_db;' -u root
 install:
   - pip install -r requirements.txt
-before-script:
-- mysql -e 'drop database if exists test; create database test;' -u root
 script:
-  # First, delete all migration scripts
-  - find . -path "*/migrations/*.py" -delete
-  - find . -path "*/migrations/*.pyc" -delete
 
   # Build migrations in a proper order
   # Authentication goes first, otherwise module dependencies will break

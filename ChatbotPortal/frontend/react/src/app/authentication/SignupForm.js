@@ -1,26 +1,34 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+import { Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
+import TermsOfService from "./TermsOfService";
 
 class SignupForm extends React.Component {
     /**
      * This class manages the Signup form
-     * @type {
-     *      {
-     *          password: string,
-     *          affiliation: string,
-     *          last_name: string,
-     *          first_name: string,
-     *          email: string}
-     *      }
+     * @type {{
+     *      password: string,
+     *      affiliation: string,
+     *      last_name: string,
+     *      password2: string,
+     *      consent: boolean,
+     *      first_name: string,
+     *      password_matched: boolean,
+     *      is_validated: boolean,
+     *      email: string}}
      */
     state = {
         email: "",
         first_name: "",
         last_name: "",
         affiliation: "",
-        password: ""
+        password: "",
+        password2: '',
+        password_matched: false,
+        consent:false,
+        is_validated:true
     };
+    baseState = this.state;
 
     /**
      * This function handles any changes that happens to the form fields
@@ -37,10 +45,59 @@ class SignupForm extends React.Component {
         });
     };
 
+    /**
+     * This function handles the changes that happens to the second password field.
+     * @param e = event
+     */
+    handle_password2 = e => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState(prevstate => {
+            const newState = {...prevstate};
+            newState[name] = value;
+            return newState;
+        });
+
+        /**
+         * Matching both the field to enable reset call
+         */
+        if (value !== null && value === this.state.password) {
+            this.setState({
+                password_matched: true
+            })
+        } else {
+            this.setState({
+                password_matched: false
+            })
+        }
+    };
+
+    /**
+     * Set state for consent checkbox
+     */
+    handle_change_consent = () => {
+        this.setState(({ consent }) => ({ consent: !consent }));
+    };
+
+    /**
+     * Sign Up Form Validation Requirements: 
+     * - consent checkbox must be checked
+     * - email must not be the same (TODO)
+     * - some field must not be empty (TODO)
+     */
+    validate_signup_form = (e, state) =>{
+        if (state.consent === false){
+            this.setState({is_validated:false});
+        }else{
+            this.props.handle_signup(e, state);
+            this.setState(this.baseState);
+        }
+    };
+
     render() {
         return (
             <Grid
-                onSubmit={e => this.props.handle_signup(e, this.state)}
+                onSubmit={e => this.validate_signup_form(e, this.state)}
                 textAlign="center"
                 style={{height: "100vh"}}
                 verticalAlign="middle"
@@ -69,8 +126,9 @@ class SignupForm extends React.Component {
                             <Form.Input
                                 fluid
                                 icon="user"
+                                type="email"
                                 iconPosition="left"
-                                placeholder="E-mail address"
+                                placeholder="E-mail address * (Required)"
                                 name="email"
                                 value={this.state.email}
                                 onChange={this.handle_change}
@@ -86,20 +144,63 @@ class SignupForm extends React.Component {
                                 fluid
                                 icon="lock"
                                 iconPosition="left"
-                                placeholder="Password"
+                                placeholder="Password * (Required)"
                                 type="password"
                                 name="password"
                                 value={this.state.password}
                                 onChange={this.handle_change}
                             />
-                            <Button color="blue" fluid size="large">
-                                Signup
-                            </Button>
+                            <Form.Input
+                                fluid
+                                icon="lock"
+                                iconPosition="left"
+                                placeholder="Confirm Password * (Required)"
+                                type="password"
+                                name="password2"
+                                value={this.state.password2}
+                                onChange={this.handle_password2}
+                            />
+
+                            {
+                                this.state.is_validated ? (
+                                    <Form.Checkbox
+                                        fluid
+                                        label={<label>I consent and agree to the <TermsOfService /> </label>}
+                                        name="consent"
+                                        checked={this.state.consent}
+                                        onChange={this.handle_change_consent}
+                                    />
+                                ) : (
+                                    <Form.Checkbox
+                                        fluid
+                                        label={<label>I consent to the <TermsOfService /> </label>}
+                                        name="consent"
+                                        checked={this.state.consent}
+                                        onChange={this.handle_change_consent}
+                                        error={{
+                                            content: 'Please read and consent to the Terms of Service',
+                                            pointing: 'left',
+                                        }}
+                                    />
+                                )
+                            }
+
+                            <Button
+                                color="blue"
+                                fluid size="large"
+                                disabled={
+                                    !this.state.email ||
+                                    !this.state.consent ||
+                                    !(this.state.password.length >= 8 && this.state.password_matched)
+                                }
+                            >Signup</Button>
                         </Segment>
                     </Form>
                     <Message>
                         Already have an account?{" "}
-                        <a href="#" onClick={() => this.props.handleLoginClicked('signup')}>
+                        <a
+                            href="#"
+                            onClick={() => this.props.handleLoginClicked('signup')}>
                             Login
                         </a>
                     </Message>
