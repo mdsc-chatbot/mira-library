@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios, {CancelToken} from 'axios';
 import {Dropdown} from 'semantic-ui-react';
 import TagPopup from "./TagPopup";
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 
 export default class TagDropdown extends React.Component {

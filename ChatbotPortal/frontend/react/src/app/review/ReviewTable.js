@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Table, Header, Rating, Dropdown } from "semantic-ui-react";
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
 

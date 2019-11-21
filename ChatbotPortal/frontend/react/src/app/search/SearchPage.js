@@ -12,7 +12,7 @@ import {
     SidebarPushable,
     SidebarPusher
 } from "semantic-ui-react";
-import {SecurityContext} from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 import SearchByAnything from "./SearchByAnything";
 import SearchAdvancedOption from "./SearchAdvancedOption";
 import SearchTable from "./SearchTable";
