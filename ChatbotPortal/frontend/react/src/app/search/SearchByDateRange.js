@@ -1,9 +1,9 @@
 import React from 'react';
 import {DatesRangeInput} from 'semantic-ui-calendar-react';
 import {Container, Dropdown, Form} from 'semantic-ui-react'
-import { DateRangePicker, SingleDatePicker, DayPickerRangeController } from 'react-dates';
-import 'react-dates/initialize'; // necessary for latest version
-import 'react-dates/lib/css/_datepicker.css';
+// import { DateRangePicker, SingleDatePicker, DayPickerRangeController } from 'react-dates';
+// import 'react-dates/initialize'; // necessary for latest version
+// import 'react-dates/lib/css/_datepicker.css';
 
 const dateOption = [
     {key: 'unselected', value: "''", text: 'Unselected'},
