@@ -152,15 +152,10 @@ class TestSearchByStatusFilter(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -213,15 +208,10 @@ class TestSearchByStatusFilter(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -272,15 +262,10 @@ class TestSearchByStatusFilter(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -331,15 +316,10 @@ class TestSearchByStatusFilter(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -409,16 +389,11 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         time.sleep(WAIT_SECONDS)
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
+        
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -490,15 +465,10 @@ class TestSearchByStatusFilter(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -539,12 +509,41 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         time.sleep(WAIT_SECONDS)
 
         # Clearing the selected filters to resume regular search operations
-        is_active_dropdown.find_element_by_tag_name('i').click()
-        time.sleep(WAIT_SECONDS)
-        is_reviewer_dropdown.find_element_by_tag_name('i').click()
-        time.sleep(WAIT_SECONDS)
-        is_staff_dropdown.find_element_by_tag_name('i').click()
 
+        # Setting up dropdown values
+        is_active_dropdown = self.browser.find_element_by_name('is_active')
+        self.assertIsNotNone(is_active_dropdown)
+        is_active_dropdown.click()
+        time.sleep(WAIT_SECONDS)
+
+        is_active_dropdown_value = is_active_dropdown.find_elements_by_class_name('text')
+        self.assertIsNotNone(is_active_dropdown_value)
+        self.assertEqual(is_active_dropdown_value[3].get_attribute('innerText'), 'None')
+        is_active_dropdown_value[3].click()
+        time.sleep(WAIT_SECONDS)
+
+        # Setting up dropdown values
+        is_reviewer_dropdown = self.browser.find_element_by_name('is_reviewer')
+        self.assertIsNotNone(is_reviewer_dropdown)
+        is_reviewer_dropdown.click()
+        time.sleep(WAIT_SECONDS)
+
+        is_reviewer_dropdown_value = is_reviewer_dropdown.find_elements_by_class_name('text')
+        self.assertIsNotNone(is_reviewer_dropdown_value)
+        self.assertEqual(is_reviewer_dropdown_value[3].get_attribute('innerText'), 'None')
+        is_reviewer_dropdown_value[3].click()
+        time.sleep(WAIT_SECONDS)
+
+        # Setting up dropdown values
+        is_staff_dropdown = self.browser.find_element_by_name('is_staff')
+        self.assertIsNotNone(is_staff_dropdown)
+        is_staff_dropdown.click()
+        time.sleep(WAIT_SECONDS)
+
+        is_staff_dropdown_value = is_staff_dropdown.find_elements_by_class_name('text')
+        self.assertIsNotNone(is_staff_dropdown_value)
+        self.assertEqual(is_staff_dropdown_value[3].get_attribute('innerText'), 'None')
+        is_staff_dropdown_value[3].click()
         time.sleep(WAIT_SECONDS)
 
         # Finding the search button

@@ -76,7 +76,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -91,15 +91,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -151,7 +146,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -166,15 +161,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -225,7 +215,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -240,15 +230,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -291,7 +276,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -306,15 +291,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -368,7 +348,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -383,15 +363,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -434,7 +409,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -449,15 +424,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -500,7 +470,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -515,15 +485,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
