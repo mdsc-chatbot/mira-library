@@ -1,3 +1,5 @@
+const BASE_URL = 'http://127.0.0.1:8000'
+
 /**
  * Initializing the background communication object
  * that the popup will use to interact with the background
@@ -40,6 +42,18 @@ let load = function () {
     window.removeEventListener("load", load, false);
 };
 
+ iframing = (responseAsJson, url) => {
+    let iframe = document.querySelector("iframe");
+    if (iframe) {
+        // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
+        iframe.style.background = "none";
+        if (iframe.src === "about:blank") {
+            // iframe.onload = function() { alert('myframe is loaded'); console.log(iframe.contentDocument) };
+            iframe.src = `${BASE_URL}/chatbotportal/app/resource_submit/extension/${responseAsJson.id}/''/${responseAsJson.token}/${encodeURIComponent(url)}`;
+        }
+    }
+};
+
 /**
  * Resizing the popup to provide responsiveness
  */
@@ -54,14 +68,12 @@ background.receive("resize", function (o) {
  * Sending storage data from background to popup
  */
 background.receive("storage-data", function () {
-
     /**
      * Extracting the current tab url
      */
     chrome.tabs.query({active: true, currentWindow: true}, function (tabArray) {
-        let iframe = document.querySelector("iframe");
-
-        fetch('http://127.0.0.1:8000/chatbotportal/authentication/currentuser/')
+         // Fetch the current user from the backend
+        fetch(`${BASE_URL}/chatbotportal/authentication/currentuser/`)
             .then(function (response) {
                 if (!response.ok) {
                     throw Error(response.statusText);
@@ -70,16 +82,15 @@ background.receive("storage-data", function () {
                 return response.json();
             })
             .then(function (responseAsJson) {
-                // Do stuff with the JSON
-                // console.log(responseAsJson.email);
-                if (iframe) {
-                    // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
-                    iframe.style.background = "none";
-                    if (iframe.src === "about:blank") {
-                        // iframe.onload = function() { alert('myframe is loaded'); console.log(iframe.contentDocument) };
-                        iframe.src = `http://127.0.0.1:8000/chatbotportal/app/resource_submit/extension/${responseAsJson.id}/''/${responseAsJson.token}/${encodeURIComponent(tabArray[0].url)}`;
-                    }
-                }
+                this.iframing(responseAsJson, tabArray[0].url)
+                // if (iframe) {
+                //     // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
+                //     iframe.style.background = "none";
+                //     if (iframe.src === "about:blank") {
+                //         // iframe.onload = function() { alert('myframe is loaded'); console.log(iframe.contentDocument) };
+                //         iframe.src = `http://127.0.0.1:8000/chatbotportal/app/resource_submit/extension/${responseAsJson.id}/''/${responseAsJson.token}/${encodeURIComponent(tabArray[0].url)}`;
+                //     }
+                // }
                 // console.log(iframe.getAttribute('innerHTML'));
                 // chrome.cookies.get({"url": 'http://127.0.0.1', "name": 'sessionid'}, function (cookie) {
                 //     console.log(cookie);
