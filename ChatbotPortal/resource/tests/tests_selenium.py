@@ -54,6 +54,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.implicitly_wait(50)
         self.vars = {}
         self.setup_db()
+        self.total_resources = 0
 
         super(TestResourceSubmission, self).setUp()
 
@@ -96,10 +97,10 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.find_element(By.NAME, "login_button").click()
 
         # Test invalid url
-        actual_resource_detail = ["", "this_is_an_invalid_url", "", "", "", "", ""]
-        self.invalid_resource_submission(actual_resource_detail, "frontend")
-        actual_resource_detail = ["", "www.google.com", "", "", "", "", ""]
-        self.invalid_resource_submission(actual_resource_detail, "backend")
+        # actual_resource_detail = ["", "this_is_an_invalid_url", "", "", "", "", ""]
+        # self.invalid_resource_submission(actual_resource_detail, "frontend")
+        # actual_resource_detail = ["", "www.google.com", "", "", "", "", ""]
+        # self.invalid_resource_submission(actual_resource_detail, "backend")
 
         # Test valid url
         actual_resource_detail = ["MyHealth.Alberta.ca", "https://myhealth.alberta.ca/", "Alberta",
@@ -116,15 +117,17 @@ class TestResourceSubmission(LiveServerTestCase):
             actual_resource_detail, "//a[2]/div/div")
 
         # Test valid url and PDF attachment
-        actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
-                                  "https://www.autism.org", "Research",
-                                  "An institution dedicated to autism research.",
-                                  "pending", "PDF",
-                                  "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
-                                  ]
-        self.valid_resource_submission(
-            actual_resource_detail, "//a[3]/div/div")
+        # actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
+        #                           "https://www.autism.org", "Research",
+        #                           "An institution dedicated to autism research.",
+        #                           "pending", "PDF",
+        #                           "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
+        #                           ]
+        # self.valid_resource_submission(
+        #     actual_resource_detail, "//a[3]/div/div")  
 
+        # Final comparision of number of submitted resource
+        self.compare_resource_submission_number()
 
     def invalid_resource_submission(self, actual_resource_detail,option):
         self.submit_a_resource(actual_resource_detail)
@@ -146,6 +149,8 @@ class TestResourceSubmission(LiveServerTestCase):
         actual_resource_detail[2] = actual_resource_detail[2].replace(",", "")  # Get rid of commas for tags comparision
         print(actual_resource_detail, test_resource_detail)
         assert actual_resource_detail == test_resource_detail
+
+        self.total_resources += 1
 
     def submit_a_resource(self, actual_resource_detail):
         [header, url, tags, comments, review_status, category, website_summary] = actual_resource_detail
@@ -230,3 +235,26 @@ class TestResourceSubmission(LiveServerTestCase):
         
         attachemnt_pdf_text = textract.process(self.attachment_path, method='pdfminer')
         assert attachemnt_pdf_text == downloaded_pdf_text
+
+    def compare_resource_submission_number(self):
+        self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+        total_resources = self.driver.find_element(
+            By.ID, "total_resources").text
+        pending_resources = self.driver.find_element(
+            By.ID, "pending_resources").text
+       
+        self.driver.find_element(By.LINK_TEXT, "My Profile").click()
+        time.sleep(1)
+        self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+        time.sleep(1)
+
+        # profile_num_submissions = self.driver.find_element(
+        #     By.ID, "profile_num_submissions").text
+
+        assert total_resources == str(self.total_resources)
+        assert pending_resources == str(self.total_resources)
+        # assert profile_num_submissions == str(self.total_resources)
+
+
+
+

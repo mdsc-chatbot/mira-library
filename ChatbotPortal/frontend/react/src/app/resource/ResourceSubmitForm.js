@@ -80,6 +80,7 @@ export default class ResourceSubmitForm extends Component {
     };
 
     set_submitted_state = (submitted_value, submitted_message) => {
+        console.log(this.state, submitted_value)
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
@@ -92,16 +93,12 @@ export default class ResourceSubmitForm extends Component {
     };
 
     update_user_submissions = () => {
-        const options = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.context.security.token}`
-        };
         axios
-            .put(
-                `/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, {headers: options})
+            .put(`/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
             .then(
-                () => {
-                },
+                () => {},
                 error => {
                     console.log(error);
                 }
