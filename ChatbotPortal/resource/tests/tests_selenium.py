@@ -117,6 +117,7 @@ class TestResourceSubmission(LiveServerTestCase):
             actual_resource_detail, "//a[2]/div/div")
 
         # Test valid url and PDF attachment
+<<<<<<< HEAD
         # actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
         #                           "https://www.autism.org", "Research",
         #                           "An institution dedicated to autism research.",
@@ -127,6 +128,17 @@ class TestResourceSubmission(LiveServerTestCase):
         #     actual_resource_detail, "//a[3]/div/div")  
 
         # Final comparision of number of submitted resource
+=======
+        actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
+                                  "https://www.autism.org", "Research",
+                                  "An institution dedicated to autism research.",
+                                  "pending", "PDF",
+                                  "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
+                                  ]
+        self.valid_resource_submission(
+            actual_resource_detail, "//a[3]/div/div")
+
+>>>>>>> 6b3c6008da4ace033b511e15e5474591db1e22a0
         self.compare_resource_submission_number()
 
     def invalid_resource_submission(self, actual_resource_detail,option):
@@ -237,6 +249,7 @@ class TestResourceSubmission(LiveServerTestCase):
         assert attachemnt_pdf_text == downloaded_pdf_text
 
     def compare_resource_submission_number(self):
+<<<<<<< HEAD
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         total_resources = self.driver.find_element(
             By.ID, "total_resources").text
@@ -258,3 +271,22 @@ class TestResourceSubmission(LiveServerTestCase):
 
 
 
+=======
+         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+         total_resources = self.driver.find_element(
+             By.ID, "total_resources").text
+         pending_resources = self.driver.find_element(
+             By.ID, "pending_resources").text
+
+         self.driver.find_element(By.LINK_TEXT, "My Profile").click()
+         time.sleep(1)
+         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+         time.sleep(1)
+
+         # profile_num_submissions = self.driver.find_element(
+         #     By.ID, "profile_num_submissions").text
+
+         assert total_resources == str(self.total_resources)
+         assert pending_resources == str(self.total_resources)
+         # assert profile_num_submissions == str(self.total_resources)
+>>>>>>> 6b3c6008da4ace033b511e15e5474591db1e22a0
