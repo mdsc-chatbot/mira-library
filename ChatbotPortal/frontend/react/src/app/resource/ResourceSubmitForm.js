@@ -5,7 +5,7 @@ import {Container, Form, Header, Input, Message, Rating} from "semantic-ui-react
 
 import TagDropdown from "./TagDropdown";
 import CategoryDropdown from './CategoryDropdown';
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
 
 export default class ResourceSubmitForm extends Component {

@@ -10,7 +10,7 @@ import {
 } from "semantic-ui-react";
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import styles from './PublicResourcePage.css';
 import {FilterList} from './FilterList';
 import {ResourceTable} from './ResourceTable';

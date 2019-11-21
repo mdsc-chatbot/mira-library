@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Form, Grid, Header, Segment} from 'semantic-ui-react';
 import axios from 'axios';
 import {baseRoute} from '../App';
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 /**
  * This class performs the password change operation after a password change request.

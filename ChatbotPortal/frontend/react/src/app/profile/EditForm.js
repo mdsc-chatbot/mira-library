@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 class EditForm extends React.Component {
   static contextType = SecurityContext;
