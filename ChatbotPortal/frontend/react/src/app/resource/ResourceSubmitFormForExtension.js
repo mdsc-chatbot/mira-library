@@ -288,6 +288,7 @@ export default class ResourceSubmitForm extends Component {
                                     <CategoryDropdown
                                         value={this.state.category}
                                         onChange={category => this.setState({category})}
+                                        token={this.props.match.params.token}
                                     />
                                 </Form.Field>
 
