@@ -20,6 +20,7 @@ import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
 import {Responsive, Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
+import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import styles from "./App.css";
 
 export default function App() {
@@ -62,9 +63,15 @@ export default function App() {
                     />
 
                     <Route
-                        exact path={baseRoute + "/resource_submit/:url"}
-                        component={ResourceSubmitForm}
+                    exact path={baseRoute + "/resource_submit"}
+                    component={ResourceSubmitForm}
                     />
+                    
+                    <Route
+                        exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
+                        component={ResourceSubmitFormForExtension}
+                    />
+
                     <Route exact path={baseRoute + "/public_resource*"}>
                         {({match}) => (
                             <PublicResourcePage match={match}/>
