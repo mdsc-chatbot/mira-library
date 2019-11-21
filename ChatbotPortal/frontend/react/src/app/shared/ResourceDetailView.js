@@ -16,13 +16,13 @@ function normal_grid_element(grid_key, grid_value) {
         className: styles.greyColumn,
         floated: "left",
         mobile: "8",
-        tablet: "2",
+        tablet: "4",
         computer: "2"
     };
 
     const gridValueColumnProps = {
         mobile: "8",
-        tablet: "14",
+        tablet: "12",
         computer: "14"
     };
 
@@ -83,7 +83,7 @@ export function ResourceDetailView({ resource }) {
                           "Tags:",
                           <div id="tags">
                               {resource.tags.map(tag => (
-                                  <Label key={tag} size="large">
+                                  <Label key={tag} size="large" stackable>
                                       {tag}
                                   </Label>
                               ))}
