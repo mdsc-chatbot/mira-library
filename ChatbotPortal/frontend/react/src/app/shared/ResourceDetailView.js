@@ -35,16 +35,24 @@ export function ResourceDetailView({resource}) {
                             <div>
                                 <span>
                                     <Icon name="globe" />
-                                    <Header.Content id="title_header">{resource.title}</Header.Content>
+                                    <Header.Content id="title_header">
+                                        {resource.title}
+                                    </Header.Content>
                                 </span>
-                                <a href={resource.url} target="_blank">
-                                    <h4 id="url" className={linkStyles.link}>{resource.url}</h4>
+                                <a href={resource.url} target="_blank" id="url">
+                                    <h4 className={linkStyles.link}>{resource.url}</h4>
                                 </a>
                             </div>
                         </Header>
                     </Menu.Item>
                     <Menu.Item position="right">
-                        <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
+                        <Rating
+                            icon="star"
+                            rating={resource.rating}
+                            maxRating={5}
+                            disabled
+                            size="massive"
+                        />
                     </Menu.Item>
                 </Menu>
 
@@ -54,7 +62,9 @@ export function ResourceDetailView({resource}) {
                     {resource.created_by_user ? (
                         <Grid.Row {...gridRowProps}>
                             <Grid.Column {...gridKeyColumnProps}>Submitted by:</Grid.Column>
-                            <Grid.Column {...gridValueColumnProps}>{resource.created_by_user}</Grid.Column>
+                            <Grid.Column {...gridValueColumnProps}>
+                                {resource.created_by_user}
+                            </Grid.Column>
                         </Grid.Row>
                     ) : null}
 
@@ -101,7 +111,7 @@ export function ResourceDetailView({resource}) {
                                         // onClick={downloadAttachment}
                                     >
                                         <Icon name="download" />
-                                        <Header.Content id="attachment">Download attachment</Header.Content>
+                                        <Header.Content>Download attachment</Header.Content>
                                     </a>
                                 </Header>
                             </Grid.Column>
@@ -117,14 +127,6 @@ export function ResourceDetailView({resource}) {
                 </Header>
                 <p id="comments" style={{ color: "grey" }}>
                     {resource.comments}
-                </p>
-
-                <Header as="h5" color="grey" className={styles.noMarginHeader}>
-                    <Icon name="book" />
-                    <Header.Content>Resource Summary:</Header.Content>
-                </Header>
-                <p id="website_summary_metadata" style={{ color: "grey" }}>
-                    {resource.website_summary_metadata}
                 </p>
             </Container>
         </div>
