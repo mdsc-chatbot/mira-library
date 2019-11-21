@@ -6,7 +6,7 @@ import linkStyles from "../shared/Link.css";
 // Originally copied from ResourceDetail
 // In the shared directory because potentially multiple components can use this view
 // e.g. viewing own resources, public page, review
-function normal_grid_element(grid_key, grid_value) {
+function grid_element(grid_key, grid_value) {
     const gridRowProps = {
         className: styles.smallRowPadding,
         columns: "2"
@@ -34,52 +34,70 @@ function normal_grid_element(grid_key, grid_value) {
     );
 }
 
+function normal_header(resource) {
+    return (
+        <Menu text>
+            <Menu.Item>
+                <Header as="h2">
+                    <div>
+                        <span>
+                            <Icon name="globe" />
+                            <Header.Content id="title_header">{resource.title}</Header.Content>
+                        </span>
+                        <a href={resource.url} target="_blank" id="url">
+                            <h4 className={linkStyles.link}>{resource.url}</h4>
+                        </a>
+                    </div>
+                </Header>
+            </Menu.Item>
+            <Menu.Item position="right">
+                <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
+            </Menu.Item>
+        </Menu>
+    );
+}
+
+function mobile_header(resource) {
+    // Wrap text
+    return (
+        <div>
+            <Header as="h3">
+                <Icon name="globe" size="small" />
+                <Header.Content id="title_header">{resource.title}</Header.Content>
+                <a href={resource.url} target="_blank" id="url">
+                    <h4 className={linkStyles.link}>{resource.url}</h4>
+                </a>
+                <Rating
+                    icon="star"
+                    rating={resource.rating}
+                    maxRating={5}
+                    disabled
+                    size="massive"
+                    style={{ paddingTop: 10 }}
+                />
+            </Header>
+        </div>
+    );
+}
+
 export function ResourceDetailView({ resource }) {
     // Common props for grid row, columns that are re-usable.
     // If we need this in more than one place, consider re-making this into several components.
 
     return (
         <Container>
-            <Menu text>
-                <Menu.Item>
-                    <Header as="h2">
-                        <div>
-                            <span>
-                                <Icon name="globe" />
-                                <Header.Content id="title_header">{resource.title}</Header.Content>
-                            </span>
-                            <a href={resource.url} target="_blank" id="url">
-                                <h4 className={linkStyles.link}>{resource.url}</h4>
-                            </a>
-                        </div>
-                        <Responsive {...Responsive.onlyMobile}>
-                            <Rating
-                                icon="star"
-                                rating={resource.rating}
-                                maxRating={5}
-                                disabled
-                                size="massive"
-                                style={{ paddingTop: 10 }}
-                            />
-                        </Responsive>
-                    </Header>
-                </Menu.Item>
-                <Menu.Item position="right">
-                    <Responsive minWidth={768}>
-                        <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
-                    </Responsive>
-                </Menu.Item>
-            </Menu>
+            <Responsive minWidth={768}>{normal_header(resource)}</Responsive>
+            <Responsive {...Responsive.onlyMobile}>{mobile_header(resource)}</Responsive>
 
             <Divider className={styles.dividerPadding} />
 
             <Grid>
-                {resource.created_by_user ? normal_grid_element("Submitted by:", resource.created_by_user) : null}
-                {normal_grid_element("Date submitted:", resource.timestamp)}
-                {normal_grid_element("Review status:", <p id="review_status"> {resource.review_status}</p>)}
-                {normal_grid_element("Category:", <p id="category"> {resource.category} </p>)}
+                {resource.created_by_user ? grid_element("Submitted by:", resource.created_by_user) : null}
+                {grid_element("Date submitted:", resource.timestamp)}
+                {grid_element("Review status:", <p id="review_status"> {resource.review_status}</p>)}
+                {grid_element("Category:", <p id="category"> {resource.category} </p>)}
                 {resource.tags && resource.tags.length > 0
-                    ? normal_grid_element(
+                    ? grid_element(
                           "Tags:",
                           <div id="tags">
                               {resource.tags.map(tag => (
