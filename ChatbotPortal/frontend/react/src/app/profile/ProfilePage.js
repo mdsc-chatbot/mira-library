@@ -142,20 +142,17 @@ class ProfilePage extends Component {
             );
     };
 
-    /* This function handles the profile page for Tablet/Computer Version */
+/* This function handles the profile page for Tablet/Computer Version */
     profilePageDataWeb = () => {
-        return (<SecurityContext.Consumer>
+        return(<SecurityContext.Consumer>
             {(securityContext) => (
                 <Form className={styles.centeredFormWeb} onSubmit={e => this.handle_edit(e, this.state)}>
                     {securityContext.security.is_logged_in ?
                         <Card fluid centered onSubmit={this.props.handle_edit}>
                             {this.state.profile_picture ? (
-                                <Image
-                                    src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
-                                    size='medium' circular centered/>
+                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} size='medium' circular centered/>
                             ) : null}
-                            <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg"
-                                        id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                            <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
                             <Card.Content className={styles.nameMobile}>
                                 <Card.Header>
                                     <Form.Group widths='equal'>
@@ -210,21 +207,28 @@ class ProfilePage extends Component {
                                     <Button.Content visible>
                                         Cancel Changes
                                     </Button.Content>
-                                    <Button.Content hidden><Icon name='cancel'/></Button.Content>
+                                    <Button.Content hidden><Icon name='cancel' /></Button.Content>
                                 </Button>
-                                <Button.Or/>
+                                <Button.Or />
                                 <Button animated='fade' positive onClick={this.saveFunction}>
                                     <Button.Content visible>
                                         Save Changes
                                     </Button.Content>
-                                    <Button.Content hidden><Icon name='chevron right'/></Button.Content>
+                                    <Button.Content hidden><Icon name='chevron right' /></Button.Content>
                                 </Button>
                             </Button.Group>
-                            <Link to={baseRoute + "/password"}>
-                                <Button icon basic color='red' fluid size='big'>
-                                    Change Password
-                                </Button>
-                            </Link>
+                            <Button
+                                animated='fade'
+                                icon
+                                basic
+                                color='red'
+                                fluid
+                                size='big'
+                                onClick={this.deleteFunction}
+                            >
+                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
+                                <Button.Content hidden>Send Request To Admin</Button.Content>
+                            </Button>
                         </Card>
                         : null}
                 </Form>
@@ -337,7 +341,11 @@ class ProfilePage extends Component {
                 </Responsive>
 
             </Segment.Group>
+
+
         );
+
+
     };
 
     /**
