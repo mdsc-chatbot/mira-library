@@ -137,18 +137,18 @@ export default class TagDropdown extends React.Component {
                 <SegmentGroup compact horizontal>
                     <Responsive as={Segment} minWidth={320}>
                         <div style={{width: "200px", paddingRight: "20"}}>
-                        <Dropdown
-                            fluid
-                            selection
-                            multiple
-                            placeholder='Enter tags'
-                            search
-                            options={this.state.tagOptions}
-                            onChange={this.handleChange}
-                            onSearchChange={this.handleSearchChange}
-                            searchQuery={this.state.searchQuery}
-                            value={this.props.value}
-                        />
+                            <Dropdown
+                                fluid
+                                multiple
+                                onChange={this.handleChange}
+                                onSearchChange={this.handleSearchChange}
+                                options={this.state.tagOptions}
+                                placeholder='Enter tags'
+                                search
+                                searchQuery={this.state.searchQuery}
+                                selection
+                                value={this.props.value}
+                            />
                         </div>
                     </Responsive>
                     <Responsive as={Segment} minWidth={320}>

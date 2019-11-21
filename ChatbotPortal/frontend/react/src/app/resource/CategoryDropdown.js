@@ -22,6 +22,7 @@ export default class CategoryDropdown extends React.Component {
     }
 
     componentDidMount() {
+        this.context.security.token = this.props.token
         // Fetch options for dropdown
         axios
             .get("/chatbotportal/resource/fetch-categories", {
