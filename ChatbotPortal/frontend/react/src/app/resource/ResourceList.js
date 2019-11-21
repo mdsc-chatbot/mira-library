@@ -7,6 +7,7 @@ import { SecurityContext } from "../security/SecurityContext";
 import ResourceStatistic from "./ResourceStatistic";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
+import ResourceResponsive from "./ResourceResponsive.js";
 
 export default class ResourceList extends Component {
     static contextType = SecurityContext;
@@ -81,19 +82,6 @@ export default class ResourceList extends Component {
             );
         };
 
-        return (
-            <div>
-                <Responsive as={Segment} {...Responsive.onlyMobile}>
-                    <div style={{ paddingTop: 30, paddingLeft: 15, paddingRight: 15, paddingBottom: 30 }}>
-                        {resource_list()}
-                    </div>
-                </Responsive>
-                <Responsive as={Segment} minWidth={768}>
-                    <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
-                        {resource_list()}
-                    </div>
-                </Responsive>
-            </div>
-        );
+        return <ResourceResponsive resource_component={resource_list()}></ResourceResponsive>;
     }
 }

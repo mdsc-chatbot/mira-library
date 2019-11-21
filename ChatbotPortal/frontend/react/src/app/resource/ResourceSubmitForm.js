@@ -7,6 +7,7 @@ import TagDropdown from "./TagDropdown";
 import CategoryDropdown from "./CategoryDropdown";
 import { SecurityContext } from "../security/SecurityContext";
 import styles from "./ResourceSubmitForm.css";
+import ResourceResponsive from "./ResourceResponsive";
 
 export default class ResourceSubmitForm extends Component {
     static contextType = SecurityContext;
@@ -254,19 +255,6 @@ export default class ResourceSubmitForm extends Component {
                 </SecurityContext.Consumer>
             );
         };
-        return (
-            <div>
-                <Responsive as={Segment} {...Responsive.onlyMobile}>
-                    <div style={{ paddingTop: 30, paddingLeft: 15, paddingRight: 15, paddingBottom: 30 }}>
-                        {resource_submit_form()}
-                    </div>
-                </Responsive>
-                <Responsive as={Segment} minWidth={768}>
-                    <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
-                        {resource_submit_form()}
-                    </div>
-                </Responsive>
-            </div>
-        );
+        return <ResourceResponsive resource_component={resource_submit_form()}></ResourceResponsive>;
     }
 }

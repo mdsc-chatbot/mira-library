@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { ResourceDetailView } from "../shared";
 import { SecurityContext } from "../security/SecurityContext";
+import ResourceResponsive from "./ResourceResponsive";
 
 export default class ResourceDetail extends Component {
     static contextType = SecurityContext;
@@ -29,18 +30,9 @@ export default class ResourceDetail extends Component {
 
     render() {
         return (
-            <div>
-                <Responsive as={Segment} {...Responsive.onlyMobile}>
-                    <div style={{ paddingTop: 30, paddingLeft: 15, paddingRight: 15, paddingBottom: 30 }}>
-                        <ResourceDetailView resource={this.state.resource} />
-                    </div>
-                </Responsive>
-                <Responsive as={Segment} minWidth={768}>
-                    <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
-                        <ResourceDetailView resource={this.state.resource} />
-                    </div>
-                </Responsive>
-            </div>
+            <ResourceResponsive
+                resource_component={<ResourceDetailView resource={this.state.resource} />}
+            ></ResourceResponsive>
         );
     }
 }
