@@ -6,6 +6,7 @@ import linkStyles from "../shared/Link.css";
 // Originally copied from ResourceDetail
 // In the shared directory because potentially multiple components can use this view
 // e.g. viewing own resources, public page, review
+// New Resource Detail view
 function grid_element(grid_key, grid_value) {
     const gridRowProps = {
         className: styles.smallRowPadding,
