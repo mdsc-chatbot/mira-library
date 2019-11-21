@@ -16,6 +16,7 @@ package-lock.json
 /ChatbotPortal/db.sqlite3
 /ChatbotPortal/test_db.sqlite3
 /ChatbotPortal/media
+/ChatbotPortal/resource/migrations
 
 ### Python ###
 __pycache__/
