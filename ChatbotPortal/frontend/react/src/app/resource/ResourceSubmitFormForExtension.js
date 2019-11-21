@@ -5,6 +5,7 @@ import {Container, Form, Header, Icon, Input, Menu, MenuItem, Message, Rating} f
 import TagDropdown from "./TagDropdown";
 import styles from "./ResourceSubmitForm.css";
 import {MenuContext} from "../contexts/MenuContext"
+import CategoryDropdown from "./CategoryDropdown";
 
 /**
  * This component only handles resouce submission directed from the extension
@@ -41,6 +42,7 @@ export default class ResourceSubmitForm extends Component {
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
 
+            category: 1,
             tags: [],
             url_validated: true,
             currentTags: null,
@@ -51,6 +53,10 @@ export default class ResourceSubmitForm extends Component {
 
     componentDidMount() {
         this.context.menu_visibility = false;
+        console.log(this.props.match.params.id);
+        console.log(this.props.match.params.first_name);
+        console.log(this.props.match.params.token);
+        console.log(this.props.match.params.url)
     }
 
     /**
@@ -72,7 +78,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
-
+        resourceFormData.append("category", this.state.category);
         // If attachment is not null, then append it to the form data
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
@@ -106,7 +112,7 @@ export default class ResourceSubmitForm extends Component {
 
         axios
             .post("/chatbotportal/resource/", resourceFormData, {
-                headers: {Authorization: `Bearer ${this.context.security.token}`}
+                headers: {Authorization: `Bearer ${this.props.match.params.token}`}
             })
             .then(() => {
             })
@@ -125,6 +131,7 @@ export default class ResourceSubmitForm extends Component {
      * @param submitted_message
      */
     set_submitted_state = (submitted_value, submitted_message) => {
+        console.log(this.state, submitted_value);
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
@@ -145,7 +152,9 @@ export default class ResourceSubmitForm extends Component {
             Authorization: `Bearer ${this.props.match.params.token}`
         };
         axios
-            .put(`/chatbotportal/authentication/${this.props.match.params.id}/update/submissions/`, {headers: options})
+            .put(`/chatbotportal/authentication/${this.props.match.params.id}/update/submissions/`,
+                '',
+                {headers: options})
             .then(() => {
             }, error => {
                 console.log(error);
@@ -222,6 +231,7 @@ export default class ResourceSubmitForm extends Component {
                         >Resource submission
                         </Header>
                         <Form onSubmit={this.handleSubmit} success error>
+                            <div>
                             {this.state.url_validated ? (
                                 <Form.Input
                                     required
@@ -261,6 +271,15 @@ export default class ResourceSubmitForm extends Component {
                                     size="massive"
                                 />
                             </Form.Field>
+
+                             <Form.Field>
+                                            <label>Category</label>
+                                            <CategoryDropdown
+                                                value={this.state.category}
+                                                onChange={category => this.setState({ category })}
+                                            />
+                                        </Form.Field>
+
                             <Form.Field>
                                 <label>Tags</label>
                                 <Form.Group className={styles.dropdownPadding}>
@@ -286,6 +305,8 @@ export default class ResourceSubmitForm extends Component {
                                     onChange={this.handleFileChange}
                                 />
                             </Form.Field>
+
+                            <div>
                             {(() => {
                                 if (this.state.submitted === 1)
                                     return (
@@ -305,10 +326,12 @@ export default class ResourceSubmitForm extends Component {
                                     );
                                 else return <div/>;
                             })()}
+                            </div>
                             <Form.Button
                                 name="submit"
                                 content="Submit"
                                 color="green"/>
+                            </div>
                         </Form>
                     </Container>
                 </div>
