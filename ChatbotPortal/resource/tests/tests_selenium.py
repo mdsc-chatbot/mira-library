@@ -54,6 +54,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.driver.implicitly_wait(50)
         self.vars = {}
         self.setup_db()
+        self.total_resources = 0
 
         super(TestResourceSubmission, self).setUp()
 
@@ -125,6 +126,7 @@ class TestResourceSubmission(LiveServerTestCase):
         self.valid_resource_submission(
             actual_resource_detail, "//a[3]/div/div")
 
+        self.compare_resource_submission_number()
 
     def invalid_resource_submission(self, actual_resource_detail,option):
         self.submit_a_resource(actual_resource_detail)
@@ -146,6 +148,8 @@ class TestResourceSubmission(LiveServerTestCase):
         actual_resource_detail[2] = actual_resource_detail[2].replace(",", "")  # Get rid of commas for tags comparision
         print(actual_resource_detail, test_resource_detail)
         assert actual_resource_detail == test_resource_detail
+
+        self.total_resources += 1
 
     def submit_a_resource(self, actual_resource_detail):
         [header, url, tags, comments, review_status, category, website_summary] = actual_resource_detail
@@ -230,3 +234,22 @@ class TestResourceSubmission(LiveServerTestCase):
         
         attachemnt_pdf_text = textract.process(self.attachment_path, method='pdfminer')
         assert attachemnt_pdf_text == downloaded_pdf_text
+
+    def compare_resource_submission_number(self):
+         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+         total_resources = self.driver.find_element(
+             By.ID, "total_resources").text
+         pending_resources = self.driver.find_element(
+             By.ID, "pending_resources").text
+
+         self.driver.find_element(By.LINK_TEXT, "My Profile").click()
+         time.sleep(1)
+         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+         time.sleep(1)
+
+         # profile_num_submissions = self.driver.find_element(
+         #     By.ID, "profile_num_submissions").text
+
+         assert total_resources == str(self.total_resources)
+         assert pending_resources == str(self.total_resources)
+         # assert profile_num_submissions == str(self.total_resources)
