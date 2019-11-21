@@ -94,8 +94,8 @@ export default class ResourceSubmitForm extends Component {
 
     update_user_submissions = () => {
         axios
-            .put(`/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            .put(`/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, '', {
+                headers: { 'Authorization': `Bearer ${this.context.security.token}` }
             })
             .then(
                 () => {},
