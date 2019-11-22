@@ -30,14 +30,26 @@ class UserPage extends Component {
 
     componentDidMount() {
         this.setState({
-            // id: this.props.rowData.id,
+            //id: this.props.rowData.id,
+            //email: this.props.rowData.email,
             first_name: this.props.rowData.first_name,
             last_name: this.props.rowData.last_name,
-            // email: this.props.rowData.email,
+            affiliation: this.props.rowData.affiliation,
+
+            //profile_picture: this.props.rowData.profile_picture
+
             is_active: this.props.rowData.is_active,
             is_reviewer: this.props.rowData.is_reviewer,
             is_staff: this.props.rowData.is_staff,
-            // profile_picture: this.props.rowData.profile_picture
+
+            submissions: this.props.rowData.submissions,
+            pending_submissions: this.props.rowData.pending_submissions,
+            approved_submissions: this.props.rowData.approved_submissions,
+            points: this.props.rowData.points,
+
+            date_joined: this.props.rowData.date_joined,
+            last_login: this.props.rowData.last_login
+            //
         })
     };
 
@@ -82,7 +94,6 @@ class UserPage extends Component {
                     this.setState({
                         first_name: response.data['first_name'],
                         last_name: response.data['last_name'],
-                        is_edited: true,
                     });
                 },
                 error => {
