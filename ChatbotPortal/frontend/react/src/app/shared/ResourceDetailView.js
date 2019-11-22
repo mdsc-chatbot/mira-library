@@ -109,32 +109,40 @@ export function ResourceDetailView({ resource }) {
                       )
                     : null}
 
-                {resource.attachment ? (
-                    <Grid.Row>
-                        <Grid.Column>
-                            <Header as="h5" color="grey">
-                                <a
-                                    href={`/chatbotportal/resource/download-attachment/${resource.id}`}
-                                    // onClick={downloadAttachment}
-                                >
-                                    <Icon name="download" />
-                                    <Header.Content>Download attachment</Header.Content>
-                                </a>
-                            </Header>
-                        </Grid.Column>
-                    </Grid.Row>
-                ) : null}
-            </Grid>
+                    {resource.attachment ? (
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Header as="h5" color="grey">
+                                    <a
+                                        href={`/chatbotportal/resource/download-attachment/${resource.id}`}
+                                        // onClick={downloadAttachment}
+                                    >
+                                        <Icon name="download" />
+                                        <Header.Content id="attachment">Download attachment</Header.Content>
+                                    </a>
+                                </Header>
+                            </Grid.Column>
+                        </Grid.Row>
+                    ) : null}
+                </Grid>
 
             <Divider />
 
-            <Header as="h5" color="grey" className={styles.noMarginHeader}>
-                <Icon name="comment" />
-                <Header.Content>Comment:</Header.Content>
-            </Header>
-            <p id="comments" style={{ color: "grey" }}>
-                {resource.comments}
-            </p>
-        </Container>
+                <Header as="h5" color="grey" className={styles.noMarginHeader}>
+                    <Icon name="comment" />
+                    <Header.Content>Comment:</Header.Content>
+                </Header>
+                <p id="comments" style={{ color: "grey" }}>
+                    {resource.comments}
+                </p>
+
+                <Header as="h5" color="grey" className={styles.noMarginHeader}>
+                    <Icon name="book" />
+                    <Header.Content>Resource Summary:</Header.Content>
+                </Header>
+                <p id="website_summary_metadata" style={{ color: "grey" }}>
+                    {resource.website_summary_metadata}
+                </p>
+            </Container>
     );
 }
