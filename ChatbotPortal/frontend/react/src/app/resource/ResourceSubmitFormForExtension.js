@@ -1,17 +1,30 @@
 import React, {Component} from "react";
 import axios from "axios";
 import validator from "validator";
-import {Container, Form, Header, Input, Message, Rating} from "semantic-ui-react";
+import {
+    Container,
+    Form,
+    FormInput,
+    Header,
+    Icon,
+    Input, Label,
+    Menu,
+    MenuItem,
+    Message,
+    Rating,
+    Responsive
+} from "semantic-ui-react";
 import TagDropdown from "./TagDropdown";
 import styles from "./ResourceSubmitForm.css";
-// import {SecurityContext} from "../security/SecurityContext";
+import {MenuContext} from "../contexts/MenuContext"
+import CategoryDropdown from "./CategoryDropdown";
 
 /**
  * This component only handles resouce submission directed from the extension
  */
 export default class ResourceSubmitForm extends Component {
 
-    // static contextType = SecurityContext;
+    static contextType = MenuContext;
 
     /**
      * The constructor that initializes the state
@@ -41,6 +54,7 @@ export default class ResourceSubmitForm extends Component {
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
 
+            category: 1,
             tags: [],
             url_validated: true,
             currentTags: null,
@@ -49,12 +63,13 @@ export default class ResourceSubmitForm extends Component {
         this.baseState = this.state;
     }
 
-    // componentDidMount() {
-    //     this.context.security.id = this.props.match.params.id;
-    //     this.context.security.first_name = this.props.match.params.first_name;
-    //     this.context.security.token = this.props.match.params.token;
-    //     this.context.security.is_logged_in = true;
-    // }
+    componentDidMount() {
+        this.context.menu_visibility = false;
+        console.log(this.props.match.params.id);
+        console.log(this.props.match.params.first_name);
+        console.log(this.props.match.params.token);
+        console.log(this.props.match.params.url)
+    }
 
     /**
      * This component creates the resource from the form data
@@ -75,7 +90,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
-
+        resourceFormData.append("category", this.state.category);
         // If attachment is not null, then append it to the form data
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
@@ -109,9 +124,10 @@ export default class ResourceSubmitForm extends Component {
 
         axios
             .post("/chatbotportal/resource/", resourceFormData, {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers: {Authorization: `Bearer ${this.props.match.params.token}`}
             })
-            .then(() => {})
+            .then(() => {
+            })
             .catch(error => {
                 console.error(error);
                 this.set_submitted_state(-1, "POST FAILURE");
@@ -127,6 +143,7 @@ export default class ResourceSubmitForm extends Component {
      * @param submitted_message
      */
     set_submitted_state = (submitted_value, submitted_message) => {
+        console.log(this.state, submitted_value);
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
@@ -147,8 +164,13 @@ export default class ResourceSubmitForm extends Component {
             Authorization: `Bearer ${this.props.match.params.token}`
         };
         axios
-            .put(`/chatbotportal/authentication/${this.props.match.params.id}/update/submissions/`, {headers: options})
-            .then(() => {}, error => {console.log(error);});
+            .put(`/chatbotportal/authentication/${this.props.match.params.id}/update/submissions/`,
+                '',
+                {headers: options})
+            .then(() => {
+            }, error => {
+                console.log(error);
+            });
     };
 
     /**
@@ -200,106 +222,131 @@ export default class ResourceSubmitForm extends Component {
      */
     render() {
         return (
-            <div style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30}}>
-                <Container vertical>
-                    <Header
-                        as="h3"
-                        style={{
-                            fontSize: "2em"
-                        }}
-                        color="blue"
-                    >Resource submission
-                    </Header>
-                    <Form onSubmit={this.handleSubmit} success error>
-                        {this.state.url_validated ? (
-                            <Form.Input
-                                required
-                                name="url"
-                                onChange={this.handleChange}
-                                width={6}
-                                value={this.state.url}
-                                label="Enter URL"
-                                placeholder="https://"
-                            />) : (
-                            <Form.Input
-                                error={{
-                                    content: "Please enter a valid url",
-                                    pointing: "below"
-                                }}
-                                fluid
-                                required
-                                name="url"
-                                onChange={this.handleChange}
-                                width={6}
-                                value={this.state.url}
-                                label="Enter URL"
-                                placeholder="https://"
-                            />
-                        )}
-                        <Form.Field>
-                            <label>Resource Usefulness Rating</label>
-                            <Rating
-                                name="rating"
-                                onRate={this.handleRate}
-                                onChange={this.handleChange}
-                                value={this.state.rating}
-                                label="Rating"
-                                defaultRating={this.state.rating}
-                                maxRating={5}
-                                icon="star"
-                                size="massive"
-                            />
-                        </Form.Field>
-                        <Form.Field>
-                            <label>Tags</label>
-                            <Form.Group className={styles.dropdownPadding}>
-                                <TagDropdown
-                                    value={this.state.tags}
-                                    onChange={tags => this.setState({tags})}
-                                />
-                            </Form.Group>
-                        </Form.Field>
-                        <Form.TextArea
-                            name="comments"
-                            onChange={this.handleChange}
-                            value={this.state.comments}
-                            label="Comments"
-                            placeholder="Enter any comments (Optional)"
+            <div>
+                <Menu inverted stackable pointing secondary size="small">
+                    <MenuItem>
+                        <Header as="h2" style={{color: "#3075c9"}}>
+                            <Icon name="qq"/>
+                            Chatbot Resources
+                        </Header>
+                    </MenuItem>
+                </Menu>
+                <div style={{padding: "2%"}}>
+                    <Container vertical>
+                        <Responsive as={Header} minWidth={320}>
+                        <Header
+                            as={"h3"}
+                            color="blue"
+                            content={"Resource Submission"}
+                            size={"small"}
+                            textAlign={"center"}
                         />
-                        <Form.Field>
-                            <label>Upload an attachment</label>
-                            <Input
-                                type="file"
-                                name="attachment"
-                                value={this.state.attachmentPath}
-                                onChange={this.handleFileChange}
-                            />
-                        </Form.Field>
-                        {(() => {
-                            if (this.state.submitted === 1)
-                                return (
-                                    <Message
-                                        success
-                                        header="Submit success"
-                                        content="Congratulations! You've submitted a resource!"
+                        </Responsive>
+                        <Form size={"mini"} onSubmit={this.handleSubmit} success error>
+                            <div>
+                                {this.state.url_validated ? (
+                                    <FormInput
+                                        fluid
+                                        label="Enter URL"
+                                        name="url"
+                                        onChange={this.handleChange}
+                                        placeholder="https://"
+                                        required
+                                        value={this.state.url}
+                                    />) : (
+                                    <Form.Input
+                                        error={{
+                                            content: "Please enter a valid url",
+                                            pointing: "below"
+                                        }}
+                                        fluid
+                                        label="Enter URL"
+                                        name="url"
+                                        onChange={this.handleChange}
+                                        placeholder="https://"
+                                        required
+                                        value={this.state.url}
                                     />
-                                );
-                            else if (this.state.submitted === -1)
-                                return (
-                                    <Message
-                                        error
-                                        header="Submit failure"
-                                        content="Something went wrong! Your resource is not submitted."
+                                )}
+                                <Form.Field>
+                                    <label>Resource Usefulness Rating</label>
+                                    <Rating
+                                        defaultRating={this.state.rating}
+                                        icon="star"
+                                        label="Rating"
+                                        maxRating={5}
+                                        name="rating"
+                                        onChange={this.handleChange}
+                                        onRate={this.handleRate}
+                                        size="massive"
+                                        value={this.state.rating}
                                     />
-                                );
-                            else return <div/>;
-                        })()}
-                        <Form.Button
-                            name="submit"
-                            content="Submit"
-                            color="green"/>
-                    </Form>
-                </Container>
+                                </Form.Field>
+
+                                <Form.Field>
+                                    <label>Category</label>
+                                    <CategoryDropdown
+                                        value={this.state.category}
+                                        onChange={category => this.setState({category})}
+                                        token={this.props.match.params.token}
+                                    />
+                                </Form.Field>
+
+                                <Form.Field>
+                                    <label>Tags</label>
+                                    <Form.Group className={styles.dropdownPadding}>
+                                        <TagDropdown
+                                            value={this.state.tags}
+                                            onChange={tags => this.setState({tags})}
+                                        />
+                                    </Form.Group>
+                                </Form.Field>
+                                <Form.TextArea
+                                    label="Comments"
+                                    name="comments"
+                                    onChange={this.handleChange}
+                                    placeholder="Enter any comments (Optional)"
+                                    value={this.state.comments}
+                                />
+                                <Form.Field>
+                                    <label>Upload an attachment</label>
+                                    <Input
+                                        name="attachment"
+                                        onChange={this.handleFileChange}
+                                        type="file"
+                                        value={this.state.attachmentPath}
+                                    />
+                                </Form.Field>
+
+                                <div>
+                                    {(() => {
+                                        if (this.state.submitted === 1)
+                                            return (
+                                                <Message
+                                                    success
+                                                    header="Submit success"
+                                                    content="Congratulations! You've submitted a resource!"
+                                                />
+                                            );
+                                        else if (this.state.submitted === -1)
+                                            return (
+                                                <Message
+                                                    error
+                                                    header="Submit failure"
+                                                    content="Something went wrong! Your resource is not submitted."
+                                                />
+                                            );
+                                        else return <div/>;
+                                    })()}
+                                </div>
+                                <Form.Button
+                                    name="submit"
+                                    content="Submit"
+                                    color="green"/>
+                            </div>
+                        </Form>
+                    </Container>
+                </div>
             </div>
         );
     }

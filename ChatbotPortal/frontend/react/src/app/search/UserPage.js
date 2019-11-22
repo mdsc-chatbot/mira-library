@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import {Button, Card, Checkbox, Container, Form, Icon, Image, Label, Segment} from 'semantic-ui-react';
 import styles from "../profile/ProfilePage.css";
 
@@ -76,7 +76,7 @@ class UserPage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(`/chatbotportal/authentication/${this.props.rowData.id}/update/`, editedData, {headers: options})
+            .put(`/chatbotportal/authentication/super/${this.props.rowData.id}/update/`, editedData, {headers: options})
             .then(
                 response => {
                     this.setState({

@@ -4,7 +4,7 @@ import {AutoSizer, Column, InfiniteLoader, Table} from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import {Modal} from "semantic-ui-react";
 import UserPage from "./UserPage";
-import {SecurityContext} from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 
 
 /**
@@ -216,7 +216,7 @@ class SearchTable extends Component {
                                         // The width of the table
                                         width={width}
                                         // The height of the table
-                                        height={200}
+                                        height={650}
                                         // The height of the rows
                                         rowHeight={40}
                                         // The number of rows (real time is expensive operation)
@@ -231,28 +231,12 @@ class SearchTable extends Component {
                                             // The key name of the row object used to retrieve the value inserted in the cell
                                             dataKey='id'
                                             // The width of the column
-                                            width={width * 0.02}
-                                        />
-                                        <Column
-                                            label='Photo'
-                                            // The key name of the row object used to retrieve the value inserted in the cell
-                                            dataKey='profile_picture'
-                                            // The width of the column
-                                            width={width * 0.05}
-                                            cellRenderer={({cellData}) => (cellData ?
-                                                (<img
-                                                    src={`/static/${cellData.split('/')[cellData.split('/').length - 1]}`}
-                                                    // style='height: 100%; width: 100%; object-fit: contain'
-                                                    width={'100%'}
-                                                    height={'100%'}
-                                                    alt={'Profile Picture'}
-                                                />)
-                                                : cellData)}
+                                            width={width * 0.01}
                                         />
                                         <Column
                                             label='Email'
                                             dataKey='email'
-                                            width={width * 0.3}
+                                            width={width * 0.125}
                                         />
                                         <Column
                                             label='First Name'
@@ -265,49 +249,76 @@ class SearchTable extends Component {
                                             width={width * 0.1}
                                         />
                                         <Column
-                                            label='Joined on'
-                                            dataKey='date_joined'
-                                            width={width * 0.1}
-                                        />
-                                        <Column
-                                            label='Last Login'
-                                            dataKey='last_login'
-                                            width={width * 0.1}
-                                        />
-                                        <Column
-                                            label='Activated'
+                                            label='Activate'
                                             dataKey='is_active'
-                                            width={width * 0.05}
+                                            width={width * 0.07}
                                         />
                                         <Column
                                             label='Reviewer'
                                             dataKey='is_reviewer'
-                                            width={width * 0.05}
+                                            width={width * 0.07}
                                         />
                                         <Column
                                             label='Staff'
                                             dataKey='is_staff'
-                                            width={0}
-                                        />
-                                        <Column
-                                            label='Admin'
-                                            dataKey='is_superuser'
-                                            width={0}
-                                        />
-                                        <Column
-                                            label='Affiliation'
-                                            dataKey='affiliation'
-                                            width={width * 0.5}
+                                            width={width * 0.07}
                                         />
                                         <Column
                                             label='Submissions'
                                             dataKey='submissions'
-                                            width={0}
+                                            width={width * 0.05}
+                                        />
+                                        <Column
+                                            label='Pending'
+                                            dataKey='pending_submissions'
+                                            width={width * 0.05}
+                                        />
+                                        <Column
+                                            label='Approved'
+                                            dataKey='approved_submissions'
+                                            width={width * 0.05}
+                                        />
+                                        <Column
+                                            label='Photo'
+                                            // The key name of the row object used to retrieve the value inserted in the cell
+                                            dataKey='profile_picture'
+                                            // The width of the column
+                                            width={width * 0.0}
+                                            cellRenderer={({cellData}) => (cellData ?
+                                                (<img
+                                                    src={`/static/${cellData.split('/')[cellData.split('/').length - 1]}`}
+                                                    // style='height: 100%; width: 100%; object-fit: contain'
+                                                    width={'100%'}
+                                                    height={'100%'}
+                                                    alt={'Profile Picture'}
+                                                />)
+                                                : cellData)}
+                                        />
+                                        <Column
+                                            label='Joined on'
+                                            dataKey='date_joined'
+                                            width={width * 0.0}
+                                        />
+                                        <Column
+                                            label='Last Login'
+                                            dataKey='last_login'
+                                            width={width * 0.0}
+                                        />
+
+                                        <Column
+                                            label='Admin'
+                                            dataKey='is_superuser'
+                                            width={width * 0.0}
+                                        />
+                                        <Column
+                                            label='Affiliation'
+                                            dataKey='affiliation'
+                                            width={width * 0.0}
                                         />
                                         <Column
                                             label='Points'
                                             dataKey='points'
-                                            width={0}
+                                            width={width * 0.0}
                                         />
                                     </Table>}
                             </AutoSizer>)

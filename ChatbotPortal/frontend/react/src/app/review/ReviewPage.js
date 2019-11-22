@@ -1,6 +1,6 @@
 import React from 'react';
 import ReviewTable from './ReviewTable';
-import {SecurityContext} from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 
 export default class ResourcePage extends React.Component {
     constructor(props) {

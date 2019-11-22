@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {ResourceDetailView} from '../shared';
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 export default class ResourceDetail extends Component {
     static contextType = SecurityContext;

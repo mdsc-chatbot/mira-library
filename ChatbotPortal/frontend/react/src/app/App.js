@@ -9,7 +9,7 @@ import {ReviewPage} from "./review";
 import HeaderMenu from "./HeaderMenu";
 import LoginPage from "./authentication/LoginPage";
 import LogoutPage from "./authentication/LogoutPage";
-import {SecurityContextProvider} from "./security/SecurityContext";
+import {SecurityContextProvider} from "./contexts/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";

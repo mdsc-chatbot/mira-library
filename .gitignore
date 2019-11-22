@@ -9,13 +9,13 @@
 /ChatbotPortal/frontend/react/node_modules
 /ChatbotPortal/node_modules/
 /ChatbotPortal/frontend/react/webpack
-package-lock.json
 /ChatbotPortal/frontend/react/package-lock.json
 
 ### Backend ###
 /ChatbotPortal/db.sqlite3
 /ChatbotPortal/test_db.sqlite3
 /ChatbotPortal/media
+/ChatbotPortal/resource/migrations
 
 ### Python ###
 __pycache__/

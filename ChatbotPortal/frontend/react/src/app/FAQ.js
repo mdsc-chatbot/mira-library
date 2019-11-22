@@ -3,7 +3,7 @@ import { Container, Header, Accordion, Divider } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import styles from "./shared/Link.css";
-import { SecurityContext } from "./security/SecurityContext";
+import { SecurityContext } from "./contexts/SecurityContext";
 import TermsOfService from "./authentication/TermsOfService";
 
 export class FAQ extends Component {

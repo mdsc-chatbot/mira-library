@@ -3,7 +3,7 @@ import axios from "axios";
 import { List, Header, Segment, Button, Grid, Card, Container } from "semantic-ui-react";
 
 import ResourceListItem from "./ResourceListItem.js";
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 import ResourceStatistic from "./ResourceStatistic";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";

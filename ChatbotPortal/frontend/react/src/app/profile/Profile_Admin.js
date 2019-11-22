@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import {Button, Container, Form, Icon, Card, Image, Segment, Label, Checkbox} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 

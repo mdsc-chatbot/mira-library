@@ -28,7 +28,7 @@ class TestLogin(LiveServerTestCase):
 
     def tearDown(self):
         """
-        Closing the browser after every test function
+        Closing the browser on focus after every test function
         :return: None
         """
         self.browser.close()
