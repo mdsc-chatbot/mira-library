@@ -3,6 +3,8 @@ import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
 import {Button, Card, Container, Form, Icon, Image, Segment, Responsive,Divider, Grid} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
+import {baseRoute} from "../App";
+import {Link} from "react-router-dom";
 
 class ProfilePage extends Component {
     /**
@@ -140,7 +142,7 @@ class ProfilePage extends Component {
             );
     };
 
-/* This function handles the profile page for Tablet/Computer Version */
+    /* This function handles the profile page for Tablet/Computer Version */
     profilePageDataWeb = () => {
         return(<SecurityContext.Consumer>
             {(securityContext) => (

@@ -32,7 +32,7 @@ export default class DetailedPublicResource extends React.Component {
 
     render() {
         return (
-            <ResourceDetailView resource={this.state.resource} />
+            <ResourceResponsive resource_component={<ResourceDetailView resource={this.state.resource}/>}/>
         );
     }
 }
