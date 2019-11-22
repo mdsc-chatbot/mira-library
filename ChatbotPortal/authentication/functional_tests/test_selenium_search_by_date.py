@@ -9,7 +9,7 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 3
+WAIT_SECONDS = 5
 
 
 class TestSearchByDate(LiveServerTestCase):
@@ -76,7 +76,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -91,22 +91,12 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
-
-        # Setting up the date range
-        date_range = self.browser.find_element_by_name('datesRange')
-        self.assertIsNotNone(date_range)
-        date_range.send_keys('2019-01-01 - 2022-01-01')
 
         # Getting the value from the drop down
         date_option_dropdown = self.browser.find_element_by_name('date_option_dropdown')
@@ -124,10 +114,21 @@ class TestSearchByDate(LiveServerTestCase):
         # Selecting search by last login
         date_option_dropdown.find_elements_by_class_name('text')[2].click()  # Select 'By Last Login'
 
+        time.sleep(WAIT_SECONDS)
+
+        # Setting up the date range
+        date_range = self.browser.find_element_by_name('datesRange')
+        self.assertIsNotNone(date_range)
+        date_range.send_keys('2019-01-01 - 2022-01-01')
+
+        time.sleep(WAIT_SECONDS)
+
         # Finding the search button
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -145,7 +146,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -160,23 +161,12 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
-
-        # Setting up the date range
-        date_range = self.browser.find_element_by_name('datesRange')
-        self.assertIsNotNone(date_range)
-        date_range.click()
-        date_range.send_keys('2019-01-01 - 2022-01-01')
 
         # Getting the value from the drop down
         date_option_dropdown = self.browser.find_element_by_name('date_option_dropdown')
@@ -194,10 +184,20 @@ class TestSearchByDate(LiveServerTestCase):
         # Selecting search by creation date
         date_option_dropdown.find_elements_by_class_name('text')[3].click()  # Select 'By Creation Date'
 
+        # Setting up the date range
+        date_range = self.browser.find_element_by_name('datesRange')
+        self.assertIsNotNone(date_range)
+        date_range.click()
+        date_range.send_keys('2019-01-01 - 2022-01-01')
+
+        time.sleep(WAIT_SECONDS)
+
         # Finding the search button
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -215,7 +215,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -230,15 +230,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -262,6 +257,8 @@ class TestSearchByDate(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -279,7 +276,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -294,24 +291,12 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
-
-        # Setting up the date range
-        date_range = self.browser.find_element_by_name('datesRange')
-        self.assertIsNotNone(date_range)
-        date_range.click()
-        self.browser.find_element_by_css_selector("tr:nth-child(5) > td:nth-child(7)").click()
-        self.browser.find_element_by_css_selector("tr:nth-child(1) > td:nth-child(6) > .suicr-content-item").click()
 
         # Getting the value from the drop down
         date_option_dropdown = self.browser.find_element_by_name('date_option_dropdown')
@@ -329,10 +314,23 @@ class TestSearchByDate(LiveServerTestCase):
         # Selecting search by creation date
         date_option_dropdown.find_elements_by_class_name('text')[3].click()  # Select 'By Creation Date'
 
+        time.sleep(WAIT_SECONDS)
+
+        # Setting up the date range
+        date_range = self.browser.find_element_by_name('datesRange')
+        self.assertIsNotNone(date_range)
+        date_range.click()
+        self.browser.find_element_by_css_selector("tr:nth-child(5) > td:nth-child(7)").click()
+        self.browser.find_element_by_css_selector("tr:nth-child(1) > td:nth-child(6) > .suicr-content-item").click()
+
+        time.sleep(WAIT_SECONDS)
+
         # Finding the search button
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -350,7 +348,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -365,15 +363,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -398,6 +391,8 @@ class TestSearchByDate(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -414,7 +409,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -429,15 +424,10 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -461,6 +451,8 @@ class TestSearchByDate(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -478,7 +470,7 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
         time.sleep(WAIT_SECONDS)
-        
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
@@ -493,23 +485,12 @@ class TestSearchByDate(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Date')
-        search_accordian[1].click()
+        self.assertEqual(search_accordian[0].get_attribute('innerText'), 'Date')
+        search_accordian[0].click()
 
         time.sleep(WAIT_SECONDS)
-
-        # Setting up the date range
-        date_range = self.browser.find_element_by_name('datesRange')
-        self.assertIsNotNone(date_range)
-        date_range.click()
-        date_range.send_keys('2019-01-01 - 2022-01-01')
 
         # Getting the value from the drop down
         date_option_dropdown = self.browser.find_element_by_name('date_option_dropdown')
@@ -527,10 +508,20 @@ class TestSearchByDate(LiveServerTestCase):
         # Selecting search by creation date
         date_option_dropdown.find_elements_by_class_name('text')[1].click()  # Select 'By Creation Date'
 
+        time.sleep(WAIT_SECONDS)
+
+        # Setting up the date range
+        date_range = self.browser.find_element_by_name('datesRange')
+        self.assertIsNotNone(date_range)
+        date_range.click()
+        date_range.send_keys('2019-01-01 - 2022-01-01')
+
         # Finding the search button
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')

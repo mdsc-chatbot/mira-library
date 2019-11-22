@@ -10,7 +10,7 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 3
+WAIT_SECONDS = 5
 
 
 class TestSearchById(LiveServerTestCase):
@@ -143,15 +143,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -203,15 +198,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -227,6 +217,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -259,15 +251,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -283,6 +270,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -315,15 +304,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -335,6 +319,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -367,15 +353,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -387,6 +368,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -419,15 +402,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -443,6 +421,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -475,15 +455,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -499,6 +474,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -531,15 +508,10 @@ class TestSearchById(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
+        # Finding the id accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'Id range')
-        search_accordian[3].click()
+        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
+        search_accordian[2].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -560,6 +532,8 @@ class TestSearchById(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')

@@ -10,7 +10,7 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 3
+WAIT_SECONDS = 5
 
 
 class TestSearchBySubmission(LiveServerTestCase):
@@ -126,7 +126,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
     def test_search_by_submission_startSubmission_equal_endSubmission(self):
         """
-        Test search by Submission range where start Submission and end Submission are the same,
+        Test search by By submission where start Submission and end Submission are the same,
         The table should return users who have submitted that many number of resources.
         :return: None
         """
@@ -146,15 +146,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -178,6 +173,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -189,7 +186,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
     def test_search_by_Submission_startSubmission_greater_endSubmission(self):
         """
-        Test search by Submission range where start Submission greater than end Submission,
+        Test search by By submission where start Submission greater than end Submission,
         The table should return 0 users.
         :return: None
         """
@@ -209,15 +206,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -241,6 +233,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -252,7 +246,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
     def test_search_by_Submission_startSubmission_less_endSubmission(self):
         """
-        Test search by Submission range where start Submission less than end Submission,
+        Test search by By submission where start Submission less than end Submission,
         The table should return all the users up to the end range if such user exists.
         :return: None
         """
@@ -272,15 +266,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -304,18 +293,20 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
         # Search table should return a single user
-        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 7)
+        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
 
         time.sleep(WAIT_SECONDS)
 
     def test_search_by_Submission_startSubmission_only(self):
         """
-        Test search by Submission range where start Submission is only mentioned,
+        Test search by By submission where start Submission is only mentioned,
         The table should return 0 users.
         :return: None
         """
@@ -334,16 +325,11 @@ class TestSearchBySubmission(LiveServerTestCase):
         time.sleep(WAIT_SECONDS)
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
+        
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -363,6 +349,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -374,7 +362,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
     def test_search_by_Submission_endSubmission_only(self):
         """
-        Test search by Submission range where end Submission is only mentioned,
+        Test search by By submission where end Submission is only mentioned,
         The table should return 0 users.
         :return: None
         """
@@ -394,15 +382,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -422,6 +405,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -433,7 +418,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
     def test_search_by_Submission_startSubmission_and_endSubmission_are_zero(self):
         """
-        Test search by Submission range where start Submission and end Submission both are zero
+        Test search by By submission where start Submission and end Submission both are zero
         The table should not be empty since 0 is a valid submission.
         :return: None
         """
@@ -453,15 +438,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -485,6 +465,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -496,7 +478,7 @@ class TestSearchBySubmission(LiveServerTestCase):
 
     def test_search_by_Submission_startSubmission_and_endSubmission_are_negatives(self):
         """
-        Test search by Submission range where start Submission and end Submission both are negatives
+        Test search by By submission where start Submission and end Submission both are negatives
         The table should return 0 user since Submissions must be greater than or equal to 0.
         :return: None
         """
@@ -516,15 +498,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -548,6 +525,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_button)
         search_button.click()
 
+        time.sleep(WAIT_SECONDS)
+
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
@@ -560,7 +539,7 @@ class TestSearchBySubmission(LiveServerTestCase):
     ####################################################################################
     def test_search_by_Submission_clearing_values_will_resume_regular_search(self):
         """
-        Test search by Submission range where start Submission and end Submission are put and then cleared,
+        Test search by By submission where start Submission and end Submission are put and then cleared,
         The table should return search based on the remaining state.
         :return: None
         """
@@ -580,15 +559,10 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[4].get_attribute('innerText'), 'Submission range')
-        search_accordian[4].click()
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
 
         time.sleep(WAIT_SECONDS)
 
@@ -619,6 +593,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         search_button = self.browser.find_element_by_tag_name('Button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')

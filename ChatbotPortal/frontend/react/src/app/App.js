@@ -12,42 +12,44 @@ import LogoutPage from "./authentication/LogoutPage";
 import {SecurityContextProvider} from "./security/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
-import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import PublicResourcePage from "./public/PublicResourcePage";
 import SearchPage from "./search/SearchPage";
 import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
+import {Responsive, Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
+import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
+import styles from "./App.css";
 
 export default function App() {
-    return (
-        <div>
-            <SecurityContextProvider>
-                <HeaderMenu/>
+    const mainPage = () => {
+        return(<SecurityContextProvider>
+            <Segment inverted attached = 'top'> <HeaderMenu /></Segment>
+            <Segment attached>
                 <Switch>
                     <Route exact path={baseRoute + "/profile"}>
                         <ProfilePage/>
                     </Route>
                     <Route exact path={baseRoute + "/resource"}>
-                        <ResourcePage/>
+                        <ResourcePage />
                     </Route>
                     <Route exact path={baseRoute + "/review"}>
-                        <ReviewPage/>
+                        <ReviewPage />
                     </Route>
                     <Route exact path={baseRoute + "/login"}>
-                        <LoginPage/>
+                        <LoginPage />
                     </Route>
                     <Route exact path={baseRoute + "/logout"}>
-                        <LogoutPage/>
+                        <LogoutPage />
                     </Route>
                     <Route
                         exact path={baseRoute + "/validate/email"}
                         component={EmailValidationRequestPage}
                     />
                     <Route exact path={baseRoute + "/search"}>
-                        <SearchPage/>
+                        <SearchPage />
                     </Route>
                     <Route
                         exact
@@ -59,10 +61,12 @@ export default function App() {
                         path={baseRoute + "/review/:resourceID"}
                         component={reviewResource}
                     />
+
                     <Route
-                        exact path={baseRoute + "/resource_submit"}
-                        component={ResourceSubmitForm}
+                    exact path={baseRoute + "/resource_submit"}
+                    component={ResourceSubmitForm}
                     />
+                    
                     <Route
                         exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
                         component={ResourceSubmitFormForExtension}
@@ -74,7 +78,7 @@ export default function App() {
                         )}
                     </Route>
                     <Route exact path={baseRoute + "/faq"}>
-                        <FAQ/>
+                        <FAQ />
                     </Route>
 
                     <Route
@@ -90,13 +94,32 @@ export default function App() {
                         component={PasswordResetPage}
                     />
                     <Route>
-                        <Homepage/>
+                        <Homepage />
                     </Route>
 
                 </Switch>
-                <Footer/>
-            </SecurityContextProvider>
-        </div>
+            </Segment>
+            <div></div>
+
+            <Segment inverted><Footer /></Segment>
+        </SecurityContextProvider>);
+    };
+    return (
+
+        <Segment.Group>
+
+            <Responsive minWidth={768}>
+                <div>
+                    {mainPage()}
+                </div>
+            </Responsive>
+
+            <Responsive maxWidth={767}>
+                    {mainPage()}
+            </Responsive>
+
+        </Segment.Group>
+
     );
 }
 

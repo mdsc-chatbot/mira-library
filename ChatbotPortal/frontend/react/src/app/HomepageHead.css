@@ -2,3 +2,10 @@
     float: right;
     width: auto;
 }
+
+:global(.ui.segments).segmentWeb{
+  margin: 0;
+    border: 0 solid rgba(34, 36, 38, 0.15);
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
+
+}

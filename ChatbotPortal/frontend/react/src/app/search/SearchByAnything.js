@@ -1,5 +1,5 @@
 import React from 'react';
-import {Form} from 'semantic-ui-react'
+import {Form, FormInput} from 'semantic-ui-react'
 
 
 /**
@@ -47,14 +47,14 @@ class SearchByAnything extends React.Component {
      */
     render() {
         return (
-            <Form>
-                <Form.Input
+                <FormInput
                     fluid
                     placeholder="Search by any attribute ..."
                     name="search_string"
                     onChange={this.handle_change}
+                    size='small'
                 />
-            </Form>
+
         );
     }
 }
