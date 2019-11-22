@@ -1,5 +1,5 @@
 import React from "react";
-import {SecurityContext} from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 import {Button, Container, Form, Grid, Header, Segment} from "semantic-ui-react";
 import axios from "axios";
 import {baseRoute} from "../App";

@@ -71,20 +71,22 @@ background.receive("storage-data", function () {
             })
             .then(function (responseAsJson) {
                 // Do stuff with the JSON
-                console.log(responseAsJson.email);
+                // console.log(responseAsJson.email);
                 if (iframe) {
-                        // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
-                        iframe.style.background = "none";
-                        if (iframe.src === "about:blank") {
-                            iframe.src = `http://127.0.0.1:8000/chatbotportal/app/resource_submit/extension/${responseAsJson.id}/''/${responseAsJson.token}/${encodeURIComponent(tabArray[0].url)}`;
-                        }
+                    // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
+                    iframe.style.background = "none";
+                    if (iframe.src === "about:blank") {
+                        // iframe.onload = function() { alert('myframe is loaded'); console.log(iframe.contentDocument) };
+                        iframe.src = `http://127.0.0.1:8000/chatbotportal/app/resource_submit/extension/${responseAsJson.id}/''/${responseAsJson.token}/${encodeURIComponent(tabArray[0].url)}`;
                     }
-                chrome.cookies.get({"url": 'http://127.0.0.1', "name": 'sessionid'}, function (cookie) {
-                    console.log(cookie);
-                    window.document.cookie = cookie;
-                    console.log(window.document.cookie);
-
-                });
+                }
+                // console.log(iframe.getAttribute('innerHTML'));
+                // chrome.cookies.get({"url": 'http://127.0.0.1', "name": 'sessionid'}, function (cookie) {
+                //     console.log(cookie);
+                //     window.document.cookie = cookie;
+                //     console.log(window.document.cookie);
+                //
+                // });
             })
             .catch(function (error) {
                 console.log('Looks like there was a problem: \n', error);

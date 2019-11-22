@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import axios from "axios";
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import {Redirect} from "react-router";
 import {baseRoute} from "../App";
 import {Message} from "semantic-ui-react";
