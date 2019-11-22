@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {SecurityContext} from '../security/SecurityContext';
-import {Button, Card, Container, Form, Icon, Image, Segment, Responsive,Divider} from 'semantic-ui-react';
+import {SecurityContext} from '../contexts/SecurityContext';
+import {Button, Card, Container, Divider, Form, Icon, Image, Responsive, Segment} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
@@ -133,7 +133,7 @@ class ProfilePage extends Component {
                     this.context.security.first_name = this.state.first_name;
                     this.context.security.last_name = this.state.last_name;
                     this.context.security.profile_picture = this.state.profile_picture;
-                    console.log(this.context.security)
+                    console.log(this.context.security);
                     console.log("Saved Changes")
                 },
                 error => {
@@ -142,7 +142,7 @@ class ProfilePage extends Component {
             );
     };
 
-    /* This function handles the profile page for Tablet/Computer Version */
+/* This function handles the profile page for Tablet/Computer Version */
     profilePageDataWeb = () => {
         return(<SecurityContext.Consumer>
             {(securityContext) => (
@@ -180,20 +180,20 @@ class ProfilePage extends Component {
                                 </Card.Header>
                             </Card.Content>
                             <Card.Description>
-                                <Divider fitted />
+                                <Divider fitted/>
                                 <h3><Icon color='blue' name='mail'/>
-                                    {securityContext.security.email}</h3><Divider fitted />
+                                    {securityContext.security.email}</h3><Divider fitted/>
                                 <h3>
                                     <Icon color='blue' name='pencil alternate'/>
                                     # of Submissions = {securityContext.security.submissions}
-                                </h3><Divider fitted />
+                                </h3><Divider fitted/>
                                 <h3>
                                     <Icon color='blue' name='trophy'/>
                                     Points = {securityContext.security.points}
-                                </h3><Divider fitted />
+                                </h3><Divider fitted/>
                                 <h3>
                                     <Icon color='blue' name='certificate'/>
-                                    { securityContext.security.is_staff ? (
+                                    {securityContext.security.is_staff ? (
                                         'Staff'
                                     ) : securityContext.security.is_reviewer ? (
                                         'Reviewer'
@@ -217,11 +217,18 @@ class ProfilePage extends Component {
                                     <Button.Content hidden><Icon name='chevron right' /></Button.Content>
                                 </Button>
                             </Button.Group>
-                            <Link to={baseRoute + "/password"}>
-                                        <Button icon basic color='red' fluid size='big'>
-                                            Change Password
-                                        </Button>
-                                    </Link>
+                            <Button
+                                animated='fade'
+                                icon
+                                basic
+                                color='red'
+                                fluid
+                                size='big'
+                                onClick={this.deleteFunction}
+                            >
+                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
+                                <Button.Content hidden>Send Request To Admin</Button.Content>
+                            </Button>
                         </Card>
                         : null}
                 </Form>
@@ -231,7 +238,7 @@ class ProfilePage extends Component {
 
     /* This function handles the profile page for Mobile Version */
     profilePageDataMobile = () => {
-        return(
+        return (
             <Container className={styles.segmentWeb}>
                 <SecurityContext.Consumer>
                     {(securityContext) => (
@@ -239,14 +246,18 @@ class ProfilePage extends Component {
                             {securityContext.security.is_logged_in ?
                                 <Card fluid centered onSubmit={this.props.handle_edit}>
                                     {this.state.profile_picture ? (
-                                        <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} centered size='medium'/>
+                                        <Image
+                                            src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
+                                            centered size='medium'/>
                                     ) : null}
-                                    <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                                    <Form.Input className={styles.imageMobile} type='file'
+                                                accept="image/png, image/jpeg" id='profile_picture'
+                                                name='profile_picture' onChange={this.handleImageChange}/>
                                     <Card.Content className={styles.nameMobile}>
                                         <Card.Header>
                                             <Form.Input
                                                 fluid
-                                                size = "tiny"
+                                                size="tiny"
                                                 label='First name'
                                                 name='first_name'
                                                 onChange={this.handle_change}
@@ -263,19 +274,19 @@ class ProfilePage extends Component {
                                         </Card.Header>
                                     </Card.Content>
                                     <Card.Description>
-                                        <Divider fitted />
+                                        <Divider fitted/>
                                         <h4><Icon color='blue' name='mail'/>
-                                            {securityContext.security.email}</h4><Divider fitted /><h4>
+                                            {securityContext.security.email}</h4><Divider fitted/><h4>
                                         <Icon color='blue' name='pencil alternate'/>
                                         # of Submissions = {securityContext.security.submissions}
-                                    </h4><Divider fitted />
+                                    </h4><Divider fitted/>
                                         <h4>
                                             <Icon color='blue' name='trophy'/>
                                             Points = {securityContext.security.points}
-                                        </h4><Divider fitted />
+                                        </h4><Divider fitted/>
                                         <h4>
                                             <Icon color='blue' name='certificate'/>
-                                            { securityContext.security.is_staff ? (
+                                            {securityContext.security.is_staff ? (
                                                 'Staff'
                                             ) : securityContext.security.is_reviewer ? (
                                                 'Reviewer'
@@ -288,14 +299,14 @@ class ProfilePage extends Component {
                                             <Button.Content visible>
                                                 Cancel Changes
                                             </Button.Content>
-                                            <Button.Content hidden><Icon name='cancel' /></Button.Content>
+                                            <Button.Content hidden><Icon name='cancel'/></Button.Content>
                                         </Button>
-                                        <Button.Or />
+                                        <Button.Or/>
                                         <Button animated='fade' positive onClick={this.saveFunction}>
                                             <Button.Content visible>
                                                 Save Changes
                                             </Button.Content>
-                                            <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                            <Button.Content hidden><Icon name='chevron right'/></Button.Content>
                                         </Button>
                                     </Button.Group>
                                     <Link to={baseRoute + "/password"}>
@@ -330,7 +341,11 @@ class ProfilePage extends Component {
                 </Responsive>
 
             </Segment.Group>
+
+
         );
+
+
     };
 
     /**

@@ -4,7 +4,7 @@ import {AutoSizer, Column, InfiniteLoader, Table} from 'react-virtualized';
 import 'react-virtualized/styles.css';
 import {Modal} from "semantic-ui-react";
 import UserPage from "./UserPage";
-import {SecurityContext} from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 
 
 /**

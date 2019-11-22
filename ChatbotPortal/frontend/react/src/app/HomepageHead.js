@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import {Container, Header, Button, Segment, Grid, Responsive, Divider,Icon} from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
-import { SecurityContext } from "./security/SecurityContext";
+import { SecurityContext } from "./contexts/SecurityContext";
 import styles from './HomepageHead.css'
 
 

@@ -1,6 +1,9 @@
 import React from 'react';
 import {DatesRangeInput} from 'semantic-ui-calendar-react';
 import {Container, Dropdown, Form} from 'semantic-ui-react'
+// import { DateRangePicker, SingleDatePicker, DayPickerRangeController } from 'react-dates';
+// import 'react-dates/initialize'; // necessary for latest version
+// import 'react-dates/lib/css/_datepicker.css';
 
 const dateOption = [
     {key: 'unselected', value: "''", text: 'Unselected'},
@@ -25,7 +28,12 @@ class SearchByDateRange extends React.Component {
          * @type {{datesRange: string, value: string}}
          */
         this.state = {
-            datesRange: ''
+            datesRange: '',
+
+            startDate: '',
+            endDate: '',
+            focusedInput: null
+
         };
     }
 
@@ -77,7 +85,7 @@ class SearchByDateRange extends React.Component {
                 <Container content="Date range"/>
                 <DatesRangeInput
                     closeOnMouseLeave
-                    popupPosition="bottom left"
+                    popupPosition="bottom right"
                     name="datesRange"
                     placeholder="From - To"
                     value={this.state.datesRange}
@@ -86,6 +94,16 @@ class SearchByDateRange extends React.Component {
                     dateFormat={"YYYY-MM-DD"}
                     pickerWidth={"50px"}
                 />
+
+                {/*<DateRangePicker*/}
+                {/*  startDate={this.state.startDate} // momentPropTypes.momentObj or null,*/}
+                {/*  startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,*/}
+                {/*  endDate={this.state.endDate} // momentPropTypes.momentObj or null,*/}
+                {/*  endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,*/}
+                {/*  onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })} // PropTypes.func.isRequired,*/}
+                {/*  focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,*/}
+                {/*  onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,*/}
+                {/*/>*/}
             </Form>
         );
     }

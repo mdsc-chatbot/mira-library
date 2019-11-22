@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
 import axios from "axios";
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 /**
  * This class sends the password change request to a respective email
