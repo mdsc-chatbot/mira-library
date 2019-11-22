@@ -187,7 +187,6 @@ class SearchTable extends Component {
     render() {
         return (
             <div className="container">
-                <h1>Users</h1>
                 <InfiniteLoader
                     // This function gets the row index and must say if the row data are already loaded or not
                     isRowLoaded={this.isRowLoaded}
