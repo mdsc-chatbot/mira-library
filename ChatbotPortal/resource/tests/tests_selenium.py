@@ -158,7 +158,7 @@ class TestResourceSubmission(LiveServerTestCase):
 
         self.driver.find_element(By.NAME, "submit_a_resource").click()
         self.driver.find_element(By.NAME, "url").send_keys(url)
-        self.driver.find_element(By.NAME, "comments").send_keys(comments)
+        #self.driver.find_element(By.NAME, "comments").send_keys(comments)
 
         # Category xpath
         if category == "PDF":
