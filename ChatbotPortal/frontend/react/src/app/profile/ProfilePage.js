@@ -180,7 +180,7 @@ class ProfilePage extends Component {
                                 </Card.Header>
                             </Card.Content>
                             <Card.Description>
-                                <Divider fitted/>
+                                <Divider fitted />
                                 <h3><Icon color='blue' name='mail'/>
                                     {securityContext.security.email}</h3><Divider fitted />
                                 <h3>
@@ -202,26 +202,19 @@ class ProfilePage extends Component {
                                 </h3><Divider fitted/>
                             </Card.Description>
 
-                            <Button.Group fluid widths={2} size='big'>
-                                <Button animated='fade' negative onClick={this.cancelFunction}>
-                                    <Button.Content visible>
-                                        Cancel Changes
-                                    </Button.Content>
-                                    <Button.Content hidden><Icon name='cancel' /></Button.Content>
-                                </Button>
-                                <Button.Or />
-                                <Button animated='fade' positive onClick={this.saveFunction}>
-                                    <Button.Content visible>
-                                        Save Changes
-                                    </Button.Content>
-                                    <Button.Content hidden><Icon name='chevron right' /></Button.Content>
-                                </Button>
-                            </Button.Group>
+
+                            <Button fluid size='big' animated='fade' positive onClick={this.saveFunction}>
+                                <Button.Content visible>
+                                    Save Changes
+                                </Button.Content>
+                                <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                            </Button>
+
                             <Link to={baseRoute + "/password"}>
-                                        <Button icon basic color='red' fluid size='big'>
-                                            Change Password
-                                        </Button>
-                                    </Link>
+                                <Button color='blue' fluid size='big'>
+                                    Change Password
+                                </Button>
+                            </Link>
                         </Card>
                         : null}
                 </Form>
@@ -232,25 +225,20 @@ class ProfilePage extends Component {
     /* This function handles the profile page for Mobile Version */
     profilePageDataMobile = () => {
         return(
-            <Container className={styles.segmentWeb}>
                 <SecurityContext.Consumer>
                     {(securityContext) => (
                         <Form className={styles.centeredFormMobile} onSubmit={e => this.handle_edit(e, this.state)}>
                             {securityContext.security.is_logged_in ?
                                 <Card fluid centered onSubmit={this.props.handle_edit}>
                                     {this.state.profile_picture ? (
-                                        <Image
-                                            src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
-                                            centered size='medium'/>
+                                        <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} centered size='small'/>
                                     ) : null}
-                                    <Form.Input className={styles.imageMobile} type='file'
-                                                accept="image/png, image/jpeg" id='profile_picture'
-                                                name='profile_picture' onChange={this.handleImageChange}/>
+                                    <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
                                     <Card.Content className={styles.nameMobile}>
                                         <Card.Header>
                                             <Form.Input
                                                 fluid
-                                                size="tiny"
+                                                size = "tiny"
                                                 label='First name'
                                                 name='first_name'
                                                 onChange={this.handle_change}
@@ -267,19 +255,19 @@ class ProfilePage extends Component {
                                         </Card.Header>
                                     </Card.Content>
                                     <Card.Description>
-                                        <Divider fitted/>
+                                        <Divider fitted />
                                         <h4><Icon color='blue' name='mail'/>
-                                            {securityContext.security.email}</h4><Divider fitted/><h4>
+                                            {securityContext.security.email}</h4><Divider fitted /><h4>
                                         <Icon color='blue' name='pencil alternate'/>
                                         # of Submissions = {securityContext.security.submissions}
-                                    </h4><Divider fitted/>
+                                    </h4><Divider fitted />
                                         <h4>
                                             <Icon color='blue' name='trophy'/>
                                             Points = {securityContext.security.points}
-                                        </h4><Divider fitted/>
+                                        </h4><Divider fitted />
                                         <h4>
                                             <Icon color='blue' name='certificate'/>
-                                            {securityContext.security.is_staff ? (
+                                            { securityContext.security.is_staff ? (
                                                 'Staff'
                                             ) : securityContext.security.is_reviewer ? (
                                                 'Reviewer'
@@ -287,23 +275,16 @@ class ProfilePage extends Component {
                                             }
                                         </h4><Divider fitted/>
                                     </Card.Description>
-                                    <Button.Group fluid widths={2} size='small'>
-                                        <Button animated='fade' negative onClick={this.cancelFunction}>
-                                            <Button.Content visible>
-                                                Cancel Changes
-                                            </Button.Content>
-                                            <Button.Content hidden><Icon name='cancel'/></Button.Content>
-                                        </Button>
-                                        <Button.Or/>
-                                        <Button animated='fade' positive onClick={this.saveFunction}>
-                                            <Button.Content visible>
-                                                Save Changes
-                                            </Button.Content>
-                                            <Button.Content hidden><Icon name='chevron right'/></Button.Content>
-                                        </Button>
-                                    </Button.Group>
+
+                                    <Button fluid size='medium' animated='fade' positive onClick={this.saveFunction}>
+                                        <Button.Content visible>
+                                            Save Changes
+                                        </Button.Content>
+                                        <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                    </Button>
+
                                     <Link to={baseRoute + "/password"}>
-                                        <Button icon basic color='red' fluid size='small'>
+                                        <Button     color='blue' fluid size='medium'>
                                             Change Password
                                         </Button>
                                     </Link>
@@ -312,28 +293,6 @@ class ProfilePage extends Component {
                         </Form>
                     )}
                 </SecurityContext.Consumer>
-
-            </Container>
-
-        );
-    };
-
-    /* This function handles the responsiveness for which version to render*/
-    profilePage = () => {
-
-        return (
-
-            <Segment.Group className={styles.segmentWeb}>
-
-                <Responsive minWidth={768}>
-                    {this.profilePageDataWeb()}
-                </Responsive>
-
-                <Responsive maxWidth={767}>
-                    {this.profilePageDataMobile()}
-                </Responsive>
-
-            </Segment.Group>
         );
     };
 
@@ -346,13 +305,13 @@ class ProfilePage extends Component {
             <React.Fragment>
                 <Segment.Group className={styles.segmentWeb}>
                     <Responsive maxWidth={767}>
-                        {this.profilePage()}
+                        {this.profilePageDataMobile()}
                     </Responsive>
 
                     <Responsive minWidth={768}>
                         <React.Fragment>
                             <Container>
-                                {this.profilePage()}
+                                {this.profilePageDataWeb()}
                             </Container>
                         </React.Fragment>
                     </Responsive>
