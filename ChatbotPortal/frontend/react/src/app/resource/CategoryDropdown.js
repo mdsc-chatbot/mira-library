@@ -11,6 +11,7 @@ export default class CategoryDropdown extends React.Component {
     static propTypes = {
         value : PropTypes.string,
         onChange : PropTypes.func.isRequired,
+        token : PropTypes.string,
     };
 
     constructor(props) {
@@ -25,7 +26,7 @@ export default class CategoryDropdown extends React.Component {
         // Fetch options for dropdown
         axios
             .get("/chatbotportal/resource/fetch-categories", {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers: { Authorization: `Bearer ${this.context.security.token ? this.context.security.token: this.props.token}` }
             })
             .then(response => {
                 this.setState({
