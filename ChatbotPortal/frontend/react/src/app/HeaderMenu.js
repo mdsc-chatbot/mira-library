@@ -173,7 +173,7 @@ export class HeaderMenu extends Component {
                                     /></Dropdown.Item>
                                 )}
 
-                                {this.context.security.is_logged_in && (
+                                {this.context.security.is_logged_in && this.context.security.is_reviewer && (
                                     <Dropdown.Item><Menu.Item
                                         name="My reviews"
                                         as={Link}
