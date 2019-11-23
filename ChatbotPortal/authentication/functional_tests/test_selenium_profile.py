@@ -68,11 +68,7 @@ class TestProfile(LiveServerTestCase):
         self.driver.find_element(By.LINK_TEXT, "Logout").click()
         self.login()
         self.get_profile(kwargs)
-
-        if "option" == "save":
-            self.compare_profile(kwargs)
-        if "option" == "cancel":
-            self.compare_profile(kwargs)
+        self.compare_profile(kwargs)
         
     def login(self):
         self.driver.find_element(By.LINK_TEXT, "Login").click()
@@ -91,10 +87,15 @@ class TestProfile(LiveServerTestCase):
             By.NAME, "last_name").clear()
         self.driver.find_element(
             By.NAME, "last_name").send_keys(kwargs["input_last_name"])
-        self.driver.find_element(
-            By.NAME, kwargs["option"]).click()
-        alert = self.driver.switch_to.alert
-        alert.accept()
+        if kwargs["option"] == "save":
+            self.driver.find_element(
+                By.NAME, kwargs["option"]).click()
+            alert = self.driver.switch_to.alert
+            alert.accept()
+        else:
+            # since cancel button will be remove, canceling changes will just be switching to another page
+            self.driver.find_element(By.LINK_TEXT, "Public Resources").click() 
+        
 
     def get_profile(self, kwargs):
         self.driver.find_element(By.LINK_TEXT, "My Profile").click()
@@ -102,7 +103,6 @@ class TestProfile(LiveServerTestCase):
             By.NAME, "first_name").get_attribute("value")
         kwargs["test_last_name"] = self.driver.find_element(
             By.NAME, "last_name").get_attribute("value")
-        time.sleep(2)
         
     def compare_profile(self, kwargs):
         assert kwargs["expected_first_name"] == kwargs["test_first_name"]
