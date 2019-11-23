@@ -6,7 +6,7 @@ import React from "react";
  * @type {React.Context<{menu_visibility: boolean}>}
  */
 export const MenuContext = React.createContext({
-    menu_visibility: true,
+    menu_visibility: true
 });
 
 export class MenuContextProvider extends React.Component {

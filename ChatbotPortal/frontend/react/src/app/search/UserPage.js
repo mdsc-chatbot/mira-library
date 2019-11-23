@@ -29,10 +29,8 @@ class UserPage extends Component {
          */
         super(props);
         this.state = {
-            id: '',
             first_name: '',
             last_name: '',
-            email: '',
             is_active: '',
             is_reviewer: '',
             is_staff: '',
@@ -179,7 +177,7 @@ class UserPage extends Component {
      */
     render() {
         return (
-            <React.Fragment>
+                        <React.Fragment>
                 <Responsive as={Container} minWidth={320} onUpdate={this.set_mobile_format}>
                     <Container>
                         <Form className={styles.centeredForm}>

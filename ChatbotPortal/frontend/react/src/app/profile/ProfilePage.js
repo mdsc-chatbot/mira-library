@@ -133,7 +133,7 @@ class ProfilePage extends Component {
                     this.context.security.first_name = this.state.first_name;
                     this.context.security.last_name = this.state.last_name;
                     this.context.security.profile_picture = this.state.profile_picture;
-                    console.log(this.context.security);
+                    console.log(this.context.security)
                     console.log("Saved Changes")
                 },
                 error => {
@@ -142,7 +142,7 @@ class ProfilePage extends Component {
             );
     };
 
-/* This function handles the profile page for Tablet/Computer Version */
+    /* This function handles the profile page for Tablet/Computer Version */
     profilePageDataWeb = () => {
         return(<SecurityContext.Consumer>
             {(securityContext) => (
@@ -182,18 +182,18 @@ class ProfilePage extends Component {
                             <Card.Description>
                                 <Divider fitted/>
                                 <h3><Icon color='blue' name='mail'/>
-                                    {securityContext.security.email}</h3><Divider fitted/>
+                                    {securityContext.security.email}</h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='pencil alternate'/>
                                     # of Submissions = {securityContext.security.submissions}
-                                </h3><Divider fitted/>
+                                </h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='trophy'/>
                                     Points = {securityContext.security.points}
-                                </h3><Divider fitted/>
+                                </h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='certificate'/>
-                                    {securityContext.security.is_staff ? (
+                                    { securityContext.security.is_staff ? (
                                         'Staff'
                                     ) : securityContext.security.is_reviewer ? (
                                         'Reviewer'
@@ -217,18 +217,11 @@ class ProfilePage extends Component {
                                     <Button.Content hidden><Icon name='chevron right' /></Button.Content>
                                 </Button>
                             </Button.Group>
-                            <Button
-                                animated='fade'
-                                icon
-                                basic
-                                color='red'
-                                fluid
-                                size='big'
-                                onClick={this.deleteFunction}
-                            >
-                                <Button.Content visible><Icon name='delete' />Delete Profile?</Button.Content>
-                                <Button.Content hidden>Send Request To Admin</Button.Content>
-                            </Button>
+                            <Link to={baseRoute + "/password"}>
+                                        <Button icon basic color='red' fluid size='big'>
+                                            Change Password
+                                        </Button>
+                                    </Link>
                         </Card>
                         : null}
                 </Form>
@@ -238,7 +231,7 @@ class ProfilePage extends Component {
 
     /* This function handles the profile page for Mobile Version */
     profilePageDataMobile = () => {
-        return (
+        return(
             <Container className={styles.segmentWeb}>
                 <SecurityContext.Consumer>
                     {(securityContext) => (
@@ -341,11 +334,7 @@ class ProfilePage extends Component {
                 </Responsive>
 
             </Segment.Group>
-
-
         );
-
-
     };
 
     /**
