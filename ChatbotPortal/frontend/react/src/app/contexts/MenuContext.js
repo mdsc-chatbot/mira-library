@@ -6,7 +6,7 @@ import React from "react";
  * @type {React.Context<{menu_visibility: boolean}>}
  */
 export const MenuContext = React.createContext({
-    menu_visibility: true
+    menu_visibility: true,
 });
 
 export class MenuContextProvider extends React.Component {
@@ -24,13 +24,20 @@ export class MenuContextProvider extends React.Component {
         }
     }
 
+    set_menu_visibility = (menu_visibility) => {
+        this.setState({menu_visibility})
+    };
+
     /**
      * Rendering the Menu context provider to the rest of the app
      * @returns {*}
      */
     render() {
         return (
-            <MenuContext.Provider value={{menu_visibility: this.state.menu_visibility}}>
+            <MenuContext.Provider value={{
+                menu_visibility: this.state.menu_visibility,
+                set_menu_visibility : this.set_menu_visibility
+            }}>
                 {this.props.children}
             </MenuContext.Provider>
         )
