@@ -64,7 +64,8 @@ export default class ResourceSubmitForm extends Component {
     }
 
     componentDidMount() {
-        this.context.menu_visibility = false;
+        // this.context.menu_visibility = false;
+        this.context.set_menu_visibility(false);
         console.log(this.props.match.params.id);
         console.log(this.props.match.params.first_name);
         console.log(this.props.match.params.token);
