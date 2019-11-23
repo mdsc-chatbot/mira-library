@@ -203,14 +203,14 @@ class ProfilePage extends Component {
                             </Card.Description>
 
                             <Button.Group fluid widths={2} size='big'>
-                                <Button animated='fade' negative onClick={this.cancelFunction}>
+                                <Button name="cancel" animated='fade' negative onClick={this.cancelFunction}>
                                     <Button.Content visible>
                                         Cancel Changes
                                     </Button.Content>
                                     <Button.Content hidden><Icon name='cancel' /></Button.Content>
                                 </Button>
                                 <Button.Or />
-                                <Button animated='fade' positive onClick={this.saveFunction}>
+                                <Button name="save" animated='fade' positive onClick={this.saveFunction}>
                                     <Button.Content visible>
                                         Save Changes
                                     </Button.Content>
