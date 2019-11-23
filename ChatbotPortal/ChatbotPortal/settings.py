@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'authentication',
     'frontend',
-    'user_profile',
     'resource',
     'review',
 ]
