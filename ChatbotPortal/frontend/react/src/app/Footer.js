@@ -5,7 +5,6 @@ import styles from "./profile/ProfilePage.css";
 export class Footer extends Component {
     render() {
         return (
-            //<div>
                 <Grid container className={styles.segmentWeb} stackable verticalAlign='middle'>
                     <Grid.Row>
                         <Grid.Column>About</Grid.Column>
@@ -17,7 +16,6 @@ export class Footer extends Component {
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
-           // </div>
         );
     }
 }

@@ -104,26 +104,15 @@ export default function App() {
                     </Segment>
                 </MenuContextProvider>
 
-            <div></div>
+            <div/>
 
             <Segment inverted><Footer /></Segment>
         </SecurityContextProvider>);
     };
     return (
-
-        <Segment.Group>
-
-            <Responsive minWidth={768}>
-                <div>
-                    {mainPage()}
-                </div>
-            </Responsive>
-
-            <Responsive maxWidth={767}>
-                    {mainPage()}
-            </Responsive>
-
-        </Segment.Group>
+        <React.Fragment>
+            {mainPage()}
+        </React.Fragment>
 
     );
 }
