@@ -55,6 +55,23 @@ export default class ResourceList extends Component {
         }
     }
 
+    resourcePage = () => {
+        return(
+            <Container style={{ paddingBottom: 50 }} textAlign="center" vertical>
+                <ResourceStatistic resources={this.state.resources} />
+                <Link to={baseRoute + "/resource_submit"}>
+                    <Button name="submit_a_resource" color = 'green' size="medium">
+                        Submit a resource
+                    </Button>
+
+                    <Button name="how_resource" color='blue' size="medium">
+                        How to submit a resource?
+                    </Button>
+            </Link>
+            </Container>
+        );
+    };
+
     render() {
         // Map resources to ResourceListItem Component
         const resources = this.state.resources.map(resource => (
@@ -65,16 +82,7 @@ export default class ResourceList extends Component {
         const resource_list = () => {
             return (
                 <div>
-                    <Container style={{ paddingBottom: 50 }} textAlign="center" vertical>
-                        <ResourceStatistic resources={this.state.resources} />
-
-                        <Link to={baseRoute + "/resource_submit"}>
-                            <Button name="submit_a_resource" positive size="big">
-                                Submit a resource
-                            </Button>
-                        </Link>
-                    </Container>
-
+                    {this.resourcePage()}
                     <Card.Group itemsPerRow={3} vertical stackable>
                         {resources}
                     </Card.Group>
