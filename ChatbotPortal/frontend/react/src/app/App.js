@@ -26,99 +26,85 @@ import styles from "./App.css";
 export default function App() {
     const mainPage = () => {
         return(<SecurityContextProvider>
-            <Segment inverted attached = 'top'> <HeaderMenu /></Segment>
-            <Segment attached>
-                <Switch>
-                    <Route exact path={baseRoute + "/profile"}>
-                        <ProfilePage/>
-                    </Route>
-                    <Route exact path={baseRoute + "/resource"}>
-                        <ResourcePage />
-                    </Route>
-                    <Route exact path={baseRoute + "/review"}>
-                        <ReviewPage />
-                    </Route>
-                    <Route exact path={baseRoute + "/login"}>
-                        <LoginPage />
-                    </Route>
-                    <Route exact path={baseRoute + "/logout"}>
-                        <LogoutPage />
-                    </Route>
-                    <Route
-                        exact path={baseRoute + "/validate/email"}
-                        component={EmailValidationRequestPage}
-                    />
-                    <Route exact path={baseRoute + "/search"}>
-                        <SearchPage />
-                    </Route>
-                    <Route
-                        exact
-                        path={baseRoute + "/resource/:resourceID"}
-                        component={ResourceDetail}
-                    />
-                    <Route
-                        exact
-                        path={baseRoute + "/review/:resourceID"}
-                        component={reviewResource}
-                    />
+            <HeaderMenu />
+            <Switch>
+                <Route exact path={baseRoute + "/profile"}>
+                    <ProfilePage/>
+                </Route>
+                <Route exact path={baseRoute + "/resource"}>
+                    <ResourcePage />
+                </Route>
+                <Route exact path={baseRoute + "/review"}>
+                    <ReviewPage />
+                </Route>
+                <Route exact path={baseRoute + "/login"}>
+                    <LoginPage />
+                </Route>
+                <Route exact path={baseRoute + "/logout"}>
+                    <LogoutPage />
+                </Route>
+                <Route
+                    exact path={baseRoute + "/validate/email"}
+                    component={EmailValidationRequestPage}
+                />
+                <Route exact path={baseRoute + "/search"}>
+                    <SearchPage />
+                </Route>
+                <Route
+                    exact
+                    path={baseRoute + "/resource/:resourceID"}
+                    component={ResourceDetail}
+                />
+                <Route
+                    exact
+                    path={baseRoute + "/review/:resourceID"}
+                    component={reviewResource}
+                />
 
-                    <Route
+                <Route
                     exact path={baseRoute + "/resource_submit"}
                     component={ResourceSubmitForm}
-                    />
-                    
-                    <Route
-                        exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
-                        component={ResourceSubmitFormForExtension}
-                    />
+                />
 
-                    <Route exact path={baseRoute + "/public_resource*"}>
-                        {({match}) => (
-                            <PublicResourcePage match={match}/>
-                        )}
-                    </Route>
-                    <Route exact path={baseRoute + "/faq"}>
-                        <FAQ />
-                    </Route>
+                <Route
+                    exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
+                    component={ResourceSubmitFormForExtension}
+                />
 
-                    <Route
-                        exact path={baseRoute + "/password"}
-                        component={PasswordChangeForm}
-                    />
-                    <Route
-                        exact path={baseRoute + "/password/reset"}
-                        component={PasswordResetRequestPage}
-                    />
-                    <Route
-                        exact path={baseRoute + "/password/reset/:uid/:token"}
-                        component={PasswordResetPage}
-                    />
-                    <Route>
-                        <Homepage />
-                    </Route>
+                <Route exact path={baseRoute + "/public_resource*"}>
+                    {({match}) => (
+                        <PublicResourcePage match={match}/>
+                    )}
+                </Route>
+                <Route exact path={baseRoute + "/faq"}>
+                    <FAQ />
+                </Route>
 
-                </Switch>
-            </Segment>
-            <div></div>
+                <Route
+                    exact path={baseRoute + "/password"}
+                    component={PasswordChangeForm}
+                />
+                <Route
+                    exact path={baseRoute + "/password/reset"}
+                    component={PasswordResetRequestPage}
+                />
+                <Route
+                    exact path={baseRoute + "/password/reset/:uid/:token"}
+                    component={PasswordResetPage}
+                />
+                <Route>
+                    <Homepage />
+                </Route>
+
+            </Switch>
 
             <Segment inverted><Footer /></Segment>
         </SecurityContextProvider>);
     };
     return (
-
-        <Segment.Group>
-
-            <Responsive minWidth={768}>
-                <div>
-                    {mainPage()}
-                </div>
-            </Responsive>
-
-            <Responsive maxWidth={767}>
-                    {mainPage()}
-            </Responsive>
-
-        </Segment.Group>
+        <React.Fragment>
+            {mainPage()}
+        </React.Fragment>
 
     );
 }

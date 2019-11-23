@@ -202,26 +202,19 @@ class ProfilePage extends Component {
                                 </h3><Divider fitted/>
                             </Card.Description>
 
-                            <Button.Group fluid widths={2} size='big'>
-                                <Button animated='fade' negative onClick={this.cancelFunction}>
-                                    <Button.Content visible>
-                                        Cancel Changes
-                                    </Button.Content>
-                                    <Button.Content hidden><Icon name='cancel' /></Button.Content>
-                                </Button>
-                                <Button.Or />
-                                <Button animated='fade' positive onClick={this.saveFunction}>
-                                    <Button.Content visible>
-                                        Save Changes
-                                    </Button.Content>
-                                    <Button.Content hidden><Icon name='chevron right' /></Button.Content>
-                                </Button>
-                            </Button.Group>
+
+                            <Button fluid size='big' animated='fade' positive onClick={this.saveFunction}>
+                                <Button.Content visible>
+                                    Save Changes
+                                </Button.Content>
+                                <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                            </Button>
+
                             <Link to={baseRoute + "/password"}>
-                                        <Button icon basic color='blue' fluid size='big'>
-                                            Change Password
-                                        </Button>
-                                    </Link>
+                                <Button color='blue' fluid size='big'>
+                                    Change Password
+                                </Button>
+                            </Link>
                         </Card>
                         : null}
                 </Form>
@@ -232,7 +225,6 @@ class ProfilePage extends Component {
     /* This function handles the profile page for Mobile Version */
     profilePageDataMobile = () => {
         return(
-            <Container className={styles.segmentWeb}>
                 <SecurityContext.Consumer>
                     {(securityContext) => (
                         <Form className={styles.centeredFormMobile} onSubmit={e => this.handle_edit(e, this.state)}>
@@ -283,23 +275,16 @@ class ProfilePage extends Component {
                                             }
                                         </h4><Divider fitted/>
                                     </Card.Description>
-                                    <Button.Group fluid widths={2} size='small'>
-                                        <Button animated='fade' negative onClick={this.cancelFunction}>
-                                            <Button.Content visible>
-                                                Cancel Changes
-                                            </Button.Content>
-                                            <Button.Content hidden><Icon name='cancel' /></Button.Content>
-                                        </Button>
-                                        <Button.Or />
-                                        <Button animated='fade' positive onClick={this.saveFunction}>
-                                            <Button.Content visible>
-                                                Save Changes
-                                            </Button.Content>
-                                            <Button.Content hidden><Icon name='chevron right' /></Button.Content>
-                                        </Button>
-                                    </Button.Group>
+
+                                    <Button fluid size='medium' animated='fade' positive onClick={this.saveFunction}>
+                                        <Button.Content visible>
+                                            Save Changes
+                                        </Button.Content>
+                                        <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                    </Button>
+
                                     <Link to={baseRoute + "/password"}>
-                                        <Button icon basic color='red' fluid size='small'>
+                                        <Button     color='blue' fluid size='medium'>
                                             Change Password
                                         </Button>
                                     </Link>
@@ -308,33 +293,7 @@ class ProfilePage extends Component {
                         </Form>
                     )}
                 </SecurityContext.Consumer>
-
-            </Container>
-
         );
-    };
-
-    /* This function handles the responsiveness for which version to render*/
-    profilePage = () => {
-
-        return (
-
-            <Segment.Group className={styles.segmentWeb}>
-
-                <Responsive minWidth={768}>
-                    {this.profilePageDataWeb()}
-                </Responsive>
-
-                <Responsive maxWidth={767}>
-                    {this.profilePageDataMobile()}
-                </Responsive>
-
-            </Segment.Group>
-
-
-        );
-
-
     };
 
     /**
@@ -346,13 +305,13 @@ class ProfilePage extends Component {
             <React.Fragment>
                 <Segment.Group className={styles.segmentWeb}>
                     <Responsive maxWidth={767}>
-                        {this.profilePage()}
+                        {this.profilePageDataMobile()}
                     </Responsive>
 
                     <Responsive minWidth={768}>
                         <React.Fragment>
                             <Container>
-                                {this.profilePage()}
+                                {this.profilePageDataWeb()}
                             </Container>
                         </React.Fragment>
                     </Responsive>
