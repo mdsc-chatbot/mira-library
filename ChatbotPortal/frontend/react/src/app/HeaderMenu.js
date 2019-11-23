@@ -74,7 +74,7 @@ export class HeaderMenu extends Component {
                         />
                     )}
 
-                    {this.context.security.is_logged_in && (
+                    {this.context.security.is_logged_in && this.context.security.is_reviewer && (
                         <Menu.Item
                             name="My reviews"
                             as={Link}
@@ -238,8 +238,6 @@ export class HeaderMenu extends Component {
             <MenuContext.Consumer>
                 {(MenuContext) => (
                     <React.Fragment>
-                        {console.log("MENUUUUU")}
-                        {console.log(MenuContext.menu_visibility)}
                         {MenuContext.menu_visibility ?
                             <Segment.Group className={styles.segmentWeb}>
 
