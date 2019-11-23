@@ -274,7 +274,7 @@ class ProfilePage extends Component {
                                     <h4><Icon color='blue' name='mail'/>
                                         {securityContext.security.email}</h4><Divider fitted /><h4>
                                     <Icon color='blue' name='pencil alternate'/>
-                                    # of Submissions = {securityContext.security.submissions}
+                                    # of Submissions = <p id="profile_num_submissions">{securityContext.security.submissions}</p>
                                 </h4><Divider fitted />
                                     <h4>
                                         <Icon color='blue' name='trophy'/>

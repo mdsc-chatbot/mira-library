@@ -158,7 +158,7 @@ class TestResourceSubmission(LiveServerTestCase):
 
         self.driver.find_element(By.NAME, "submit_a_resource").click()
         self.driver.find_element(By.NAME, "url").send_keys(url)
-        #self.driver.find_element(By.NAME, "comments").send_keys(comments)
+        self.driver.find_element(By.NAME, "comments").send_keys(comments)
 
         # Category xpath
         if category == "PDF":
@@ -173,7 +173,7 @@ class TestResourceSubmission(LiveServerTestCase):
         # Tags xpath
         for tag in tags.split(","):
             self.driver.find_element(
-                By.XPATH, "//div[4]/div/div/input").send_keys(tag)
+                By.XPATH, "//div[4]/div/div/div/div/div/input").send_keys(tag)
             self.driver.find_element(
                 By.CSS_SELECTOR, ".ui > .search").send_keys(Keys.ENTER)
 
@@ -243,13 +243,11 @@ class TestResourceSubmission(LiveServerTestCase):
              By.ID, "pending_resources").text
 
          self.driver.find_element(By.LINK_TEXT, "My Profile").click()
-         time.sleep(1)
-         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
-         time.sleep(1)
-
+         db_profile_num_submissions = CustomUser.objects.get(pk=1).submissions
+         print(db_profile_num_submissions)
          # profile_num_submissions = self.driver.find_element(
          #     By.ID, "profile_num_submissions").text
 
          assert total_resources == str(self.total_resources)
          assert pending_resources == str(self.total_resources)
-         # assert profile_num_submissions == str(self.total_resources)
+         #assert db_profile_num_submissions == str(self.total_resources)
