@@ -1,9 +1,8 @@
 import React from 'react';
-import {DatesRangeInput} from 'semantic-ui-calendar-react';
 import {Container, Dropdown, Form} from 'semantic-ui-react'
-// import { DateRangePicker, SingleDatePicker, DayPickerRangeController } from 'react-dates';
-// import 'react-dates/initialize'; // necessary for latest version
-// import 'react-dates/lib/css/_datepicker.css';
+import {DateRangePicker} from "react-dates";
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 
 const dateOption = [
     {key: 'unselected', value: "''", text: 'Unselected'},
@@ -56,6 +55,25 @@ class SearchByDateRange extends React.Component {
     };
 
     /**
+     * Handles the changes to the date range picker and sets the date into props and the states
+     * @param startDate
+     * @param endDate
+     */
+    handle_date_change = ({startDate, endDate}) => {
+        console.log(startDate)
+        if (startDate === '' || startDate === null || endDate === '' || endDate === null) {
+            this.props.set_date_range_params('', '')
+        } else {
+            this.props.set_date_range_params(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'))
+        }
+        this.setState({
+            startDate: startDate,
+            endDate: endDate
+        });
+
+    };
+
+    /**
      * This function handles the changes that happen to in the drop down field of the form.
      * @param e = Event
      * @param value = The value from the drop down form that will be stored in the state
@@ -83,27 +101,22 @@ class SearchByDateRange extends React.Component {
                     options={dateOption}
                 />
                 <Container content="Date range"/>
-                <DatesRangeInput
-                    closeOnMouseLeave
-                    popupPosition="bottom right"
-                    name="datesRange"
-                    placeholder="From - To"
-                    value={this.state.datesRange}
-                    iconPosition="left"
-                    onChange={this.handle_change_daterange}
-                    dateFormat={"YYYY-MM-DD"}
-                    pickerWidth={"50px"}
+                <DateRangePicker
+                    endDate={this.state.endDate}
+                    focusedInput={this.state.focusedInput}
+                    initialEndDate={null}
+                    initialStartDate={null}
+                    initialVisibleMonth={null}
+                    isDayBlocked={function noRefCheck() {}}
+                    isDayHighlighted={function noRefCheck() {}}
+                    isOutsideRange={function noRefCheck() {}}
+                    numberOfMonths={1}
+                    onDatesChange={({startDate, endDate}) => this.handle_date_change({startDate, endDate})}
+                    onFocusChange={focusedInput => this.setState({focusedInput})}
+                    showClearDates
+                    small
+                    startDate={this.state.startDate}
                 />
-
-                {/*<DateRangePicker*/}
-                {/*  startDate={this.state.startDate} // momentPropTypes.momentObj or null,*/}
-                {/*  startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,*/}
-                {/*  endDate={this.state.endDate} // momentPropTypes.momentObj or null,*/}
-                {/*  endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,*/}
-                {/*  onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })} // PropTypes.func.isRequired,*/}
-                {/*  focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,*/}
-                {/*  onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,*/}
-                {/*/>*/}
             </Form>
         );
     }

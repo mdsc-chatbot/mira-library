@@ -143,8 +143,8 @@ class TestCurrentUserView(BaseViewTest):
         self.client.logout()
 
         response = self.client.get(url)
-        # assert status code is 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert status code is 203 NON AUTHORITATIVE INFORMATION
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         # assert response data is empty
         self.assertIsNone(response.data)
 
@@ -244,8 +244,8 @@ class TestLogoutView(BaseViewTest):
         # Trying to retrieve the current user which should not be returned
         current_user_url = reverse('auth-current-user')
         response = self.client.get(current_user_url)
-        # assert status code is 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert status code is 203 NON AUTHORITATIVE INFORMATION
+        self.assertEqual(response.status_code, status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
         # assert response data is empty
         self.assertIsNone(response.data)
 
@@ -1143,7 +1143,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_date': "''",
                 'end_date': "''",
                 'start_id': "1",
-                'end_id': "10",
+                'end_id': "1000",
                 'start_submission': "''",
                 'end_submission': "''",
                 'submission_range_option': "''",
@@ -1267,8 +1267,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'search_option': "''",
                 'start_date': "''",
                 'end_date': "''",
-                'start_id': "2",
-                'end_id': "2",
+                'start_id': "31",
+                'end_id': "31",
                 'start_submission': "''",
                 'end_submission': "''",
                 'submission_range_option': "''",

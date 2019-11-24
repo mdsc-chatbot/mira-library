@@ -1,7 +1,7 @@
 import React from "react";
 import Homepage from "./Homepage";
 import {Route, Switch} from "react-router-dom";
-import {ProfilePage} from "./profile";
+import ProfilePage from "./profile/ProfilePage";
 import ResourcePage from "./resource/ResourcePage";
 import ResourceDetail from "./resource/ResourceDetail";
 import reviewResource from "./review/reviewResource";
@@ -21,82 +21,90 @@ import PasswordChangeForm from "./password/PasswordChangeForm"
 import {Responsive, Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
+import {MenuContextProvider} from './contexts/MenuContext';
 import styles from "./App.css";
 
 export default function App() {
     const mainPage = () => {
-        return(<SecurityContextProvider>
-            <HeaderMenu />
-            <Switch>
-                <Route exact path={baseRoute + "/profile"}>
-                    <ProfilePage/>
-                </Route>
-                <Route exact path={baseRoute + "/resource"}>
-                    <ResourcePage />
-                </Route>
-                <Route exact path={baseRoute + "/review"}>
-                    <ReviewPage />
-                </Route>
-                <Route exact path={baseRoute + "/login"}>
-                    <LoginPage />
-                </Route>
-                <Route exact path={baseRoute + "/logout"}>
-                    <LogoutPage />
-                </Route>
-                <Route
-                    exact path={baseRoute + "/validate/email"}
-                    component={EmailValidationRequestPage}
-                />
-                <Route exact path={baseRoute + "/search"}>
-                    <SearchPage />
-                </Route>
-                <Route
-                    exact
-                    path={baseRoute + "/resource/:resourceID"}
-                    component={ResourceDetail}
-                />
-                <Route
-                    exact
-                    path={baseRoute + "/review/:resourceID"}
-                    component={reviewResource}
-                />
+        return(
+            <SecurityContextProvider>
+                <MenuContextProvider>
+                    <Segment inverted attached = 'top'> <HeaderMenu /></Segment>
+                    <Segment attached>
+                        <Switch>
+                            <Route exact path={baseRoute + "/profile"}>
+                                <ProfilePage/>
+                            </Route>
+                            <Route exact path={baseRoute + "/resource"}>
+                                <ResourcePage />
+                            </Route>
+                            <Route exact path={baseRoute + "/review"}>
+                                <ReviewPage />
+                            </Route>
+                            <Route exact path={baseRoute + "/login"}>
+                                <LoginPage />
+                            </Route>
+                            <Route exact path={baseRoute + "/logout"}>
+                                <LogoutPage />
+                            </Route>
+                            <Route
+                                exact path={baseRoute + "/validate/email"}
+                                component={EmailValidationRequestPage}
+                            />
+                            <Route exact path={baseRoute + "/search"}>
+                                <SearchPage />
+                            </Route>
+                            <Route
+                                exact
+                                path={baseRoute + "/resource/:resourceID"}
+                                component={ResourceDetail}
+                            />
+                            <Route
+                                exact
+                                path={baseRoute + "/review/:resourceID"}
+                                component={reviewResource}
+                            />
 
-                <Route
-                    exact path={baseRoute + "/resource_submit"}
-                    component={ResourceSubmitForm}
-                />
+                            <Route
+                            exact path={baseRoute + "/resource_submit"}
+                            component={ResourceSubmitForm}
+                            />
 
-                <Route
-                    exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
-                    component={ResourceSubmitFormForExtension}
-                />
+                            <Route
+                                exact path={baseRoute + "/resource_submit/extension/:id/:first_name/:token/:url"}
+                                component={ResourceSubmitFormForExtension}
+                            />
 
-                <Route exact path={baseRoute + "/public_resource*"}>
-                    {({match}) => (
-                        <PublicResourcePage match={match}/>
-                    )}
-                </Route>
-                <Route exact path={baseRoute + "/faq"}>
-                    <FAQ />
-                </Route>
+                            <Route exact path={baseRoute + "/public_resource*"}>
+                                {({match}) => (
+                                    <PublicResourcePage match={match}/>
+                                )}
+                            </Route>
+                            <Route exact path={baseRoute + "/faq"}>
+                                <FAQ />
+                            </Route>
 
-                <Route
-                    exact path={baseRoute + "/password"}
-                    component={PasswordChangeForm}
-                />
-                <Route
-                    exact path={baseRoute + "/password/reset"}
-                    component={PasswordResetRequestPage}
-                />
-                <Route
-                    exact path={baseRoute + "/password/reset/:uid/:token"}
-                    component={PasswordResetPage}
-                />
-                <Route>
-                    <Homepage />
-                </Route>
+                            <Route
+                                exact path={baseRoute + "/password"}
+                                component={PasswordChangeForm}
+                            />
+                            <Route
+                                exact path={baseRoute + "/password/reset"}
+                                component={PasswordResetRequestPage}
+                            />
+                            <Route
+                                exact path={baseRoute + "/password/reset/:uid/:token"}
+                                component={PasswordResetPage}
+                            />
+                            <Route>
+                                <Homepage />
+                            </Route>
 
-            </Switch>
+                        </Switch>
+                    </Segment>
+                </MenuContextProvider>
+
+            <div/>
 
             <Segment inverted><Footer /></Segment>
         </SecurityContextProvider>);

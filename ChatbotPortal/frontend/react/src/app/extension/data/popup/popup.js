@@ -1,3 +1,5 @@
+const BASE_URL = 'http://127.0.0.1:8000';
+
 /**
  * Initializing the background communication object
  * that the popup will use to interact with the background
@@ -41,6 +43,27 @@ let load = function () {
 };
 
 /**
+ * This function loads an iframe in the popup html with our desired page and parameters
+ * @param dataAsJson = Jsonified data
+ * @param url = url that would be passed along as a parameter
+ */
+let iframing = function (dataAsJson, url) {
+    let iframe = document.querySelector("iframe");
+    if (iframe) {
+        // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
+        iframe.style.background = "none";
+        if (iframe.src === "about:blank") {
+            // iframe.onload = function() { alert('myframe is loaded'); console.log(iframe.contentDocument) };
+            if (!!dataAsJson.first_name) {
+                iframe.src = `${BASE_URL}/chatbotportal/app/resource_submit/extension/${dataAsJson.id}/${dataAsJson.first_name}/${dataAsJson.token}/${encodeURIComponent(url)}`;
+            } else {
+                iframe.src = `${BASE_URL}/chatbotportal/app/resource_submit/extension/${dataAsJson.id}/''/${dataAsJson.token}/${encodeURIComponent(url)}`;
+            }
+        }
+    }
+};
+
+/**
  * Resizing the popup to provide responsiveness
  */
 background.receive("resize", function (o) {
@@ -54,46 +77,27 @@ background.receive("resize", function (o) {
  * Sending storage data from background to popup
  */
 background.receive("storage-data", function () {
-
-    /**
-     * Extracting the current tab url
-     */
-    chrome.tabs.query({active: true, currentWindow: true}, function (tabArray) {
-        let iframe = document.querySelector("iframe");
-
-        fetch('http://127.0.0.1:8000/chatbotportal/authentication/currentuser/')
-            .then(function (response) {
-                if (!response.ok) {
-                    throw Error(response.statusText);
-                }
-                // Read the response as json.
+    // Fetch the current user from the backend
+    fetch(`${BASE_URL}/chatbotportal/authentication/currentuser/`)
+        .then(function (response) {
+            if (response.status === 200) {
+                // Upon finding a logged in user, return the jsonified details.
                 return response.json();
-            })
-            .then(function (responseAsJson) {
-                // Do stuff with the JSON
-                // console.log(responseAsJson.email);
-                if (iframe) {
-                    // Upon finding the iframe tag, set the src to the desired url that we want to show in the popup
-                    iframe.style.background = "none";
-                    if (iframe.src === "about:blank") {
-                        // iframe.onload = function() { alert('myframe is loaded'); console.log(iframe.contentDocument) };
-                        iframe.src = `http://127.0.0.1:8000/chatbotportal/app/resource_submit/extension/${responseAsJson.id}/''/${responseAsJson.token}/${encodeURIComponent(tabArray[0].url)}`;
-                    }
-                }
-                // console.log(iframe.getAttribute('innerHTML'));
-                // chrome.cookies.get({"url": 'http://127.0.0.1', "name": 'sessionid'}, function (cookie) {
-                //     console.log(cookie);
-                //     window.document.cookie = cookie;
-                //     console.log(window.document.cookie);
-                //
-                // });
-            })
-            .catch(function (error) {
-                console.log('Looks like there was a problem: \n', error);
+            } else {
+                // If not logged in user is found, redirect to login page
+                chrome.tabs.create({url: `${BASE_URL}/chatbotportal/app/login`});
+            }
+        })
+        .then(function (responseAsJson) {
+            // Finding the current tab url
+            chrome.tabs.query({active: true, currentWindow: true}, function (tabArray) {
+                // Upon finding the current tab url call the iframing function to show our desired url with specified parameters
+                iframing(responseAsJson, tabArray[0].url)
             });
-
-
-    });
+        })
+        .catch(function (error) {
+            console.log('Looks like there was a problem: \n', error);
+        });
 });
 
 // Adding event listener upon the window being loaded

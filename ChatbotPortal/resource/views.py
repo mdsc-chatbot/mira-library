@@ -1,7 +1,7 @@
 from rest_framework import permissions, generics, viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
-from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer
+from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer, TagSerializer
 from .models import Resource, Tag, Category
 import json
 import mimetypes
@@ -87,3 +87,8 @@ class ResourceSearchView(generics.ListAPIView):
     queryset = Resource.objects.filter(review_status="approved")
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
+
+
+class TagCreateView(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = TagSerializer

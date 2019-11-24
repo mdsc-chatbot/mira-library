@@ -1,0 +1,21 @@
+.advancedSearchView {
+    height: 100vh;
+    background: white;
+}
+
+.checkboxStyle {
+    float: right;
+}
+
+.headerStyle {
+    font-size: 2em;
+}
+
+.searchTableView {
+    height: 100vh;
+}
+
+.sidebarStyle {
+    box-shadow: none !important;
+    background: white !important;
+}

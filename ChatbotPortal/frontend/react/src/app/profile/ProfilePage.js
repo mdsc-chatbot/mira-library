@@ -1,63 +1,51 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
-import {Button, Card, Container, Form, Icon, Image, Segment, Responsive,Divider, Grid} from 'semantic-ui-react';
+import {Button, Card, Container, Divider, Form, FormInput, Icon, Image, Responsive, Segment} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 import {baseRoute} from "../App";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
 
+/**
+ * This class renders the profile information of a logged in user
+ */
 class ProfilePage extends Component {
-    /**
-     * This class renders the profile information
-     * @type {React.Context<*>}
-     */
+
     static contextType = SecurityContext;
 
-    BASE_AUTH_URL = 'http://127.0.0.1:8000/authentication/auth/';
-
     constructor(props) {
-        /**
-         * This constructor sets up the primary state for the props
-         */
         super(props);
-        this.state = {
-            is_logged_in: false,
-            is_edited: '',
-            first_name: '',
-            last_name: '',
-            profile_picture: null,
-            submissions: '',
-            points: ''
-        };
-    };
+        this.state = {}
+    }
 
     componentDidMount() {
-        this.updateStateFromSecurityContext();
+        this.retrieve_user_info();
     }
 
     /**
-     * Being called whenever state and props gets updated
+     * Get the current logged in user's information
      */
-    componentDidUpdate() {
-        this.updateStateFromSecurityContext();
-    }
-
-    /**
-     * This function gets called upon being refreshed to keep user seamlessly logged in if the session is not expired
-     */
-    updateStateFromSecurityContext = () => {
-        if (this.state.is_logged_in === false && this.context.security && this.context.security.is_logged_in) {
-            this.setState({
-                is_logged_in: this.context.security.is_logged_in,
-                is_edited: false,
-                first_name: this.context.security.first_name,
-                last_name: this.context.security.last_name,
-                profile_picture: this.context.security.profile_picture,
-                submissions: this.context.security.submissions,
-                points: this.context.security.points
-            });
-        }
-        console.log(this.state)
+    retrieve_user_info = () => {
+        axios
+            .get('/chatbotportal/authentication/currentuser/', {withCredentials: true})
+            .then(
+                response => {
+                    /**
+                     * If the response data is not empty set is_logged_in status to true, otherwise false
+                     */
+                    if (response.data !== '') {
+                        response.data['is_logged_in'] = true;
+                        this.setState(response.data);
+                    } else {
+                        response.data = JSON.parse('{}');
+                        response.data['is_logged_in'] = false;
+                        this.setState(response.data);
+                    }
+                },
+                error => {
+                    console.log(error);
+                }
+            );
     };
 
     /**
@@ -75,24 +63,14 @@ class ProfilePage extends Component {
         });
     };
 
+    /**
+     * This function extracts the file data
+     * @param event
+     */
     handleImageChange = event => {
         this.setState({
-            // [event.nativeEvent.target.name]: event.nativeEvent.target.files[0],
-            // imagePath: event.nativeEvent.target.value
-            imagePath: event.target.files[0]
+            profile_picture: event.target.files[0]
         })
-    };
-
-    saveFunction = () => {
-        alert("Your changes were saved!");
-    };
-
-    cancelFunction = () => {
-        alert("No changes were saved!");
-    };
-
-    deleteFunction = () => {
-        alert("A request has been sent to the admin!");
     };
 
     /*
@@ -100,19 +78,15 @@ class ProfilePage extends Component {
      * @param e : event
      * @param editedData : data from the EditForm upon submission
      */
-    handle_edit = (e, editedData) => {
-        e.preventDefault();
-        let formData = new FormData();
-        if (this.state.imagePath) formData.append('profile_picture', this.state.imagePath);
-        formData.append('first_name', this.state.first_name);
-        formData.append('last_name', this.state.last_name);
+    handle_edit = (event, editedData) => {
+        event.preventDefault();
 
-        // Defining header and content-type for accessing authenticated information
-        const options = {
-            'Authorization': `Bearer ${this.context.security.token}`,
-            // "Content-Type":"multipart/form-data"
-            'Content-Type': 'application/json',
-        };
+        let formData = new FormData();
+        formData.append('first_name', editedData.first_name);
+        formData.append('last_name', editedData.last_name);
+        if (this.state.profile_picture) {
+            formData.append('profile_picture', editedData.profile_picture);
+        }
 
         /**
          * Perform a put request for edit.
@@ -120,21 +94,17 @@ class ProfilePage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(`/chatbotportal/authentication/${this.context.security.id}/update/`, formData, {headers: options})
+            .put(
+                `/chatbotportal/authentication/${this.context.security.id}/update/`,
+                formData,
+                {headers: {'Authorization': `Bearer ${this.context.security.token}`}})
             .then(
                 response => {
                     console.log(response.data);
-                    this.setState({
-                        first_name: response.data['first_name'],
-                        last_name: response.data['last_name'],
-                        profile_picture: response.data['profile_picture'],
-                        is_edited: true,
-                    });
-                    this.context.security.first_name = this.state.first_name;
-                    this.context.security.last_name = this.state.last_name;
-                    this.context.security.profile_picture = this.state.profile_picture;
-                    console.log(this.context.security)
-                    console.log("Saved Changes")
+                    this.setState(response.data);
+                    this.context.setSecurity(response.data);
+                    // Reloading the page after modal closes
+                    window.location.reload();
                 },
                 error => {
                     console.log(error);
@@ -146,19 +116,27 @@ class ProfilePage extends Component {
     profilePageDataWeb = () => {
         return(<SecurityContext.Consumer>
             {(securityContext) => (
-                <Form className={styles.centeredFormWeb} onSubmit={e => this.handle_edit(e, this.state)}>
+                <Form className={styles.centeredFormWeb}>
                     {securityContext.security.is_logged_in ?
-                        <Card fluid centered onSubmit={this.props.handle_edit}>
-                            {this.state.profile_picture ? (
-                                <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} size='medium' circular centered/>
+                        <Card fluid centered>
+                            {typeof(this.state.profile_picture) !== 'object' && this.state.profile_picture? (
+                                <Image
+                                    src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
+                                    size='medium'
+                                    circular
+                                    centered/>
                             ) : null}
-                            <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                            <Form.Input
+                                className={styles.imageMobile}
+                                type='file'
+                                accept="image/png, image/jpeg"
+                                id='profile_picture'
+                                name='profile_picture'
+                                onChange={this.handleImageChange}/>
                             <Card.Content className={styles.nameMobile}>
                                 <Card.Header>
                                     <Form.Group widths='equal'>
-
                                         <Form.Input
-                                            // className={styles.fixedInputHeight}
                                             fluid
                                             label='First name'
                                             name='first_name'
@@ -167,7 +145,6 @@ class ProfilePage extends Component {
                                             value={this.state.first_name}
                                         />
                                         <Form.Input
-                                            // className={styles.fixedInputHeight}
                                             fluid
                                             label='Last name'
                                             size='large'
@@ -175,7 +152,6 @@ class ProfilePage extends Component {
                                             onChange={this.handle_change}
                                             value={this.state.last_name}
                                         />
-
                                     </Form.Group>
                                 </Card.Header>
                             </Card.Content>
@@ -203,7 +179,7 @@ class ProfilePage extends Component {
                             </Card.Description>
 
 
-                            <Button fluid size='big' animated='fade' positive onClick={this.saveFunction}>
+                            <Button fluid size='big' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
                                 <Button.Content visible>
                                     Save Changes
                                 </Button.Content>
@@ -227,11 +203,14 @@ class ProfilePage extends Component {
         return(
                 <SecurityContext.Consumer>
                     {(securityContext) => (
-                        <Form className={styles.centeredFormMobile} onSubmit={e => this.handle_edit(e, this.state)}>
+                        <Form className={styles.centeredFormMobile}>
                             {securityContext.security.is_logged_in ?
-                                <Card fluid centered onSubmit={this.props.handle_edit}>
-                                    {this.state.profile_picture ? (
-                                        <Image src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`} centered size='small'/>
+                                <Card fluid centered>
+                                    {typeof(this.state.profile_picture) !== 'object' && this.state.profile_picture? (
+                                        <Image
+                                            src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
+                                            centered
+                                            size='small'/>
                                     ) : null}
                                     <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
                                     <Card.Content className={styles.nameMobile}>
@@ -259,7 +238,7 @@ class ProfilePage extends Component {
                                         <h4><Icon color='blue' name='mail'/>
                                             {securityContext.security.email}</h4><Divider fitted /><h4>
                                         <Icon color='blue' name='pencil alternate'/>
-                                        # of Submissions = {securityContext.security.submissions}
+                                        # of Submissions = <p id="profile_num_submissions">{securityContext.security.submissions}</p>
                                     </h4><Divider fitted />
                                         <h4>
                                             <Icon color='blue' name='trophy'/>
@@ -276,7 +255,7 @@ class ProfilePage extends Component {
                                         </h4><Divider fitted/>
                                     </Card.Description>
 
-                                    <Button fluid size='medium' animated='fade' positive onClick={this.saveFunction}>
+                                    <Button fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
                                         <Button.Content visible>
                                             Save Changes
                                         </Button.Content>
@@ -284,7 +263,7 @@ class ProfilePage extends Component {
                                     </Button>
 
                                     <Link to={baseRoute + "/password"}>
-                                        <Button     color='blue' fluid size='medium'>
+                                        <Button color='blue' fluid size='medium'>
                                             Change Password
                                         </Button>
                                     </Link>
