@@ -21,3 +21,9 @@
     padding-bottom: 1em;
     justify-content: space-between;
 }
+
+.mobileTopBarContainer {
+    display: flex;
+    padding-bottom: 1em;
+    flex-wrap: wrap;
+}
