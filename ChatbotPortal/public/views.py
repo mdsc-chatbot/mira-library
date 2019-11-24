@@ -54,13 +54,18 @@ class ResourceView(generics.ListAPIView):
         # 2, 5 : Rating (desc, asc)
         # Reference on how to do complex sorting: https://stackoverflow.com/questions/19623311/how-to-order-django-queryset-by-a-specified-match-and-then-default-to-the-origin
         sort_param = int(self.request.query_params.get('sort'))
-        if (sort_param == None or sort_param == "" or sort_param == 0 or sort_param == 3 or sort_param == 1 or sort_param == 4):
+        if (sort_param == None or sort_param == "" or sort_param == 0 or sort_param == 3):
             # By default, popularity is also recency
             # TODO: Figure out how to do popularity sort...
             if (sort_param == 0):
                 queryset = queryset.order_by('-timestamp')
             else:
                 queryset = queryset.order_by('timestamp')
+        elif (sort_param == 1 or sort_param == 4):
+            if (sort_param == 1):
+                queryset = queryset.order_by('-public_view_count')
+            else:
+                queryset = queryset.order_by('public_view_count')
         elif (sort_param == 2 or sort_param == 5):
             if (sort_param == 2):
                 queryset = queryset.order_by('-rating')
@@ -90,6 +95,14 @@ class DetailedResourceView(generics.RetrieveAPIView):
     queryset = Resource.objects.all()
     serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
+
+    # Override generics.RetrieveAPIView here to insert view count update
+    def get(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.public_view_count += 1
+        instance.save()
+        return self.retrieve(request, *args, **kwargs)
+
 
 class DetailedResourceAdminView(generics.RetrieveAPIView):
     queryset = Resource.objects.all()

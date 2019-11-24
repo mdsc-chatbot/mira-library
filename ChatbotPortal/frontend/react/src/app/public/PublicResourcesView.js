@@ -88,9 +88,14 @@ export class PublicResourcesView extends Component {
     };
 
     fetchTags = () => {
+        const headers = {};
+        if (this.context.security.token) {
+            headers['Authorization'] = `Bearer ${this.context.security.token}`;
+        }
+
         axios
             .get("/api/public/tags", {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers
             })
             .then(res => {
                 this.setState({
@@ -100,9 +105,14 @@ export class PublicResourcesView extends Component {
     };
 
     fetchCategories = () => {
+        const headers = {};
+        if (this.context.security.token) {
+            headers['Authorization'] = `Bearer ${this.context.security.token}`;
+        }
+
         axios
             .get("/api/public/categories", {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers
             })
             .then(res => {
                 this.setState({
