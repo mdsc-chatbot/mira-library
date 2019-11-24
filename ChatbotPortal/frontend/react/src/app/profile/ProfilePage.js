@@ -40,6 +40,7 @@ class ProfilePage extends Component {
                         response.data = JSON.parse('{}');
                         response.data['is_logged_in'] = false;
                         this.setState(response.data);
+                        window.location.replace(baseRoute);
                     }
                 },
                 error => {

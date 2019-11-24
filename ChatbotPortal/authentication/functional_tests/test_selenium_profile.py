@@ -85,8 +85,6 @@ class TestProfile(LiveServerTestCase):
         if kwargs["option"] == "save":
             self.driver.find_element(
                 By.NAME, kwargs["option"]).click()
-            alert = self.driver.switch_to.alert
-            alert.accept()
         else:
             # since cancel button will be remove, canceling changes will just be switching to another page
             self.driver.find_element(By.LINK_TEXT, "Public Resources").click() 
