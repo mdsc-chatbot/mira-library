@@ -57,6 +57,8 @@ python manage.py migrate –run-syncdb
 ```
 
 #### After that just run the test command:
+```
 python manage.py test --verbosity=3 --noinput authentication.tests
 python manage.py test --verbosity=3 --noinput resource.tests
+```
 
