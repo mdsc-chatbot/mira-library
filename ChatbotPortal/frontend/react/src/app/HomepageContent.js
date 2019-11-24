@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import styles from './HomepageContent.css';
+import {PublicResourceCard} from './public/PublicResourceCard';
 
 /**
  * Includes:
@@ -103,10 +104,12 @@ export class HomepageContent extends Component {
                             >
                                 Popular Resources
                             </Header>
-                            <Card.Group itemsPerRow={5}>
+                            <Card.Group itemsPerRow={5} stackable>
                                 {this.state.popularResources.length ? (
                                     <React.Fragment>
-                                        {this.state.popularResources.map(this.showCard)}
+                                        {this.state.popularResources.map((resource) => (
+                                            <PublicResourceCard resource={resource} locationPrefix="/public_resource/detail" />
+                                        ))}
                                         {this.showMoreCard()}
                                     </React.Fragment>
                                 ) : (
@@ -124,10 +127,12 @@ export class HomepageContent extends Component {
                             >
                                 Recent Resources
                             </Header>
-                            <Card.Group itemsPerRow={5}>
+                            <Card.Group itemsPerRow={5} stackable>
                                 {this.state.recentResources.length ? (
                                     <React.Fragment>
-                                        {this.state.recentResources.map(this.showCard)}
+                                        {this.state.recentResources.map((resource) => (
+                                            <PublicResourceCard resource={resource} locationPrefix="/public_resource/detail" />
+                                        ))}
                                         {this.showMoreCard()}
                                     </React.Fragment>
                                 ) : (
@@ -145,10 +150,12 @@ export class HomepageContent extends Component {
                             >
                                 Highest Rated Resources
                             </Header>
-                            <Card.Group itemsPerRow={5}>
+                            <Card.Group itemsPerRow={5} stackable>
                                 {this.state.ratingResources.length ? (
                                     <React.Fragment>
-                                        {this.state.ratingResources.map(this.showCard)}
+                                        {this.state.ratingResources.map((resource) => (
+                                            <PublicResourceCard resource={resource} locationPrefix="/public_resource/detail" />
+                                        ))}
                                         {this.showMoreCard()}
                                     </React.Fragment>
                                 ) : (
