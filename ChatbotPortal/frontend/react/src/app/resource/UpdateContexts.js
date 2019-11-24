@@ -11,6 +11,14 @@ class UpdateContexts extends Component {
         });
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.token !== this.props.token) {
+            this.context.setSecurity({
+                token: this.props.token
+            });
+        }
+    }
+
     render() {
         return (
             <div/>
