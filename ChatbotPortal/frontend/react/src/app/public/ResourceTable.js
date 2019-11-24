@@ -31,7 +31,7 @@ export function ResourceTable({resources, loadingResources}) {
                     {resources.map(resource => (
                         <Card>
                             <Card.Content>
-                                <Link to={location => ({...location, pathname: `${location.pathname}/detail/1`})}>
+                                <Link to={location => ({...location, pathname: `${location.pathname}/detail/${resource.id}`})}>
                                     <Card.Header>
                                         {resource.title}
                                     </Card.Header>

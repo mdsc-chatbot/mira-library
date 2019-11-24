@@ -9,6 +9,74 @@ from .serializers import ResourceSerializer, TagSerializer, CategorySerializer, 
 class StandardResultSetPagination(PageNumberPagination):
     page_size = 100
 
+class HomepageResultSetPagination(PageNumberPagination):
+    page_size = 4
+
+
+def ResourceViewQuerySet(query_params):
+    # Taken from PR #164
+    queryset = Resource.objects.filter(review_status="approved")
+
+    # Search parameters is matched between two fields currently:
+    #   - title
+    #   - website summary
+    search_param = query_params.get('search')
+    if (search_param != None and search_param != ""):
+        matching_titles = Resource.objects.filter(title__icontains=search_param)
+        matching_url = Resource.objects.filter(url__icontains=search_param)
+        matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
+        queryset = queryset.intersection(matching_titles.union(matching_url, matching_summary))
+
+    # Filter resources by categories
+    category_param = query_params.get('categories')
+    if (category_param != None and category_param != ""):
+
+        # Assumes that tags are separated via commas in a string
+        category_list = category_param.split(',')
+        queryset = queryset.filter(category__id__in=category_list)
+
+    # Filter resources by tags
+    tag_param = query_params.get('tags')
+    if (tag_param != None and tag_param != ""):
+
+        # Assumes that tags are separated via commas in a string
+        tag_list = tag_param.split(',')
+        queryset = queryset.filter(tags__id__in=tag_list)
+
+    # Sort query
+    # 0, 3 : Recency (desc, asc)
+    # 1, 4 : Popularity (desc, asc)
+    # 2, 5 : Rating (desc, asc)
+    # Reference on how to do complex sorting: https://stackoverflow.com/questions/19623311/how-to-order-django-queryset-by-a-specified-match-and-then-default-to-the-origin
+    sort_param = int(query_params.get('sort'))
+    if (sort_param == None or sort_param == "" or sort_param == 0 or sort_param == 3):
+        # By default, popularity is also recency
+        if (sort_param == 0):
+            queryset = queryset.order_by('-timestamp')
+        else:
+            queryset = queryset.order_by('timestamp')
+    elif (sort_param == 1 or sort_param == 4):
+        if (sort_param == 1):
+            queryset = queryset.order_by('-public_view_count')
+        else:
+            queryset = queryset.order_by('public_view_count')
+    elif (sort_param == 2 or sort_param == 5):
+        if (sort_param == 2):
+            queryset = queryset.order_by('-rating')
+        else:
+            queryset = queryset.order_by('rating')
+
+    return queryset
+
+
+class HomepageResourceView(generics.ListAPIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    pagination_class = HomepageResultSetPagination
+
+    def get_queryset(self):
+        return ResourceViewQuerySet(self.request.query_params)
+
 
 class ResourceView(generics.ListAPIView):
     """
@@ -19,60 +87,8 @@ class ResourceView(generics.ListAPIView):
     pagination_class = StandardResultSetPagination
 
     def get_queryset(self):
-        # Taken from PR #164
-        queryset = Resource.objects.filter(review_status="approved")
+        return ResourceViewQuerySet(self.request.query_params)
 
-        # Search parameters is matched between two fields currently:
-        #   - title
-        #   - website summary
-        search_param = self.request.query_params.get('search')
-        if (search_param != None and search_param != ""):
-            matching_titles = Resource.objects.filter(title__icontains=search_param)
-            matching_url = Resource.objects.filter(url__icontains=search_param)
-            matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
-            queryset = queryset.intersection(matching_titles.union(matching_url, matching_summary))
-
-        # Filter resources by categories
-        category_param = self.request.query_params.get('categories')
-        if (category_param != None and category_param != ""):
-
-            # Assumes that tags are separated via commas in a string
-            category_list = category_param.split(',')
-            queryset = queryset.filter(category__id__in=category_list)
-
-        # Filter resources by tags
-        tag_param = self.request.query_params.get('tags')
-        if (tag_param != None and tag_param != ""):
-
-            # Assumes that tags are separated via commas in a string
-            tag_list = tag_param.split(',')
-            queryset = queryset.filter(tags__id__in=tag_list)
-
-        # Sort query
-        # 0, 3 : Recency (desc, asc)
-        # 1, 4 : Popularity (desc, asc)
-        # 2, 5 : Rating (desc, asc)
-        # Reference on how to do complex sorting: https://stackoverflow.com/questions/19623311/how-to-order-django-queryset-by-a-specified-match-and-then-default-to-the-origin
-        sort_param = int(self.request.query_params.get('sort'))
-        if (sort_param == None or sort_param == "" or sort_param == 0 or sort_param == 3):
-            # By default, popularity is also recency
-            # TODO: Figure out how to do popularity sort...
-            if (sort_param == 0):
-                queryset = queryset.order_by('-timestamp')
-            else:
-                queryset = queryset.order_by('timestamp')
-        elif (sort_param == 1 or sort_param == 4):
-            if (sort_param == 1):
-                queryset = queryset.order_by('-public_view_count')
-            else:
-                queryset = queryset.order_by('public_view_count')
-        elif (sort_param == 2 or sort_param == 5):
-            if (sort_param == 2):
-                queryset = queryset.order_by('-rating')
-            else:
-                queryset = queryset.order_by('rating')
-
-        return queryset
 
 class TagView(generics.ListAPIView):
     serializer_class = TagSerializer
@@ -83,6 +99,7 @@ class TagView(generics.ListAPIView):
         # TODO: Tag sorting? (Sort desc by most used)
         return Tag.objects.all()
 
+
 class CategoryView(generics.ListAPIView):
     serializer_class = CategorySerializer
     permission_classes = {permissions.AllowAny}
@@ -90,6 +107,7 @@ class CategoryView(generics.ListAPIView):
     def get_queryset(self):
         # TODO: Category sorting? (Sort desc by most used)
         return Category.objects.all()
+
 
 class DetailedResourceView(generics.RetrieveAPIView):
     queryset = Resource.objects.all()
