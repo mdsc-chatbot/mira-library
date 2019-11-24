@@ -10,6 +10,7 @@ import {
 } from "semantic-ui-react";
 import axios from 'axios';
 import {Link} from 'react-router-dom';
+import styles from './HomepageContent.css';
 
 /**
  * Includes:
@@ -76,8 +77,8 @@ export class HomepageContent extends Component {
     showMoreCard = () => {
         return (
             <Card>
-                <Card.Content>
-                    <Link to={location => ({...location, pathname: `${location.pathname}/public_resource`})}>
+                <Card.Content className={styles.centerAlignment}>
+                    <Link className={styles.centerAlignment} to={location => ({...location, pathname: `${location.pathname}/public_resource`})}>
                         <Card.Header>
                             Show More...
                         </Card.Header>
@@ -103,40 +104,16 @@ export class HomepageContent extends Component {
                                 Popular Resources
                             </Header>
                             <Card.Group itemsPerRow={5}>
-                                <Card>
-                                    <Card.Content>
-                                        <Card.Header>
-                                            Matthew Harris
-                                        </Card.Header>
-                                        <Card.Meta>Co-Worker</Card.Meta>
-                                        <Card.Description>
-                                            Matthew is a pianist living in
-                                            Nashville.
-                                        </Card.Description>
-                                    </Card.Content>
-                                </Card>
-
-                                <Card>
-                                    <Card.Content>
-                                        <Card.Header content="Jake Smith" />
-                                        <Card.Meta content="Musicians" />
-                                        <Card.Description content="Jake is a drummer living in New York." />
-                                    </Card.Content>
-                                </Card>
-
-                                <Card>
-                                    <Card.Content
-                                        header="Elliot Baker"
-                                        meta="Friend"
-                                        description="Elliot is a music producer living in Chicago."
-                                    />
-                                </Card>
-
-                                <Card
-                                    header="Jenny Hess"
-                                    meta="Friend"
-                                    description="Jenny is a student studying Media Management at the New School"
-                                />
+                                {this.state.popularResources.length ? (
+                                    <React.Fragment>
+                                        {this.state.popularResources.map(this.showCard)}
+                                        {this.showMoreCard()}
+                                    </React.Fragment>
+                                ) : (
+                                    <div>
+                                        <Loader active inline />
+                                    </div>
+                                )}
                             </Card.Group>
                         </Grid.Row>
 
@@ -155,7 +132,7 @@ export class HomepageContent extends Component {
                                     </React.Fragment>
                                 ) : (
                                     <div>
-                                        <Loader />
+                                        <Loader active inline />
                                     </div>
                                 )}
                             </Card.Group>
@@ -176,7 +153,7 @@ export class HomepageContent extends Component {
                                     </React.Fragment>
                                 ) : (
                                     <div>
-                                        <Loader />
+                                        <Loader active inline />
                                     </div>
                                 )}
                             </Card.Group>
