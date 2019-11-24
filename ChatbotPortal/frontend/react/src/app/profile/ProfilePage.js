@@ -158,20 +158,20 @@ class ProfilePage extends Component {
                             <Card.Description>
                                 <Divider fitted />
                                 <h3><Icon color='blue' name='mail'/>
-                                    {securityContext.security.email}</h3><Divider fitted />
+                                    {this.state.email}</h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='pencil alternate'/>
-                                    # of Submissions = {securityContext.security.submissions}
+                                    # of Submissions = <p id="profile_num_submissions">{this.state.submissions}</p>
                                 </h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='trophy'/>
-                                    Points = {securityContext.security.points}
+                                    Points = {this.state.points}
                                 </h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='certificate'/>
-                                    { securityContext.security.is_staff ? (
+                                    { this.state.is_staff ? (
                                         'Staff'
-                                    ) : securityContext.security.is_reviewer ? (
+                                    ) : this.state.is_reviewer ? (
                                         'Reviewer'
                                     ) : 'Newbie'
                                     }
@@ -179,7 +179,7 @@ class ProfilePage extends Component {
                             </Card.Description>
 
 
-                            <Button fluid size='big' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
+                            <Button name="save" fluid size='big' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
                                 <Button.Content visible>
                                     Save Changes
                                 </Button.Content>
@@ -236,26 +236,26 @@ class ProfilePage extends Component {
                                     <Card.Description>
                                         <Divider fitted />
                                         <h4><Icon color='blue' name='mail'/>
-                                            {securityContext.security.email}</h4><Divider fitted /><h4>
+                                            {this.state.email}</h4><Divider fitted /><h4>
                                         <Icon color='blue' name='pencil alternate'/>
-                                        # of Submissions = <p id="profile_num_submissions">{securityContext.security.submissions}</p>
+                                        # of Submissions = <p id="profile_num_submissions">{this.state.submissions}</p>
                                     </h4><Divider fitted />
                                         <h4>
                                             <Icon color='blue' name='trophy'/>
-                                            Points = {securityContext.security.points}
+                                            Points = {this.state.points}
                                         </h4><Divider fitted />
                                         <h4>
                                             <Icon color='blue' name='certificate'/>
-                                            { securityContext.security.is_staff ? (
+                                            { this.state.is_staff ? (
                                                 'Staff'
-                                            ) : securityContext.security.is_reviewer ? (
+                                            ) : this.state.is_reviewer ? (
                                                 'Reviewer'
                                             ) : 'Newbie'
                                             }
                                         </h4><Divider fitted/>
                                     </Card.Description>
 
-                                    <Button fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
+                                    <Button name="save" fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
                                         <Button.Content visible>
                                             Save Changes
                                         </Button.Content>

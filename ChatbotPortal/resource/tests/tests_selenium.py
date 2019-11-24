@@ -234,18 +234,20 @@ class TestResourceSubmission(LiveServerTestCase):
         assert attachemnt_pdf_text == downloaded_pdf_text
 
     def compare_resource_submission_number(self):
-         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
-         total_resources = self.driver.find_element(
-             By.ID, "total_resources").text
-         pending_resources = self.driver.find_element(
-             By.ID, "pending_resources").text
+        self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+        total_resources = self.driver.find_element(
+            By.ID, "total_resources").text
+        pending_resources = self.driver.find_element(
+            By.ID, "pending_resources").text
 
-         self.driver.find_element(By.LINK_TEXT, "My Profile").click()
-         db_profile_num_submissions = CustomUser.objects.get(pk=1).submissions
-         print(db_profile_num_submissions)
-         # profile_num_submissions = self.driver.find_element(
-         #     By.ID, "profile_num_submissions").text
+        self.driver.find_element(By.LINK_TEXT, "My Profile").click()
+        db_profile_num_submissions = CustomUser.objects.get(pk=1).submissions
+        print(db_profile_num_submissions)
+        profile_num_submissions = self.driver.find_element(
+            By.ID, "profile_num_submissions").text
 
-         assert total_resources == str(self.total_resources)
-         assert pending_resources == str(self.total_resources)
-         #assert db_profile_num_submissions == str(self.total_resources)
+        assert total_resources == str(self.total_resources)
+        assert pending_resources == str(self.total_resources)
+        assert str(db_profile_num_submissions) == str(self.total_resources)
+        assert profile_num_submissions == str(self.total_resources)
+
