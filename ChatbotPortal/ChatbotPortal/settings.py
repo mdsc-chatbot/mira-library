@@ -97,11 +97,11 @@ DATABASES = {
         }
     }
 }
-if 'test' in sys.argv:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3'
-    }
+# if 'test' in sys.argv:
+#     DATABASES['default'] = {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'db.sqlite3'
+#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
