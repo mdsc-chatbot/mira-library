@@ -45,12 +45,12 @@ CREATE DATABASE main_db
 
 #### In python console run the following sequentially:
 ```
-python manage.py makemigrations admin
-python manage.py migrate admin
 python manage.py makemigrations auth
 python manage.py migrate auth
 python manage.py makemigrations authentication
 python manage.py migrate authentication
+python manage.py makemigrations admin
+python manage.py migrate admin
 python manage.py makemigrations
 python manage.py migrate
 python manage.py migrate –run-syncdb
