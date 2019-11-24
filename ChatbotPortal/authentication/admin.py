@@ -24,9 +24,9 @@ class CustomUserAdmin(UserAdmin):
         'last_login',
         'profile_picture',
         'submissions',
-        'points',
         'pending_submissions',
         'approved_submissions',
+        'points',
     ]
 
     # Fields to be filtered
@@ -44,8 +44,8 @@ class CustomUserAdmin(UserAdmin):
         ('Login Credentials', {'fields': ['email', 'password']}),
         ('User Details',
          {'fields': ['first_name', 'last_name', 'affiliation', 'date_joined', 'last_login',
-                     'profile_picture', 'submissions', 'points', 'pending_submissions',
-                     'approved_submissions', ]}),
+                     'profile_picture', 'submissions', 'pending_submissions',
+                     'approved_submissions', 'points']}),
         ('Permissions', {'fields': ['is_active', 'is_reviewer', 'is_staff', 'is_superuser']}),
     ]
 
@@ -83,7 +83,9 @@ class CustomUserAdmin(UserAdmin):
                 'affiliation',
                 'profile_picture',
                 'submissions',
-                'points'
+                'pending_submissions',
+                'approved_submissions',
+                'points',
             )}
          ),
     ]

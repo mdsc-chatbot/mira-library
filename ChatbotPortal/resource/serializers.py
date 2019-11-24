@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Resource
+from .models import Resource, Tag
 
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,3 +29,8 @@ class ResourceUpdateSerializer(serializers.Serializer):
         instance.__dict__.update(validated_data)
         instance.save()
         return instance
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['name']
