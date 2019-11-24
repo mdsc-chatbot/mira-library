@@ -27,6 +27,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'is_superuser',
             'profile_picture',
             'submissions',
+            'pending_submissions',
+            'approved_submissions',
             'points'
         ]
 
@@ -74,7 +76,9 @@ class CustomUserTokenSerializer(serializers.ModelSerializer):
             'token',
             'profile_picture',
             'submissions',
-            'points'
+            'pending_submissions',
+            'approved_submissions',
+            'points',
         ]
 
 

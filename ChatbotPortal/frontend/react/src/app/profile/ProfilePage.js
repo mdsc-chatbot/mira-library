@@ -13,6 +13,11 @@ class ProfilePage extends Component {
 
     static contextType = SecurityContext;
 
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+
     componentDidMount() {
         this.retrieve_user_info();
     }
