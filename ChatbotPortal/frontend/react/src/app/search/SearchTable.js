@@ -84,7 +84,6 @@ class SearchTable extends Component {
         // Getting rows from server; upon successful completion, every items in the
         // result is pushed in a temporary variable which in turn is stored in the
         // loadedData state.
-        console.log(this.state.nextPage)
         if (!!this.state.nextPage) {
             this.getRowsFromServer(this.state.nextPage)
                 .then((result) => {
@@ -195,7 +194,7 @@ class SearchTable extends Component {
                     loadMoreRows={this.loadMoreRows}
                     // The number of rows in the original data base
                     rowCount={1000000}
-                    threshold={2} >
+                    threshold={2}>
                     {/*onRowsRender: This function should be passed as the child's onRowsRender property,
                     it informs loader when the user is scrolling*/}
                     {/*registerChild: This function should be set as the child's ref property. It enables a set
@@ -228,49 +227,38 @@ class SearchTable extends Component {
                                             // The key name of the row object used to retrieve the value inserted in the cell
                                             dataKey='id'
                                             // The width of the column
-                                            width={width * 0.01}/>
+                                            width={width * 0.1}/>
                                         <Column
                                             label='Email'
                                             dataKey='email'
-                                            width={width * 0.125}/>
+                                            width={width}/>
                                         <Column
                                             label='First Name'
                                             dataKey='first_name'
-                                            width={width * 0.1}/>
+                                            width={width}/>
                                         <Column
                                             label='Last Name'
                                             dataKey='last_name'
-                                            width={width * 0.1}/>
-                                        <Column
-                                            label='Activate'
-                                            dataKey='is_active'
-                                            width={width * 0.07}/>
-                                        <Column
-                                            label='Reviewer'
-                                            dataKey='is_reviewer'
-                                            width={width * 0.07}/>
-                                        <Column
-                                            label='Staff'
-                                            dataKey='is_staff'
-                                            width={width * 0.07}/>
+                                            width={width}/>
+
                                         <Column
                                             label='Submissions'
                                             dataKey='submissions'
-                                            width={width * 0.05}/>
+                                            width={width}/>
                                         <Column
                                             label='Pending'
                                             dataKey='pending_submissions'
-                                            width={width * 0.05}/>
+                                            width={width}/>
                                         <Column
                                             label='Approved'
                                             dataKey='approved_submissions'
-                                            width={width * 0.05}/>
+                                            width={width}/>
                                         <Column
                                             label='Photo'
                                             // The key name of the row object used to retrieve the value inserted in the cell
                                             dataKey='profile_picture'
                                             // The width of the column
-                                            width={width * 0.0}
+                                            width={0}
                                             cellRenderer={({cellData}) => (cellData ?
                                                 (<img
                                                     src={`/static/${cellData.split('/')[cellData.split('/').length - 1]}`}
@@ -280,25 +268,37 @@ class SearchTable extends Component {
                                                     alt={'Profile Picture'}/>)
                                                 : cellData)}/>
                                         <Column
+                                            label='Activate'
+                                            dataKey='is_active'
+                                            width={0}/>
+                                        <Column
+                                            label='Reviewer'
+                                            dataKey='is_reviewer'
+                                            width={0}/>
+                                        <Column
+                                            label='Staff'
+                                            dataKey='is_staff'
+                                            width={0}/>
+                                        <Column
                                             label='Joined on'
                                             dataKey='date_joined'
-                                            width={width * 0.0}/>
+                                            width={0}/>
                                         <Column
                                             label='Last Login'
                                             dataKey='last_login'
-                                            width={width * 0.0}/>
+                                            width={0}/>
                                         <Column
                                             label='Admin'
                                             dataKey='is_superuser'
-                                            width={width * 0.0}/>
+                                            width={0}/>
                                         <Column
                                             label='Affiliation'
                                             dataKey='affiliation'
-                                            width={width * 0.0}/>
+                                            width={0}/>
                                         <Column
                                             label='Points'
                                             dataKey='points'
-                                            width={width * 0.0}/>
+                                            width={0}/>
                                     </Table>}
                             </AutoSizer>)
                     }
