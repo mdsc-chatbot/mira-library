@@ -16,10 +16,11 @@ class ResourceTest(TestCase):
         return resource
 
     def compare_resource_webscraped(self, resource_pk, url, title, summary):
-        self.create_resource(url).save()
-        db_resource = Resource.objects.get(pk=resource_pk)
-        test_title = db_resource.title.strip()
-        test_summary = db_resource.website_summary_metadata.strip()
+        resource = self.create_resource(url)
+        resource.save()
+
+        test_title = resource.title.strip()
+        test_summary = resource.website_summary_metadata.strip()
         # print("title:", test_title, "summary:", test_summary )
         self.assertTrue(title == test_title and summary == test_summary)
 
