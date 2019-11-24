@@ -13,6 +13,11 @@ class ProfilePage extends Component {
 
     static contextType = SecurityContext;
 
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+
     componentDidMount() {
         this.retrieve_user_info();
     }
@@ -233,7 +238,7 @@ class ProfilePage extends Component {
                                         <h4><Icon color='blue' name='mail'/>
                                             {securityContext.security.email}</h4><Divider fitted /><h4>
                                         <Icon color='blue' name='pencil alternate'/>
-                                        # of Submissions = {securityContext.security.submissions}
+                                        # of Submissions = <p id="profile_num_submissions">{securityContext.security.submissions}</p>
                                     </h4><Divider fitted />
                                         <h4>
                                             <Icon color='blue' name='trophy'/>

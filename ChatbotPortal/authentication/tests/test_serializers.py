@@ -28,17 +28,17 @@ class TestSerializers(TestCase):
             'is_superuser',
             'profile_picture',
             'submissions',
-            'points'
+            'pending_submissions',
+            'approved_submissions',
+            'points',
         ]
         self.user_attributes = {
             'id': 1,
-            # 'last_login' : datetime.datetime,
             'email': 'test@user.ca',
             'password': '1234',
             'first_name': 'Test',
             'last_name': 'User',
             'affiliation': 'Tester',
-            # 'date_joined' : datetime.datetime,
             'is_active': True,
             'is_reviewer': False,
             'is_staff': False,
