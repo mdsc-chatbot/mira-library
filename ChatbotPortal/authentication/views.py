@@ -66,7 +66,7 @@ class CurrentUserView(generics.RetrieveAPIView):
             if user is not None:
                 serializer = CustomUserTokenSerializer(user, context={'request': request})
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
 class LoginView(generics.CreateAPIView):

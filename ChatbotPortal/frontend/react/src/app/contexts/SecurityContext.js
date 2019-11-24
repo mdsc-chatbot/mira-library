@@ -1,5 +1,7 @@
 import React from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
+import {withRouter} from 'react-router';
 
 /**
  * creating a security context
@@ -10,7 +12,13 @@ export const SecurityContext = React.createContext({
     setSecurity: null
 });
 
-export class SecurityContextProvider extends React.Component {
+class InnerSecurityContextProvider extends React.Component {
+
+    static propTypes = {
+        // From withRouter
+        location : PropTypes.object,
+    };
+
     /**
      * A security context provider that provides context to every component
      * @param props properties that needs to be passed
@@ -22,7 +30,7 @@ export class SecurityContextProvider extends React.Component {
         super(props);
         this.state = {
             security: {},
-        }
+        };
     }
 
     /**
@@ -64,9 +72,14 @@ export class SecurityContextProvider extends React.Component {
 
     /**
      * Get the corrent user once the security context is mounted
+     *
+     * Only get the current user if not using a certain url (i.e. resource submission through extension)
+     * We use the component UpdateContexts to update the context.
      */
     componentDidMount() {
-        this.get_the_current_user();
+        if (!this.props.location.pathname.startsWith('/chatbotportal/app/resource_submit/extension/')) {
+            this.get_the_current_user();
+        }
     };
 
     /**
@@ -82,5 +95,4 @@ export class SecurityContextProvider extends React.Component {
     }
 }
 
-
-
+export const SecurityContextProvider = withRouter(InnerSecurityContextProvider);

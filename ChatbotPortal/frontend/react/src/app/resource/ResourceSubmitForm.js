@@ -1,13 +1,12 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import axios from "axios";
 import validator from "validator";
-import { Container, Form, Header, Input, Message, Rating, Responsive, Segment } from "semantic-ui-react";
+import {Container, Form, Header, Input, Message, Rating} from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
 import CategoryDropdown from './CategoryDropdown';
 import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
-import ResourceResponsive from "./ResourceResponsive";
 
 export default class ResourceSubmitForm extends Component {
     static contextType = SecurityContext;
@@ -48,7 +47,9 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
         resourceFormData.append("category", this.state.category);
-        this.state.attachment !== null ? resourceFormData.append("attachment", this.state.attachment) : null;
+        this.state.attachment !== null
+            ? resourceFormData.append("attachment", this.state.attachment)
+            : null;
 
         // Submission for tags
         // Lists have to be submitted in a certain way in order for the server to recognize it
@@ -84,7 +85,7 @@ export default class ResourceSubmitForm extends Component {
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
-        this.setState({ submitted: submitted_value }, () => {
+        this.setState({submitted: submitted_value}, () => {
             setTimeout(() => {
                 this.setState(this.baseState);
             }, 1000);
@@ -106,11 +107,11 @@ export default class ResourceSubmitForm extends Component {
     };
 
     handleRate = (event, data) => {
-        this.setState({ rating: data.rating });
+        this.setState({rating: data.rating});
     };
 
     handleChange = event => {
-        this.setState({ [event.target.name]: event.target.value });
+        this.setState({[event.target.name]: event.target.value});
     };
 
     // event.target.value holds the pathname of a file
@@ -124,7 +125,7 @@ export default class ResourceSubmitForm extends Component {
     handleSubmit = event => {
         // Validations
         if (!validator.isURL(this.state.url) || !this.state.url) {
-            this.setState({ url_validated: false });
+            this.setState({url_validated: false});
         } else {
             this.post_resource();
         }
@@ -132,8 +133,8 @@ export default class ResourceSubmitForm extends Component {
     };
 
     render() {
-        const resource_submit_form = () => {
-            return (
+        return (
+            <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
                 <SecurityContext.Consumer>
                     {securityContext => (
                         <Container vertical>
@@ -154,6 +155,7 @@ export default class ResourceSubmitForm extends Component {
                                                 required
                                                 name="url"
                                                 onChange={this.handleChange}
+                                                width={6}
                                                 value={this.state.url}
                                                 label="Enter URL"
                                                 placeholder="https://"
@@ -168,6 +170,7 @@ export default class ResourceSubmitForm extends Component {
                                                 required
                                                 name="url"
                                                 onChange={this.handleChange}
+                                                width={6}
                                                 value={this.state.url}
                                                 label="Enter URL"
                                                 placeholder="https://"
@@ -230,15 +233,18 @@ export default class ResourceSubmitForm extends Component {
                                                     return (
                                                         <Message success header="Submit success">
                                                             <Message.Content name="submit_success">
-                                                                Congratulations! You've submitted a resource!
+                                                                Congratulations! You've submitted a
+                                                                resource!
                                                             </Message.Content>
                                                         </Message>
                                                     );
                                                 else if (this.state.submitted === -1)
                                                     return (
-                                                        <Message error header="Submit failure">
+                                                        <Message
+                                                            error header="Submit failure">
                                                             <Message.Content name="submit_failure">
-                                                                Something went wrong! Your resource is not submitted.
+                                                                Something went wrong! Your resource
+                                                                is not submitted.
                                                             </Message.Content>
                                                         </Message>
                                                     );
@@ -253,8 +259,7 @@ export default class ResourceSubmitForm extends Component {
                         </Container>
                     )}
                 </SecurityContext.Consumer>
-            );
-        };
-        return <ResourceResponsive resource_component={resource_submit_form()}></ResourceResponsive>;
+            </div>
+        );
     }
 }

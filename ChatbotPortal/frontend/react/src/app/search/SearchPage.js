@@ -16,6 +16,7 @@ import {SecurityContext} from "../contexts/SecurityContext";
 import SearchByAnything from "./SearchByAnything";
 import SearchAdvancedOption from "./SearchAdvancedOption";
 import SearchTable from "./SearchTable";
+import styles from "./SearchPage.css"
 
 class SearchPage extends Component {
 
@@ -55,7 +56,9 @@ class SearchPage extends Component {
             url: "/chatbotportal/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=",
 
             sidebar_visible: true,
-            checkbox_visible: false
+            checkbox_visible: false,
+            width: "thin",
+            animation: "slide out"
         };
     }
 
@@ -152,12 +155,16 @@ class SearchPage extends Component {
         if (window.innerWidth <= 760) {
             this.setState({
                 sidebar_visible: false,
-                checkbox_visible: true
+                checkbox_visible: true,
+                width: "wide",
+                animation: "scale down"
             })
         } else {
             this.setState({
                 sidebar_visible: true,
-                checkbox_visible: false
+                checkbox_visible: false,
+                width: "thin",
+                animation: "slide out"
             })
         }
 
@@ -180,29 +187,27 @@ class SearchPage extends Component {
             <SecurityContext.Consumer>
                 {(securityContext) => (
                     <Responsive as={SidebarPushable} minWidth={320} onUpdate={this.set_sidebar_visibility}>
-
                         {securityContext.security.is_logged_in ?
                             <SidebarPushable as={Segment}>
                                 <Sidebar
+                                    className={styles.sidebarStyle}
                                     as={Container}
-                                    animation='push'
+                                    animation={this.state.animation}
                                     icon='labeled'
                                     inverted
                                     vertical
                                     visible={this.state.sidebar_visible}
-                                    width='tiny'
-                                >
+                                    width={this.state.width}>
                                     <Responsive as={Container} minWidth={320}>
-
-                                        <Container fluid>
-                                            <div style={{height: "100vh", backgroundColor: "white"}}>
-                                                <SearchAdvancedOption
-                                                    set_date_range_params={this.set_date_range_params}
-                                                    set_date_option_params={this.set_date_option_params}
-                                                    set_status_search_params={this.set_status_search_params}
-                                                    set_id_search_params={this.set_id_search_params}
-                                                    set_submission_search_params={this.set_submission_search_params}/>
-</div>
+                                        <Container
+                                            className={styles.advancedSearchView}
+                                            fluid>
+                                            <SearchAdvancedOption
+                                                set_date_range_params={this.set_date_range_params}
+                                                set_date_option_params={this.set_date_option_params}
+                                                set_status_search_params={this.set_status_search_params}
+                                                set_id_search_params={this.set_id_search_params}
+                                                set_submission_search_params={this.set_submission_search_params}/>
                                         </Container>
                                     </Responsive>
                                 </Sidebar>
@@ -211,23 +216,19 @@ class SearchPage extends Component {
                                         <Segment basic>
                                             {this.state.checkbox_visible ?
                                                 <Checkbox
+                                                    className={styles.checkboxStyle}
                                                     checked={this.state.sidebar_visible}
                                                     name='sidebar_visible'
                                                     value={this.state.sidebar_visible}
                                                     onChange={this.handle_toggle}
-                                                    slider
-                                                />
+                                                    slider/>
                                                 : null}
                                             <Responsive as={Header} minWidth={320}>
                                                 <Header
-                                                    as="h3"
-                                                    style={{
-                                                        fontSize: "2em"
-                                                    }}
+                                                    as="h1"
+                                                    className={styles.headerStyle}
                                                     color="blue"
-                                                >
-                                                    Search
-                                                </Header>
+                                                    content="Search"/>
                                             </Responsive>
                                             <Responsive as={Form} minWidth={320}>
                                                 <Form size="mini">
@@ -236,18 +237,19 @@ class SearchPage extends Component {
                                                             icon="search"
                                                             color="blue"
                                                             size="mini"
-                                                            onClick={this.submit_query}
-                                                        />
+                                                            onClick={this.submit_query}/>
                                                         < SearchByAnything set_search_string={this.set_search_string}/>
                                                     </FormGroup>
                                                 </Form>
                                             </Responsive>
                                         </Segment>
-                                        <div style={{height: "100vh"}}>
+                                        <Container
+                                            className={styles.searchTableView}
+                                            fluid>
                                             <SearchTable
                                                 url={this.state.url}
                                                 search_clicked={this.state.search_clicked}/>
-                                        </div>
+                                        </Container>
                                     </SidebarPusher>
                                 </Responsive>
                             </SidebarPushable>

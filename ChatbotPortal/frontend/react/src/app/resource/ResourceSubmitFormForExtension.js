@@ -7,7 +7,7 @@ import {
     FormInput,
     Header,
     Icon,
-    Input, Label,
+    Input,
     Menu,
     MenuItem,
     Message,
@@ -18,6 +18,7 @@ import TagDropdown from "./TagDropdown";
 import styles from "./ResourceSubmitForm.css";
 import {MenuContext} from "../contexts/MenuContext"
 import CategoryDropdown from "./CategoryDropdown";
+import UpdateContexts from "./UpdateContexts";
 
 /**
  * This component only handles resouce submission directed from the extension
@@ -64,11 +65,7 @@ export default class ResourceSubmitForm extends Component {
     }
 
     componentDidMount() {
-        this.context.menu_visibility = false;
-        console.log(this.props.match.params.id);
-        console.log(this.props.match.params.first_name);
-        console.log(this.props.match.params.token);
-        console.log(this.props.match.params.url)
+        this.context.set_menu_visibility(false);
     }
 
     /**
@@ -76,20 +73,16 @@ export default class ResourceSubmitForm extends Component {
      * @returns {FormData}
      */
     create_resource = () => {
-        // Get current logged in user
-        let created_by_user = this.props.match.params.first_name;
-        let created_by_user_pk = this.props.match.params.id;
-
         // Creating form data object
         const resourceFormData = new FormData();
 
         // Inputting data in the object
+        resourceFormData.append("created_by_user", this.props.match.params.first_name);
+        resourceFormData.append("created_by_user_pk", this.props.match.params.id);
         resourceFormData.append("title", "Unknown title");
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
-        resourceFormData.append("created_by_user", created_by_user);
-        resourceFormData.append("created_by_user_pk", created_by_user_pk);
         resourceFormData.append("category", this.state.category);
         // If attachment is not null, then append it to the form data
         this.state.attachment !== null
@@ -143,7 +136,6 @@ export default class ResourceSubmitForm extends Component {
      * @param submitted_message
      */
     set_submitted_state = (submitted_value, submitted_message) => {
-        console.log(this.state, submitted_value);
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
@@ -223,6 +215,7 @@ export default class ResourceSubmitForm extends Component {
     render() {
         return (
             <div>
+                <UpdateContexts token={this.props.match.params.token}/>
                 <Menu inverted stackable pointing secondary size="small">
                     <MenuItem>
                         <Header as="h2" style={{color: "#3075c9"}}>
@@ -234,13 +227,13 @@ export default class ResourceSubmitForm extends Component {
                 <div style={{padding: "2%"}}>
                     <Container vertical>
                         <Responsive as={Header} minWidth={320}>
-                        <Header
-                            as={"h3"}
-                            color="blue"
-                            content={"Resource Submission"}
-                            size={"small"}
-                            textAlign={"center"}
-                        />
+                            <Header
+                                as={"h3"}
+                                color="blue"
+                                content={"Resource Submission"}
+                                size={"small"}
+                                textAlign={"center"}
+                            />
                         </Responsive>
                         <Form size={"mini"} onSubmit={this.handleSubmit} success error>
                             <div>
@@ -288,7 +281,6 @@ export default class ResourceSubmitForm extends Component {
                                     <CategoryDropdown
                                         value={this.state.category}
                                         onChange={category => this.setState({category})}
-                                        token={this.props.match.params.token}
                                     />
                                 </Form.Field>
 

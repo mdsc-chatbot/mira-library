@@ -105,8 +105,7 @@ export default class ResourceDetail extends Component {
                         headers: { 'Authorization': `Bearer ${this.context.security.token}` }
                     })
                     .then(
-                        response => {
-                        },
+                        response => {},
                         error => {
                             console.log(error);
                         }
