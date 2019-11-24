@@ -21,8 +21,8 @@ export class HeaderMenu extends Component {
     headerMenuWeb = () => {
         const { activeItem } = this.state;
         return(
-            <Segment  inverted attached = 'top'>
-                <Menu inverted stackable pointing secondary size="large">
+            <React.Fragment>
+                <Menu inverted fluid pointing secondary size="large">
                     <Menu.Item
                         as="a"
                         style={{ paddingLeft: 50 }}
@@ -114,14 +114,14 @@ export class HeaderMenu extends Component {
                         />
                     )}
                 </Menu>
-            </Segment>
+            </React.Fragment>
         );
     };
 
     headerMenuMobile = () => {
         const { activeItem } = this.state;
         return(
-            <Segment  inverted attached = 'top'>
+            <React.Fragment>
                 <Menu inverted pointing fluid widths = {2} size="small">
                     <Menu.Item
                         as="a"
@@ -228,54 +228,31 @@ export class HeaderMenu extends Component {
 
                     </Menu.Menu>
                 </Menu>
-            </Segment>
-
-        );
-    };
-
-    headerMenu = () => {
-        return(
-            <MenuContext.Consumer>
-                {(MenuContext) => (
-                    <React.Fragment>
-                        {MenuContext.menu_visibility ?
-                            <Segment.Group className={styles.segmentWeb}>
-
-                                <Responsive minWidth={768}>
-                                    {this.headerMenuWeb()}
-                                </Responsive>
-
-                                <Responsive maxWidth={767}>
-                                    {this.headerMenuMobile()}
-                                </Responsive>
-
-                            </Segment.Group> : null}
-                    </React.Fragment>
-                )}
-            </MenuContext.Consumer>
-
-
+            </React.Fragment>
         );
     };
 
     render() {
         return (
-            <React.Fragment>
-                <Segment.Group className={styles.segmentWeb}>
-                    <Responsive maxWidth={767}>
-                        {this.headerMenu()}
-                    </Responsive>
+            <MenuContext.Consumer>
+                {(MenuContext) => (
+                    <React.Fragment>
+                        {MenuContext.menu_visibility ?
+                            <Segment.Group>
+                                <Responsive maxWidth={767}>
+                                    {this.headerMenuMobile()}
+                                </Responsive>
 
-                    <Responsive minWidth={768}>
-                        <React.Fragment>
-                            {this.headerMenu()}
-                        </React.Fragment>
-                    </Responsive>
-                </Segment.Group>
-            </React.Fragment>
-
+                                <Responsive minWidth={768}>
+                                    <React.Fragment>
+                                        {this.headerMenuWeb()}
+                                    </React.Fragment>
+                                </Responsive>
+                            </Segment.Group> :null}
+                    </React.Fragment>
+                )}
+            </MenuContext.Consumer>
         );
     }
 }
-
 export default HeaderMenu;
