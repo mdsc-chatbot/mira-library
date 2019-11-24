@@ -97,7 +97,20 @@ export default class ResourceDetail extends Component {
                         console.log(error);
                     }
                 );
-
+            axios
+            .put(
+                "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
+                {"rating": this.state.rating},
+                {headers: options}
+            )
+            .then(
+                response => {
+                    console.log("update rating:", response)
+                },
+                error => {
+                    console.log(error);
+                }
+            );
             // User
             console.log(this.state.resource);
             console.log(review_status);
