@@ -1143,7 +1143,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'start_date': "''",
                 'end_date': "''",
                 'start_id': "1",
-                'end_id': "10",
+                'end_id': "1000",
                 'start_submission': "''",
                 'end_submission': "''",
                 'submission_range_option': "''",
@@ -1256,6 +1256,7 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
         self.assertEqual(len(response.data), 4)
         self.assertEqual(len(response.data['results']), 0)
 
+        # print(CustomUser.objects.get(email='regular1@user.ca').id)
         # start_id = end_id
         url = reverse(
             'search-anything-by-filter-date-id',
@@ -1267,8 +1268,8 @@ class TestSearchByAnythingWithFilterDateIdView(BaseViewTest):
                 'search_option': "''",
                 'start_date': "''",
                 'end_date': "''",
-                'start_id': "2",
-                'end_id': "2",
+                'start_id': "31",
+                'end_id': "31",
                 'start_submission': "''",
                 'end_submission': "''",
                 'submission_range_option': "''",
