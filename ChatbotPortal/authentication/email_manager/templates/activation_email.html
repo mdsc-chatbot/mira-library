@@ -11,15 +11,6 @@
 			font-family: "Verdana";
 		}
 
-		header{
-			background-color: #0000FF; 							/* Used if the image is unavailable */
-			background-repeat: no-repeat; 						/* Do not repeat the image */
-			background-size: cover; 							/* Resize the background image to cover the entire container */
-			height: 50%; 										/* You must set a specified height */
-			/* background-position: center; */ 					/* Center the image */
-			padding: 5px;
-		}
-
 		h1{
 			padding-top: 30px; 									/* Padding the headline from the top of the box */
 			font-size: 24;									/* The size of the text (hardcoded) */
@@ -34,7 +25,7 @@
 			display: inline-block;								/* Having the anchors as inline-block to be displayed side by side */
 			background-color: rgba(10, 71, 238, 0.856);		    /* A transparent background color on the navigation boxes */
 			border-radius: 10px;								/* Carving the box edges */
-			width: 20%;											/* Width of the boxes */
+			width: 30%;											/* Width of the boxes */
 			
 			padding: 20px;										/* Padding the texts from the top of the box */
 			font-size: 100%;										/* Font size proportionate to the anchor box size */
@@ -44,51 +35,52 @@
 			text-decoration: none;								/* Remove the underline from the texts */
 		}
 
-		/* Styling the right container for the texts */
-		.middle{
-			float: left;										/* Having the element at the right */
-			display: inline-block;								/* Having the element as inline-block to be displayed side by side */
-			width: 74.5%;										/* Proportional width of the element */
-		}
-
 		.user_name{
 			font-family: "Verdana";
 			font-size: 30;			
+			padding-left:10px;
+			padding-right:10px;
+
 		}
 
 		.confirmation_message{
 			font-family: "Verdana";
-			font-size: 20;
+			font-size: 16;
+			padding-left:10px;
+			padding-right:10px;
 		}
 
 		.sign{
 			font-family: "Verdana";
 			font-size: 12;
 			padding-top:12;
+			color:gray;
+			padding-left:10px;
+			padding-right:10px;
 		}
 
-		.centered {
+		.div {
 			position: absolute;
-			left: 5%;
-			top:10%;
+			border:1px solid rgb(228, 226, 226);
+			border-radius: 3px;
 		}
 
 	</style>
 </head>
 <body>
-	<!-- <div class="centered">
+	<div class="div">
+		<img src="https://raw.githubusercontent.com/tnguyen10/ChatbotPortal_image/master/logo.png" alt="MISSING"/>
+		<p></p>
 		<p class="user_name">Hi {{user.first_name}},</h1>
-			<main>
-				<section class = "middle">
-					<p class="confirmation_message">Thank you for joining Chatbot Portal, <br/> </p>
-					<p class="confirmation_message">Please click the below button to confirm your email in order to complete the signup process.</p>
-					<a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" target="_blank">Confirm</a>
-					<p class="sign">©The Chatbot Portal team</p>
-				</section>
-			</main>
-	</div> -->
+		<p class="confirmation_message">Thank you for joining Chatbot Portal, <br/>
+			Please click the below button to confirm your email in order to complete the signup process.</p>
+		<p class="confirmation_message">
+				<a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" target="_blank">Confirm</a>
+		</p>
+		<p class="sign">©The Chatbot Portal team</p>
+	</div>
 
-	<div class="card mb-3">
+	<!-- <div class="card mb-3">
 			<img src="logo.png" class="card-img-top" alt="...">
 			<div class="card-body">
 			  <h2 class="card-title">Hi {{user.first_name}},</h2>
@@ -98,7 +90,7 @@
 			  <p></p>
 			  <p class="card-text"><small class="text-muted">©The Chatbot Portal team</small></p>
 			</div>
-	</div>
+	</div> -->
 
 </body>
 </html>
