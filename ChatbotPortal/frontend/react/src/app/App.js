@@ -1,7 +1,7 @@
 import React from "react";
 import Homepage from "./Homepage";
 import {Route, Switch} from "react-router-dom";
-import {ProfilePage} from "./profile";
+import ProfilePage from "./profile/ProfilePage";
 import ResourcePage from "./resource/ResourcePage";
 import ResourceDetail from "./resource/ResourceDetail";
 import reviewResource from "./review/reviewResource";
