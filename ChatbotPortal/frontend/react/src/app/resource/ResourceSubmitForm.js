@@ -70,13 +70,14 @@ export default class ResourceSubmitForm extends Component {
             .post("/chatbotportal/resource/", resourceFormData, {
                 headers: { Authorization: `Bearer ${this.context.security.token}` }
             })
-            .then(() => {})
+            .then(() => {
+                this.set_submitted_state(1, "POST SUCESS");
+            })
             .catch(error => {
                 console.error(error);
                 this.set_submitted_state(-1, "POST FAILURE");
             });
 
-        this.set_submitted_state(1, "POST SUCESS");
     };
 
     set_submitted_state = (submitted_value, submitted_message) => {

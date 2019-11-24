@@ -101,8 +101,8 @@ export default class ResourceDetail extends Component {
             console.log(review_status);
             if (review_status === "approved") {
                 axios
-                    .put(`/chatbotportal/authentication/${this.context.security.id}/update/approved_submissions/`, {
-                        headers: { Authorization: `Bearer ${this.context.security.token}` }
+                    .put(`/chatbotportal/authentication/${this.state.resource.created_by_user_pk}/update/approved_submissions/`, '', {
+                        headers: { 'Authorization': `Bearer ${this.context.security.token}` }
                     })
                     .then(
                         response => {},
