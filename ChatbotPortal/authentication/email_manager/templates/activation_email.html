@@ -1,6 +1,7 @@
 {% autoescape off %}
 <html lang="en">
 <head>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<meta charset="UTF-8">
 	<title>Email Verification Chatbot Portal</title>
 	<style>
@@ -20,20 +21,19 @@
 
 		h1{
 			padding-top: 30px; 									/* Padding the headline from the top of the box */
-			font-size: 25px;									/* The size of the text (hardcoded) */
-			color: rgba(255, 255, 255, 1);						/* Color of the text (white) */
-			text-align:center;									/* Center the text */
-			text-transform: uppercase;							/* Showing only uppercase letters */
-			text-shadow: 2px 2px rgba(0, 0, 0, 1);				/* Having a shadow effect on the text */
+			font-size: 24;									/* The size of the text (hardcoded) */
+			color: rgb(0, 0, 0);							/* Color of the text (white) */
+			text-align:left;									/* Center the text */
+			font-family: "Verdana";
+			font-weight: "normal";
 		}
 
 		/* Idle style for the links */
 		a:link{
 			display: inline-block;								/* Having the anchors as inline-block to be displayed side by side */
-			background-color: rgba(0, 255, 255, 0.25);		    /* A transparent background color on the navigation boxes */
+			background-color: rgba(10, 71, 238, 0.856);		    /* A transparent background color on the navigation boxes */
 			border-radius: 10px;								/* Carving the box edges */
 			width: 20%;											/* Width of the boxes */
-			margin-left: 55%;
 			
 			padding: 20px;										/* Padding the texts from the top of the box */
 			font-size: 100%;										/* Font size proportionate to the anchor box size */
@@ -49,20 +49,43 @@
 			display: inline-block;								/* Having the element as inline-block to be displayed side by side */
 			width: 74.5%;										/* Proportional width of the element */
 		}
+
+		.user_name{
+			font-family: "Verdana";
+			font-size: 30;			
+		}
+
+		.confirmation_message{
+			font-family: "Verdana";
+			font-size: 20;
+		}
+
+		.sign{
+			font-family: "Verdana";
+			font-size: 12;
+			padding-top:12;
+		}
+
+		.centered {
+			position: absolute;
+			left: 5%;
+			top:10%;
+		}
+
 	</style>
 </head>
 <body>
-	<header>
-		<h1>Welcome to Chatbotportal</h1>
-	</header>
-	<main>
-		<section class = "middle">
-			<h2>Please Activate Your Portal</h2>
-			<p>Hi {{user.first_name}}, </p>
-			<p>Please click on the button to activate your Chatbot Portal account.</p>
-			<a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" target="_blank">Confirm</a>
-		</section>
-	</main>
+	<div class="centered">
+		<p class="user_name">Hi {{user.first_name}},</h1>
+			<main>
+				<section class = "middle">
+					<p class="confirmation_message">Thank you for joining Chatbot Portal, <br/> </p>
+					<p class="confirmation_message">Please click the below button to confirm your email in order to complete the signup process.</p>
+					<a href="http://{{ domain }}{% url 'activate' uidb64=uid token=token %}" target="_blank">Confirm</a>
+					<p class="sign">©The Chatbot Portal team</p>
+				</section>
+			</main>
+	</div>
 </body>
 </html>
 {% endautoescape %}
