@@ -3,6 +3,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import {ResourceDetailView} from '../shared';
 import {SecurityContext} from '../contexts/SecurityContext';
+import ResourceResponsive from '../resource/ResourceResponsive';
 
 export default class DetailedPublicResource extends React.Component {
     static contextType = SecurityContext;

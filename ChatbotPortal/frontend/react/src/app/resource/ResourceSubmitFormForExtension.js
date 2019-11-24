@@ -64,7 +64,7 @@ export default class ResourceSubmitForm extends Component {
     }
 
     componentDidMount() {
-        this.context.menu_visibility = false;
+        this.context.set_menu_visibility(false);
         console.log(this.props.match.params.id);
         console.log(this.props.match.params.first_name);
         console.log(this.props.match.params.token);
@@ -143,7 +143,6 @@ export default class ResourceSubmitForm extends Component {
      * @param submitted_message
      */
     set_submitted_state = (submitted_value, submitted_message) => {
-        console.log(this.state, submitted_value);
         if (submitted_value === 1) {
             this.update_user_submissions();
         }

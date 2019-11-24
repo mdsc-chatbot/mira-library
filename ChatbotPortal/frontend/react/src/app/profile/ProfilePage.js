@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
-import {Button, Card, Container, Form, Icon, Image, Segment, Responsive,Divider, Grid} from 'semantic-ui-react';
+import {Button, Card, Container, Divider, Form, Icon, Image, Responsive, Segment} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";

@@ -75,7 +75,7 @@ export class SearchAdvancedOption extends Component {
 
         return (
             <div id='advanced_search_accordian'>
-                <Header content='Search Filter' color="blue" size="small"/>
+                <Header content='Search Filter' color="blue" size="medium"/>
                 <Accordion
                     panels={advanced_search_option}
                     exclusive={false}
