@@ -40,6 +40,7 @@ class ProfilePage extends Component {
                         response.data = JSON.parse('{}');
                         response.data['is_logged_in'] = false;
                         this.setState(response.data);
+                        window.location.replace(baseRoute);
                     }
                 },
                 error => {
@@ -158,20 +159,20 @@ class ProfilePage extends Component {
                             <Card.Description>
                                 <Divider fitted />
                                 <h3><Icon color='blue' name='mail'/>
-                                    {securityContext.security.email}</h3><Divider fitted />
+                                    {this.state.email}</h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='pencil alternate'/>
-                                    # of Submissions = {securityContext.security.submissions}
+                                    # of Submissions = <p id="profile_num_submissions">{this.state.submissions}</p>
                                 </h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='trophy'/>
-                                    Points = {securityContext.security.points}
+                                    Points = {this.state.points}
                                 </h3><Divider fitted />
                                 <h3>
                                     <Icon color='blue' name='certificate'/>
-                                    { securityContext.security.is_staff ? (
+                                    { this.state.is_staff ? (
                                         'Staff'
-                                    ) : securityContext.security.is_reviewer ? (
+                                    ) : this.state.is_reviewer ? (
                                         'Reviewer'
                                     ) : 'Newbie'
                                     }
@@ -179,7 +180,7 @@ class ProfilePage extends Component {
                             </Card.Description>
 
 
-                            <Button fluid size='big' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
+                            <Button name="save" fluid size='big' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
                                 <Button.Content visible>
                                     Save Changes
                                 </Button.Content>
@@ -201,66 +202,66 @@ class ProfilePage extends Component {
     /* This function handles the profile page for Mobile Version */
     profilePageDataMobile = () => {
         return(
-            <SecurityContext.Consumer>
-                {(securityContext) => (
-                    <Form className={styles.centeredFormMobile}>
-                        {securityContext.security.is_logged_in ?
-                            <Card fluid centered>
-                                {typeof(this.state.profile_picture) !== 'object' && this.state.profile_picture? (
-                                    <Image
-                                        src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
-                                        centered
-                                        size='small'/>
-                                ) : null}
-                                <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
-                                <Card.Content className={styles.nameMobile}>
-                                    <Card.Header>
-                                        <Form.Input
-                                            fluid
-                                            size = "tiny"
-                                            label='First name'
-                                            name='first_name'
-                                            onChange={this.handle_change}
-                                            value={this.state.first_name}
-                                        />
-                                        <Form.Input
-                                            fluid
-                                            size="tiny"
-                                            label='Last name'
-                                            name='last_name'
-                                            onChange={this.handle_change}
-                                            value={this.state.last_name}
-                                        />
-                                    </Card.Header>
-                                </Card.Content>
-                                <Card.Description>
-                                    <Divider fitted />
-                                    <h4><Icon color='blue' name='mail'/>
-                                        {securityContext.security.email}</h4><Divider fitted /><h4>
-                                    <Icon color='blue' name='pencil alternate'/>
-                                    # of Submissions = <p id="profile_num_submissions">{securityContext.security.submissions}</p>
-                                </h4><Divider fitted />
-                                    <h4>
-                                        <Icon color='blue' name='trophy'/>
-                                        Points = {securityContext.security.points}
+                <SecurityContext.Consumer>
+                    {(securityContext) => (
+                        <Form className={styles.centeredFormMobile}>
+                            {securityContext.security.is_logged_in ?
+                                <Card fluid centered>
+                                    {typeof(this.state.profile_picture) !== 'object' && this.state.profile_picture? (
+                                        <Image
+                                            src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
+                                            centered
+                                            size='small'/>
+                                    ) : null}
+                                    <Form.Input className={styles.imageMobile} type='file' accept="image/png, image/jpeg" id='profile_picture' name='profile_picture' onChange={this.handleImageChange}/>
+                                    <Card.Content className={styles.nameMobile}>
+                                        <Card.Header>
+                                            <Form.Input
+                                                fluid
+                                                size = "tiny"
+                                                label='First name'
+                                                name='first_name'
+                                                onChange={this.handle_change}
+                                                value={this.state.first_name}
+                                            />
+                                            <Form.Input
+                                                fluid
+                                                size="tiny"
+                                                label='Last name'
+                                                name='last_name'
+                                                onChange={this.handle_change}
+                                                value={this.state.last_name}
+                                            />
+                                        </Card.Header>
+                                    </Card.Content>
+                                    <Card.Description>
+                                        <Divider fitted />
+                                        <h4><Icon color='blue' name='mail'/>
+                                            {this.state.email}</h4><Divider fitted /><h4>
+                                        <Icon color='blue' name='pencil alternate'/>
+                                        # of Submissions = <p id="profile_num_submissions">{this.state.submissions}</p>
                                     </h4><Divider fitted />
-                                    <h4>
-                                        <Icon color='blue' name='certificate'/>
-                                        { securityContext.security.is_staff ? (
-                                            'Staff'
-                                        ) : securityContext.security.is_reviewer ? (
-                                            'Reviewer'
-                                        ) : 'Newbie'
-                                        }
-                                    </h4><Divider fitted/>
-                                </Card.Description>
+                                        <h4>
+                                            <Icon color='blue' name='trophy'/>
+                                            Points = {this.state.points}
+                                        </h4><Divider fitted />
+                                        <h4>
+                                            <Icon color='blue' name='certificate'/>
+                                            { this.state.is_staff ? (
+                                                'Staff'
+                                            ) : this.state.is_reviewer ? (
+                                                'Reviewer'
+                                            ) : 'Newbie'
+                                            }
+                                        </h4><Divider fitted/>
+                                    </Card.Description>
 
-                                <Button fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
-                                    <Button.Content visible>
-                                        Save Changes
-                                    </Button.Content>
-                                    <Button.Content hidden><Icon name='chevron right' /></Button.Content>
-                                </Button>
+                                    <Button name="save" fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
+                                        <Button.Content visible>
+                                            Save Changes
+                                        </Button.Content>
+                                        <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                    </Button>
 
                                 <Link to={baseRoute + "/password"}>
                                     <Button color='blue' fluid size='medium'>
