@@ -37,11 +37,20 @@ def fetch_tags(request):
         # Return empty http response if can't find tags
         return HttpResponse()
 
-
 def fetch_categories(request):
     category_set = Category.objects.all().values()
     return JsonResponse(list(category_set), safe=False)
 
+def gettags(request, resource_id):
+    resource = Resource.objects.get(pk=int(resource_id))
+    tags = resource.tags.all()
+    tagSent = []
+    for item in tags:
+        print(item)
+        tag_set = {'id':item.id, 'name':item.name, 'approved':item.approved}
+        tagSent.append(tag_set)
+
+    return JsonResponse(tagSent, safe=False)
 
 # Downloads request attachment
 def download_attachment(request, resource_id):
@@ -87,7 +96,7 @@ class ResourceSearchView(generics.ListAPIView):
     queryset = Resource.objects.filter(review_status="approved")
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
-
+    
 
 class TagCreateView(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
