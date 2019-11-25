@@ -158,29 +158,38 @@ class ProfilePage extends Component {
                             </Card.Content>
                             <Card.Description>
                                 <Divider fitted />
+
                                 <Header as="h3">
                                     <Icon color='blue' name='mail'/>
                                     <Header.Content id="email"> {this.state.email} </Header.Content>
                                 </Header>
                                 <Divider fitted />
+
                                 <Header as="h3">
                                     <Icon color='blue' name='pencil alternate'/>
                                     <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
                                 </Header>
                                 <Divider fitted />
-                                <h3>
+
+                                <Header as="h3">
                                     <Icon color='blue' name='trophy'/>
-                                    Points = {this.state.points}
-                                </h3><Divider fitted />
-                                <h3>
+                                    <Header.Content id="points"> Points = {this.state.points} </Header.Content>
+                                </Header>
+                                <Divider fitted />
+
+                                <Header as="h3">
                                     <Icon color='blue' name='certificate'/>
-                                    { this.state.is_staff ? (
-                                        'Staff'
-                                    ) : this.state.is_reviewer ? (
-                                        'Reviewer'
-                                    ) : 'Newbie'
-                                    }
-                                </h3><Divider fitted/>
+                                    <Header.Content id="status"> 
+                                        { this.state.is_staff ? (
+                                            'Staff'
+                                        ) : this.state.is_reviewer ? (
+                                            'Reviewer'
+                                        ) : 'Newbie'
+                                        }
+                                    </Header.Content>
+                                </Header>
+                                <Divider fitted/>
+                                
                             </Card.Description>
 
 
@@ -240,29 +249,38 @@ class ProfilePage extends Component {
                                     </Card.Content>
                                     <Card.Description>
                                         <Divider fitted />
+
                                         <Header as="h4">
                                             <Icon color='blue' name='mail'/>
                                             <Header.Content id="email"> {this.state.email} </Header.Content>
                                         </Header>
                                         <Divider fitted />
+
                                         <Header as="h4">
                                             <Icon color='blue' name='pencil alternate'/>
                                             <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
                                         </Header>
                                         <Divider fitted />
-                                        <h4>
+
+                                        <Header as="h4">
                                             <Icon color='blue' name='trophy'/>
-                                            Points = {this.state.points}
-                                        </h4><Divider fitted />
-                                        <h4>
+                                            <Header.Content id="points"> Points = {this.state.points} </Header.Content>
+                                        </Header>
+                                        <Divider fitted />
+
+                                        <Header as="h4">
                                             <Icon color='blue' name='certificate'/>
-                                            { this.state.is_staff ? (
-                                                'Staff'
-                                            ) : this.state.is_reviewer ? (
-                                                'Reviewer'
-                                            ) : 'Newbie'
-                                            }
-                                        </h4><Divider fitted/>
+                                            <Header.Content id="status"> 
+                                                { this.state.is_staff ? (
+                                                    'Staff'
+                                                ) : this.state.is_reviewer ? (
+                                                    'Reviewer'
+                                                ) : 'Newbie'
+                                                }
+                                            </Header.Content>
+                                        </Header>
+                                        <Divider fitted/>
+
                                     </Card.Description>
 
                                     <Button name="save" fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
