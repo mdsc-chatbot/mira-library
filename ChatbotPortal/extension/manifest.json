@@ -19,7 +19,14 @@
   ],
   "browser_action": {
     "default_title": "Submit Resources",
-    "default_popup": "data/popup/popup.html"
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "64": "icons/64.png",
+      "128": "icons/128.png"
+    }
   },
   "web_accessible_resources": [
     "popup.html"
