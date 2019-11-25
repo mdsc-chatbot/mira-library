@@ -144,7 +144,7 @@ class TestResourceSubmission(LiveServerTestCase):
         assert "Congratulations! You've submitted a resource!" == test_valid_text
         actual_resource_detail[2] = actual_resource_detail[2].replace(",", "")  # Get rid of commas for tags comparision
         print(actual_resource_detail, test_resource_detail)
-        # assert actual_resource_detail == test_resource_detail
+        assert actual_resource_detail == test_resource_detail
 
         self.total_resources += 1
 
