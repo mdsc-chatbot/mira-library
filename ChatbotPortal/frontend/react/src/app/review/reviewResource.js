@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import axios from "axios";
-import {Container, Divider, Form, Header, Icon, Label, Rating} from "semantic-ui-react";
+import axios, {CancelToken} from "axios";
+import {Container, Divider, Form, Header, Icon, Label, Rating, Checkbox, Table} from "semantic-ui-react";
 import {SecurityContext} from "../contexts/SecurityContext";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
@@ -17,6 +17,7 @@ export default class ResourceDetail extends Component {
             resource: {},
             rating: 1,
             comments: "No comments",
+            tags: [],
         };
     }
 
@@ -33,12 +34,14 @@ export default class ResourceDetail extends Component {
             .then(res => {
                 this.setState({
                     resource: res.data
+                    
                 });
             });
     };
 
     componentDidMount() {
         this.get_resource_details();
+        this.handleSearchChange();
     }
 
     approve = data => {
@@ -50,7 +53,7 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
+            .post("/api/review/", review, {headers: options})
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -66,7 +69,7 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
+            .post("/api/review/", review, {headers: options})
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -142,6 +145,7 @@ export default class ResourceDetail extends Component {
         this.setState({[event.target.name]: event.target.value});
     };
 
+
     downloadAttachment = () => {
         // Having the permission header loaded
         //TODO: Fix this. This file should be using the shared component for viewing a resource.
@@ -158,6 +162,24 @@ export default class ResourceDetail extends Component {
         //         fileDownload(response.data, fileName);
         //     });
     };
+    
+    handleSearchChange = () => {
+        const resourceID = this.props.match.params.resourceID;
+            // Fetch search results
+        axios
+            .get(`/chatbotportal/resource/get-tags/${resourceID}`, '',
+                {
+                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                }
+            )
+            
+            .then(response=>{
+                console.log(response.data)
+                this.setState({
+                    tags: response.data
+                });
+            })
+        };
 
     render() {
         return (
@@ -169,11 +191,35 @@ export default class ResourceDetail extends Component {
                         <div>
                             {securityContext.security.is_logged_in ?
                                 <div>
+
                                     <Container>
                                     <ResourceResponsive
                                         resource_component={<ResourceDetailView resource={this.state.resource} />}
                                     ></ResourceResponsive>
                                     </Container>
+                                    
+                                    <Container>
+                                    {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
+                                        <Table class="ui celled table">
+                                            <thead>
+                                                <tr><th>tag ID</th><th>Tag Name</th><th></th></tr>
+                                            </thead>
+                                            <tbody>
+                                                {//console.log("tags",this.state.resource.tags),
+                                                this.state.tags.map(tag => (
+                                                    tag.approved !== true ?(
+                                                        <tr key={tag} ref={tr => this.results = tr}>
+                                                        <td>{tag.id}</td>
+                                                        <td>{tag.name}</td>
+                                                        <td><div class="ui toggle checkbox"><input type="checkbox"/><label>Approve</label></div></td>
+                                                        </tr>
+                                                    ):('')
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    ) : null}
+                                    </Container>
+
                                     <Container style={{width: "50%", height: "10%"}}>
                                         <h2>Submit Review</h2>
                                         <div class="ui form">

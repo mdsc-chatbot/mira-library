@@ -40,7 +40,7 @@ export default class ReviewTable extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("http://127.0.0.1:8000/api/review", {headers: options}).then(res => {
+        axios.get("/api/review", {headers: options}).then(res => {
             this.setState({
                 reviews: res.data
             });
