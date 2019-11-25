@@ -1,0 +1,7 @@
+:global( .ui.grid > .row > .column).noPaddingTagColumn {
+    padding: 0
+}
+
+:global( .ui.grid > .row > .column).noPaddingResourceColumn {
+    padding-right: 0
+}

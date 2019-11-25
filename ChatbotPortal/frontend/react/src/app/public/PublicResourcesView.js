@@ -6,7 +6,7 @@ import {
     Input,
     Button,
     Dropdown,
-    Pagination,
+    Pagination, Responsive,
 } from "semantic-ui-react";
 import PropTypes from 'prop-types';
 import axios from 'axios';
@@ -14,8 +14,9 @@ import {SecurityContext} from '../contexts/SecurityContext';
 import styles from './PublicResourcePage.css';
 import {FilterList} from './FilterList';
 import {ResourceTable} from './ResourceTable';
+import ownStyles from './PublicResourcesView.css'
 
-export class PublicResourcesView extends Component {
+class PublicResourcesView extends Component {
     static contextType = SecurityContext;
     // Static list of sort options
     // This list is reflected in the back-end code as well. Check out the view for retrieving resources.
@@ -30,6 +31,7 @@ export class PublicResourcesView extends Component {
 
     static propTypes = {
         tagId : PropTypes.string,
+        mobileView : PropTypes.bool, // True if need to show a mobile view
     };
 
     constructor(props) {
@@ -88,9 +90,14 @@ export class PublicResourcesView extends Component {
     };
 
     fetchTags = () => {
+        const headers = {};
+        if (this.context.security.token) {
+            headers['Authorization'] = `Bearer ${this.context.security.token}`;
+        }
+
         axios
             .get("/api/public/tags", {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers
             })
             .then(res => {
                 this.setState({
@@ -100,9 +107,14 @@ export class PublicResourcesView extends Component {
     };
 
     fetchCategories = () => {
+        const headers = {};
+        if (this.context.security.token) {
+            headers['Authorization'] = `Bearer ${this.context.security.token}`;
+        }
+
         axios
             .get("/api/public/categories", {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers
             })
             .then(res => {
                 this.setState({
@@ -169,6 +181,19 @@ export class PublicResourcesView extends Component {
         this.fetchResources(activePage)
     };
 
+    showResourceHeader = () => {
+        return (
+            <React.Fragment>
+                <Dropdown selection placeholder={"Sort by"} value={this.state.sortOption} onChange={this.handleSortDropdownChange} options={PublicResourcesView.resourceDropdownOptions} />
+                <Pagination
+                    activePage={this.state.resourcePage}
+                    totalPages={Math.ceil(this.state.totalResourceCount / 100)}
+                    onPageChange={this.handlePageChange}
+                />
+            </React.Fragment>
+        );
+    };
+
     render() {
         return (
             <Segment vertical>
@@ -185,7 +210,7 @@ export class PublicResourcesView extends Component {
                             </form>
                         </Grid.Row>
                         <Grid.Row columns="2">
-                            <Grid.Column width="3">
+                            <Grid.Column className={ownStyles.noPaddingTagColumn} width={this.props.mobileView ? "5" : "3"}>
                                 <FilterList
                                     tags={this.state.tags}
                                     categories={this.state.categories}
@@ -195,16 +220,11 @@ export class PublicResourcesView extends Component {
                                 />
                             </Grid.Column>
 
-                            <Grid.Column width="13">
+                            <Grid.Column className={ownStyles.noPaddingResourceColumn} width={this.props.mobileView ? "11" : "13"}>
                                 <Segment>
-                                    <span className={styles.topBarContainer}>
-                                        <Dropdown selection placeholder={"Sort by"} value={this.state.sortOption} onChange={this.handleSortDropdownChange} options={PublicResourcesView.resourceDropdownOptions} />
-                                        <Pagination
-                                            activePage={this.state.resourcePage}
-                                            totalPages={Math.ceil(this.state.totalResourceCount / 100)}
-                                            onPageChange={this.handlePageChange}
-                                        />
-                                    </span>
+                                    <span className={this.props.mobileView ? styles.mobileTopBarContainer : styles.topBarContainer}>
+                                            {this.showResourceHeader()}
+                                        </span>
                                     <ResourceTable
                                         resources={this.state.resources}
                                         loadingResources={this.state.loadingResources}
@@ -219,4 +239,16 @@ export class PublicResourcesView extends Component {
     }
 }
 
-export default PublicResourcesView;
+export default function ResponsiveResourcesView(props) {
+    return (
+        <React.Fragment>
+            <Responsive maxWidth={767}>
+                <PublicResourcesView mobileView={true} {...props} />
+            </Responsive>
+
+            <Responsive minWidth={768}>
+                <PublicResourcesView mobileView={false} {...props} />
+            </Responsive>
+        </React.Fragment>
+    );
+};
