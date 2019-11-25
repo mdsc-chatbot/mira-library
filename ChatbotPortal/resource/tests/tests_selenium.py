@@ -245,7 +245,7 @@ class TestResourceSubmission(LiveServerTestCase):
         db_profile_num_submissions = CustomUser.objects.get(pk=1).submissions
         print(db_profile_num_submissions)
         profile_num_submissions = self.driver.find_element(
-            By.ID, "profile_num_submissions").text
+            By.ID, "profile_num_submissions").text.replace("# of Submissions = ","").strip()
 
         assert total_resources == str(self.total_resources)
         assert pending_resources == str(self.total_resources)
