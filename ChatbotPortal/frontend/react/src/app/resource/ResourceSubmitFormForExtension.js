@@ -220,7 +220,7 @@ export default class ResourceSubmitForm extends Component {
                     <MenuItem>
                         <Header as="h2" style={{color: "#3075c9"}}>
                             <Icon name="qq"/>
-                            Chatbot Resources
+                            Chatbot Portal
                         </Header>
                     </MenuItem>
                 </Menu>
