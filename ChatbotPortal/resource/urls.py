@@ -10,6 +10,7 @@ urlpatterns = [
     re_path(r'^get-tags/(?P<resource_id>.*)$', views.gettags, name='fetch-review-tags'),
     re_path(r'^fetch-categories', views.fetch_categories, name='fetch-categories'),
     path('<pk>/update/', views.ResourceUpdateView.as_view()),
+    path('<pk>/updatetags/', views.TagUpdateView.as_view()),
     path('search/', views.ResourceSearchView.as_view()),
 ]
 

@@ -28,7 +28,7 @@ admin.site.register(Resource, ResourceAdmin)
 
 class TagAdmin(admin.ModelAdmin):
     model = Tag
-    list_display = ['id', 'name']
+    list_display = ['id', 'name', 'approved']
 
 class CategoryAdmin(admin.ModelAdmin):
     model = Category

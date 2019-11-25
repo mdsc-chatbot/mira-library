@@ -101,6 +101,25 @@ export default class ResourceDetail extends Component {
                         console.log(error);
                     }
                 );
+            for (var i = 0, len = this.state.tags.length; i < len; i++) {
+                    console.log("updating tags", this.state.tags[i])
+                    if (this.state.tags[i].approved === true){
+                        axios
+                            .put(
+                                "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
+                                {"approved": true},
+                                {headers: options}
+                            )
+                            .then(
+                                response => {
+                                    console.log("updateTag: ",response);
+                                },
+                                error => {
+                                    console.log(error);
+                                }
+                            );
+                    }
+                }
             // User
             console.log(this.state.resource);
             console.log(review_status);
@@ -180,6 +199,22 @@ export default class ResourceDetail extends Component {
                 });
             })
         };
+    
+    updateTagApproval = (id, status) =>{
+        this.setState(state => {
+            const tags = this.state.tags.map((item) => {
+                if (item.id === id) {
+                  console.log("updated tag:", item.name)
+                  return item.approved=status;
+                  
+                } else {
+                  return item;
+                }
+            });
+        });
+        console.log("changed",id, status);
+        console.log(this.state.tags)
+    }
 
     render() {
         return (
@@ -211,7 +246,11 @@ export default class ResourceDetail extends Component {
                                                         <tr key={tag} ref={tr => this.results = tr}>
                                                         <td>{tag.id}</td>
                                                         <td>{tag.name}</td>
-                                                        <td><div class="ui toggle checkbox"><input type="checkbox"/><label>Approve</label></div></td>
+                                                        <td>
+                                                        <button class="positive ui button" onClick={() => this.updateTagApproval(tag.id, true)}>Approve</button>
+                                                        <button class="negative ui button" onClick={() => this.updateTagApproval(tag.id, false)}>Reject</button>
+                                                        </td>
+                                                        <td><Checkbox disabled/></td>
                                                         </tr>
                                                     ):('')
                                                 ))}

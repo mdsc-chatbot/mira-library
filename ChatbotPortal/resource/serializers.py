@@ -31,6 +31,14 @@ class ResourceUpdateSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+class TagUpdateSerializer(serializers.Serializer):
+    approved = serializers.BooleanField(default=False)
+
+    def update(self, instance, validated_data):
+        instance.__dict__.update(validated_data)
+        instance.save()
+        return instance
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
