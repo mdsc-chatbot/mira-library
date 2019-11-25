@@ -1,6 +1,7 @@
 import React from 'react';
 import {Card, Rating, Loader} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
+import {PublicResourceCard} from "./PublicResourceCard";
 
 export function ResourceTable({resources, loadingResources}) {
     /**
@@ -27,26 +28,9 @@ export function ResourceTable({resources, loadingResources}) {
         // CASE 3
         return (
             <React.Fragment>
-                <Card.Group itemsPerRow="2">
+                <Card.Group itemsPerRow="2" stackable>
                     {resources.map(resource => (
-                        <Card>
-                            <Card.Content>
-                                <Link to={location => ({...location, pathname: `${location.pathname}/detail/1`})}>
-                                    <Card.Header>
-                                        {resource.title}
-                                    </Card.Header>
-                                    <Card.Meta>{resource.url}</Card.Meta>
-                                    <Card.Description>
-                                        <Rating
-                                            icon="star"
-                                            rating={resource.rating}
-                                            maxRating={5}
-                                            disabled
-                                        />
-                                    </Card.Description>
-                                </Link>
-                            </Card.Content>
-                        </Card>
+                        <PublicResourceCard resource={resource} locationPrefix="/detail" />
                     ))}
                 </Card.Group>
             </React.Fragment>

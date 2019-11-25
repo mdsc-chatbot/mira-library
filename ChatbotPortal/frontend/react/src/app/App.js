@@ -29,8 +29,10 @@ export default function App() {
         return(
             <SecurityContextProvider>
                 <MenuContextProvider>
-                    <Segment inverted attached = 'top'> <HeaderMenu /></Segment>
-                    <Segment attached>
+                    <Segment  className={styles.headerMenu} inverted attached = 'top'>
+                        <HeaderMenu/>
+                    </Segment>
+                    <Segment className={styles.segmentWeb} attached>
                         <Switch>
                             <Route exact path={baseRoute + "/profile"}>
                                 <ProfilePage/>
@@ -66,8 +68,8 @@ export default function App() {
                             />
 
                             <Route
-                            exact path={baseRoute + "/resource_submit"}
-                            component={ResourceSubmitForm}
+                                exact path={baseRoute + "/resource_submit"}
+                                component={ResourceSubmitForm}
                             />
 
                             <Route
@@ -103,11 +105,8 @@ export default function App() {
                         </Switch>
                     </Segment>
                 </MenuContextProvider>
-
-            <div/>
-
-            <Segment inverted><Footer /></Segment>
-        </SecurityContextProvider>);
+                <Segment attached = 'bottom' inverted><Footer /></Segment>
+            </SecurityContextProvider>);
     };
     return (
         <React.Fragment>

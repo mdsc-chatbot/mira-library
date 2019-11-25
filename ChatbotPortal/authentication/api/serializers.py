@@ -86,8 +86,8 @@ class UserUpdateSerializer(serializers.Serializer):
     """
     This serializer will serialize the update data
     """
-    first_name = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=100)
+    first_name = serializers.CharField(max_length=100,allow_null=True)
+    last_name = serializers.CharField(max_length=100,allow_null=True)
     profile_picture = serializers.ImageField(required=False)
 
     # password = serializers.CharField(max_length=255)

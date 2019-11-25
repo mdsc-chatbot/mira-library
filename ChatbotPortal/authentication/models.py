@@ -21,18 +21,21 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         blank=True,
         max_length=100,
         unique=False,
+        null=True,
     )
     last_name = models.CharField(
         verbose_name='Last Name',
         blank=True,
         max_length=100,
         unique=False,
+        null=True,
     )
     affiliation = models.TextField(
         verbose_name='Reason for opening account',
         blank=True,
         max_length=500,
         unique=False,
+        null=True,
     )
 
     profile_picture = models.ImageField(blank=True, null=True, upload_to='profile_pics')
