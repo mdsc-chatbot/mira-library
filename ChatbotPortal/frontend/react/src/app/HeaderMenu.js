@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Dropdown, Header, Icon, Menu, Responsive, Segment, Container} from "semantic-ui-react";
+import {Dropdown, Header, Icon, Menu, Responsive, Segment, Container, Image} from "semantic-ui-react";
 import {baseRoute} from "./App";
 import {Link} from "react-router-dom";
 import {SecurityContext} from "./contexts/SecurityContext";
@@ -31,7 +31,7 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h2" style={{ color: "#3075c9" }}>
-                                <Icon name="qq" />
+                                <Image src={require("./logo/512.ico")} ui wrapped/>
                                 Chatbot Resources
                             </Header>
                         </Link>
@@ -131,7 +131,7 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h4" style={{ color: "#3075c9" }}>
-                                <Icon name="qq" />
+                                <Image src={require("./logo/512.ico")} ui wrapped/>
                                 Chatbot Resources
                             </Header>
                         </Link>
