@@ -234,6 +234,7 @@ class SearchPage extends Component {
                                                 <Form size="mini">
                                                     <FormGroup>
                                                         <Button
+                                                            id="search_button"
                                                             icon="search"
                                                             color="blue"
                                                             size="mini"

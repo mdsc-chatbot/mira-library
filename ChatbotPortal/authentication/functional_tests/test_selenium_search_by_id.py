@@ -10,7 +10,8 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 5
+WAIT_SECONDS = 3
+IMPLICIT_WAIT_SECONDS = 50
 
 
 class TestSearchById(LiveServerTestCase):
@@ -29,6 +30,7 @@ class TestSearchById(LiveServerTestCase):
         self.regular_user_password = '12345678'
         self.reset_db()
         self.browser = webdriver.Chrome()
+        self.browser.implicitly_wait(IMPLICIT_WAIT_SECONDS)
 
     def tearDown(self):
         """
@@ -121,25 +123,27 @@ class TestSearchById(LiveServerTestCase):
         """
         CustomUser.objects.all().delete()
 
-    def test_search_by_id_startId_equal_endId(self):
-        """
-        Test search by id range where start id and end id are the same,
-        The table should return a single user.
-        :return: None
-        """
+    def logging_in(self):
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+
         time.sleep(WAIT_SECONDS)
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
 
         time.sleep(WAIT_SECONDS)
 
+    def search_by_id_range(self, id1=None, id2=None):
+        """
+        This function executes the search by setting appropriate ids
+        :param id1: start id
+        :param id2: end id
+        :return: None
+        """
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
         search_option.click()
-
-        time.sleep(WAIT_SECONDS)
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
@@ -148,22 +152,35 @@ class TestSearchById(LiveServerTestCase):
         self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
         search_accordian[2].click()
 
-        time.sleep(WAIT_SECONDS)
-
-        user = CustomUser.objects.get(email=self.super_user_email)
-
         start_id = self.browser.find_element_by_name('start_id')
         self.assertIsNotNone(start_id)
-        start_id.send_keys(user.id)
 
         end_id = self.browser.find_element_by_name('end_id')
         self.assertIsNotNone(end_id)
-        end_id.send_keys(user.id)
+
+        if id1 is not None:
+            start_id.send_keys(id1)
+        if id2 is not None:
+            end_id.send_keys(id2)
+
+        time.sleep(WAIT_SECONDS)
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
+
+    def test_search_by_id_startId_equal_endId(self):
+        """
+        Test search by id range where start id and end id are the same,
+        The table should return a single user.
+        :return: None
+        """
+        self.logging_in()
+
+        user = CustomUser.objects.get(email=self.super_user_email)
+
+        self.search_by_id_range(user.id, user.id)
 
         time.sleep(WAIT_SECONDS)
 
@@ -174,49 +191,15 @@ class TestSearchById(LiveServerTestCase):
         # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 1)
 
-        time.sleep(WAIT_SECONDS)
-
     def test_search_by_id_startId_greater_endId(self):
         """
         Test search by id range where start id greater than end id,
         The table should return 0 users.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the id accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_id = self.browser.find_element_by_name('start_id')
-        self.assertIsNotNone(start_id)
-        start_id.send_keys(1000)
-
-        end_id = self.browser.find_element_by_name('end_id')
-        self.assertIsNotNone(end_id)
-        end_id.send_keys(1)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
+        self.search_by_id_range(1000, 1)
 
         time.sleep(WAIT_SECONDS)
 
@@ -226,8 +209,6 @@ class TestSearchById(LiveServerTestCase):
 
         # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_id_startId_less_endId(self):
         """
@@ -235,41 +216,9 @@ class TestSearchById(LiveServerTestCase):
         The table should return all the users up to the end range if such user exists.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the id accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_id = self.browser.find_element_by_name('start_id')
-        self.assertIsNotNone(start_id)
-        start_id.send_keys(1)
-
-        end_id = self.browser.find_element_by_name('end_id')
-        self.assertIsNotNone(end_id)
-        end_id.send_keys(1000)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
+        self.search_by_id_range(1, 1000)
 
         time.sleep(WAIT_SECONDS)
 
@@ -278,9 +227,7 @@ class TestSearchById(LiveServerTestCase):
         self.assertIsNotNone(search_table)
 
         # Search table should return a single user
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 7)
 
     def test_search_by_id_startId_only(self):
         """
@@ -288,37 +235,9 @@ class TestSearchById(LiveServerTestCase):
         The table should return 0 users.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the id accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_id = self.browser.find_element_by_name('start_id')
-        self.assertIsNotNone(start_id)
-        start_id.send_keys(1)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
+        self.search_by_id_range(id1=1)
 
         time.sleep(WAIT_SECONDS)
 
@@ -326,10 +245,8 @@ class TestSearchById(LiveServerTestCase):
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
-        # Search table should return 0 users
+        # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_id_endId_only(self):
         """
@@ -337,37 +254,9 @@ class TestSearchById(LiveServerTestCase):
         The table should return 0 users.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the id accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        end_id = self.browser.find_element_by_name('end_id')
-        self.assertIsNotNone(end_id)
-        end_id.send_keys(1000)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
+        self.search_by_id_range(id2=1000)
 
         time.sleep(WAIT_SECONDS)
 
@@ -375,10 +264,8 @@ class TestSearchById(LiveServerTestCase):
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
-        # Search table should return 0 users
+        # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_id_startId_and_endId_are_zero(self):
         """
@@ -386,41 +273,9 @@ class TestSearchById(LiveServerTestCase):
         The table should return 0 user since ids must be greater than 1.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the id accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_id = self.browser.find_element_by_name('start_id')
-        self.assertIsNotNone(start_id)
-        start_id.send_keys(0)
-
-        end_id = self.browser.find_element_by_name('end_id')
-        self.assertIsNotNone(end_id)
-        end_id.send_keys(0)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
+        self.search_by_id_range(0, 0)
 
         time.sleep(WAIT_SECONDS)
 
@@ -428,10 +283,8 @@ class TestSearchById(LiveServerTestCase):
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
-        # Search table should return zero user
+        # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_id_startId_and_endId_are_negatives(self):
         """
@@ -439,41 +292,9 @@ class TestSearchById(LiveServerTestCase):
         The table should return 0 user since ids must be greater than 1.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the id accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_id = self.browser.find_element_by_name('start_id')
-        self.assertIsNotNone(start_id)
-        start_id.send_keys(-1)
-
-        end_id = self.browser.find_element_by_name('end_id')
-        self.assertIsNotNone(end_id)
-        end_id.send_keys(-1)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
+        self.search_by_id_range(-1, -1)
 
         time.sleep(WAIT_SECONDS)
 
@@ -481,10 +302,8 @@ class TestSearchById(LiveServerTestCase):
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
-        # Search table should return zero user
+        # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_id_clearing_values_will_resume_regular_search(self):
         """
@@ -492,19 +311,11 @@ class TestSearchById(LiveServerTestCase):
         The table should return search based on the remaining state.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
-
-        time.sleep(WAIT_SECONDS)
+        self.logging_in()
 
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
         search_option.click()
-
-        time.sleep(WAIT_SECONDS)
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
@@ -512,8 +323,6 @@ class TestSearchById(LiveServerTestCase):
         search_accordian = self.browser.find_elements_by_class_name('title')
         self.assertEqual(search_accordian[2].get_attribute('innerText'), 'By Id')
         search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
 
         start_id = self.browser.find_element_by_name('start_id')
         self.assertIsNotNone(start_id)
@@ -523,13 +332,11 @@ class TestSearchById(LiveServerTestCase):
         self.assertIsNotNone(end_id)
         end_id.send_keys(1)
 
-        time.sleep(WAIT_SECONDS)
-
         start_id.send_keys(Keys.BACKSPACE)
         end_id.send_keys(Keys.BACKSPACE)
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -541,5 +348,3 @@ class TestSearchById(LiveServerTestCase):
 
         # Search table should not be empty
         self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)

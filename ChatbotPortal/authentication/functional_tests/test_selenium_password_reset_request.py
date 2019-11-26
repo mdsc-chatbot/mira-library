@@ -1,5 +1,3 @@
-import time
-
 from django.test import LiveServerTestCase
 from selenium import webdriver
 
@@ -29,7 +27,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.active_user_email = 'test@test.ca'
         self.active_user_password = '12345678'
         self.browser = webdriver.Chrome()
-        # self.setUp_db()
+        self.browser.implicitly_wait(WAIT_SECONDS)
 
     def tearDown(self):
         """
@@ -37,7 +35,6 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
         self.browser.close()
-        # self.reset_db()
 
     def reset_db(self):
         """
@@ -69,19 +66,15 @@ class TestPasswordResetRequest(LiveServerTestCase):
         """
 
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset link on login form
         password_reset_link = self.browser.find_element_by_id('password_reset_link')
         self.assertIsNotNone(password_reset_link)
         password_reset_link.click()
 
-        time.sleep(WAIT_SECONDS)
-
         # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
+        password_reset_request_page_button = self.browser.find_element_by_name('email')
+        self.assertIsNotNone(password_reset_request_page_button)
 
     def test_password_reset_button_is_disabled(self):
         """
@@ -89,20 +82,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset link on login form
-        password_reset_link = self.browser.find_element_by_id('password_reset_link')
-        self.assertIsNotNone(password_reset_link)
-        password_reset_link.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
+        self.test_click_password_reset_link_on_loginpage()
 
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
@@ -110,7 +90,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be disabled
         self.assertFalse(password_reset_button.is_enabled())
 
-        time.sleep(WAIT_SECONDS)
+        return password_reset_button
 
     def test_email_not_sent_message(self):
         """
@@ -118,28 +98,7 @@ class TestPasswordResetRequest(LiveServerTestCase):
         :return: None
         """
 
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset link on login form
-        password_reset_link = self.browser.find_element_by_id('password_reset_link')
-        self.assertIsNotNone(password_reset_link)
-        password_reset_link.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
-
-        password_reset_button = self.browser.find_element_by_name('password_reset_button')
-        self.assertIsNotNone(password_reset_button)
-
-        # The password reset button should be disabled
-        self.assertFalse(password_reset_button.is_enabled())
-
-        time.sleep(WAIT_SECONDS)
+        self.test_password_reset_button_is_disabled()
 
         # Find the message field for the next page
         message_field = self.browser.find_element_by_tag_name('p')
@@ -147,36 +106,12 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.assertEqual(message_field.get_attribute('innerHTML'), 'Email is not sent yet.')
         self.assertIsNotNone(message_field)
 
-        time.sleep(WAIT_SECONDS)
-
     def test_password_reset_button_is_enabled(self):
         """
         Test if the password reset button gets enabled upon filling email field
         :return: None
         """
-
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset link on login form
-        password_reset_link = self.browser.find_element_by_id('password_reset_link')
-        self.assertIsNotNone(password_reset_link)
-        password_reset_link.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
-
-        password_reset_button = self.browser.find_element_by_name('password_reset_button')
-        self.assertIsNotNone(password_reset_button)
-
-        # The password reset button should be disabled
-        self.assertFalse(password_reset_button.is_enabled())
-
-        time.sleep(WAIT_SECONDS)
+        password_reset_button = self.test_password_reset_button_is_disabled()
 
         # Finding the email field
         email = self.browser.find_element_by_name('email')
@@ -186,36 +121,13 @@ class TestPasswordResetRequest(LiveServerTestCase):
         # The password reset button should be enabled
         self.assertTrue(password_reset_button.is_enabled())
 
-        time.sleep(WAIT_SECONDS)
-
     def test_invalid_email_attempted_password_reset(self):
         """
         Test if the email field has the correct email format
         :return: None
         """
 
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset link on login form
-        password_reset_link = self.browser.find_element_by_id('password_reset_link')
-        self.assertIsNotNone(password_reset_link)
-        password_reset_link.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
-
-        password_reset_button = self.browser.find_element_by_name('password_reset_button')
-        self.assertIsNotNone(password_reset_button)
-
-        # The password reset button should be disabled
-        self.assertFalse(password_reset_button.is_enabled())
-
-        time.sleep(WAIT_SECONDS)
+        password_reset_button = self.test_password_reset_button_is_disabled()
 
         # Finding the email field
         email = self.browser.find_element_by_name('email')
@@ -226,37 +138,13 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.assertTrue(password_reset_button.is_enabled())
         password_reset_button.click()
 
-        time.sleep(WAIT_SECONDS)
-
     def test_successful_email_sent_message(self):
         """
         Test email not sent message as the initial condition of the form
         :return: None
         """
 
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset link on login form
-        password_reset_link = self.browser.find_element_by_id('password_reset_link')
-        self.assertIsNotNone(password_reset_link)
-        password_reset_link.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        # Check if the URL matches for the password reset page
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
-
-        password_reset_button = self.browser.find_element_by_name('password_reset_button')
-        self.assertIsNotNone(password_reset_button)
-
-        # The password reset button should be disabled
-        self.assertFalse(password_reset_button.is_enabled())
-
-        time.sleep(WAIT_SECONDS)
+        password_reset_button = self.test_password_reset_button_is_disabled()
 
         # Finding the email field
         email = self.browser.find_element_by_name('email')
@@ -267,13 +155,9 @@ class TestPasswordResetRequest(LiveServerTestCase):
         self.assertTrue(password_reset_button.is_enabled())
         password_reset_button.click()
 
-        time.sleep(WAIT_SECONDS)
-
         # Find the message field for the next page
         message_field = self.browser.find_element_by_tag_name('p')
         # Finding the inner html of the message field and check if it is equal to the intended message
         self.assertEqual(message_field.get_attribute('innerHTML'),
                          'An email is sent with a password change link, Please check your email.')
         self.assertIsNotNone(message_field)
-
-        time.sleep(WAIT_SECONDS)

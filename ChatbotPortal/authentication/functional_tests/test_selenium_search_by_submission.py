@@ -10,7 +10,8 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 5
+WAIT_SECONDS = 3
+IMPLICIT_WAIT_SECONDS = 50
 
 
 class TestSearchBySubmission(LiveServerTestCase):
@@ -29,6 +30,7 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.regular_user_password = '12345678'
         self.reset_db()
         self.browser = webdriver.Chrome()
+        self.browser.implicitly_wait(IMPLICIT_WAIT_SECONDS)
 
     def tearDown(self):
         """
@@ -123,6 +125,56 @@ class TestSearchBySubmission(LiveServerTestCase):
         :return: None
         """
         CustomUser.objects.all().delete()
+        
+    def logging_in(self):
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+
+        time.sleep(WAIT_SECONDS)
+
+        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
+        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
+        self.browser.find_element_by_name('login_button').click()
+
+        time.sleep(WAIT_SECONDS)
+        
+    def search_by_submission_range_with_option(self, id1=None, id2=None, option=None):
+        """
+        This function executes the search by setting appropriate ids
+        :param id1: start id
+        :param id2: end id
+        :param option: The option of for submission range whether total, pending or approved
+        :return: None
+        """
+        search_option = self.browser.find_element_by_link_text('Search')
+        self.assertIsNotNone(search_option)
+        search_option.click()
+
+        # Finding the date accordian
+        search_accordian = self.browser.find_elements_by_class_name('title')
+        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
+        search_accordian[3].click()
+
+        start_submission = self.browser.find_element_by_name('start_submission')
+        self.assertIsNotNone(start_submission)
+
+        end_submission = self.browser.find_element_by_name('end_submission')
+        self.assertIsNotNone(end_submission)
+        
+        if id1 is not None:
+            start_submission.send_keys(id1)
+        if id2 is not None:
+            end_submission.send_keys(id2)
+
+        # Select option
+        if option is not None:
+            self.browser.execute_script("document.getElementsByName('submission_range_option')[" + str(option) + "].click()")
+
+        # Finding the search button
+        search_button = self.browser.find_element_by_id('search_button')
+        self.assertIsNotNone(search_button)
+        search_button.click()
+
+        time.sleep(WAIT_SECONDS)
 
     def test_search_by_submission_startSubmission_equal_endSubmission(self):
         """
@@ -130,57 +182,16 @@ class TestSearchBySubmission(LiveServerTestCase):
         The table should return users who have submitted that many number of resources.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_submission = self.browser.find_element_by_name('start_submission')
-        self.assertIsNotNone(start_submission)
-        start_submission.send_keys(100)
-
-        end_submission = self.browser.find_element_by_name('end_submission')
-        self.assertIsNotNone(end_submission)
-        end_submission.send_keys(100)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(100, 100, 0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
         # Search table should not be empty
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 1)
 
         time.sleep(WAIT_SECONDS)
 
@@ -190,50 +201,9 @@ class TestSearchBySubmission(LiveServerTestCase):
         The table should return 0 users.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_submission = self.browser.find_element_by_name('start_submission')
-        self.assertIsNotNone(start_submission)
-        start_submission.send_keys(1000)
-
-        end_submission = self.browser.find_element_by_name('end_submission')
-        self.assertIsNotNone(end_submission)
-        end_submission.send_keys(1)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(1000, 0, 0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -241,8 +211,6 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         # Search table should return a single user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_Submission_startSubmission_less_endSubmission(self):
         """
@@ -250,59 +218,16 @@ class TestSearchBySubmission(LiveServerTestCase):
         The table should return all the users up to the end range if such user exists.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_submission = self.browser.find_element_by_name('start_submission')
-        self.assertIsNotNone(start_submission)
-        start_submission.send_keys(0)
-
-        end_submission = self.browser.find_element_by_name('end_submission')
-        self.assertIsNotNone(end_submission)
-        end_submission.send_keys(1000)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(0, 1000, 0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
         self.assertIsNotNone(search_table)
 
         # Search table should return a single user
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 7)
 
     def test_search_by_Submission_startSubmission_only(self):
         """
@@ -310,46 +235,9 @@ class TestSearchBySubmission(LiveServerTestCase):
         The table should return 0 users.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-        
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_submission = self.browser.find_element_by_name('start_submission')
-        self.assertIsNotNone(start_submission)
-        start_submission.send_keys(1)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(1, None,0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -357,8 +245,6 @@ class TestSearchBySubmission(LiveServerTestCase):
 
         # Search table should return 0 users
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
 
     def test_search_by_Submission_endSubmission_only(self):
         """
@@ -366,46 +252,9 @@ class TestSearchBySubmission(LiveServerTestCase):
         The table should return 0 users.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        end_submission = self.browser.find_element_by_name('end_submission')
-        self.assertIsNotNone(end_submission)
-        end_submission.send_keys(1000)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(None, 1000, 0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -414,58 +263,15 @@ class TestSearchBySubmission(LiveServerTestCase):
         # Search table should return 0 users
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
 
-        time.sleep(WAIT_SECONDS)
-
     def test_search_by_Submission_startSubmission_and_endSubmission_are_zero(self):
         """
         Test search by By submission where start Submission and end Submission both are zero
         The table should not be empty since 0 is a valid submission.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_submission = self.browser.find_element_by_name('start_submission')
-        self.assertIsNotNone(start_submission)
-        start_submission.send_keys(0)
-
-        end_submission = self.browser.find_element_by_name('end_submission')
-        self.assertIsNotNone(end_submission)
-        end_submission.send_keys(0)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(0, 0, 0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -474,58 +280,15 @@ class TestSearchBySubmission(LiveServerTestCase):
         # Search table should not be empty
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 4)
 
-        time.sleep(WAIT_SECONDS)
-
     def test_search_by_Submission_startSubmission_and_endSubmission_are_negatives(self):
         """
         Test search by By submission where start Submission and end Submission both are negatives
         The table should return 0 user since Submissions must be greater than or equal to 0.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
-        search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
-
-        start_submission = self.browser.find_element_by_name('start_submission')
-        self.assertIsNotNone(start_submission)
-        start_submission.send_keys(-1)
-
-        end_submission = self.browser.find_element_by_name('end_submission')
-        self.assertIsNotNone(end_submission)
-        end_submission.send_keys(-1)
-
-        time.sleep(WAIT_SECONDS)
-
-        # Select total option
-        self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
-        self.assertIsNotNone(search_button)
-        search_button.click()
-
-        time.sleep(WAIT_SECONDS)
+        self.search_by_submission_range_with_option(-1, -1, 0)
 
         # Finding search table
         search_table = self.browser.find_element_by_class_name('ReactVirtualized__Table')
@@ -534,37 +297,22 @@ class TestSearchBySubmission(LiveServerTestCase):
         # Search table should return zero user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 0)
 
-        time.sleep(WAIT_SECONDS)
-
-    ####################################################################################
     def test_search_by_Submission_clearing_values_will_resume_regular_search(self):
         """
         Test search by By submission where start Submission and end Submission are put and then cleared,
         The table should return search based on the remaining state.
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
-
-        time.sleep(WAIT_SECONDS)
+        self.logging_in()
 
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
         search_option.click()
 
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
         self.assertEqual(search_accordian[3].get_attribute('innerText'), 'By submission')
         search_accordian[3].click()
-
-        time.sleep(WAIT_SECONDS)
 
         start_submission = self.browser.find_element_by_name('start_submission')
         self.assertIsNotNone(start_submission)
@@ -574,12 +322,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(end_submission)
         end_submission.send_keys(1)
 
-        time.sleep(WAIT_SECONDS)
-
         # Select total option
         self.browser.execute_script("document.getElementsByName('submission_range_option')[0].click()")
-
-        time.sleep(WAIT_SECONDS)
 
         start_submission.send_keys(Keys.BACKSPACE)
         end_submission.send_keys(Keys.BACKSPACE)
@@ -587,10 +331,8 @@ class TestSearchBySubmission(LiveServerTestCase):
         # Select reset option
         self.browser.execute_script("document.getElementsByName('submission_range_option')[3].click()")
 
-        time.sleep(WAIT_SECONDS)
-
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -601,6 +343,4 @@ class TestSearchBySubmission(LiveServerTestCase):
         self.assertIsNotNone(search_table)
 
         # Search table should not be empty
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 7)

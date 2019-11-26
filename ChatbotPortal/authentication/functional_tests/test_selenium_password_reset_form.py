@@ -1,5 +1,3 @@
-import time
-
 from django.test import LiveServerTestCase
 from selenium import webdriver
 
@@ -26,7 +24,7 @@ class TestPasswordResetForm(LiveServerTestCase):
         self.active_user_email = 'test@test.ca'
         self.active_user_password = '12345678'
         self.browser = webdriver.Chrome()
-        # self.setUp_db()
+        self.browser.implicitly_wait(WAIT_SECONDS)
 
     def tearDown(self):
         """
@@ -59,6 +57,32 @@ class TestPasswordResetForm(LiveServerTestCase):
         """
         CustomUser.objects.all().delete()
 
+    def password_resetting(self, password1, password2):
+        """
+        Going to password change page and perform some actions
+        :param password1: 1st password
+        :param password2: confirmation field
+        :return: None
+        """
+        self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
+
+        # Finding the password reset button
+        password_reset_button = self.browser.find_element_by_name('password_reset_button')
+        self.assertIsNotNone(password_reset_button)
+        self.assertFalse(password_reset_button.is_enabled())
+
+        # Finding the new_password1 field
+        password1_element = self.browser.find_element_by_name('new_password1')
+        self.assertIsNotNone(password1_element)
+        password1_element.send_keys(password1)
+
+        # Finding the new_password2 field
+        password2_element = self.browser.find_element_by_name('new_password2')
+        self.assertIsNotNone(password2_element)
+        password2_element.send_keys(password2)
+
+        return password_reset_button
+
     def test_password_reset_button_is_disabled(self):
         """
         Test if password reset button is disabled if password fields do not match and are less than 8 characters
@@ -66,71 +90,29 @@ class TestPasswordResetForm(LiveServerTestCase):
         """
 
         self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
-        time.sleep(WAIT_SECONDS)
 
         # Finding the password reset button
         password_reset_button = self.browser.find_element_by_name('password_reset_button')
         self.assertIsNotNone(password_reset_button)
         self.assertFalse(password_reset_button.is_enabled())
-
-        time.sleep(WAIT_SECONDS)
 
     def test_password_reset_button_is_enabled(self):
         """
         Test if password reset button is enabled if password fields match and are al least 8 characters
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset button
-        password_reset_button = self.browser.find_element_by_name('password_reset_button')
-        self.assertIsNotNone(password_reset_button)
-        self.assertFalse(password_reset_button.is_enabled())
-
-        # Finding the new_password1 field
-        password1 = self.browser.find_element_by_name('new_password1')
-        self.assertIsNotNone(password1)
-        password1.send_keys(self.active_user_password)
-
-        # Finding the new_password2 field
-        password2 = self.browser.find_element_by_name('new_password2')
-        self.assertIsNotNone(password2)
-        password2.send_keys(self.active_user_password)
-
+        password_reset_button = self.password_resetting(self.active_user_password, self.active_user_password)
         # The password reset button should be enabled now
         self.assertTrue(password_reset_button.is_enabled())
-
-        time.sleep(WAIT_SECONDS)
 
     def test_password_reset_button_message_for_unsuccessful_attempt(self):
         """
         Test if password reset button is enabled if password fields match and are al least 8 characters
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, PASSWORD_RESET_FORM))
-        time.sleep(WAIT_SECONDS)
-
-        # Finding the password reset button
-        password_reset_button = self.browser.find_element_by_name('password_reset_button')
-        self.assertIsNotNone(password_reset_button)
-        self.assertFalse(password_reset_button.is_enabled())
-
-        # Finding the new_password1 field
-        password1 = self.browser.find_element_by_name('new_password1')
-        self.assertIsNotNone(password1)
-        password1.send_keys(self.active_user_password)
-
-        # Finding the new_password2 field
-        password2 = self.browser.find_element_by_name('new_password2')
-        self.assertIsNotNone(password2)
-        password2.send_keys(self.active_user_password)
-
-        # The password reset button should be enabled now
+        password_reset_button = self.password_resetting(self.active_user_password, self.active_user_password)
         self.assertTrue(password_reset_button.is_enabled())
         password_reset_button.click()
-
-        time.sleep(WAIT_SECONDS)
 
         # Finding password reset request page button
         password_reset_request_page_button = self.browser.find_element_by_name('password_reset_request_page_button')
@@ -138,16 +120,11 @@ class TestPasswordResetForm(LiveServerTestCase):
         self.assertEqual(password_reset_request_page_button.get_attribute('innerHTML'),
                          'Unable to reset! Please request password reset email again.')
 
-        time.sleep(WAIT_SECONDS)
-
         # Redirecting to password reset request email field
         password_reset_request_page_button.click()
 
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + PASSWORD_RESET_PAGE, self.browser.current_url)
-
-        time.sleep(WAIT_SECONDS)
+        password_reset_request_page_button = self.browser.find_element_by_name('email')
+        self.assertIsNotNone(password_reset_request_page_button)
 
 
 """
