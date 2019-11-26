@@ -3,10 +3,14 @@ import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
 import {
     Button,
-    Card, CardContent, CardHeader,
+    Card,
+    CardContent,
+    CardHeader,
     Checkbox,
-    Container, Divider,
-    Form, FormGroup,
+    Container,
+    Form,
+    FormGroup,
+    FormInput,
     Icon,
     Image,
     Label,
@@ -34,7 +38,7 @@ class UserPage extends Component {
             is_active: '',
             is_reviewer: '',
             is_staff: '',
-            // profile_picture: ''
+            profile_picture: '',
 
             horizontal_state: ''
         };
@@ -44,15 +48,13 @@ class UserPage extends Component {
         this.setState({
             first_name: this.props.rowData.first_name,
             last_name: this.props.rowData.last_name,
-            affiliation: this.props.rowData.affiliation,
-
-            //profile_picture: this.props.rowData.profile_picture
-
             is_active: this.props.rowData.is_active,
             is_reviewer: this.props.rowData.is_reviewer,
-            is_staff: this.props.rowData.is_staff
+            is_staff: this.props.rowData.is_staff,
+            profile_picture: this.props.rowData.profile_picture
         });
 
+        // Checking for responsiveness
         if (window.innerWidth <= 760) {
             this.setState({
                 horizontal_state: false
@@ -80,6 +82,16 @@ class UserPage extends Component {
     };
 
     /**
+     * This function extracts the file data
+     * @param event
+     */
+    handleImageChange = event => {
+        this.setState({
+            profile_picture: event.target.files[0]
+        })
+    };
+
+    /**
      * This function handles the overall edit operations
      * @param e : event
      * @param editedData : data from the EditForm upon submission
@@ -87,11 +99,18 @@ class UserPage extends Component {
     handle_edit = (e, editedData) => {
         e.preventDefault();
 
-        // Defining header and content-type for accessing authenticated information
-        const options = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.context.security.token}`
-        };
+        let formData = new FormData();
+        formData.append('first_name', editedData.first_name);
+        formData.append('last_name', editedData.last_name);
+        formData.append('is_active', editedData.is_active);
+        formData.append('is_reviewer', editedData.is_reviewer);
+        formData.append('is_staff', editedData.is_staff);
+
+        // Checking if an image update is required
+        // If the image is selected then it should be a file object, otherwise a string of file url
+        if (typeof (this.state.profile_picture) === 'object') {
+            formData.append('profile_picture', editedData.profile_picture);
+        }
 
         /**
          * Perform a put request for edit.
@@ -99,14 +118,11 @@ class UserPage extends Component {
          * Otherwise, send an error is thrown."
          */
         axios
-            .put(`/chatbotportal/authentication/super/${this.props.rowData.id}/update/`, editedData, {headers: options})
+            .put(`/chatbotportal/authentication/super/${this.props.rowData.id}/update/`, formData,
+                {headers: {'Authorization': `Bearer ${this.context.security.token}`}})
             .then(
                 response => {
-                    this.setState({
-                        first_name: response.data['first_name'],
-                        last_name: response.data['last_name'],
-
-                    });
+                    this.setState(response.data);
                 },
                 error => {
                     console.log(error);
@@ -177,7 +193,7 @@ class UserPage extends Component {
      */
     render() {
         return (
-                        <React.Fragment>
+            <React.Fragment>
                 <Responsive as={Container} minWidth={320} onUpdate={this.set_mobile_format}>
                     <Container>
                         <Form className={styles.centeredForm}>
@@ -193,27 +209,38 @@ class UserPage extends Component {
                                 <Card className={styles.cardBackground}
                                       fluid
                                       centered>
-                                    {this.props.rowData.profile_picture ?
+                                    {typeof (this.state.profile_picture) !== 'object' && this.state.profile_picture ? (
                                         <Image
-                                            src={`/static/${this.props.rowData.profile_picture.split('/')[this.props.rowData.profile_picture.split('/').length - 1]}`}
-                                            wrapped ui={true}/>
-                                        : null}
+                                            src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
+                                            size='medium'
+                                            circular
+                                            centered/>
+                                    ) : null}
+                                    <FormInput
+                                        className={styles.imageMobile}
+                                        type='file'
+                                        accept="image/png, image/jpeg"
+                                        id='profile_picture'
+                                        name='profile_picture'
+                                        onChange={this.handleImageChange}/>
                                     <CardContent>
                                         <CardHeader>
                                             <FormGroup widths='equal' unstackable>
-                                                <Form.Input
+                                                <FormInput
                                                     className={styles.fixedInputHeight}
                                                     fluid
-                                                    label='First name'
+                                                    // label='First name'
                                                     name='first_name'
                                                     onChange={this.handle_change}
+                                                    placeholder="First Name"
                                                     value={this.state.first_name}/>
-                                                <Form.Input
+                                                <FormInput
                                                     className={styles.fixedInputHeight}
                                                     fluid
-                                                    label='Last name'
+                                                    // label='Last name'
                                                     name='last_name'
                                                     onChange={this.handle_change}
+                                                    placeholder="Last Name"
                                                     value={this.state.last_name}/>
                                             </FormGroup>
                                         </CardHeader>
@@ -256,7 +283,7 @@ class UserPage extends Component {
                                     </CardContent>
                                     <CardContent extra>
                                         <h3><Icon color='red' name='heart'/>
-                                        Affiliation: </h3> {this.props.rowData.affiliation}
+                                            Affiliation: </h3> {this.props.rowData.affiliation}
                                     </CardContent>
                                     <CardContent extra>
                                         <h3>
