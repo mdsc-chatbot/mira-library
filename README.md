@@ -9,41 +9,27 @@ Apart from all this, they can also browse through find a resource section where 
 
 # How to run
 
-#### Django backend (Go to ChatbotPortal)
-```
-pip install -r requirements.txt
-python manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb
-python manage.py createsuperuser
-python manage.py runserver
-```
-If encounter 401 error, login to admin site
-
-#### React frontend (Go to ChatbotPortal/frontend/react)
-```
-npm install
-npm run-script build
-```
-
-# How to test (Selenium)
-Change TEST=True in settings.py
-rerun all migrations, runserver
-
-```python3 manage.py test resource.tests -v 2```
-
-
-#### Here is the guide how our migration should work:
-
-In MySQL console
+#### Create mysql database
 ```
 mysql -u root -p
 SHOW DATABASES;
 DROP DATABASE test_main_db;
 DROP DATABASE main_db;
 GRANT ALL PRIVILEGES ON . TO 'root'@'localhost';
-CREATE DATABASE main_db
+CREATE DATABASE main_db;
 ```
 
-#### In python console run the following sequentially:
+#### Django backend (Go to ChatbotPortal)
+```
+pip install -r requirements.txt
+python manage.py makemigrations 
+python manage.py migrate && python manage.py migrate --run-syncdb
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+OR 
+
 ```
 python manage.py makemigrations auth
 python manage.py migrate auth
@@ -55,10 +41,20 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py migrate –run-syncdb
 ```
+If encounter 401 error, login to admin site
 
-#### After that just run the test command:
+#### React frontend (Go to ChatbotPortal/frontend/react)
+```
+npm install
+npm run-script build
+```
+
+# How to test (backend tests and selenium tests)
 ```
 python manage.py test --verbosity=3 --noinput authentication.tests
+python manage.py test --verbosity=3 --noinput authentication.functional_tests
 python manage.py test --verbosity=3 --noinput resource.tests
 ```
+
+# More documentations on our codebase
 
