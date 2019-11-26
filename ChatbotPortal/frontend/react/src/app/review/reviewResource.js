@@ -229,7 +229,7 @@ export default class ResourceDetail extends Component {
 
                                     <Container>
                                     <ResourceResponsive
-                                        resource_component={<ResourceDetailView resource={this.state.resource} />}
+                                        resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />}
                                     ></ResourceResponsive>
                                     </Container>
                                     

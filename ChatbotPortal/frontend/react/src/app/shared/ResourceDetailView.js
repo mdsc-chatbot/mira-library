@@ -80,7 +80,7 @@ function mobile_header(resource) {
     );
 }
 
-export function ResourceDetailView({ resource }) {
+export function ResourceDetailView({ resource , tagsGot }) {
     // Common props for grid row, columns that are re-usable.
     // If we need this in more than one place, consider re-making this into several components.
 
@@ -100,10 +100,14 @@ export function ResourceDetailView({ resource }) {
                     ? grid_element(
                           "Tags:",
                           <div id="tags">
-                              {resource.tags.map(tag => (
-                                  <Label key={tag} size="large" stackable>
-                                      {tag}
-                                  </Label>
+                              {console.log("gotten",tagsGot)}
+                              {tagsGot.map(tag => (
+                                  console.log(tag),
+                                  tag.approved === true ?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
                               ))}
                           </div>
                       )
