@@ -1,19 +1,7 @@
 import React, {Component} from "react";
 import axios from "axios";
 import validator from "validator";
-import {
-    Container,
-    Form,
-    FormInput,
-    Header,
-    Icon,
-    Input,
-    Menu,
-    MenuItem,
-    Message,
-    Rating,
-    Responsive
-} from "semantic-ui-react";
+import {Container, Form, FormInput, Header, Input, Message, Rating, Responsive} from "semantic-ui-react";
 import TagDropdown from "./TagDropdown";
 import styles from "./ResourceSubmitForm.css";
 import {MenuContext} from "../contexts/MenuContext"
@@ -216,14 +204,6 @@ export default class ResourceSubmitForm extends Component {
         return (
             <div>
                 <UpdateContexts token={this.props.match.params.token}/>
-                <Menu inverted stackable pointing secondary size="small">
-                    <MenuItem>
-                        <Header as="h2" style={{color: "#3075c9"}}>
-                            <Icon name="qq"/>
-                            Chatbot Resources
-                        </Header>
-                    </MenuItem>
-                </Menu>
                 <div style={{padding: "2%"}}>
                     <Container vertical>
                         <Responsive as={Header} minWidth={320}>

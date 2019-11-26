@@ -102,3 +102,17 @@ class TestProfile(LiveServerTestCase):
         assert kwargs["expected_first_name"] == kwargs["test_first_name"]
         assert kwargs["expected_last_name"] == kwargs["test_last_name"]
         
+    def test_reset_password(self):
+        self.driver.get('%s%s' % (self.live_server_url, "/chatbotportal/app"))
+        self.login()
+        self.driver.find_element(By.LINK_TEXT, "My Profile").click()
+        self.driver.find_element(By.NAME, "change_password").click()
+        self.user_password = "newpasswordtest"
+        self.driver.find_element(By.NAME, "password").send_keys(self.user_password)
+        self.driver.find_element(By.NAME, "new_password2").send_keys(self.user_password)
+        self.driver.find_element(By.NAME, "login_button").click()
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
+        self.login()
+        self.driver.find_element(By.LINK_TEXT, "My Profile").click()
+        test_user_email = self.driver.find_element(By.ID, "email").text
+        assert self.user_email == test_user_email

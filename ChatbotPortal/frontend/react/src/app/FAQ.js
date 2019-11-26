@@ -176,7 +176,7 @@ export class FAQ extends Component {
                     </p>
                 </div>
 
-                <div style={{ paddingBottom: 20 }}>
+                <div>
                     <Header as="h3" color="blue">
                         How do I Signup to submit a resource?
                     </Header>
@@ -188,9 +188,11 @@ export class FAQ extends Component {
                         This information helps us better tailor our website.
                         <br />
                         After you fill out the sign up form, we will send you and email for
-                        verification. It is important that you read and consent to our{" "}
-                        {<TermsOfService />}
+                        verification. It is important that you read and consent to our{" "}  
                     </p>
+                </div>
+                <div style={{ paddingBottom: 20 }}>
+                    <TermsOfService/>
                 </div>
 
                 <div style={{ paddingBottom: 20 }}>

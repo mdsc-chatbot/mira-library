@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
-import {Button, Card, Container, Divider, Form, FormInput, Icon, Image, Responsive, Segment} from 'semantic-ui-react';
+import {Button, Card, Container, Divider, Form, FormInput, Icon, Image, Responsive, Segment, Header} from 'semantic-ui-react';
 import styles from "./ProfilePage.css";
 import {baseRoute} from "../App";
 import {Link, Redirect} from "react-router-dom";
@@ -158,25 +158,38 @@ class ProfilePage extends Component {
                             </Card.Content>
                             <Card.Description>
                                 <Divider fitted />
-                                <h3><Icon color='blue' name='mail'/>
-                                    {this.state.email}</h3><Divider fitted />
-                                <h3>
+
+                                <Header as="h3">
+                                    <Icon color='blue' name='mail'/>
+                                    <Header.Content id="email"> {this.state.email} </Header.Content>
+                                </Header>
+                                <Divider fitted />
+
+                                <Header as="h3">
                                     <Icon color='blue' name='pencil alternate'/>
-                                    # of Submissions = <p id="profile_num_submissions">{this.state.submissions}</p>
-                                </h3><Divider fitted />
-                                <h3>
+                                    <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
+                                </Header>
+                                <Divider fitted />
+
+                                <Header as="h3">
                                     <Icon color='blue' name='trophy'/>
-                                    Points = {this.state.points}
-                                </h3><Divider fitted />
-                                <h3>
+                                    <Header.Content id="points"> Points = {this.state.points} </Header.Content>
+                                </Header>
+                                <Divider fitted />
+
+                                <Header as="h3">
                                     <Icon color='blue' name='certificate'/>
-                                    { this.state.is_staff ? (
-                                        'Staff'
-                                    ) : this.state.is_reviewer ? (
-                                        'Reviewer'
-                                    ) : 'Newbie'
-                                    }
-                                </h3><Divider fitted/>
+                                    <Header.Content id="status"> 
+                                        { this.state.is_staff ? (
+                                            'Staff'
+                                        ) : this.state.is_reviewer ? (
+                                            'Reviewer'
+                                        ) : 'Newbie'
+                                        }
+                                    </Header.Content>
+                                </Header>
+                                <Divider fitted/>
+                                
                             </Card.Description>
 
 
@@ -188,7 +201,7 @@ class ProfilePage extends Component {
                             </Button>
 
                             <Link to={baseRoute + "/password"}>
-                                <Button color='blue' fluid size='big'>
+                                <Button name="change_password" color='blue' fluid size='big'>
                                     Change Password
                                 </Button>
                             </Link>
@@ -236,24 +249,38 @@ class ProfilePage extends Component {
                                     </Card.Content>
                                     <Card.Description>
                                         <Divider fitted />
-                                        <h4><Icon color='blue' name='mail'/>
-                                            {this.state.email}</h4><Divider fitted /><h4>
-                                        <Icon color='blue' name='pencil alternate'/>
-                                        # of Submissions = <p id="profile_num_submissions">{this.state.submissions}</p>
-                                    </h4><Divider fitted />
-                                        <h4>
+
+                                        <Header as="h4">
+                                            <Icon color='blue' name='mail'/>
+                                            <Header.Content id="email"> {this.state.email} </Header.Content>
+                                        </Header>
+                                        <Divider fitted />
+
+                                        <Header as="h4">
+                                            <Icon color='blue' name='pencil alternate'/>
+                                            <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
+                                        </Header>
+                                        <Divider fitted />
+
+                                        <Header as="h4">
                                             <Icon color='blue' name='trophy'/>
-                                            Points = {this.state.points}
-                                        </h4><Divider fitted />
-                                        <h4>
+                                            <Header.Content id="points"> Points = {this.state.points} </Header.Content>
+                                        </Header>
+                                        <Divider fitted />
+
+                                        <Header as="h4">
                                             <Icon color='blue' name='certificate'/>
-                                            { this.state.is_staff ? (
-                                                'Staff'
-                                            ) : this.state.is_reviewer ? (
-                                                'Reviewer'
-                                            ) : 'Newbie'
-                                            }
-                                        </h4><Divider fitted/>
+                                            <Header.Content id="status"> 
+                                                { this.state.is_staff ? (
+                                                    'Staff'
+                                                ) : this.state.is_reviewer ? (
+                                                    'Reviewer'
+                                                ) : 'Newbie'
+                                                }
+                                            </Header.Content>
+                                        </Header>
+                                        <Divider fitted/>
+
                                     </Card.Description>
 
                                     <Button name="save" fluid size='medium' animated='fade' positive onClick={event => this.handle_edit(event, this.state)}>
@@ -264,7 +291,7 @@ class ProfilePage extends Component {
                                     </Button>
 
                                 <Link to={baseRoute + "/password"}>
-                                    <Button color='blue' fluid size='medium'>
+                                    <Button name="change_password" color='blue' fluid size='medium'>
                                         Change Password
                                     </Button>
                                 </Link>
