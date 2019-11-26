@@ -31,7 +31,7 @@ def create_tags(request):
 def fetch_tags(request):
     try:
         tag_set = Tag.objects.filter(
-            name__contains=request.GET['name']).values('id', 'name')
+            name__contains=request.GET['name'], approved=True).values('id', 'name')
         return JsonResponse(list(tag_set), safe=False)
     except:
         # Return empty http response if can't find tags
