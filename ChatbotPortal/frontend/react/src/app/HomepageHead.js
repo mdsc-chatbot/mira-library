@@ -12,8 +12,7 @@ export class HomepageHead extends Component {
 
     homePageData = () => {
         return(
-            <Segment>
-
+            <React.Fragment>
                 <Header
                     as="h1"
                     content="Welcome to Chatbot Portal"
@@ -28,7 +27,8 @@ export class HomepageHead extends Component {
                     as="h3"
                     content="Resources site providing information about autism, intellectual disability, and learning disability."
                     style={{
-                        fontWeight: "normal"
+                        fontWeight: "normal",
+                        marginBottom: "1em"
                     }}
                 />
 
@@ -65,10 +65,7 @@ export class HomepageHead extends Component {
 
                     )}
                 </Button.Group>
-
-            </Segment>
-
-
+            </React.Fragment>
         );
     };
     homePageWeb = () => {
@@ -104,8 +101,6 @@ export class HomepageHead extends Component {
                     </Grid.Column>
                 </Grid>
 
-                <Divider/>
-
                 <Button.Group fluid widths='2' size ='medium'>
                     <Link to={baseRoute + "/public_resource"}>
                         <Button fluid color="orange">
@@ -123,17 +118,17 @@ export class HomepageHead extends Component {
                 <Button.Group widths='3' size='tiny'>
                     <Link to={baseRoute + "/public_resource/59"}>
                         <Button  color="google plus">
-                            View resources about funding
+                            Funding Resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/public_resource/46"}>
                         <Button color="google plus">
-                            View resources about stress
+                            Stress Resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/public_resource/47"}>
                         <Button color="google plus">
-                            View resources about sleep
+                            Sleep Resources
                         </Button>
                     </Link>
                 </Button.Group>
