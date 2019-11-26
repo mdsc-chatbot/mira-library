@@ -239,11 +239,11 @@ export class HeaderMenu extends Component {
                     <React.Fragment>
                         {MenuContext.menu_visibility ?
                             <Segment.Group>
-                                <Responsive maxWidth={767}>
+                                <Responsive maxWidth={1009}>
                                     {this.headerMenuMobile()}
                                 </Responsive>
 
-                                <Responsive minWidth={768}>
+                                <Responsive minWidth={1010}>
                                     <React.Fragment>
                                         {this.headerMenuWeb()}
                                     </React.Fragment>
