@@ -89,7 +89,7 @@ class ProfilePage extends Component {
 
         // Checking if an image update is required
         // If the image is selected then it should be a file object, otherwise a string of file url
-        if (typeof(this.state.profile_picture) === 'object') {
+        if (typeof(this.state.profile_picture) === 'object' && this.state.profile_picture !== null) {
             formData.append('profile_picture', editedData.profile_picture);
         }
 
@@ -109,7 +109,7 @@ class ProfilePage extends Component {
                     this.setState(response.data);
                     this.context.setSecurity(response.data);
                     // Reloading the page after modal closes
-                    // window.location.reload();
+                    window.location.reload();
                 },
                 error => {
                     console.log(error);
