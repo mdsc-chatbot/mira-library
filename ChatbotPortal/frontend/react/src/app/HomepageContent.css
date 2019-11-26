@@ -1,0 +1,4 @@
+.centerAlignment {
+    display: flex;
+    align-self: center;
+}

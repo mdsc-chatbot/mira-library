@@ -15,7 +15,7 @@ export class HomepageHead extends Component {
             <React.Fragment>
                 <Header
                     as="h1"
-                    content="Welcome to Chatbot Resources"
+                    content="Welcome to Chatbot Portal"
                     style={{
                         fontSize: "2em",
                         fontWeight: "bold",
@@ -83,7 +83,7 @@ export class HomepageHead extends Component {
                     <Grid.Column>
                         <Header
                             as="h1"
-                            content="Welcome to Chatbot Resources"
+                            content="Welcome to Chatbot Portal"
                             style={{
                                 fontWeight: "bold",
                                 color: "#3075c9",
