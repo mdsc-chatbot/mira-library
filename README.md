@@ -57,4 +57,4 @@ python manage.py test --verbosity=3 --noinput resource.tests
 ```
 
 # More documentations on our codebase
-
+https://github.com/UAlberta-CMPUT401/ChatbotResources/wiki/10.-Documentations
