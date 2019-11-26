@@ -100,9 +100,7 @@ export function ResourceDetailView({ resource , tagsGot }) {
                     ? grid_element(
                           "Tags:",
                           <div id="tags">
-                              {console.log("gotten",tagsGot)}
                               {tagsGot.map(tag => (
-                                  console.log(tag),
                                   tag.approved === true ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}

@@ -46,7 +46,6 @@ export default class ResourceDetail extends Component {
 
     approve = data => {
         const review = this.format_data(data, true);
-        console.log(review);
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
@@ -62,7 +61,6 @@ export default class ResourceDetail extends Component {
 
     reject = data => {
         const review = this.format_data(data, false);
-        console.log(review);
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
@@ -95,14 +93,12 @@ export default class ResourceDetail extends Component {
                 )
                 .then(
                     response => {
-                        console.log("update: ",response);
                     },
                     error => {
                         console.log(error);
                     }
                 );
             for (var i = 0, len = this.state.tags.length; i < len; i++) {
-                    console.log("updating tags", this.state.tags[i])
                     if (this.state.tags[i].approved === true){
                         axios
                             .put(
@@ -112,7 +108,6 @@ export default class ResourceDetail extends Component {
                             )
                             .then(
                                 response => {
-                                    console.log("updateTag: ",response);
                                 },
                                 error => {
                                     console.log(error);
@@ -121,8 +116,6 @@ export default class ResourceDetail extends Component {
                     }
                 }
             // User
-            console.log(this.state.resource);
-            console.log(review_status);
             if (review_status === "approved") {
                 axios
                     .put(`/chatbotportal/authentication/${this.state.resource.created_by_user_pk}/update/approved_submissions/`, '', {
@@ -193,7 +186,6 @@ export default class ResourceDetail extends Component {
             )
             
             .then(response=>{
-                console.log(response.data)
                 this.setState({
                     tags: response.data
                 });
@@ -204,7 +196,6 @@ export default class ResourceDetail extends Component {
         this.setState(state => {
             const tags = this.state.tags.map((item) => {
                 if (item.id === id) {
-                  console.log("updated tag:", item.name)
                   return item.approved=status;
                   
                 } else {
@@ -212,8 +203,6 @@ export default class ResourceDetail extends Component {
                 }
             });
         });
-        console.log("changed",id, status);
-        console.log(this.state.tags)
     }
 
     render() {
@@ -240,8 +229,7 @@ export default class ResourceDetail extends Component {
                                                 <tr><th>tag ID</th><th>Tag Name</th><th></th></tr>
                                             </thead>
                                             <tbody>
-                                                {//console.log("tags",this.state.resource.tags),
-                                                this.state.tags.map(tag => (
+                                                {this.state.tags.map(tag => (
                                                     tag.approved !== true ?(
                                                         <tr key={tag} ref={tr => this.results = tr}>
                                                         <td>{tag.id}</td>
@@ -292,7 +280,6 @@ export default class ResourceDetail extends Component {
                                                     placeholder="Enter any comments about this resource"
                                                 />
                                             </div>
-                                            {console.log(this.state.resource)}
                                             <div style={{display: "block"}}>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button

@@ -42,7 +42,6 @@ export default class DetailedPublicResource extends React.Component {
                 this.setState({
                     tags: res.data
                 });
-                console.log(res.data)
             });
     }
 
