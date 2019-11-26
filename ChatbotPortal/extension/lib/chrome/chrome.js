@@ -17,10 +17,14 @@ app.homepage = function () {
 };
 
 /**
- * Setting up app uninstall status
+ * App tab will create a new tab with the url specified
+ * @type {{open: app.tab.open}}
  */
-chrome.runtime.setUninstallURL(app.homepage() + "?v=" + app.version() + "&type=uninstall", function () {
-});
+app.tab = {
+  "open": function (url) {
+      chrome.tabs.create({"url": url, "active": true})
+  }
+};
 
 /**
  * Setting up app installation status
@@ -29,9 +33,15 @@ chrome.runtime.onInstalled.addListener(function (event) {
     window.setTimeout(function () {
         if (event.reason === "install") {
             //  Upon installing for the first time, redirect to the ChatbotPortal homepage
-            app.tab.open(app.homepage() + "?v=" + app.version() + "&type=" + event.reason);
+            app.tab.open(app.homepage());
         }
     }, 3000);
+});
+
+/**
+ * Setting up app uninstall status
+ */
+chrome.runtime.setUninstallURL(app.homepage() + "?v=" + app.version() + "&type=uninstall", function () {
 });
 
 /**
