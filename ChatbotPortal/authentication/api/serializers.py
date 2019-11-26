@@ -134,14 +134,16 @@ class UserUpdateByAdminSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        # pop the password out since we need to hash it
-        # password = validated_data.pop('password')
-        # update the instance with the rest of the validated data fields
+        # Check if the validated data has an image
+        if 'profile_picture' in validated_data:
+            # If the validated data has an image, then check if the instance already has a valid image
+            if os.path.isfile('media/' + instance.__dict__['profile_picture']):
+                # If the instance already has a valid image, then delete the image from the media
+                os.remove('media/' + instance.__dict__['profile_picture'])
+
+        # Update the user instance
         instance.__dict__.update(validated_data)
-        # if password:
-        #     # update password if the password field was not empty
-        #     instance.set_password(password)
-        # Save the updated instance
+
         instance.save()
         return instance
 
