@@ -248,7 +248,15 @@ export class HeaderMenu extends Component {
                                         {this.headerMenuWeb()}
                                     </React.Fragment>
                                 </Responsive>
-                            </Segment.Group> :null}
+                            </Segment.Group>
+                            :
+                            <Menu inverted fluid pointing secondary size="large">
+                                <Header as="h2" style={{ color: "#3075c9", paddingLeft: 50 }}>
+                                    <Image src={require("./logo/512.ico")} ui wrapped/>
+                                        Chatbot Portal
+                                </Header>
+                            </Menu>
+                        }
                     </React.Fragment>
                 )}
             </MenuContext.Consumer>
