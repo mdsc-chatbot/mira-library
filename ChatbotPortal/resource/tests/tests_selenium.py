@@ -171,9 +171,9 @@ class TestResourceSubmission(LiveServerTestCase):
         # Tags xpath
         for tag in tags.split(","):
             self.driver.find_element(
-                By.XPATH, "//div[4]/div/div/div/div/div/input").send_keys(tag)
+                By.XPATH, "//div/div/div/div/input").send_keys(tag)
             self.driver.find_element(
-                By.CSS_SELECTOR, ".ui > .search").send_keys(Keys.ENTER)
+                By.XPATH, "//div/div/div/div/input").send_keys(Keys.ENTER)
 
         self.driver.find_element(By.NAME, "submit").click()
 
