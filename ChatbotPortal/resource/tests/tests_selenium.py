@@ -70,7 +70,7 @@ class TestResourceSubmission(LiveServerTestCase):
         user.save()
 
         for tag_name in ["Alberta", "General_Health", "Public", "Research","Institution"]:
-            tag = Tag.objects.create(name=tag_name)
+            tag = Tag.objects.create(name=tag_name,approved=True)
             tag.save()
 
     def tearDown(self):
