@@ -1,5 +1,5 @@
 import React from 'react';
-import {Container, Dropdown, Form} from 'semantic-ui-react'
+import {Container, Dropdown, Form, Popup, Segment} from 'semantic-ui-react'
 import {DateRangePicker} from "react-dates";
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
@@ -100,23 +100,30 @@ class SearchByDateRange extends React.Component {
                     onChange={this.handle_change_dropdown}
                     options={dateOption}
                 />
-                <Container content="Date range"/>
-                <DateRangePicker
-                    endDate={this.state.endDate}
-                    focusedInput={this.state.focusedInput}
-                    initialEndDate={null}
-                    initialStartDate={null}
-                    initialVisibleMonth={null}
-                    isDayBlocked={function noRefCheck() {}}
-                    isDayHighlighted={function noRefCheck() {}}
-                    isOutsideRange={function noRefCheck() {}}
-                    numberOfMonths={1}
-                    onDatesChange={({startDate, endDate}) => this.handle_date_change({startDate, endDate})}
-                    onFocusChange={focusedInput => this.setState({focusedInput})}
-                    showClearDates
-                    small
-                    startDate={this.state.startDate}
-                />
+                <Segment id="date_popup" size={"mini"}>
+                    <Popup flowing hoverable position={"top right"} size={"mini"}
+                           trigger={<Container content="Date range"/>}>
+                        <DateRangePicker
+                            endDate={this.state.endDate}
+                            focusedInput={this.state.focusedInput}
+                            initialEndDate={null}
+                            initialStartDate={null}
+                            initialVisibleMonth={null}
+                            isDayBlocked={function noRefCheck() {
+                            }}
+                            isDayHighlighted={function noRefCheck() {
+                            }}
+                            isOutsideRange={function noRefCheck() {
+                            }}
+                            numberOfMonths={1}
+                            onDatesChange={({startDate, endDate}) => this.handle_date_change({startDate, endDate})}
+                            onFocusChange={focusedInput => this.setState({focusedInput})}
+                            showClearDates
+                            small
+                            startDate={this.state.startDate}
+                        />
+                    </Popup>
+                </Segment>
             </Form>
         );
     }
