@@ -12,7 +12,8 @@ export default class DetailedPublicResource extends React.Component {
         super(props);
 
         this.state = {
-            resource: {}
+            resource: {},
+            tags:{},
         };
     }
 
@@ -33,11 +34,20 @@ export default class DetailedPublicResource extends React.Component {
                     resource: res.data
                 });
             });
+        axios
+            .get(`/chatbotportal/resource/get-tags/${resourceId}`, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
+            .then(res => {
+                this.setState({
+                    tags: res.data
+                });
+            });
     }
 
     render() {
         return (
-            <ResourceResponsive resource_component={<ResourceDetailView resource={this.state.resource}/>}/>
+            <ResourceResponsive resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags}/>}/>
         );
     }
 }
