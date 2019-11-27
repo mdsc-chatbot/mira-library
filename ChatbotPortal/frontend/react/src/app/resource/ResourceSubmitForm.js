@@ -134,7 +134,7 @@ export default class ResourceSubmitForm extends Component {
 
     render() {
         return (
-            <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
+            <div style={{ paddingTop: "3%", paddingLeft: "10%", paddingRight: "10%", paddingBottom: "3%" }}>
                 <SecurityContext.Consumer>
                     {securityContext => (
                         <Container vertical>
@@ -155,7 +155,7 @@ export default class ResourceSubmitForm extends Component {
                                                 required
                                                 name="url"
                                                 onChange={this.handleChange}
-                                                width={6}
+                                                width={16}
                                                 value={this.state.url}
                                                 label="Enter URL"
                                                 placeholder="https://"
@@ -170,7 +170,7 @@ export default class ResourceSubmitForm extends Component {
                                                 required
                                                 name="url"
                                                 onChange={this.handleChange}
-                                                width={6}
+                                                width={16}
                                                 value={this.state.url}
                                                 label="Enter URL"
                                                 placeholder="https://"

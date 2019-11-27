@@ -134,9 +134,8 @@ export default class TagDropdown extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <SegmentGroup compact horizontal>
-                    <Responsive as={Segment} minWidth={320}>
-                        <div style={{width: "200px", paddingRight: "20"}}>
+                <SegmentGroup size={"mini"} style={{width: "100%"}} compact horizontal>
+                        <Segment style={{width: "100%"}}>
                             <Dropdown
                                 fluid
                                 multiple
@@ -149,11 +148,10 @@ export default class TagDropdown extends React.Component {
                                 selection
                                 value={this.props.value}
                             />
-                        </div>
-                    </Responsive>
-                    <Responsive as={Segment} minWidth={320}>
-                        <TagPopup onNewTag={this.handleNewTagAdded}/>
-                    </Responsive>
+                        </Segment>
+                        <Segment>
+                            <TagPopup onNewTag={this.handleNewTagAdded}/>
+                        </Segment>
                 </SegmentGroup>
             </React.Fragment>
         );
