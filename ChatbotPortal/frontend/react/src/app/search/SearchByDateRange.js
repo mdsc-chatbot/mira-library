@@ -102,7 +102,7 @@ class SearchByDateRange extends React.Component {
                 />
                 <Segment id="date_popup" size={"mini"}>
                     <Popup flowing hoverable position={"top right"} size={"mini"}
-                           trigger={<Container content="Date Range" onClick={event => event.preventDefault()}/>}>
+                           trigger={<Container content="Date range"/>}>
                         <DateRangePicker
                             endDate={this.state.endDate}
                             focusedInput={this.state.focusedInput}

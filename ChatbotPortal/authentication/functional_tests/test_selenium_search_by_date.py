@@ -29,7 +29,7 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 3
+WAIT_SECONDS = 5
 IMPLICIT_WAIT_SECONDS = 50
 
 
@@ -138,6 +138,8 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.go_to_search_page_date_option_dropdown(2)  # Choose By Last Login option
 
+        self.browser.find_element_by_id('date_popup').click()
+
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
         self.assertIsNotNone(startDate)
@@ -167,6 +169,8 @@ class TestSearchByDate(LiveServerTestCase):
         :return: None
         """
         self.go_to_search_page_date_option_dropdown(3)  # Choose By Creation Date option
+
+        self.browser.find_element_by_id('date_popup').click()
 
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
@@ -219,6 +223,8 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.go_to_search_page_date_option_dropdown(3)  # Choose By Creation Date option
 
+        self.browser.find_element_by_id('date_popup').click()
+
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
         self.assertIsNotNone(startDate)
@@ -269,6 +275,8 @@ class TestSearchByDate(LiveServerTestCase):
         :return: None
         """
         self.go_to_search_page_date_option_dropdown(1)  # Choose Unselected
+
+        self.browser.find_element_by_id('date_popup').click()
 
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
