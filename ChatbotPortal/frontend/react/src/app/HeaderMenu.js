@@ -31,7 +31,7 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h2" style={{ color: "#3075c9" }}>
-                                <Image src={require("./logo/512.ico")} ui wrapped/>
+                                <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
                                 Chatbot Portal
                             </Header>
                         </Link>
@@ -131,7 +131,7 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h4" style={{ color: "#3075c9" }}>
-                                <Image src={require("./logo/512.ico")} ui wrapped/>
+                                <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
                                 Chatbot Portal
                             </Header>
                         </Link>
@@ -252,7 +252,7 @@ export class HeaderMenu extends Component {
                             :
                             <Menu inverted fluid pointing secondary size="large">
                                 <Header as="h2" style={{ color: "#3075c9", paddingLeft: 50 }}>
-                                    <Image src={require("./logo/512.ico")} ui wrapped/>
+                                    <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
                                         Chatbot Portal
                                 </Header>
                             </Menu>
