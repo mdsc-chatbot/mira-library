@@ -1,7 +1,7 @@
 from rest_framework import permissions, generics, viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
-from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer, TagSerializer
+from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer, TagSerializer, TagUpdateSerializer
 from .models import Resource, Tag, Category
 import json
 import mimetypes
@@ -31,17 +31,26 @@ def create_tags(request):
 def fetch_tags(request):
     try:
         tag_set = Tag.objects.filter(
-            name__contains=request.GET['name']).values('id', 'name')
+            name__contains=request.GET['name'], approved=True).values('id', 'name')
         return JsonResponse(list(tag_set), safe=False)
     except:
         # Return empty http response if can't find tags
         return HttpResponse()
 
-
 def fetch_categories(request):
     category_set = Category.objects.all().values()
     return JsonResponse(list(category_set), safe=False)
 
+def gettags(request, resource_id):
+    resource = Resource.objects.get(pk=int(resource_id))
+    tags = resource.tags.all()
+    tagSent = []
+    for item in tags:
+        print(item)
+        tag_set = {'id':item.id, 'name':item.name, 'approved':item.approved}
+        tagSent.append(tag_set)
+
+    return JsonResponse(tagSent, safe=False)
 
 # Downloads request attachment
 def download_attachment(request, resource_id):
@@ -80,6 +89,10 @@ class ResourceUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = ResourceUpdateSerializer
     queryset = Resource.objects.all()
 
+class TagUpdateView(generics.RetrieveUpdateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = TagUpdateSerializer
+    queryset = Tag.objects.all()
 
 class ResourceSearchView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -87,7 +100,7 @@ class ResourceSearchView(generics.ListAPIView):
     queryset = Resource.objects.filter(review_status="approved")
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
-
+    
 
 class TagCreateView(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

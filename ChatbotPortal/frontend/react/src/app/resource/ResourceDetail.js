@@ -11,7 +11,8 @@ export default class ResourceDetail extends Component {
         super(props);
 
         this.state = {
-            resource: {}
+            resource: {},
+            tags:{},
         };
     }
 
@@ -25,13 +26,24 @@ export default class ResourceDetail extends Component {
                 this.setState({
                     resource: res.data
                 });
+                console.log(res.data)
+            });
+        axios
+            .get(`/chatbotportal/resource/get-tags/${resourceID}`, {
+                headers: { Authorization: `Bearer ${this.context.security.token}` }
+            })
+            .then(res => {
+                this.setState({
+                    tags: res.data
+                });
+                console.log(res.data)
             });
     }
 
     render() {
         return (
             <ResourceResponsive
-                resource_component={<ResourceDetailView resource={this.state.resource} />}
+                resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags}/>}
             ></ResourceResponsive>
         );
     }

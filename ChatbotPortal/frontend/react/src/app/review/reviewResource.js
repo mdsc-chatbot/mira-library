@@ -1,9 +1,11 @@
 import React, {Component} from "react";
-import axios from "axios";
-import {Container, Divider, Form, Header, Icon, Label, Rating} from "semantic-ui-react";
+import axios, {CancelToken} from "axios";
+import {Container, Divider, Form, Header, Icon, Label, Rating, Checkbox, Table} from "semantic-ui-react";
 import {SecurityContext} from "../contexts/SecurityContext";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
+import ResourceResponsive from "../resource/ResourceResponsive";
+import { ResourceDetailView } from "../shared";
 
 export default class ResourceDetail extends Component {
     static contextType = SecurityContext;
@@ -15,6 +17,7 @@ export default class ResourceDetail extends Component {
             resource: {},
             rating: 1,
             comments: "No comments",
+            tags: [],
         };
     }
 
@@ -31,24 +34,25 @@ export default class ResourceDetail extends Component {
             .then(res => {
                 this.setState({
                     resource: res.data
+                    
                 });
             });
     };
 
     componentDidMount() {
         this.get_resource_details();
+        this.handleSearchChange();
     }
 
     approve = data => {
         const review = this.format_data(data, true);
-        console.log(review);
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
+            .post("/api/review/", review, {headers: options})
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -57,14 +61,13 @@ export default class ResourceDetail extends Component {
 
     reject = data => {
         const review = this.format_data(data, false);
-        console.log(review);
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
+            .post("/api/review/", review, {headers: options})
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -85,7 +88,7 @@ export default class ResourceDetail extends Component {
             axios
                 .put(
                     "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
-                    {"review_status": review_status},
+                    {"review_status": review_status, "rating": this.state.rating},
                     {headers: options}
                 )
                 .then(
@@ -95,10 +98,24 @@ export default class ResourceDetail extends Component {
                         console.log(error);
                     }
                 );
-
+            for (var i = 0, len = this.state.tags.length; i < len; i++) {
+                    if (this.state.tags[i].approved === true){
+                        axios
+                            .put(
+                                "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
+                                {"approved": true},
+                                {headers: options}
+                            )
+                            .then(
+                                response => {
+                                },
+                                error => {
+                                    console.log(error);
+                                }
+                            );
+                    }
+                }
             // User
-            console.log(this.state.resource);
-            console.log(review_status);
             if (review_status === "approved") {
                 axios
                     .put(`/chatbotportal/authentication/${this.state.resource.created_by_user_pk}/update/approved_submissions/`, '', {
@@ -140,6 +157,7 @@ export default class ResourceDetail extends Component {
         this.setState({[event.target.name]: event.target.value});
     };
 
+
     downloadAttachment = () => {
         // Having the permission header loaded
         //TODO: Fix this. This file should be using the shared component for viewing a resource.
@@ -156,6 +174,36 @@ export default class ResourceDetail extends Component {
         //         fileDownload(response.data, fileName);
         //     });
     };
+    
+    handleSearchChange = () => {
+        const resourceID = this.props.match.params.resourceID;
+            // Fetch search results
+        axios
+            .get(`/chatbotportal/resource/get-tags/${resourceID}`, '',
+                {
+                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                }
+            )
+            
+            .then(response=>{
+                this.setState({
+                    tags: response.data
+                });
+            })
+        };
+    
+    updateTagApproval = (id, status) =>{
+        this.setState(state => {
+            const tags = this.state.tags.map((item) => {
+                if (item.id === id) {
+                  return item.approved=status;
+                  
+                } else {
+                  return item;
+                }
+            });
+        });
+    }
 
     render() {
         return (
@@ -167,67 +215,38 @@ export default class ResourceDetail extends Component {
                         <div>
                             {securityContext.security.is_logged_in ?
                                 <div>
+
                                     <Container>
-                                        <Header as="h3" style={{fontSize: "2em"}}>
-                                            <Icon name="globe"/>
-                                            <Header.Content>
-                                                {this.state.resource.title}
-                                            </Header.Content>
-                                        </Header>
-
-                                        <Divider></Divider>
-
-                                        <p style={{color: "grey", paddingTop: 25}}>
-                                            Submitted by {this.state.resource.created_by_user}
-                                        </p>
-                                        <p style={{color: "grey", marginTop: -10}}>
-                                            Date submitted: {this.state.resource.timestamp}
-                                        </p>
-
-                                        <a href={this.state.resource.url} target="_blank">
-                                            <h4>{this.state.resource.url}</h4>
-                                        </a>
-
-                                        {this.state.resource.rating ? (
-                                            <p>
-                                                <Rating
-                                                    icon="star"
-                                                    defaultRating={this.state.resource.rating}
-                                                    maxRating={5}
-                                                    disabled
-                                                    size="massive"
-                                                />
-                                            </p>
-                                        ) : null}
-                                        {this.state.resource.tags &&
-                                        this.state.resource.tags.length > 0 ? (
-                                            <p>
-                                                <span style={{color: "grey"}}>Tags:</span>
-                                                {this.state.resource.tags.map(tag => (
-                                                    <Label key={tag} size="large">
-                                                        {tag}
-                                                    </Label>
-                                                ))}
-                                            </p>
-                                        ) : null}
-                                        {this.state.resource.attachment ? (
-                                            <Header as="h5" color="grey">
-                                                <a href="#" onClick={this.downloadAttachment}>
-                                                    <Icon name="download"/>
-                                                    <Header.Content>
-                                                        Download attachment
-                                                    </Header.Content>
-                                                </a>
-                                            </Header>
-                                        ) : null}
-                                        <Header as="h5" color="grey">
-                                            <Icon name="comment"/>
-                                            <Header.Content>Comments:</Header.Content>
-                                        </Header>
-                                        <p style={{color: "grey", marginTop: -10}}>
-                                            {this.state.resource.comments}
-                                        </p>
+                                    <ResourceResponsive
+                                        resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />}
+                                    ></ResourceResponsive>
                                     </Container>
+                                    
+                                    <Container>
+                                    {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
+                                        <Table class="ui celled table">
+                                            <thead>
+                                                <tr><th>tag ID</th><th>Tag Name</th><th></th></tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.state.tags.map(tag => (
+                                                    tag.approved !== true ?(
+                                                        <tr key={tag} ref={tr => this.results = tr}>
+                                                        <td>{tag.id}</td>
+                                                        <td>{tag.name}</td>
+                                                        <td>
+                                                        <button class="positive ui button" onClick={() => this.updateTagApproval(tag.id, true)}>Approve</button>
+                                                        <button class="negative ui button" onClick={() => this.updateTagApproval(tag.id, false)}>Reject</button>
+                                                        </td>
+                                                        <td><Checkbox disabled/></td>
+                                                        </tr>
+                                                    ):('')
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    ) : null}
+                                    </Container>
+
                                     <Container style={{width: "50%", height: "10%"}}>
                                         <h2>Submit Review</h2>
                                         <div class="ui form">
@@ -261,7 +280,6 @@ export default class ResourceDetail extends Component {
                                                     placeholder="Enter any comments about this resource"
                                                 />
                                             </div>
-                                            {console.log(this.state.resource)}
                                             <div style={{display: "block"}}>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button

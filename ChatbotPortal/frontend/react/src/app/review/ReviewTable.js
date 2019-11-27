@@ -40,7 +40,7 @@ export default class ReviewTable extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("http://127.0.0.1:8000/api/review", {headers: options}).then(res => {
+        axios.get("/api/review", {headers: options}).then(res => {
             this.setState({
                 reviews: res.data
             });
@@ -87,7 +87,7 @@ export default class ReviewTable extends Component {
     handleOrder = (e, {value}) => {this.setState({ order: {value}.value})}
 
     
-    getData = (reviews,ids) =>{
+    getData = (reviews,ids,currentReviewer) =>{
         function numRevs(id){var numReviews = reviews.reduce(function (n, reviews) {
             return n + (reviews.resource_id == id);
         }, 0); return numReviews}
@@ -148,7 +148,7 @@ export default class ReviewTable extends Component {
         console.log(this.state.order,this.state.resources)
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            ids.includes(r.id) !== true ?(
+            ids.includes(r.id) !== true && r.created_by_user_pk !== currentReviewer ?(
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -234,7 +234,7 @@ export default class ReviewTable extends Component {
                                 {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
                             </thead>
                             <tbody>
-                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids)):(this.completedReviews(ids, reviewsApproval))}
+                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids,reviewer)):(this.completedReviews(ids, reviewsApproval))}
                             </tbody>
                         </Table>
                     </div>
