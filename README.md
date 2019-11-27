@@ -9,12 +9,37 @@ Apart from all this, they can also browse through find a resource section where 
 
 # How to run
 
+#### Create mysql database
+```
+mysql -u root -p
+SHOW DATABASES;
+DROP DATABASE test_main_db;
+DROP DATABASE main_db;
+GRANT ALL PRIVILEGES ON . TO 'root'@'localhost';
+CREATE DATABASE main_db;
+```
+
 #### Django backend (Go to ChatbotPortal)
 ```
 pip install -r requirements.txt
-python manage.py makemigrations && python manage.py migrate && python manage.py migrate --run-syncdb
+python manage.py makemigrations 
+python manage.py migrate && python manage.py migrate --run-syncdb
 python manage.py createsuperuser
 python manage.py runserver
+```
+
+OR 
+
+```
+python manage.py makemigrations auth
+python manage.py migrate auth
+python manage.py makemigrations authentication
+python manage.py migrate authentication
+python manage.py makemigrations admin
+python manage.py migrate admin
+python manage.py makemigrations
+python manage.py migrate
+python manage.py migrate –run-syncdb
 ```
 If encounter 401 error, login to admin site
 
@@ -24,10 +49,12 @@ npm install
 npm run-script build
 ```
 
-# How to test (Selenium)
-Change TEST=True in settings.py
-rerun all migrations, runserver
+# How to test (backend tests and selenium tests)
+```
+python manage.py test --verbosity=3 --noinput authentication.tests
+python manage.py test --verbosity=3 --noinput authentication.functional_tests
+python manage.py test --verbosity=3 --noinput resource.tests
+```
 
-```python3 manage.py test resource.tests -v 2```
-
-
+# More documentations on our codebase
+https://github.com/UAlberta-CMPUT401/ChatbotResources/wiki/10.-Documentations

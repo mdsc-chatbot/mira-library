@@ -9,3 +9,4 @@ django-filter==2.2.0
 mysqlclient==1.4.4
 django-rest-auth==0.9.5
 textract==1.6.3
+
