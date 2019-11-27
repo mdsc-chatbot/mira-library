@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Form, Grid, Header, Message, Segment} from "semantic-ui-react";
 import axios from "axios";
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 /**
  * This class sends the password change request to a respective email
@@ -26,9 +26,7 @@ class PasswordResetRequestPage extends React.Component {
         const url = `/chatbotportal/authentication/password/reset/`;
 
         axios
-            .post(url, emailFormData, {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
-            })
+            .post(url, emailFormData)
             .then(
                 response => {
                     console.log(response);

@@ -9,7 +9,8 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 5
+WAIT_SECONDS = 3
+IMPLICIT_WAIT_SECONDS = 50
 
 
 class TestSearchByStatusFilter(LiveServerTestCase):
@@ -28,6 +29,7 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.regular_user_password = '12345678'
         self.reset_db()
         self.browser = webdriver.Chrome()
+        self.browser.implicitly_wait(IMPLICIT_WAIT_SECONDS)
 
     def tearDown(self):
         """
@@ -130,46 +132,43 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         :return: None
         """
         CustomUser.objects.all().delete()
-
-    def test_search_status_filter_by_is_active(self):
-        """
-        Test search non-active users
-        :return: None
-        """
+        
+    def logging_in(self):
         self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+
         time.sleep(WAIT_SECONDS)
+
         self.browser.find_element_by_name('email').send_keys(self.super_user_email)
         self.browser.find_element_by_name('password').send_keys(self.super_user_password)
         self.browser.find_element_by_name('login_button').click()
 
         time.sleep(WAIT_SECONDS)
 
+    def opening_status_search_filter(self):
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
         search_option.click()
 
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
         # Finding the date accordian
         search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
+        self.assertEqual(search_accordian[1].get_attribute('innerText'), 'Status')
+        search_accordian[1].click()
 
         time.sleep(WAIT_SECONDS)
+
+    def test_search_status_filter_by_is_active_nonactive(self):
+        """
+        Test search non-active users
+        :return: None
+        """
+        self.logging_in()
+
+        self.opening_status_search_filter()
 
         # Setting up the date range
         is_active_dropdown = self.browser.find_element_by_name('is_active')
         self.assertIsNotNone(is_active_dropdown)
         is_active_dropdown.click()
-
-        time.sleep(WAIT_SECONDS)
 
         is_active_dropdown_value = is_active_dropdown.find_elements_by_class_name('text')
         self.assertIsNotNone(is_active_dropdown_value)
@@ -177,7 +176,7 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         is_active_dropdown_value[2].click()
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -188,42 +187,16 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_table)
 
         # Search table is not empty
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 1)
 
-        time.sleep(WAIT_SECONDS)
-
-    def test_search_status_filter_by_is_reviewer(self):
+    def test_search_status_filter_by_is_reviewer_reviewer(self):
         """
         Test search reviewers
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
+        self.opening_status_search_filter()
 
         # Setting up dropdown values
         is_reviewer_dropdown = self.browser.find_element_by_name('is_reviewer')
@@ -236,7 +209,7 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         is_reviewer_dropdown_value[1].click()
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -247,42 +220,16 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_table)
 
         # Search table is not empty
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 3)
 
-        time.sleep(WAIT_SECONDS)
-
-    def test_search_status_filter_by_is_staff(self):
+    def test_search_status_filter_by_is_staff_nonstaff(self):
         """
         Test search users who are not staffs
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
+        self.opening_status_search_filter()
 
         # Setting up dropdown values
         is_staff_dropdown = self.browser.find_element_by_name('is_staff')
@@ -295,7 +242,7 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         is_staff_dropdown_value[2].click()
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -306,42 +253,16 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_table)
 
         # Search table is not empty
-        self.assertGreater(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 5)
 
     def test_search_status_filter_by_is_active_is_reviewer_is_staff(self):
         """
         Test search a user who is active and is a reviewer and is a staff member
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
+        self.opening_status_search_filter()
 
         # Setting up dropdown values
         is_active_dropdown = self.browser.find_element_by_name('is_active')
@@ -374,7 +295,7 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         is_staff_dropdown_value[1].click()
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -387,40 +308,14 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         # Search table is not empty because super user is such kind of user
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 2)
 
-        time.sleep(WAIT_SECONDS)
-
     def test_search_status_filter_by_is_nonactive_is_nonreviewer_is_nonstaff(self):
         """
         Test search a user who is not active and is not a reviewer and is not a staff member
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
+        self.opening_status_search_filter()
 
         # Setting up dropdown values
         is_active_dropdown = self.browser.find_element_by_name('is_active')
@@ -453,7 +348,7 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         is_staff_dropdown_value[2].click()
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -466,89 +361,79 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         # Search table is not empty because there is one such user: regular1
         self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 1)
 
-        time.sleep(WAIT_SECONDS)
-
-    #####################################################################################################################
     def test_search_status_filter_once_selected_must_be_set_to_None_to_go_back_to_normal_search(self):
         """
         Test search filters must be set to none to go back to normal search functionality
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
+        self.logging_in()
 
-        time.sleep(WAIT_SECONDS)
-
-        search_option = self.browser.find_element_by_link_text('Search')
-        self.assertIsNotNone(search_option)
-        search_option.click()
-
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
-        # Finding the accordian
-        advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
-        self.assertIsNotNone(advanced_search_accordian)
-        advanced_search_accordian.click()
-
-        # Finding the date accordian
-        search_accordian = self.browser.find_elements_by_class_name('title')
-        self.assertEqual(search_accordian[2].get_attribute('innerText'), 'Status filtered')
-        search_accordian[2].click()
-
-        time.sleep(WAIT_SECONDS)
+        self.opening_status_search_filter()
 
         # Setting up dropdown values
         is_active_dropdown = self.browser.find_element_by_name('is_active')
         self.assertIsNotNone(is_active_dropdown)
         is_active_dropdown.click()
-        time.sleep(WAIT_SECONDS)
 
         is_active_dropdown_value = is_active_dropdown.find_elements_by_class_name('text')
         self.assertIsNotNone(is_active_dropdown_value)
         self.assertEqual(is_active_dropdown_value[1].get_attribute('innerText'), 'Yes')
         is_active_dropdown_value[1].click()
-        time.sleep(WAIT_SECONDS)
 
         # Setting up dropdown values
         is_reviewer_dropdown = self.browser.find_element_by_name('is_reviewer')
         self.assertIsNotNone(is_reviewer_dropdown)
         is_reviewer_dropdown.click()
-        time.sleep(WAIT_SECONDS)
 
         is_reviewer_dropdown_value = is_reviewer_dropdown.find_elements_by_class_name('text')
         self.assertIsNotNone(is_reviewer_dropdown_value)
         self.assertEqual(is_reviewer_dropdown_value[1].get_attribute('innerText'), 'Yes')
         is_reviewer_dropdown_value[1].click()
-        time.sleep(WAIT_SECONDS)
 
         # Setting up dropdown values
         is_staff_dropdown = self.browser.find_element_by_name('is_staff')
         self.assertIsNotNone(is_staff_dropdown)
         is_staff_dropdown.click()
-        time.sleep(WAIT_SECONDS)
 
         is_staff_dropdown_value = is_staff_dropdown.find_elements_by_class_name('text')
         self.assertIsNotNone(is_staff_dropdown_value)
         self.assertEqual(is_staff_dropdown_value[1].get_attribute('innerText'), 'Yes')
         is_staff_dropdown_value[1].click()
-        time.sleep(WAIT_SECONDS)
 
         # Clearing the selected filters to resume regular search operations
-        is_active_dropdown.find_element_by_tag_name('i').click()
-        time.sleep(WAIT_SECONDS)
-        is_reviewer_dropdown.find_element_by_tag_name('i').click()
-        time.sleep(WAIT_SECONDS)
-        is_staff_dropdown.find_element_by_tag_name('i').click()
 
-        time.sleep(WAIT_SECONDS)
+        # Setting up dropdown values
+        is_active_dropdown = self.browser.find_element_by_name('is_active')
+        self.assertIsNotNone(is_active_dropdown)
+        is_active_dropdown.click()
+
+        is_active_dropdown_value = is_active_dropdown.find_elements_by_class_name('text')
+        self.assertIsNotNone(is_active_dropdown_value)
+        self.assertEqual(is_active_dropdown_value[3].get_attribute('innerText'), 'None')
+        is_active_dropdown_value[3].click()
+
+        # Setting up dropdown values
+        is_reviewer_dropdown = self.browser.find_element_by_name('is_reviewer')
+        self.assertIsNotNone(is_reviewer_dropdown)
+        is_reviewer_dropdown.click()
+
+        is_reviewer_dropdown_value = is_reviewer_dropdown.find_elements_by_class_name('text')
+        self.assertIsNotNone(is_reviewer_dropdown_value)
+        self.assertEqual(is_reviewer_dropdown_value[3].get_attribute('innerText'), 'None')
+        is_reviewer_dropdown_value[3].click()
+
+        # Setting up dropdown values
+        is_staff_dropdown = self.browser.find_element_by_name('is_staff')
+        self.assertIsNotNone(is_staff_dropdown)
+        is_staff_dropdown.click()
+
+        is_staff_dropdown_value = is_staff_dropdown.find_elements_by_class_name('text')
+        self.assertIsNotNone(is_staff_dropdown_value)
+        self.assertEqual(is_staff_dropdown_value[3].get_attribute('innerText'), 'None')
+        is_staff_dropdown_value[3].click()
 
         # Finding the search button
-        search_button = self.browser.find_element_by_tag_name('Button')
+        search_button = self.browser.find_element_by_id('search_button')
         self.assertIsNotNone(search_button)
         search_button.click()
 
@@ -559,6 +444,4 @@ class TestSearchByStatusFilter(LiveServerTestCase):
         self.assertIsNotNone(search_table)
 
         # Search table is not empty and should return all the users
-        self.assertGreaterEqual(int(search_table.get_attribute('aria-rowcount')), 0)
-
-        time.sleep(WAIT_SECONDS)
+        self.assertEqual(int(search_table.get_attribute('aria-rowcount')), 8)

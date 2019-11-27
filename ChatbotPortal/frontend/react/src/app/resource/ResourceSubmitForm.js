@@ -5,7 +5,7 @@ import {Container, Form, Header, Input, Message, Rating} from "semantic-ui-react
 
 import TagDropdown from "./TagDropdown";
 import CategoryDropdown from './CategoryDropdown';
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
 
 export default class ResourceSubmitForm extends Component {
@@ -70,16 +70,18 @@ export default class ResourceSubmitForm extends Component {
             .post("/chatbotportal/resource/", resourceFormData, {
                 headers: { Authorization: `Bearer ${this.context.security.token}` }
             })
-            .then(() => {})
+            .then(() => {
+                this.set_submitted_state(1, "POST SUCESS");
+            })
             .catch(error => {
                 console.error(error);
                 this.set_submitted_state(-1, "POST FAILURE");
             });
 
-        this.set_submitted_state(1, "POST SUCESS");
     };
 
     set_submitted_state = (submitted_value, submitted_message) => {
+        console.log(this.state, submitted_value)
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
@@ -92,16 +94,12 @@ export default class ResourceSubmitForm extends Component {
     };
 
     update_user_submissions = () => {
-        const options = {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.context.security.token}`
-        };
         axios
-            .put(
-                `/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, {headers: options})
+            .put(`/chatbotportal/authentication/${this.context.security.id}/update/submissions/`, '', {
+                headers: { 'Authorization': `Bearer ${this.context.security.token}` }
+            })
             .then(
-                () => {
-                },
+                () => {},
                 error => {
                     console.log(error);
                 }
@@ -136,7 +134,7 @@ export default class ResourceSubmitForm extends Component {
 
     render() {
         return (
-            <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
+            <div style={{ paddingTop: "3%", paddingLeft: "10%", paddingRight: "10%", paddingBottom: "3%" }}>
                 <SecurityContext.Consumer>
                     {securityContext => (
                         <Container vertical>
@@ -157,7 +155,7 @@ export default class ResourceSubmitForm extends Component {
                                                 required
                                                 name="url"
                                                 onChange={this.handleChange}
-                                                width={6}
+                                                width={16}
                                                 value={this.state.url}
                                                 label="Enter URL"
                                                 placeholder="https://"
@@ -172,7 +170,7 @@ export default class ResourceSubmitForm extends Component {
                                                 required
                                                 name="url"
                                                 onChange={this.handleChange}
-                                                width={6}
+                                                width={16}
                                                 value={this.state.url}
                                                 label="Enter URL"
                                                 placeholder="https://"

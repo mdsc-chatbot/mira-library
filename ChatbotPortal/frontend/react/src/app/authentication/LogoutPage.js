@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
 import HomePage from "../Homepage";
 import {Redirect} from "react-router";
 import {baseRoute} from "../App";

@@ -1,3 +1,5 @@
+import os
+
 from rest_auth import serializers as rest_auth_serializer
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
@@ -27,6 +29,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'is_superuser',
             'profile_picture',
             'submissions',
+            'pending_submissions',
+            'approved_submissions',
             'points'
         ]
 
@@ -74,7 +78,9 @@ class CustomUserTokenSerializer(serializers.ModelSerializer):
             'token',
             'profile_picture',
             'submissions',
-            'points'
+            'pending_submissions',
+            'approved_submissions',
+            'points',
         ]
 
 
@@ -82,8 +88,8 @@ class UserUpdateSerializer(serializers.Serializer):
     """
     This serializer will serialize the update data
     """
-    first_name = serializers.CharField(max_length=100)
-    last_name = serializers.CharField(max_length=100)
+    first_name = serializers.CharField(max_length=100, allow_null=True)
+    last_name = serializers.CharField(max_length=100, allow_null=True)
     profile_picture = serializers.ImageField(required=False)
 
     # password = serializers.CharField(max_length=255)
@@ -95,14 +101,17 @@ class UserUpdateSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        # pop the password out since we need to hash it
-        # password = validated_data.pop('password')
-        # update the instance with the rest of the validated data fields
+
+        # Check if the validated data has an image
+        if 'profile_picture' in validated_data:
+            # If the validated data has an image, then check if the instance already has a valid image
+            if os.path.isfile('media/'+instance.__dict__['profile_picture']):
+                # If the instance already has a valid image, then delete the image from the media
+                os.remove('media/'+instance.__dict__['profile_picture'])
+
+        # Update the user instance
         instance.__dict__.update(validated_data)
-        # if password:
-        #     # update password if the password field was not empty
-        #     instance.set_password(password)
-        # Save the updated instance
+
         instance.save()
         return instance
 
@@ -125,16 +134,19 @@ class UserUpdateByAdminSerializer(serializers.Serializer):
         :param validated_data: data to be updated in the instance
         :return: Updated instance
         """
-        # pop the password out since we need to hash it
-        # password = validated_data.pop('password')
-        # update the instance with the rest of the validated data fields
+        # Check if the validated data has an image
+        if 'profile_picture' in validated_data:
+            # If the validated data has an image, then check if the instance already has a valid image
+            if os.path.isfile('media/' + instance.__dict__['profile_picture']):
+                # If the instance already has a valid image, then delete the image from the media
+                os.remove('media/' + instance.__dict__['profile_picture'])
+
+        # Update the user instance
         instance.__dict__.update(validated_data)
-        # if password:
-        #     # update password if the password field was not empty
-        #     instance.set_password(password)
-        # Save the updated instance
+
         instance.save()
         return instance
+
 
 class UserUpdateSubmissionSerializer(serializers.Serializer):
     """

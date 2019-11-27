@@ -1,72 +1,72 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import axios, {CancelToken} from 'axios';
-import {Dropdown} from 'semantic-ui-react';
+import {Dropdown, Responsive, Segment, SegmentGroup} from 'semantic-ui-react';
 import TagPopup from "./TagPopup";
-import { SecurityContext } from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 
 
 export default class TagDropdown extends React.Component {
-	static contextType = SecurityContext;
+    static contextType = SecurityContext;
 
-	static mapResponseToDropdownOption = tag => ({
-		key : tag.id,
-		text : tag.name,
-		value : tag.id
-	});
+    static mapResponseToDropdownOption = tag => ({
+        key: tag.id,
+        text: tag.name,
+        value: tag.id
+    });
 
-	constructor(props) {
-		super(props);
+    constructor(props) {
+        super(props);
 
-		this.state = {
-			searchQuery : '',
-			tagOptions : [], // options to show to user (to click)
-			selectedOptions : [], // selected options so that the current values don't 'disappear' in the UI
-			searchRequestCancelToken : null,
-		};
-	}
+        this.state = {
+            searchQuery: '',
+            tagOptions: [], // options to show to user (to click)
+            selectedOptions: [], // selected options so that the current values don't 'disappear' in the UI
+            searchRequestCancelToken: null,
+        };
+    }
 
-	handleChange = (event, data) => {
-		// Change value
-		this.props.onChange(data.value);
+    handleChange = (event, data) => {
+        // Change value
+        this.props.onChange(data.value);
 
-		this.setState({
-			searchQuery: ''
-		});
+        this.setState({
+            searchQuery: ''
+        });
 
-		// Find out if the newest value was selected/unselected
-		// If selected, add the selected option to selectedOptions
-		// If unselected, remove the selected option in selectedOptions
-		// This is to make sure the UI is consistent.
-		// First, find the selected option using the text of the dropdown
-		const selectedText = event.target.textContent;
-		const selectedOption = data.options.find(option => option.text === selectedText);
+        // Find out if the newest value was selected/unselected
+        // If selected, add the selected option to selectedOptions
+        // If unselected, remove the selected option in selectedOptions
+        // This is to make sure the UI is consistent.
+        // First, find the selected option using the text of the dropdown
+        const selectedText = event.target.textContent;
+        const selectedOption = data.options.find(option => option.text === selectedText);
 
-		if (selectedOption !== undefined) {
-			// Selected
-			const newSelectedOptions = this.state.selectedOptions.slice();
-			newSelectedOptions.push(selectedOption);
-			this.setState({ selectedOptions : newSelectedOptions })
-		} else {
-			// Unselected
-			const indexOfSelectedOption = this.state.selectedOptions.find(option => option.text === selectedText);
-			const newSelectedOptions = this.state.selectedOptions.slice();
-			newSelectedOptions.splice(indexOfSelectedOption, 1);
-			this.setState({ selectedOptions : newSelectedOptions })
-		}
-	};
+        if (selectedOption !== undefined) {
+            // Selected
+            const newSelectedOptions = this.state.selectedOptions.slice();
+            newSelectedOptions.push(selectedOption);
+            this.setState({selectedOptions: newSelectedOptions})
+        } else {
+            // Unselected
+            const indexOfSelectedOption = this.state.selectedOptions.find(option => option.text === selectedText);
+            const newSelectedOptions = this.state.selectedOptions.slice();
+            newSelectedOptions.splice(indexOfSelectedOption, 1);
+            this.setState({selectedOptions: newSelectedOptions})
+        }
+    };
 
-	handleSearchChange = (event, {searchQuery}) => {
-		// Cancel previous search requests if possible
-		if (this.state.searchRequestCancelToken) {
-			this.state.searchRequestCancelToken.cancel()
-		}
+    handleSearchChange = (event, {searchQuery}) => {
+        // Cancel previous search requests if possible
+        if (this.state.searchRequestCancelToken) {
+            this.state.searchRequestCancelToken.cancel()
+        }
 
-		// Prepare for promise cancellation
-		const source = CancelToken.source();
+        // Prepare for promise cancellation
+        const source = CancelToken.source();
 
-		// Fetch search results
-		axios
+        // Fetch search results
+        axios
             .get(
                 "/chatbotportal/resource/fetch-tags",
                 {
@@ -76,7 +76,7 @@ export default class TagDropdown extends React.Component {
                     cancelToken: source.token
                 },
                 {
-                    headers: { Authorization: `Bearer ${this.context.security.token}` }
+                    headers: {Authorization: `Bearer ${this.context.security.token}`}
                 }
             )
             .then(response => {
@@ -105,54 +105,60 @@ export default class TagDropdown extends React.Component {
                 });
             });
 
-		this.setState({
-			searchQuery : searchQuery,
-			searchRequestCancelToken : source
-		})
-	};
+        this.setState({
+            searchQuery: searchQuery,
+            searchRequestCancelToken: source
+        })
+    };
 
-	handleNewTagAdded = (tag) => {
-		// Adding new tag to values
-		const value = this.props.value.slice();
-		value.push(tag.id);
-		this.props.onChange(value);
+    handleNewTagAdded = (tag) => {
+        // Adding new tag to values
+        const value = this.props.value.slice();
+        value.push(tag.id);
+        this.props.onChange(value);
 
-		// Adding tag to selected options
-		this.setState((prevState) => {
-			const selectedOptions = prevState.selectedOptions.slice();
-			selectedOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
-			const tagOptions = prevState.tagOptions.slice();
-			tagOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
+        // Adding tag to selected options
+        this.setState((prevState) => {
+            const selectedOptions = prevState.selectedOptions.slice();
+            selectedOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
+            const tagOptions = prevState.tagOptions.slice();
+            tagOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
 
-			return {
-				selectedOptions,
-				tagOptions
-			};
-		});
-	};
+            return {
+                selectedOptions,
+                tagOptions
+            };
+        });
+    };
 
-	render() {
-		return (
-			<React.Fragment>
-				<Dropdown
-					fluid
-					selection
-					multiple
-					placeholder='Enter tags'
-					search
-					options={this.state.tagOptions}
-					onChange={this.handleChange}
-					onSearchChange={this.handleSearchChange}
-					searchQuery={this.state.searchQuery}
-					value={this.props.value}
-				/>
-				<TagPopup onNewTag={this.handleNewTagAdded} />
-			</React.Fragment>
-		);
-	}
+    render() {
+        return (
+            <React.Fragment>
+                <SegmentGroup size={"mini"} style={{width: "100%"}} compact horizontal>
+                        <Segment style={{width: "100%"}}>
+                            <Dropdown
+                                fluid
+                                multiple
+                                onChange={this.handleChange}
+                                onSearchChange={this.handleSearchChange}
+                                options={this.state.tagOptions}
+                                placeholder='Enter tags'
+                                search
+                                searchQuery={this.state.searchQuery}
+                                selection
+                                value={this.props.value}
+                            />
+                        </Segment>
+                        <Segment>
+                            <TagPopup onNewTag={this.handleNewTagAdded}/>
+                        </Segment>
+                </SegmentGroup>
+            </React.Fragment>
+        );
+    }
 }
 
 TagDropdown.propTypes = {
-	value : PropTypes.array,
-	onChange : PropTypes.func,
+    value: PropTypes.array,
+    onChange: PropTypes.func,
 };

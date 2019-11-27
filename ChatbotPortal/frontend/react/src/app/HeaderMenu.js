@@ -1,9 +1,11 @@
-import React, { Component } from "react";
-import {Menu, Header, Icon, Segment, Responsive, Dropdown, Container} from "semantic-ui-react";
-import { baseRoute } from "./App";
-import { Link } from "react-router-dom";
-import { SecurityContext } from "./security/SecurityContext";
-import styles from "./profile/ProfilePage.css";
+import React, {Component} from "react";
+import {Dropdown, Header, Icon, Menu, Responsive, Segment, Container, Image} from "semantic-ui-react";
+import {baseRoute} from "./App";
+import {Link} from "react-router-dom";
+import {SecurityContext} from "./contexts/SecurityContext";
+import {MenuContext} from "./contexts/MenuContext";
+import styles from "./App.css";
+
 
 export class HeaderMenu extends Component {
     static contextType = SecurityContext;
@@ -14,122 +16,113 @@ export class HeaderMenu extends Component {
     }
     handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+
+
     headerMenuWeb = () => {
         const { activeItem } = this.state;
         return(
-            <div>
-                <Segment inverted>
-                    <Menu inverted stackable pointing secondary size="small">
-                        <Menu.Item
-                            as="a"
-                            style={{ paddingLeft: 50 }}
-                            active={activeItem === "Home"}
-                            onClick={this.handleItemClick}
-                        >
-                            <Link to={baseRoute}>
-                                <Header as="h2" style={{ color: "#3075c9" }}>
-                                    <Icon name="qq" />
-                                    Chatbot Resources
-                                </Header>
-                            </Link>
-                        </Menu.Item>
+            <React.Fragment>
+                <Menu inverted fluid pointing secondary size="large">
+                    <Menu.Item
+                        as="a"
+                        style={{ paddingLeft: 50 }}
+                        active={activeItem === "Home"}
+                        onClick={this.handleItemClick}
+                    >
+                        <Link to={baseRoute}>
+                            <Header as="h2" style={{ color: "#3075c9" }}>
+                                <Image src={require("./logo/512.ico")} ui wrapped/>
+                                Chatbot Portal
+                            </Header>
+                        </Link>
+                    </Menu.Item>
 
+                    <Menu.Item
+                        name="Public Resources"
+                        as={Link}
+                        to={baseRoute + "/public_resource"}
+                        position="right"
+                        active={activeItem === "Public Resources"}
+                        onClick={this.handleItemClick}
+                    />
+
+                    <Menu.Item
+                        name="FAQ"
+                        as={Link}
+                        to={baseRoute + "/faq"}
+                        active={activeItem === "FAQ"}
+                        onClick={this.handleItemClick}
+                    />
+
+                    {this.context.security.is_logged_in && (
                         <Menu.Item
-                            name="Public Resources"
+                            name="My Profile"
                             as={Link}
-                            to={baseRoute + "/public_resource"}
-                            position="right"
-                            active={activeItem === "Public Resources"}
+                            to={baseRoute + "/profile"}
+                            active={activeItem === "My Profile"}
                             onClick={this.handleItemClick}
                         />
+                    )}
 
+                    {this.context.security.is_logged_in && (
                         <Menu.Item
-                            name="FAQ"
+                            name="My resources"
                             as={Link}
-                            to={baseRoute + "/faq"}
-                            active={activeItem === "FAQ"}
+                            to={baseRoute + "/resource"}
+                            active={activeItem === "My resources"}
                             onClick={this.handleItemClick}
                         />
+                    )}
 
+                    {this.context.security.is_logged_in && this.context.security.is_reviewer && (
                         <Menu.Item
-                            name="Passchange"
+                            name="My reviews"
                             as={Link}
-                            to={baseRoute + "/password"}
-                            active={activeItem === "Passchange"}
+                            to={baseRoute + "/review"}
+                            active={activeItem === "My reviews"}
                             onClick={this.handleItemClick}
                         />
-                        {this.context.security.is_logged_in && (
-                            <Menu.Item
-                                name="My Profile"
-                                as={Link}
-                                to={baseRoute + "/profile"}
-                                active={activeItem === "My Profile"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
+                    )}
 
-                        {this.context.security.is_logged_in && (
-                            <Menu.Item
-                                name="My resources"
-                                as={Link}
-                                to={baseRoute + "/resource"}
-                                active={activeItem === "My resources"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
+                    {this.context.security.is_logged_in && this.context.security.is_staff && (
+                        <Menu.Item
+                            name="Search"
+                            as={Link}
+                            to={baseRoute + "/search"}
+                            active={activeItem === "Search"}
+                            onClick={this.handleItemClick}
+                        />
+                    )}
 
-                        {this.context.security.is_logged_in && (
-                            <Menu.Item
-                                name="My reviews"
-                                as={Link}
-                                to={baseRoute + "/review"}
-                                active={activeItem === "My reviews"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
+                    {this.context.security.is_logged_in && (
+                        <Menu.Item
+                            name="Logout"
+                            as={Link}
+                            to={baseRoute + "/logout"}
+                            active={activeItem === "Logout"}
+                            onClick={this.handleItemClick}
+                        />
+                    )}
 
-                        {this.context.security.is_logged_in && this.context.security.is_staff && (
-                            <Menu.Item
-                                name="Search"
-                                as={Link}
-                                to={baseRoute + "/search"}
-                                active={activeItem === "Search"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
-
-                        {this.context.security.is_logged_in && (
-                            <Menu.Item
-                                name="Logout"
-                                as={Link}
-                                to={baseRoute + "/logout"}
-                                active={activeItem === "Logout"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
-
-                        {!this.context.security.is_logged_in && (
-                            <Menu.Item
-                                name="Login"
-                                as={Link}
-                                to={baseRoute + "/login"}
-                                active={activeItem === "Login"}
-                                onClick={this.handleItemClick}
-                            />
-                        )}
-                    </Menu>
-                </Segment>
-            </div>
-
+                    {!this.context.security.is_logged_in && (
+                        <Menu.Item
+                            name="Login"
+                            as={Link}
+                            to={baseRoute + "/login"}
+                            active={activeItem === "Login"}
+                            onClick={this.handleItemClick}
+                        />
+                    )}
+                </Menu>
+            </React.Fragment>
         );
     };
 
     headerMenuMobile = () => {
         const { activeItem } = this.state;
         return(
-            //<div>
-              //  {/*    <Segment>*/}
-                <Menu fluid widths = {2} size="small">
+            <React.Fragment>
+                <Menu inverted pointing fluid widths = {2} size="small">
                     <Menu.Item
                         as="a"
                         style={{ paddingLeft: 50 }}
@@ -138,8 +131,8 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h4" style={{ color: "#3075c9" }}>
-                                <Icon name="qq" />
-                                Chatbot Resources
+                                <Image src={require("./logo/512.ico")} ui wrapped/>
+                                Chatbot Portal
                             </Header>
                         </Link>
                     </Menu.Item>
@@ -147,7 +140,7 @@ export class HeaderMenu extends Component {
 
                         <Dropdown item text='Menu' floating labeled>
 
-                            <Dropdown.Menu>
+                            <Dropdown.Menu className={styles.headerMobile}>
 
                                 <Dropdown.Item>
                                     <Menu.Item
@@ -180,7 +173,7 @@ export class HeaderMenu extends Component {
                                     /></Dropdown.Item>
                                 )}
 
-                                {this.context.security.is_logged_in && (
+                                {this.context.security.is_logged_in && this.context.security.is_reviewer && (
                                     <Dropdown.Item><Menu.Item
                                         name="My reviews"
                                         as={Link}
@@ -235,46 +228,39 @@ export class HeaderMenu extends Component {
 
                     </Menu.Menu>
                 </Menu>
-                //     </Segment>
-           // </div>
-
-        );
-    };
-
-    headerMenu = () => {
-        return(
-            <Segment.Group className={styles.segmentWeb}>
-
-                <Responsive minWidth={768}>
-                    {this.headerMenuWeb()}
-                </Responsive>
-
-                <Responsive maxWidth={767}>
-                    {this.headerMenuMobile()}
-                </Responsive>
-
-            </Segment.Group>
+            </React.Fragment>
         );
     };
 
     render() {
         return (
-            <React.Fragment>
-                <Segment.Group className={styles.segmentWeb}>
-                    <Responsive maxWidth={767}>
-                        {this.headerMenu()}
-                    </Responsive>
+            <MenuContext.Consumer>
+                {(MenuContext) => (
+                    <React.Fragment>
+                        {MenuContext.menu_visibility ?
+                            <Segment.Group>
+                                <Responsive maxWidth={1009}>
+                                    {this.headerMenuMobile()}
+                                </Responsive>
 
-                    <Responsive minWidth={768}>
-                        <React.Fragment>
-                            {this.headerMenu()}
-                        </React.Fragment>
-                    </Responsive>
-                </Segment.Group>
-            </React.Fragment>
-
+                                <Responsive minWidth={1010}>
+                                    <React.Fragment>
+                                        {this.headerMenuWeb()}
+                                    </React.Fragment>
+                                </Responsive>
+                            </Segment.Group>
+                            :
+                            <Menu inverted fluid pointing secondary size="large">
+                                <Header as="h2" style={{ color: "#3075c9", paddingLeft: 50 }}>
+                                    <Image src={require("./logo/512.ico")} ui wrapped/>
+                                        Chatbot Portal
+                                </Header>
+                            </Menu>
+                        }
+                    </React.Fragment>
+                )}
+            </MenuContext.Consumer>
         );
     }
 }
-
 export default HeaderMenu;

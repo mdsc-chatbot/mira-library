@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {ResourceDetailView} from '../shared';
-import { SecurityContext } from "../security/SecurityContext";
+import { ResourceDetailView } from "../shared";
+import { SecurityContext } from "../contexts/SecurityContext";
+import ResourceResponsive from "./ResourceResponsive";
 
 export default class ResourceDetail extends Component {
     static contextType = SecurityContext;
@@ -29,7 +30,9 @@ export default class ResourceDetail extends Component {
 
     render() {
         return (
-            <ResourceDetailView resource={this.state.resource} />
+            <ResourceResponsive
+                resource_component={<ResourceDetailView resource={this.state.resource} />}
+            ></ResourceResponsive>
         );
     }
 }

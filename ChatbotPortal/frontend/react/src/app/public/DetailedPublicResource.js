@@ -2,7 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import {ResourceDetailView} from '../shared';
-import {SecurityContext} from '../security/SecurityContext';
+import {SecurityContext} from '../contexts/SecurityContext';
+import ResourceResponsive from '../resource/ResourceResponsive';
 
 export default class DetailedPublicResource extends React.Component {
     static contextType = SecurityContext;
@@ -18,10 +19,14 @@ export default class DetailedPublicResource extends React.Component {
     componentDidMount() {
         const resourceId = this.props.resourceId;
         const retrieve_url = this.context.security.is_reviewer || this.context.security.is_superuser ? 'retrieve-admin' : 'retrieve';
+        const headers = {};
+        if (this.context.security.token) {
+            headers['Authorization'] = `Bearer ${this.context.security.token}`;
+        }
 
         axios
             .get(`/api/public/${retrieve_url}/${resourceId}`, {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
+                headers
             })
             .then(res => {
                 this.setState({
@@ -32,7 +37,7 @@ export default class DetailedPublicResource extends React.Component {
 
     render() {
         return (
-            <ResourceDetailView resource={this.state.resource} />
+            <ResourceResponsive resource_component={<ResourceDetailView resource={this.state.resource}/>}/>
         );
     }
 }

@@ -1,6 +1,8 @@
 import React from 'react';
-import {DatesRangeInput} from 'semantic-ui-calendar-react';
 import {Container, Dropdown, Form} from 'semantic-ui-react'
+import {DateRangePicker} from "react-dates";
+import 'react-dates/initialize';
+import 'react-dates/lib/css/_datepicker.css';
 
 const dateOption = [
     {key: 'unselected', value: "''", text: 'Unselected'},
@@ -25,7 +27,12 @@ class SearchByDateRange extends React.Component {
          * @type {{datesRange: string, value: string}}
          */
         this.state = {
-            datesRange: ''
+            datesRange: '',
+
+            startDate: '',
+            endDate: '',
+            focusedInput: null
+
         };
     }
 
@@ -45,6 +52,25 @@ class SearchByDateRange extends React.Component {
             const date_range = value.split(' - ');
             this.props.set_date_range_params(date_range[0], date_range[1])
         }
+    };
+
+    /**
+     * Handles the changes to the date range picker and sets the date into props and the states
+     * @param startDate
+     * @param endDate
+     */
+    handle_date_change = ({startDate, endDate}) => {
+        console.log(startDate)
+        if (startDate === '' || startDate === null || endDate === '' || endDate === null) {
+            this.props.set_date_range_params('', '')
+        } else {
+            this.props.set_date_range_params(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'))
+        }
+        this.setState({
+            startDate: startDate,
+            endDate: endDate
+        });
+
     };
 
     /**
@@ -75,15 +101,21 @@ class SearchByDateRange extends React.Component {
                     options={dateOption}
                 />
                 <Container content="Date range"/>
-                <DatesRangeInput
-                    popupPosition="bottom left"
-                    name="datesRange"
-                    placeholder="From - To"
-                    value={this.state.datesRange}
-                    iconPosition="left"
-                    onChange={this.handle_change_daterange}
-                    dateFormat={"YYYY-MM-DD"}
-                    size='small'
+                <DateRangePicker
+                    endDate={this.state.endDate}
+                    focusedInput={this.state.focusedInput}
+                    initialEndDate={null}
+                    initialStartDate={null}
+                    initialVisibleMonth={null}
+                    isDayBlocked={function noRefCheck() {}}
+                    isDayHighlighted={function noRefCheck() {}}
+                    isOutsideRange={function noRefCheck() {}}
+                    numberOfMonths={1}
+                    onDatesChange={({startDate, endDate}) => this.handle_date_change({startDate, endDate})}
+                    onFocusChange={focusedInput => this.setState({focusedInput})}
+                    showClearDates
+                    small
+                    startDate={this.state.startDate}
                 />
             </Form>
         );

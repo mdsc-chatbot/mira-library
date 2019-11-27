@@ -1,6 +1,8 @@
 import React from "react";
 import HomepageHead from "./HomepageHead";
 import HomepageContent from "./HomepageContent";
+import styles from "./HomepageHead.css";
+import {Responsive, Segment} from "semantic-ui-react";
 
 export default class HomePage extends React.Component {
     constructor(props) {
@@ -11,16 +13,21 @@ export default class HomePage extends React.Component {
 
     render() {
         return (
-            <div
-                style={{
-                    paddingTop: 30,
-                    paddingLeft: 100,
-                    paddingRight: 100
-                }}
-            >
-                <HomepageHead />
-                <HomepageContent />
-            </div>
+            <React.Fragment>
+                <Segment.Group className={styles.segmentWeb}>
+
+                    <Responsive minWidth={768}>
+                        <HomepageHead/>
+                        <HomepageContent/>
+                    </Responsive>
+
+                    <Responsive maxWidth={767}>
+                        <HomepageHead/>
+                    </Responsive>
+
+                </Segment.Group>
+            </React.Fragment>
+
         );
     }
 }

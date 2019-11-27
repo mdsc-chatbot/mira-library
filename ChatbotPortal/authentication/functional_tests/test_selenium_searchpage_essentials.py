@@ -9,7 +9,8 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 5
+WAIT_SECONDS = 3
+IMPLICIT_WAIT_SECONDS = 10
 
 
 class TestSearchPageEssentials(LiveServerTestCase):
@@ -28,6 +29,7 @@ class TestSearchPageEssentials(LiveServerTestCase):
         self.regular_user_password = '12345678'
         self.reset_db()
         self.browser = webdriver.Chrome()
+        self.browser.implicitly_wait(IMPLICIT_WAIT_SECONDS)
 
     def tearDown(self):
         """
@@ -69,19 +71,23 @@ class TestSearchPageEssentials(LiveServerTestCase):
         """
         CustomUser.objects.all().delete()
 
+    def logging_in(self, email, password):
+        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
+
+        time.sleep(WAIT_SECONDS)
+
+        self.browser.find_element_by_name('email').send_keys(email)
+        self.browser.find_element_by_name('password').send_keys(password)
+        self.browser.find_element_by_name('login_button').click()
+
+        time.sleep(WAIT_SECONDS)
+
     def test_search_option_visible_to_super_user(self):
         """
         Test the admin should have the search option
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
-
-        time.sleep(WAIT_SECONDS)
-
+        self.logging_in(self.super_user_email, self.super_user_password)
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
 
@@ -90,13 +96,7 @@ class TestSearchPageEssentials(LiveServerTestCase):
         Test the regular user should not have the search option
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.regular_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.regular_user_password)
-        self.browser.find_element_by_name('login_button').click()
-
-        time.sleep(WAIT_SECONDS)
+        self.logging_in(self.regular_user_email, self.regular_user_password)
 
         search_option = self.browser.find_elements_by_link_text('Search')
         self.assertEqual(len(search_option), 0)
@@ -106,17 +106,14 @@ class TestSearchPageEssentials(LiveServerTestCase):
         Test the admin should have the search option
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
-
-        time.sleep(WAIT_SECONDS)
+        self.logging_in(self.super_user_email, self.super_user_password)
 
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
         search_option.click()
+
+        # Finding the id accordian
+        search_accordian = self.browser.find_elements_by_class_name('title')
 
         self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
 
@@ -125,24 +122,12 @@ class TestSearchPageEssentials(LiveServerTestCase):
         Test the admin should have the search option
         :return: None
         """
-        self.browser.get('%s%s' % (self.live_server_url, LOGIN_PAGE))
-        time.sleep(WAIT_SECONDS)
-        self.browser.find_element_by_name('email').send_keys(self.super_user_email)
-        self.browser.find_element_by_name('password').send_keys(self.super_user_password)
-        self.browser.find_element_by_name('login_button').click()
-
-        time.sleep(WAIT_SECONDS)
+        self.logging_in(self.super_user_email, self.super_user_password)
 
         search_option = self.browser.find_element_by_link_text('Search')
         self.assertIsNotNone(search_option)
         search_option.click()
 
-        time.sleep(WAIT_SECONDS)
-
-        self.assertURLEqual(self.live_server_url + SEARCH_PAGE, self.browser.current_url)
-
         advanced_search_accordian = self.browser.find_element_by_id('advanced_search_accordian')
         self.assertIsNotNone(advanced_search_accordian)
         advanced_search_accordian.click()
-
-        time.sleep(WAIT_SECONDS)

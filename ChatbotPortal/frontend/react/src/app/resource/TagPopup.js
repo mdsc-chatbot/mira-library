@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import {Button, Form, Input, Popup, Label} from 'semantic-ui-react';
-import { SecurityContext } from "../security/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 export default class TagPopup extends React.Component {
 	static contextType = SecurityContext;
@@ -24,13 +24,12 @@ export default class TagPopup extends React.Component {
 	};
 
 	handleSubmit = (event, data) => {
-		//TODO: Use return value from post method somehow...
 		event.preventDefault();
 
 		axios.post('/chatbotportal/resource/create-tag', {
 			name : this.state.value
-		}, {
-			headers: {"Content-Type": "application/json"},
+		},{
+			headers: {Authorization: `Bearer ${this.context.security.token}`}
 		})
 			.then(response => {
 				this.props.onNewTag(response.data);

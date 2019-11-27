@@ -22,28 +22,28 @@ export class ResourceStatistic extends Component {
         return (
             <div>
                 <Statistic size="mini" color="blue">
-                    <Statistic.Value>
+                    <Statistic.Value id="total_resources">
                         <Icon name="globe" />
                         {total_resources}
                     </Statistic.Value>
                     <Statistic.Label> Total Submitted Resources</Statistic.Label>
                 </Statistic>
                 <Statistic size="mini" color="yellow">
-                    <Statistic.Value>
+                    <Statistic.Value id="pending_resources">
                         <Icon name="sync alternate" />
                         {pending_resources}
                     </Statistic.Value>
                     <Statistic.Label> Pending Resources</Statistic.Label>
                 </Statistic>
                 <Statistic size="mini" color="olive">
-                    <Statistic.Value>
+                    <Statistic.Value id="approved_resources">
                         <Icon name="thumbs up" />
                         {approved_resources}
                     </Statistic.Value>
                     <Statistic.Label> Approved Resources</Statistic.Label>
                 </Statistic>
                 <Statistic size="mini" color="red">
-                    <Statistic.Value>
+                    <Statistic.Value id="rejected_resources">
                         <Icon name="thumbs down" />
                         {rejected_resources}
                     </Statistic.Value>

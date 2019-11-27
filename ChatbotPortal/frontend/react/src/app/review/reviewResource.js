@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import axios from "axios";
 import {Container, Divider, Form, Header, Icon, Label, Rating} from "semantic-ui-react";
-import {SecurityContext} from "../security/SecurityContext";
+import {SecurityContext} from "../contexts/SecurityContext";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
 
@@ -101,12 +101,11 @@ export default class ResourceDetail extends Component {
             console.log(review_status);
             if (review_status === "approved") {
                 axios
-                    .put(
-                        `/chatbotportal/authentication/${this.state.resource.created_by_user_pk}/update/approved_submissions/`, {headers: options}
-                    )
+                    .put(`/chatbotportal/authentication/${this.state.resource.created_by_user_pk}/update/approved_submissions/`, '', {
+                        headers: { 'Authorization': `Bearer ${this.context.security.token}` }
+                    })
                     .then(
-                        response => {
-                        },
+                        response => {},
                         error => {
                             console.log(error);
                         }
