@@ -50,7 +50,7 @@ sys.path.append('...')
 class TestResourceSubmission(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
-        self.driver.implicitly_wait(50)
+        self.driver.implicitly_wait(4)
         self.vars = {}
         self.setup_db()
         self.total_resources = 0
@@ -116,7 +116,7 @@ class TestResourceSubmission(LiveServerTestCase):
 
         # Test valid url and PDF attachment
         actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
-                                  "https://www.autism.org", "ADHD,Research",
+                                  "https://www.autism.org", "Autism,Research",
                                   "An institution dedicated to autism research.",
                                   "pending", "PDF",
                                   "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
@@ -195,7 +195,7 @@ class TestResourceSubmission(LiveServerTestCase):
             # Tags xpath
         try:
             test_tags = self.driver.find_element(
-                By.XPATH, ("//div[4]")).text
+                By.XPATH, ("//div[5]")).text
             test_tags = test_tags.replace("Tags:\n", "")
             print("tags", test_tags)
         except:

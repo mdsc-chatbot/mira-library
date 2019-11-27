@@ -17,13 +17,13 @@ function grid_element(grid_key, grid_value) {
         floated: "left",
         mobile: "8",
         tablet: "4",
-        computer: "2"
+        computer: "3"
     };
 
     const gridValueColumnProps = {
         mobile: "8",
         tablet: "12",
-        computer: "14"
+        computer: "13"
     };
 
     return (
