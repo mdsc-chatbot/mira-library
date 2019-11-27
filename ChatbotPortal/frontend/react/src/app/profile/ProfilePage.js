@@ -5,6 +5,7 @@ import {Button, Card, Container, Divider, Form, FormInput, Icon, Image, Responsi
 import styles from "./ProfilePage.css";
 import {baseRoute} from "../App";
 import {Link, Redirect} from "react-router-dom";
+import {object} from "prop-types";
 
 /**
  * This class renders the profile information of a logged in user
@@ -85,7 +86,10 @@ class ProfilePage extends Component {
         let formData = new FormData();
         formData.append('first_name', editedData.first_name);
         formData.append('last_name', editedData.last_name);
-        if (this.state.profile_picture) {
+
+        // Checking if an image update is required
+        // If the image is selected then it should be a file object, otherwise a string of file url
+        if (typeof(this.state.profile_picture) === 'object' && this.state.profile_picture !== null) {
             formData.append('profile_picture', editedData.profile_picture);
         }
 
@@ -125,7 +129,8 @@ class ProfilePage extends Component {
                                     src={`/static/${this.state.profile_picture.split('/')[this.state.profile_picture.split('/').length - 1]}`}
                                     size='medium'
                                     circular
-                                    centered/>
+                                    centered
+                                />
                             ) : null}
                             <Form.Input
                                 className={styles.imageMobile}
