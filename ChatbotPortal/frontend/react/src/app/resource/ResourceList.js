@@ -8,6 +8,8 @@ import ResourceStatistic from "./ResourceStatistic";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
 import ResourceResponsive from "./ResourceResponsive.js";
+import ResourceSubmissionHelp from "./ResourceSubmissionHelp.js";
+
 
 export default class ResourceList extends Component {
     static contextType = SecurityContext;
@@ -63,11 +65,11 @@ export default class ResourceList extends Component {
                     <Button name="submit_a_resource" color = 'green' size="medium">
                         Submit a resource
                     </Button>
-
-                    <Button name="how_resource" color='blue' size="medium">
+                </Link>
+                <ResourceSubmissionHelp trigger={
+                <Button name="how_resource" color='blue' size="medium">
                         How to submit a resource?
-                    </Button>
-            </Link>
+                </Button>}/>
             </Container>
         );
     };
