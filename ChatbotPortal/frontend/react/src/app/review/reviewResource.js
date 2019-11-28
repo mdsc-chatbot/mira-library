@@ -218,11 +218,15 @@ export default class ResourceDetail extends Component {
             })
         };
     
-    updateTagApproval = (id, status) =>{
+    updateTagApproval = (id) =>{
         this.setState(state => {
             const tags = this.state.tags.map((item) => {
                 if (item.id === id) {
-                  return item.approved=status;
+                    if (item.approved === true){
+                        return item.approved=false;
+                    }else{
+                        return item.approved=true;
+                    }
                   
                 } else {
                   return item;
@@ -248,11 +252,11 @@ export default class ResourceDetail extends Component {
                                     ></ResourceResponsive>
                                     </Container>
                                     
-                                    <Container>
+                                    <Container style={{width: "70%", height: "20%"}}>
                                     {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
                                         <Table class="ui celled table">
                                             <thead>
-                                                <tr><th>tag ID</th><th>Tag Name</th><th></th></tr>
+                                                <tr><th>tag ID</th><th>Tag Name</th><th>Approve</th></tr>
                                             </thead>
                                             <tbody>
                                                 {this.state.tags.map(tag => (
@@ -260,11 +264,7 @@ export default class ResourceDetail extends Component {
                                                         <tr key={tag} ref={tr => this.results = tr}>
                                                         <td>{tag.id}</td>
                                                         <td>{tag.name}</td>
-                                                        <td>
-                                                        <button class="positive ui button" onClick={() => this.updateTagApproval(tag.id, true)}>Approve</button>
-                                                        <button class="negative ui button" onClick={() => this.updateTagApproval(tag.id, false)}>Reject</button>
-                                                        </td>
-                                                        <td><Checkbox disabled/></td>
+                                                        <td><Checkbox onChange={() => this.updateTagApproval(tag.id)} toggle/></td>
                                                         </tr>
                                                     ):('')
                                                 ))}
@@ -273,7 +273,7 @@ export default class ResourceDetail extends Component {
                                     ) : null}
                                     </Container>
 
-                                    <Container style={{width: "50%", height: "10%"}}>
+                                    <Container style={{paddingTop:'2%',width: "70%", height: "10%"}}>
                                         <h2>Submit Review</h2>
                                         <div class="ui form">
                                             <div

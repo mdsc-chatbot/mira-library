@@ -199,7 +199,7 @@ export default class ReviewTable extends Component {
         var viewPending = true
         return (
             <div>
-                <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
+                <div style={{paddingTop:'2%', paddingLeft:'6%', paddingRight:'6%'}}>
                     <div style={{ padding: "2em 0em",textAlign: "center" }}
                         vertical>
 
