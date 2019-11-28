@@ -214,7 +214,7 @@ class TestResourceSubmission(LiveServerTestCase):
         if test_category == "PDF":
             self.download_and_compare_attachments()
 
-            # Tags xpath
+        # Tags xpath
         try:
             test_tags = self.driver.find_element(
                 By.XPATH, ("//div[5]")).text

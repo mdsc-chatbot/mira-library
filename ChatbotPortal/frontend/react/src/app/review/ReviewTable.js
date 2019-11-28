@@ -221,20 +221,9 @@ export default class ReviewTable extends Component {
         var viewPending = true
         return (
             <div>
-                <div style={{paddingTop:30, paddingLeft:100, paddingRight:100}}>
+                <div style={{paddingTop:'2%', paddingLeft:'6%', paddingRight:'6%'}}>
                     <div style={{ padding: "2em 0em",textAlign: "center" }}
                         vertical>
-
-                        <Header
-                            as="h3"
-                            style={{
-                                fontSize: "2em"
-                            }}
-                            color="blue">
-                            Reviews
-                        </Header>
-
-                        <Header as="h4" color="grey">{this.state.header}</Header>
                     </div>
                     {this.state.pending === 'Completed Reviews'?
                         <div style={{display:'inline-block'}}>
