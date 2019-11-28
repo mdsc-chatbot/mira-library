@@ -74,7 +74,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ChatbotPortal.urls'
+ROOT_URLCONF = 'chatbotPortal.urls'
 
 TEMPLATES = [
     {
@@ -96,7 +96,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ChatbotPortal.wsgi.application'
+WSGI_APPLICATION = 'chatbotPortal.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
