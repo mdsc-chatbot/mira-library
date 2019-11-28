@@ -21,14 +21,16 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import React, {Component} from "react";
-import {Dropdown, Header, Icon, Menu, Responsive, Segment, Container, Image} from "semantic-ui-react";
+import {Dropdown, Header, Icon, Menu, Responsive, Segment, Image} from "semantic-ui-react";
 import {baseRoute} from "./App";
 import {Link} from "react-router-dom";
 import {SecurityContext} from "./contexts/SecurityContext";
 import {MenuContext} from "./contexts/MenuContext";
 import styles from "./App.css";
 
-
+/**
+ * This class renders the Header Menu of a logged in user
+ */
 export class HeaderMenu extends Component {
     static contextType = SecurityContext;
     constructor(props) {
@@ -39,7 +41,9 @@ export class HeaderMenu extends Component {
     handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
 
-
+    /**
+     * This class renders the header menu of a logged in user for Web and Tablet
+     */
     headerMenuWeb = () => {
         const { activeItem } = this.state;
         return(
@@ -140,6 +144,9 @@ export class HeaderMenu extends Component {
         );
     };
 
+    /**
+     * This class renders the header menu of a logged in user for Mobile
+     */
     headerMenuMobile = () => {
         const { activeItem } = this.state;
         return(
@@ -254,6 +261,10 @@ export class HeaderMenu extends Component {
         );
     };
 
+    /**
+     * This renders the HeaderMenu
+     * @returns {React.Fragment}
+     */
     render() {
         return (
             <MenuContext.Consumer>
@@ -275,7 +286,7 @@ export class HeaderMenu extends Component {
                             <Menu inverted fluid pointing secondary size="large">
                                 <Header as="h2" style={{ color: "#3075c9", paddingLeft: 50 }}>
                                     <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                        Chatbot Portal
+                                    Chatbot Portal
                                 </Header>
                             </Menu>
                         }

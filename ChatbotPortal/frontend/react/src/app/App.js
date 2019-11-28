@@ -40,11 +40,16 @@ import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
-import {Responsive, Segment} from "semantic-ui-react";
+import {Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import {MenuContextProvider} from './contexts/MenuContext';
 import styles from "./App.css";
+
+/**
+ * This class renders the re-direction of the links, and menu, according
+ * to whether the user is logged in or not
+ */
 
 export default function App() {
     const mainPage = () => {
@@ -130,6 +135,11 @@ export default function App() {
                 <Segment attached = 'bottom' inverted><Footer /></Segment>
             </SecurityContextProvider>);
     };
+
+    /**
+     * This renders the Page according to the user and link
+     * @returns {React.Fragment}
+     */
     return (
         <React.Fragment>
             {mainPage()}

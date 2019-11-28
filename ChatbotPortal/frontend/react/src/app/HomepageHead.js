@@ -21,17 +21,16 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import React, { Component } from "react";
-import {Container, Header, Button, Segment, Grid, Responsive, Divider,Icon} from "semantic-ui-react";
+import {Header, Button, Segment, Grid, Responsive, Icon} from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import { SecurityContext } from "./contexts/SecurityContext";
 import styles from './HomepageHead.css'
 
-
-
 export class HomepageHead extends Component {
     static contextType = SecurityContext;
 
+    // The constant homepage data
     homePageData = () => {
         return(
             <React.Fragment>
@@ -90,6 +89,8 @@ export class HomepageHead extends Component {
             </React.Fragment>
         );
     };
+
+    // Home page layout and Data for Web & Tab Orientation
     homePageWeb = () => {
         return(
             <Segment className={styles.segmentWeb} textAlign="center" vertical>
@@ -98,6 +99,8 @@ export class HomepageHead extends Component {
 
         );
     };
+
+    // Home page Layout and Data for Mobile Orientation
     homePageMobile = () => {
         return(
             <React.Fragment>
@@ -158,6 +161,11 @@ export class HomepageHead extends Component {
         );
     };
 
+
+    /**
+     * This renders the HomepPage
+     * @returns {React.Fragment}
+     */
     render() {
         return (
             <Segment.Group className={styles.segmentWeb}>
@@ -174,5 +182,4 @@ export class HomepageHead extends Component {
         );
     }
 }
-
 export default HomepageHead;

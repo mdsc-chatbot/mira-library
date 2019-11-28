@@ -37,7 +37,6 @@ export default class HomePage extends React.Component {
         return (
             <React.Fragment>
                 <Segment.Group className={styles.segmentWeb}>
-
                     <Responsive minWidth={768}>
                         <HomepageHead/>
                         <HomepageContent/>
