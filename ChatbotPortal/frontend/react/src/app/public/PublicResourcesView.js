@@ -129,15 +129,16 @@ class PublicResourcesView extends Component {
         });
     };
 
-    handleTagSelected = (event, {id, checked}) => {
-        // Remove or add id depending on whether checkbox was checked
+    handleTagSelected = (event, {tag_id, checked}) => {
+        event.preventDefault();
+        // Remove or add tag_id depending on whether checkbox was checked
         this.setState((prevState) => {
             let selectedTags = prevState.selectedTags.slice();
 
             if (checked) {
-                selectedTags.push(id);
+                selectedTags.push(tag_id);
             } else {
-                selectedTags = selectedTags.filter(value => value !== id);
+                selectedTags = selectedTags.filter(value => value !== tag_id);
             }
 
             return {
@@ -149,15 +150,16 @@ class PublicResourcesView extends Component {
         });
     };
 
-    handleCategorySelected = (event, {id, checked}) => {
-        // Remove or add id depending on whether checkbox was checked
+    handleCategorySelected = (event, {category_id, checked}) => {
+        event.preventDefault();
+        // Remove or add category_id depending on whether checkbox was checked
         this.setState((prevState) => {
             let selectedCategories = prevState.selectedCategories.slice();
 
             if (checked) {
-                selectedCategories.push(id);
+                selectedCategories.push(category_id);
             } else {
-                selectedCategories = selectedCategories.filter(value => value !== id);
+                selectedCategories = selectedCategories.filter(value => value !== category_id);
             }
 
             return {
