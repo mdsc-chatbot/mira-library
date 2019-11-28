@@ -1,6 +1,6 @@
 /**
- * @file: ProfilePage.js
- * @summary: Renders user's profile page and allow the user change certain user information (name, profile picture, password)
+ * @file: Footer.js
+ * @summary: Component for website footer
  * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
  * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
  * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen

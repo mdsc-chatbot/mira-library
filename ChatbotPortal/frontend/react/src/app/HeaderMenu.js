@@ -1,6 +1,6 @@
 /**
- * @file: ProfilePage.js
- * @summary: Renders user's profile page and allow the user change certain user information (name, profile picture, password)
+ * @file: HeaderMenu.js
+ * @summary: Component for website header, conditionally links to different pages depends on if the user is logged in
  * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
  * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
  * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
