@@ -237,22 +237,17 @@ export default class ResourceDetail extends Component {
 
     render() {
         return (
-            <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30,}}
-            >
+            
                 <SecurityContext.Consumer>
                     {(securityContext) => (
                         <div>
                             {securityContext.security.is_logged_in ?
-                                <div>
 
-                                    <Container>
-                                    <ResourceResponsive
-                                        resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />}
-                                    ></ResourceResponsive>
-                                    </Container>
-                                    
-                                    <Container style={{width: "70%", height: "20%"}}>
+                                <ResourceResponsive
+                                    resource_component={
+                                        <div>
+                                    <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />
+                                    <div>
                                     {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
                                         <Table class="ui celled table">
                                             <thead>
@@ -271,9 +266,9 @@ export default class ResourceDetail extends Component {
                                             </tbody>
                                         </Table>
                                     ) : null}
-                                    </Container>
+                                    </div>
 
-                                    <Container style={{paddingTop:'2%',width: "70%", height: "10%"}}>
+                                    <div>
                                         <h2>Submit Review</h2>
                                         <div class="ui form">
                                             <div
@@ -331,11 +326,16 @@ export default class ResourceDetail extends Component {
                                                 </Link>
                                             </div>
                                         </div>
-                                    </Container>
-                                </div> : null}
+                                    </div>
+
+                                    </div>
+                                }
+                                ></ResourceResponsive>
+                                
+                                    
+                                : null}
                         </div>)}
                 </SecurityContext.Consumer>
-            </div>
         );
     }
 }
