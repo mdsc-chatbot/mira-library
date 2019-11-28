@@ -26,3 +26,17 @@
 :global(.ui.dropdown .menu).headerMobile{
   background: black !important;
 }
+
+@media (max-width: 767px) {
+    .segmentResponsive {
+        /* Enough to fit iphone6 100% is good enough for us */
+        min-height: 478px;
+    }
+}
+
+@media (min-width: 768px) {
+    .segmentResponsive {
+        /* I aimed for around 1280 x 800 screen monitor, that's probably the lowest we'll support */
+        min-height: 583px
+    }
+}

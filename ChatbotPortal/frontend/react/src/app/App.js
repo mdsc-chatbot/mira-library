@@ -59,7 +59,7 @@ export default function App() {
                     <Segment  className={styles.headerMenu} inverted attached = 'top'>
                         <HeaderMenu/>
                     </Segment>
-                    <Segment className={styles.segmentWeb} attached>
+                    <Segment className={`${styles.segmentWeb} ${styles.segmentResponsive}`} attached>
                         <Switch>
                             <Route exact path={baseRoute + "/profile"}>
                                 <ProfilePage/>
