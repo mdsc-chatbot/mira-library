@@ -309,6 +309,7 @@ export default class ResourceDetail extends Component {
                                             <div style={{display: "block"}}>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button
+                                                        name="approve"
                                                         class="positive ui button"
                                                         onClick={() =>
                                                             this.approve(this.state.resource)
@@ -319,6 +320,7 @@ export default class ResourceDetail extends Component {
                                                 </Link>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button
+                                                        name="reject"
                                                         class="negative ui button"
                                                         onClick={() =>
                                                             this.reject(this.state.resource)

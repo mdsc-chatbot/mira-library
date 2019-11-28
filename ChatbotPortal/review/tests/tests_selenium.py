@@ -35,7 +35,7 @@ import sys
 import os
 from pathlib import Path
 import textract
-from resource.models import Resource, Tag
+from resource.models import Resource, Tag, Category
 from ..models import Reviews
 
 class TestReviewSubmission(LiveServerTestCase):
@@ -52,90 +52,135 @@ class TestReviewSubmission(LiveServerTestCase):
         CustomUser.objects.all().delete()
         Resource.objects.all().delete()
 
-        self.user_email = "test@gmail.com"
-        self.user_password = "test"
-        user = CustomUser.objects.create_user(
-            email=self.user_email,
-            password=self.user_password,
+        normal_user = CustomUser.objects.create_user(
+            email='normal_user@test.com',
+            password='normal_user',
         )
-        user.save()
-
-        user = CustomUser.objects.create_user(
-            email='testSubmit@test.com',
-            password='12345678',
+        reviewer_user = CustomUser.objects.create_user(
+            email='reviewer_user@test.com',
+            password='reviewer_user',
+            is_reviewer=True,
         )
-        user.save()
+        normal_user.save()
+        reviewer_user.save()
 
-        tagReject = Tag.objects.create(name='Poor People', approved=False)
-        tagReject.save()
-        tagFutureAccept = Tag.objects.create(name="Research", approved=False)
-        tagFutureAccept.save()
+        website_category = Category.objects.create(name='Website')
+        website_category.save()
 
-        
-        resource = Resource.objects.create(
+        future_approved_resource = Resource.objects.create(
             url = "https://www.caddra.ca/",
-            rating = 4,
-            comments = "ADHD resource",
             review_status = "pending",
-            created_by_user='testSubmit@test.com',
-            created_by_user_pk = 2,
-
+            created_by_user='normal_user@test.com',
+            created_by_user_pk = 1,
+            category=website_category,
         )
-        resource.tags.add(tagReject)
-        resource.tags.add(tagFutureAccept)
+        future_rejected_resource = Resource.objects.create(
+            url = "https://www.google.ca/",
+            review_status = "pending",
+            created_by_user='normal_user@test.com',
+            created_by_user_pk = 1,
+            category=website_category,
+        )
+        future_approved_resource.save()
+        future_rejected_resource.save()
+
+        tag_resource = Resource.objects.create(
+            url = "https://en.wikipedia.org/wiki/Attention_deficit_hyperactivity_disorder",
+            review_status = "pending",
+            created_by_user='normal_user@test.com',
+            created_by_user_pk = 1,
+            category=website_category,
+        )
+        future_approved_tag = Tag.objects.create(name="Research", approved=False)
+        future_approved_tag.save()
+        future_rejected_tag = Tag.objects.create(name='Poor People', approved=False)
+        future_rejected_tag.save()
+        tag_resource.tags.add(future_rejected_tag)
+        tag_resource.tags.add(future_approved_tag)
 
     def tearDown(self):
         self.driver.close()
         self.driver.quit()
         super(TestReviewSubmission, self).tearDown()
 
-    def wait_for_window(self, timeout=2):
-        time.sleep(round(timeout / 1000))
-        wh_now = self.driver.window_handles
-        wh_then = self.vars["window_handles"]
-        if len(wh_now) > len(wh_then):
-            return set(wh_now).difference(set(wh_then)).pop()
+    def login(self, user_email, user_password):
+        self.driver.find_element(By.LINK_TEXT, "Login").click()
+        self.driver.find_element(By.NAME, "email").send_keys(user_email)
+        self.driver.find_element(By.NAME, "password").send_keys(user_password)
+        self.driver.find_element(By.NAME, "login_button").click()
+
+    def review_a_resource(self, kwargs):
+        self.driver.find_element(By.LINK_TEXT, "My Reviews").click()
+        self.driver.find_element(By.XPATH, kwargs["review_item_xpath"]).click()
+        self.driver.find_element(By.NAME, "comments").clear()
+        self.driver.find_element(By.NAME, "comments").send_keys(kwargs["review_comment"])
+        self.driver.find_element(By.XPATH, "//div[3]/div/div/div/div/i[4]").click()
+        if "review_tag" in kwargs and kwargs["review_tag"]:
+            self.driver.find_element(By.CSS_SELECTOR, "label").click()
+        self.driver.find_element(By.NAME, kwargs["review_status"]).click()
+
+    def reviewer_user_process(self):
+        self.login("reviewer_user@test.com", "reviewer_user")
+        self.review_a_resource(
+            {
+            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/1\')]",
+            "review_comment":"https://www.caddra.ca/ resource is approved.",
+            "review_status":"approve",
+            }
+        )
+        self.review_a_resource(
+            {
+            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/2\')]",
+            "review_comment":"https://www.google.ca/ resource is rejected.",
+            "review_status":"reject",
+            }
+        )
+        self.review_a_resource(
+            {
+            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/3\')]",
+            "review_comment":"https://www.google.ca/ resource is rejected.",
+            "review_status":"approve",
+            "review_tag":True
+            }
+        )
+        self.driver.find_element(By.LINK_TEXT, "Logout").click()
+
+    def check_resource_review_status(self, kwargs):
+        self.driver.find_element(By.LINK_TEXT, "My Resources").click()
+        self.driver.find_element(By.XPATH, (kwargs["resource_xpath"])).click()
+        test_review_status = self.driver.find_element(By.ID, "review_status").text
+        assert test_review_status == kwargs["review_status"]
+
+        # This resource has approved and rejected tags
+        if kwargs["review_status"] == "pending":
+            test_tags = self.driver.find_element(
+                By.XPATH, ("//div[5]")).text
+            test_tags = test_tags.replace("Tags:\n", "")
+            assert test_tags == "Research"
+
+    def normal_user_process(self):
+        self.login("normal_user@test.com", "normal_user")
+        self.check_resource_review_status(
+            {
+            "resource_xpath":"//a[1]/div/div",
+            "review_status":"approved",
+            }
+        )
+        self.check_resource_review_status(
+            {
+            "resource_xpath":"//a[2]/div/div",
+            "review_status":"rejected",
+            }
+        )
+        self.check_resource_review_status(
+            {
+            "resource_xpath":"//a[3]/div/div",
+            "review_status":"approved",
+            }
+        )
 
     def test_review_submission(self):
 
         self.driver.get('%s%s' % (self.live_server_url, "/chatbotportal/app"))
-        self.driver.find_element(By.LINK_TEXT, "Login").click()
-        self.driver.find_element(By.NAME, "email").send_keys(self.user_email)
-        self.driver.find_element(
-            By.NAME, "password").send_keys(self.user_password)
-        self.driver.find_element(By.NAME, "login_button").click()
-
-        #test accessing and viewing reviews
-        self.driver.find_element(By.LINK_TEXT, "My Reviews").click()
-
-        self.driver.find_element(By.LINK_TEXT, 'Review').click()
-        #review tags
-        self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(2)").click()
-        #review rating
-        self.driver.find_element(By.CSS_SELECTOR, "selected:nth-child(2)").click()
-        #review comments
-        self.driver.find_element(By.NAME, "comments").send_keys('test comments')
-        #approve review
-        self.driver.find_element(By.CSS_SELECTOR, ".positive").click()
-
-        #check results
-        #open completed resources
-        self.driver.find_element(By.CSS_SELECTOR, ".right:nth-child(3)").click()
-        #check for approved
-        self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(1) .check")
-
-        #need to check review comments
-
-        #open review made
-        self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(1)").click()
-        test_review_status = self.driver.find_element(By.ID, "review_status").text
-        assert test_review_status == 'approved'
-
-        try:
-            test_tags = self.driver.find_element(
-                By.XPATH, ("//div[5]")).text
-            test_tags = test_tags.replace("Tags:\n", "")
-            print("tags", test_tags)
-        except:
-            test_tags = ""
-        assert test_tags == 'Research'
+        self.reviewer_user_process()
+        self.normal_user_process()
