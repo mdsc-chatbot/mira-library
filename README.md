@@ -54,6 +54,8 @@ npm run-script build
 python manage.py test --verbosity=3 --noinput authentication.tests
 python manage.py test --verbosity=3 --noinput authentication.functional_tests
 python manage.py test --verbosity=3 --noinput resource.tests
+python manage.py test --verbosity=3 --noinput review.tests
+python manage.py test --verbosity=3 --noinput public.tests
 ```
 
 # More documentations on our codebase
