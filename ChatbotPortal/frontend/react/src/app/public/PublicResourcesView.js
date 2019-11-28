@@ -229,8 +229,8 @@ class PublicResourcesView extends Component {
                     <Grid>
                         <Grid.Row>
                             <form className={styles.searchBarContainer} onSubmit={(event) => {event.preventDefault(); this.fetchResources(1);}}>
-                                <Input className={styles.searchBarFlex} size="huge" placeholder='Search for resources...' value={this.state.search} onChange={this.handleSearchChange}/>
-                                <Button size="huge">Search</Button>
+                                <Input name="searchBar" className={styles.searchBarFlex} size="huge" placeholder='Search for resources...' value={this.state.search} onChange={this.handleSearchChange}/>
+                                <Button name="searchButton" size="huge">Search</Button>
                             </form>
                         </Grid.Row>
                         <Grid.Row columns="2">

@@ -50,7 +50,7 @@ def ResourceViewQuerySet(query_params):
         matching_titles = Resource.objects.filter(title__icontains=search_param)
         matching_url = Resource.objects.filter(url__icontains=search_param)
         matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
-        queryset = queryset.intersection(matching_titles.union(matching_url, matching_summary))
+        queryset = queryset.filter(id__in=[resource.id for resource in matching_titles.union(matching_url, matching_summary)])
 
     # Filter resources by categories
     category_param = query_params.get('categories')
