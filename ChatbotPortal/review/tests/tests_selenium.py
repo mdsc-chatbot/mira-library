@@ -51,6 +51,7 @@ class TestReviewSubmission(LiveServerTestCase):
     def setup_db(self):
         CustomUser.objects.all().delete()
         Resource.objects.all().delete()
+        Reviews.objects.all().delete()
 
         normal_user = CustomUser.objects.create_user(
             email='normal_user@test.com',
@@ -111,7 +112,7 @@ class TestReviewSubmission(LiveServerTestCase):
 
     def review_a_resource(self, kwargs):
         self.driver.find_element(By.LINK_TEXT, "My Reviews").click()
-        self.driver.find_element(By.XPATH, kwargs["review_item_xpath"]).click()
+        self.driver.find_element(By.XPATH, "(//a[contains(text(),'Review')])[2]").click()
         self.driver.find_element(By.NAME, "comments").clear()
         self.driver.find_element(By.NAME, "comments").send_keys(kwargs["review_comment"])
         self.driver.find_element(By.XPATH, "//div[3]/div/div/div/div/i[4]").click()
@@ -123,9 +124,10 @@ class TestReviewSubmission(LiveServerTestCase):
         self.login("reviewer_user@test.com", "reviewer_user")
         self.review_a_resource(
             {
-            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/1\')]",
-            "review_comment":"https://caddac.ca/adhd/resources/online-resources/ resource is approved.",
+            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/3\')]",
+            "review_comment":"wikipedia resource is approved.",
             "review_status":"approve",
+            "review_tag":True
             }
         )
         self.review_a_resource(
@@ -137,10 +139,9 @@ class TestReviewSubmission(LiveServerTestCase):
         )
         self.review_a_resource(
             {
-            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/3\')]",
-            "review_comment":"wikipedia resource is approved.",
+            "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/1\')]",
+            "review_comment":"https://caddac.ca/adhd/resources/online-resources/ resource is approved.",
             "review_status":"approve",
-            "review_tag":True
             }
         )
         self.driver.find_element(By.LINK_TEXT, "Logout").click()
