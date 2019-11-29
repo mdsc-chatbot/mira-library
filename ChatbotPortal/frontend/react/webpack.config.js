@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const productionMode = false;
+const productionMode = true;
 const environment = productionMode ? 'production' : 'development';
 const sourceMaps = productionMode;
 

@@ -32,14 +32,17 @@ from bs4 import BeautifulSoup
 from .validators import validate_file_size
 from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator
 import ssl
+import requests
 
 class ResourceManager(models.Manager):
 
     def get_soup(self, url):
-        r = urllib.request.Request(url, headers={
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
-        html = urllib.request.urlopen(r,context=ssl.SSLContext()).read().decode('utf8')
-        soup = BeautifulSoup(html, 'html.parser')
+        # r = urllib.request.Request(url, headers={
+        #     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36'})
+        # html = urllib.request.urlopen(r,context=ssl.SSLContext()).read().decode('utf8')
+        # Uncomment above once we have SSL figured out for deployment
+        html = requests.get(url)
+        soup = BeautifulSoup(html.text, 'html.parser')
         return soup
 
     def create(self, **obj_data):
@@ -101,7 +104,7 @@ class Resource(models.Model):
     review_status = models.CharField(
         max_length=50, default="pending", blank=True, null=True)
     review_comments= models.TextField(
-        default="No Comment")
+        default="No Comment", blank=True, null=True)
     website_summary_metadata = models.TextField(default="", blank=True, null=True)
 
     public_view_count = models.IntegerField(default=0)

@@ -76,7 +76,8 @@ class ResourceTest(TestCase):
         self.assertRaises(ValidationError, resource.full_clean)
     
     def test_ratings(self):
+        num_resource = Resource.objects.all().count()
         Resource.objects.all().delete()
         resource = self.create_resource("https://www.caddra.ca/", rating=4)
-        db_resource = Resource.objects.get(pk=1)
+        db_resource = Resource.objects.get(pk=num_resource+1)
         self.assertTrue(4==db_resource.rating)
