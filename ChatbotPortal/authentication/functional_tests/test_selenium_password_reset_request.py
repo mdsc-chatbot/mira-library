@@ -22,9 +22,6 @@ from selenium import webdriver
 
 from ..models import CustomUser
 
-# The base url
-BASE_URL = 'http://127.0.0.1:8000'
-
 HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 PASSWORD_RESET_PAGE = '/chatbotportal/app/password/reset'
