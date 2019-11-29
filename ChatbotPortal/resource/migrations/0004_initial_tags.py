@@ -65,6 +65,7 @@ def initialize_tags(apps, schema_editor):
         Tag(id=57, name='Attention deficit hyperactivity disorder', approved=True),
         Tag(id=58, name='learning disability', approved=True),
         Tag(id=59, name='Funding', approved=True),
+        Tag(id=60, name='Adult', approved=True),
     ])
 
 class Migration(migrations.Migration):
