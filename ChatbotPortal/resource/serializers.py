@@ -49,6 +49,7 @@ class RetrieveResourceSerializer(serializers.ModelSerializer):
 class ResourceUpdateSerializer(serializers.Serializer):
     review_status = serializers.CharField(max_length=50, default="pending")
     rating = serializers.IntegerField(default=1)
+    review_comments = serializers.CharField()
 
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)
