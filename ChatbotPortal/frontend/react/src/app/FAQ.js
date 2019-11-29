@@ -52,7 +52,7 @@ export class FAQ extends Component {
 
         const panels = [];
         const faq_title_content = {
-            "What are resources again and How do I view them?": (
+            "What are resources again and how do I view them?": (
                 <p>
                     Resources are information gathered regarding autism, intellectual disability and
                     learning disability. They are mainly website urls.
@@ -86,7 +86,7 @@ export class FAQ extends Component {
                 </p>
             ),
 
-            "What is a Reviewer status and how do I obtain it?": (
+            "What is a reviewer status and how do I obtain it?": (
                 <p>
                     A reviewer status is given to users of our website by us. A reviewer can approve
                     or reject a submitted resource, they are also required to give a review comment.
@@ -95,14 +95,14 @@ export class FAQ extends Component {
                 </p>
             ),
 
-            "What are points and How do I gain points?": (
+            "What are points and how do I gain points?": (
                 <p>
                     Points are used for various benefits. As a user you can gain points by having
                     your submitted resource approved. Each approved resource is worth 1 points.
                 </p>
             ),
 
-            "What are the rating on each resource and How is each submitted resource being rated?": (
+            "What are the rating on each resource and how is each submitted resource being rated?": (
                 <p>
                     The rating on each resource shows how useful it is. Your submitted resource is
                     rated first by you, then manually adjusted by us or reviewers. Each resource is
@@ -113,7 +113,7 @@ export class FAQ extends Component {
 
         for (const [key, value] of Object.entries(faq_title_content)) {
             panels.push({
-                title: { content: key, icon: "question" },
+                title: { content: key, icon: "dropdown" },
                 content: { content: value }
             });
         }
@@ -134,15 +134,15 @@ export class FAQ extends Component {
                     }}
                     color="blue"
                 >
-                    Frequently Asked Question (FAQ)
+                    Frequently Asked Questions (FAQs)
                 </Header>
                 <Divider />
                 <div style={{ paddingBottom: 20 }}>
                     <Header as="h3" color="blue">
-                        What is ChatbotResources and How do I use this site?
+                        What is Chatbot Resources and how do I use this site?
                     </Header>
                     <p>
-                        ChatbotResources is a website dedicated to providing and gathering
+                        Chatbot Resources is a website dedicated to providing and gathering
                         information regarding autism, intellectual disability and learning
                         disability. These information are gathered from variety of sources such as
                         health professionals, educators and approved resource submission.
@@ -154,7 +154,7 @@ export class FAQ extends Component {
                             Public Resources
                         </Link>{" "}
                         for our approved resources and information.
-                        <br />
+                        <br /><br/>
                         As a logged in user, you can view{" "}
                         {conditionally_render("/profile", "My Profile")}
                         which shows your profile, number of resource submission, points and status.
@@ -186,7 +186,7 @@ export class FAQ extends Component {
                         <br />
                         <br />
                         Optionally, you can search and select for tag to categorize
-                        your resource (eg. autism, ADHD, age). 
+                        your resource (eg. Autism, ADHD and Age etc.). 
                         <br />
                         If you cannot find a tag that
                         accurately categorize your resource, you can submit
@@ -200,7 +200,7 @@ export class FAQ extends Component {
 
                 <div>
                     <Header as="h3" color="blue">
-                        How do I Signup to submit a resource?
+                        How do I sign up to submit a resource?
                     </Header>
                     <p className={styles.inline}>
                         We require your name, email address and password for a successful signup.
@@ -213,13 +213,13 @@ export class FAQ extends Component {
                         verification. It is important that you read and consent to our{" "}  
                     </p>
                 </div>
-                <div style={{ paddingBottom: 20 }}>
+                <div style={{ paddingBottom: 20, paddingTop: 5 }}>
                     <TermsOfService/>
                 </div>
 
                 <div style={{ paddingBottom: 20 }}>
                     <Header as="h3" color="blue">
-                        Do I need to Signup and Login to submit a resource?
+                        Do I need to sign up and login to submit a resource?
                     </Header>
                     <p>
                         Unfortunately, yes you will have to{" "}
@@ -231,7 +231,7 @@ export class FAQ extends Component {
                         <br />
                         As a logged in user, you will be able to track and see details of all
                         your submitted resources. You can also gain points from each
-                        approved resource. 
+                        approved resource.
                     </p>
                 </div>
 

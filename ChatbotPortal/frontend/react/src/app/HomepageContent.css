@@ -25,3 +25,16 @@
     display: flex;
     align-self: center;
 }
+
+:global(.ui.inline.loader).inlineLoader{
+    position: relative !important;
+    vertical-align: middle !important;
+    margin: 0em !important;
+    left: 1.25em !important;
+    top: 0.5em !important;
+    transform: none !important;
+}
+
+:global(.ui.grid).alignment {
+    margin-left: 1rem !important;
+}
