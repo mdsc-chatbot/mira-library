@@ -83,7 +83,7 @@ class TestPublicPage(LiveServerTestCase):
         # 3. Resource with no tag or categories
         resource1 = Resource.objects.create(url='https://myhealth.alberta.ca/', category=website_category, review_status='approved')
         resource2 = Resource.objects.create(url='https://www.autism.org', website_summary_metadata='ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments.', category=pdf_category, review_status='approved')
-        resource3 = Resource.objects.create(url='https://www.autismedmonton.org/', review_status='approved',category=website_category,)
+        resource3 = Resource.objects.create(url='https://www.webmd.com', review_status='approved',category=website_category,)
 
         resource1.save()
         resource2.save()
@@ -145,27 +145,27 @@ class TestPublicPage(LiveServerTestCase):
         self.driver.find_element(By.NAME, "searchButton").click()
 
         self.check_search_results(["MyHealth.Alberta.ca"], 
-        ["The Autism Research Institute | #1 Advocate for Autism Research | Home", "Autism Edmonton"])
+        ["The Autism Research Institute | #1 Advocate for Autism Research | Home", "WebMD - Better information. Better health."])
 
     def resource_tag(self):
         self.go_to_public_resources()
         self.driver.find_element(By.XPATH, "//label[contains(.,'English')]").click()
         self.check_search_results(["MyHealth.Alberta.ca"], 
-        ["The Autism Research Institute | #1 Advocate for Autism Research | Home", "Autism Edmonton"])
+        ["The Autism Research Institute | #1 Advocate for Autism Research | Home", "WebMD - Better information. Better health."])
 
         self.go_to_public_resources()
         self.driver.find_element(By.XPATH, "//label[contains(.,'French')]").click()
         self.check_search_results(["The Autism Research Institute | #1 Advocate for Autism Research | Home"], 
-        ["MyHealth.Alberta.ca", "Autism Edmonton"])
+        ["MyHealth.Alberta.ca", "WebMD - Better information. Better health."])
 
     def resource_category(self):
         self.go_to_public_resources()
         self.driver.find_element(By.XPATH, "//label[contains(.,'Website')]").click()
-        self.check_search_results(["MyHealth.Alberta.ca", "Autism Edmonton"], 
+        self.check_search_results(["MyHealth.Alberta.ca", "WebMD - Better information. Better health."], 
         ["The Autism Research Institute | #1 Advocate for Autism Research | Home"])
 
         self.go_to_public_resources()
         self.driver.find_element(By.XPATH, "//label[contains(.,'PDF')]").click()
         self.check_search_results(["The Autism Research Institute | #1 Advocate for Autism Research | Home"], 
-        ["MyHealth.Alberta.ca", "Autism Edmonton"])
+        ["MyHealth.Alberta.ca", "WebMD - Better information. Better health."])
 
