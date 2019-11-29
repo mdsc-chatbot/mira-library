@@ -173,7 +173,7 @@ export default class ResourceSubmitForm extends Component {
                             </Header>
                             <Form onSubmit={this.handleSubmit} success error>
                                 <ResourceSubmissionHelp style={{display:'inline-block'}} trigger={
-                                    <Icon name='question circle' size="big" />
+                                    <Icon name='question circle'/>
                                 }/>
                                 {securityContext.security.is_logged_in ? (
                                     <div>
