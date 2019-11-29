@@ -55,6 +55,18 @@ function grid_element(grid_key, grid_value) {
         </Grid.Row>
     );
 }
+function reviews(reviewComments){
+    return (
+        <Container>
+            <Header as="h5" color="grey" className={styles.noMarginHeader}>
+                <Header.Content>Reviewer Comments</Header.Content>
+            </Header>
+            <p style={{ color: "grey" }}>
+                {reviewComments}
+            </p>
+        </Container>
+    )
+}
 
 function normal_header(resource) {
     return (
@@ -102,10 +114,10 @@ function mobile_header(resource) {
     );
 }
 
-export function ResourceDetailView({ resource , tagsGot }) {
+export function ResourceDetailView({ resource , tagsGot, viewer }) {
     // Common props for grid row, columns that are re-usable.
     // If we need this in more than one place, consider re-making this into several components.
-
+    
     return (
         <Container>
             <Responsive minWidth={768}>{normal_header(resource)}</Responsive>
@@ -167,6 +179,12 @@ export function ResourceDetailView({ resource , tagsGot }) {
                 <p id="website_summary_metadata" style={{ color: "grey" }}>
                     {resource.website_summary_metadata}
                 </p>
+                {resource.review_status === 'approved' && resource.review_comments !== 'No Comment' && resource.created_by_user_pk === viewer?(
+                    reviews(resource.review_comments)
+                ):(<p></p>)}
+                {resource.review_status === 'rejected' && resource.created_by_user === viewer?(
+                    reviews(resource.review_comments)
+                ):(<p></p>)}
             </Container>
     );
 }

@@ -64,9 +64,12 @@ export default class ResourceDetail extends Component {
     }
 
     render() {
+        const viewer = this.context.security.is_logged_in
+            ? this.context.security.id
+            : "Unknown user";
         return (
             <ResourceResponsive
-                resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags}/>}
+                resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={viewer}/>}
             ></ResourceResponsive>
         );
     }

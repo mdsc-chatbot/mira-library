@@ -114,7 +114,7 @@ export default class ResourceDetail extends Component {
             axios
                 .put(
                     "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
-                    {"review_status": review_status, "rating": this.state.rating},
+                    {"review_status": review_status, "rating": this.state.rating, "review_comments": this.state.comments},
                     {headers: options}
                 )
                 .then(
@@ -232,6 +232,9 @@ export default class ResourceDetail extends Component {
     }
 
     render() {
+        const reviewer = this.context.security.is_logged_in
+            ? this.context.security.id
+            : "Unknown user";
         return (
             <div
                 style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30,}}
@@ -244,7 +247,7 @@ export default class ResourceDetail extends Component {
 
                                     <Container>
                                     <ResourceResponsive
-                                        resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />}
+                                        resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer} />}
                                     ></ResourceResponsive>
                                     </Container>
                                     
