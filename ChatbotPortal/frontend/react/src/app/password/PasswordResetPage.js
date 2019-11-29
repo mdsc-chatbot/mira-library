@@ -66,9 +66,7 @@ class PasswordResetPage extends React.Component {
             const url = `/chatbotportal/authentication/password/reset/confirm/${this.state.uid}/${this.state.token}/`;
 
             axios
-                .post(url, passwordFormData, {
-                    headers: { Authorization: `Bearer ${this.context.security.token}` }
-                })
+                .post(url, passwordFormData)
                 .then(
                     response => {
                         console.log(response);
