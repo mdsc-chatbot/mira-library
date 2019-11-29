@@ -24,12 +24,13 @@
 import React, {Component} from "react";
 import axios from "axios";
 import validator from "validator";
-import {Container, Form, Header, Input, Message, Rating} from "semantic-ui-react";
+import {Container, Form, Header, Input, Message, Rating, Icon} from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
 import CategoryDropdown from './CategoryDropdown';
 import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
+import ResourceSubmissionHelp from "./ResourceSubmissionHelp.js"
 
 export default class ResourceSubmitForm extends Component {
     static contextType = SecurityContext;
@@ -171,6 +172,9 @@ export default class ResourceSubmitForm extends Component {
                                 Resource submission
                             </Header>
                             <Form onSubmit={this.handleSubmit} success error>
+                                <ResourceSubmissionHelp style={{display:'inline-block'}} trigger={
+                                    <Icon name='question circle'/>
+                                }/>
                                 {securityContext.security.is_logged_in ? (
                                     <div>
                                         {this.state.url_validated ? (
