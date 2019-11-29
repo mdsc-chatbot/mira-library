@@ -319,7 +319,7 @@ class ProfilePage extends Component {
                                     </Button>
 
                                 <Link to={baseRoute + "/password"}>
-                                    <Button name="change_password" color='blue' fluid size='medium'>
+                                    <Button className={styles.changePW} name="change_password" color='blue' fluid size='medium'>
                                         Change Password
                                     </Button>
                                 </Link>
