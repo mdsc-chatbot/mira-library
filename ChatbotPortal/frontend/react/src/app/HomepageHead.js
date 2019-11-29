@@ -40,7 +40,7 @@ export class HomepageHead extends Component {
                     style={{
                         fontSize: "2em",
                         fontWeight: "bold",
-                        color: "#3075c9",
+                        color: "#0072BB",
                         marginTop: "1em"
                     }}
                 />
@@ -53,39 +53,54 @@ export class HomepageHead extends Component {
                     }}
                 />
 
-                <Button.Group>
-                    <Button.Group vertical>
-                        <Link to={baseRoute + "/public_resource"}>
-                            <Button size="big" color="orange">
-                                View all our public resources
-                            </Button>
-                        </Link>
+                <Segment className={styles.segmentWeb} textAlign="center" vertical>
+                    {this.context.security.is_logged_in ? (
+                        <Button.Group className={styles.buttonAlign} fluid widths='2' size ='large'>
+                            <Link to={baseRoute + "/public_resource"}>
+                                <Button fluid className={styles.publicResource} color="yellow">
+                                    View all our public resources
+                                </Button>
+                            </Link>
+                            <Link to={baseRoute + "/resource_submit"}>
+                                <Button className={styles.loginButton} color='yellow'>
+                                    Submit a resource
+                                </Button>
+                            </Link>
+                        </Button.Group>
+                    ) : (
+                        <Button.Group className={styles.buttonAlign} fluid widths='2' size ='large'>
+                            <Link to={baseRoute + "/public_resource"}>
+                                <Button className={styles.publicResource} fluid color="yellow">
+                                    View all our public resources
+                                </Button>
+                            </Link>
+                            <Link to={baseRoute + "/login"}>
+                                <Button className={styles.loginButton} fluid color="yellow">
+                                    Log in to submit resources
+                                </Button>
+                            </Link>
+                        </Button.Group>
+                    )
+                    }
+
+                    <Button.Group className={styles.buttonAlign} size='medium'>
                         <Link to={baseRoute + "/public_resource/59"}>
-                            <Button className={styles.smallButtonStyle} compact floated="right" size="medium" color="google plus">
-                                View resources about funding
+                            <Button className={styles.firstButtonJustify}  color="google plus">
+                                Funding Resources
                             </Button>
                         </Link>
                         <Link to={baseRoute + "/public_resource/46"}>
-                            <Button className={styles.smallButtonStyle} compact floated="right" size="medium" color="google plus">
-                                View resources about stress
+                            <Button className={styles.buttonJustify}   color="google plus">
+                                Stress Resources
                             </Button>
                         </Link>
                         <Link to={baseRoute + "/public_resource/47"}>
-                            <Button className={styles.smallButtonStyle} compact floated="right" size="medium" color="google plus">
-                                View resources about sleep
+                            <Button className={styles.buttonJustify}  color="google plus">
+                                Sleep Resources
                             </Button>
                         </Link>
                     </Button.Group>
-
-                    {!this.context.security.is_logged_in && (
-                        <Link to={baseRoute + "/login"}>
-                            <Button size="big" color="green">
-                                Log in to submit resources
-                            </Button>
-                        </Link>
-
-                    )}
-                </Button.Group>
+                </Segment>
             </React.Fragment>
         );
     };
@@ -119,40 +134,54 @@ export class HomepageHead extends Component {
                         <Header
                             as="h3"
                             content="Resources site providing information about autism, intellectual disability, and learning disability."
-                            style={{
-                                fontWeight: "normal"
-                            }}
+                            className={styles.header3}
                         />
                     </Grid.Column>
                 </Grid>
 
-                <Button.Group fluid widths='2' size ='medium'>
-                    <Link to={baseRoute + "/public_resource"}>
-                        <Button fluid color="orange">
-                            View all our public resources
-                        </Button>
-                    </Link>
 
-                    {!this.context.security.is_logged_in &&(<Link to={baseRoute + "/login"}>
-                        <Button fluid color="green">
-                            Log in to submit resources
-                        </Button>
-                    </Link>)}
-                </Button.Group>
+                {this.context.security.is_logged_in ? (
+                    <Button.Group className={styles.buttonAlign} fluid widths='2' size ='medium'>
+                        <Link to={baseRoute + "/public_resource"}>
+                            <Button fluid className={styles.publicResource} color='yellow'>
+                                View all our public resources
+                            </Button>
+                        </Link>
+                        <Link to={baseRoute + "/resource_submit"}>
+                            <Button className={styles.loginButton} color='yellow'>
+                                Submit a resource
+                            </Button>
+                        </Link>
+                    </Button.Group>
+                ) : (
+                    <Button.Group className={styles.buttonAlign} fluid widths='2' size ='small'>
+                        <Link to={baseRoute + "/public_resource"}>
+                            <Button className={styles.publicResource} color='yellow'>
+                                View all our public resources
+                            </Button>
+                        </Link>
+                        <Link to={baseRoute + "/login"}>
+                            <Button className={styles.loginButton} color='yellow'>
+                                Log in to submit resources
+                            </Button>
+                        </Link>
+                    </Button.Group>
+                )
+                }
 
-                <Button.Group widths='3' size='tiny'>
+                <Button.Group className={styles.buttonAlign} widths='3' size='tiny'>
                     <Link to={baseRoute + "/public_resource/59"}>
-                        <Button  color="google plus">
+                        <Button className={styles.firstButtonJustify} color="google plus">
                             Funding Resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/public_resource/46"}>
-                        <Button color="google plus">
+                        <Button className={styles.buttonJustify} color="google plus">
                             Stress Resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/public_resource/47"}>
-                        <Button color="google plus">
+                        <Button className={styles.buttonJustify} color="google plus">
                             Sleep Resources
                         </Button>
                     </Link>

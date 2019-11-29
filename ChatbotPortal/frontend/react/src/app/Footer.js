@@ -35,7 +35,7 @@ export class Footer extends Component {
      */
     render() {
         return (
-                <Grid container className={styles.segmentWeb} stackable verticalAlign='middle'>
+                <Grid container className={`${styles.segmentWeb} ${styles.FooterAlign}`} stackable verticalAlign='middle'>
                     <Grid.Row>
                         <Grid.Column><a href="http://www.bolduclab.com/contact-us.html" style={{color:"white"}}>Contact</a></Grid.Column>
                     </Grid.Row>

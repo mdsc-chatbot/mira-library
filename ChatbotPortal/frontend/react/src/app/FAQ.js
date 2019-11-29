@@ -21,7 +21,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import React, { Component } from "react";
-import { Container, Header, Accordion, Divider } from "semantic-ui-react";
+import { Container, Header, Accordion, Divider, Responsive } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import styles from "./shared/Link.css";
@@ -52,7 +52,7 @@ export class FAQ extends Component {
 
         const panels = [];
         const faq_title_content = {
-            "What are resources again and How do I view them?": (
+            "What are resources again and how do I view them?": (
                 <p>
                     Resources are information gathered regarding autism, intellectual disability and
                     learning disability. They are mainly website urls.
@@ -86,7 +86,7 @@ export class FAQ extends Component {
                 </p>
             ),
 
-            "What is a Reviewer status and how do I obtain it?": (
+            "What is a reviewer status and how do I obtain it?": (
                 <p>
                     A reviewer status is given to users of our website by us. A reviewer can approve
                     or reject a submitted resource, they are also required to give a review comment.
@@ -95,14 +95,14 @@ export class FAQ extends Component {
                 </p>
             ),
 
-            "What are points and How do I gain points?": (
+            "What are points and how do I gain points?": (
                 <p>
                     Points are used for various benefits. As a user you can gain points by having
                     your submitted resource approved. Each approved resource is worth 1 points.
                 </p>
             ),
 
-            "What are the rating on each resource and How is each submitted resource being rated?": (
+            "What are the rating on each resource and how is each submitted resource being rated?": (
                 <p>
                     The rating on each resource shows how useful it is. Your submitted resource is
                     rated first by you, then manually adjusted by us or reviewers. Each resource is
@@ -113,137 +113,149 @@ export class FAQ extends Component {
 
         for (const [key, value] of Object.entries(faq_title_content)) {
             panels.push({
-                title: { content: key, icon: "question" },
+                title: { content: key, icon: "dropdown" },
                 content: { content: value }
             });
         }
 
+        const faq = () =>{
+            return (
+                <div>
+                    <Header
+                        as="h3"
+                        style={{
+                            fontSize: "2em"
+                        }}
+                        color="blue"
+                    >
+                        Frequently Asked Questions (FAQs)
+                    </Header>
+                    <Divider />
+                    <div style={{ paddingBottom: 20 }}>
+                        <Header as="h3" color="blue">
+                            What is Chatbot Resources and how do I use this site?
+                        </Header>
+                        <p>
+                            Chatbot Resources is a website dedicated to providing and gathering
+                            information regarding autism, intellectual disability and learning
+                            disability. These information are gathered from variety of sources such as
+                            health professionals, educators and approved resource submission.
+                            <br />
+                            You can use this site either as a visitor or a logged in user.
+                            <br />
+                            <br /> As a visitor, you can view our{" "}
+                            <Link to={baseRoute + "/public_resource"} className={styles.link}>
+                                Public Resources
+                            </Link>{" "}
+                            for our approved resources and information.
+                            <br /><br/>
+                            As a logged in user, you can view{" "}
+                            {conditionally_render("/profile", "My Profile")}
+                            which shows your profile, number of resource submission, points and status.
+                            You can also view {conditionally_render("/resource", "My Resources")}, which
+                            shows your submitted resources and their details. If you are approved by us,
+                            you can also see {conditionally_render("/review", "My Reviews")}, which
+                            shows the pending resources waiting for you to review.
+                        </p>
+                    </div>
+
+                    <div style={{ paddingBottom: 20 }}>
+                        <Header as="h3" color="blue">
+                            How do I submit resources? What informations are required to submit a
+                            resource?
+                        </Header>
+                        <p>
+                            You must first{" "}
+                            <Link to={baseRoute + "/login"} className={styles.link}>
+                                SignUp{" "}
+                            </Link>{" "}
+                            and{" "}
+                            <Link to={baseRoute + "/login"} className={styles.link}>
+                                Login{" "}
+                            </Link>
+                            in order to submit a resource.
+                            <br />
+                            To submit a resource, you are required to input a website
+                            url and rate how useful it was to you.
+                            <br />
+                            <br />
+                            Optionally, you can search and select for tag to categorize
+                            your resource (eg. Autism, ADHD and Age etc.). 
+                            <br />
+                            If you cannot find a tag that
+                            accurately categorize your resource, you can submit
+                            a new tag for us to review. We will try to add it to our
+                            database so that you can search and select it later.
+                            <br />
+                            <br />
+                            Optionally, you can also upload a file attachment related to the resource.
+                        </p>
+                    </div>
+
+                    <div>
+                        <Header as="h3" color="blue">
+                            How do I sign up to submit a resource?
+                        </Header>
+                        <p className={styles.inline}>
+                            We require your name, email address and password for a successful signup.
+                            <br />
+                            Optionally, we would like to know your affiliation (your role, occupation in
+                            relation to autism, intellectual disability and learning disability field).
+                            This information helps us better tailor our website.
+                            <br />
+                            After you fill out the sign up form, we will send you and email for
+                            verification. It is important that you read and consent to our{" "}  
+                        </p>
+                    </div>
+                    <div style={{ paddingBottom: 20, paddingTop: 5 }}>
+                        <TermsOfService/>
+                    </div>
+
+                    <div style={{ paddingBottom: 20 }}>
+                        <Header as="h3" color="blue">
+                            Do I need to sign up and login to submit a resource?
+                        </Header>
+                        <p>
+                            Unfortunately, yes you will have to{" "}
+                            <Link to={baseRoute + "/login"} className={styles.link}>
+                                Login{" "}
+                            </Link>
+                            in order to submit a resource. This is to assure the quality
+                            of resources submitted. 
+                            <br />
+                            As a logged in user, you will be able to track and see details of all
+                            your submitted resources. You can also gain points from each
+                            approved resource.
+                        </p>
+                    </div>
+
+                    <div>
+                        <Header as="h3" color="blue">
+                            Still confused? Check out our other FAQs:
+                        </Header>
+                        <Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />
+                    </div>
+            </div>
+            )
+        }
+
         return (
-            <div
-                style={{
-                    paddingTop: 30,
-                    paddingLeft: 100,
-                    paddingRight: 100,
-                    paddingBottom: 30
-                }}
-            >
-                <Header
-                    as="h3"
-                    style={{
-                        fontSize: "2em"
-                    }}
-                    color="blue"
-                >
-                    Frequently Asked Question (FAQ)
-                </Header>
-                <Divider />
-                <div style={{ paddingBottom: 20 }}>
-                    <Header as="h3" color="blue">
-                        What is ChatbotResources and How do I use this site?
-                    </Header>
-                    <p>
-                        ChatbotResources is a website dedicated to providing and gathering
-                        information regarding autism, intellectual disability and learning
-                        disability. These information are gathered from variety of sources such as
-                        health professionals, educators and approved resource submission.
-                        <br />
-                        You can use this site either as a visitor or a logged in user.
-                        <br />
-                        <br /> As a visitor, you can view our{" "}
-                        <Link to={baseRoute + "/public_resource"} className={styles.link}>
-                            Public Resources
-                        </Link>{" "}
-                        for our approved resources and information.
-                        <br />
-                        As a logged in user, you can view{" "}
-                        {conditionally_render("/profile", "My Profile")}
-                        which shows your profile, number of resource submission, points and status.
-                        You can also view {conditionally_render("/resource", "My Resources")}, which
-                        shows your submitted resources and their details. If you are approved by us,
-                        you can also see {conditionally_render("/review", "My Reviews")}, which
-                        shows the pending resources waiting for you to review.
-                    </p>
-                </div>
-
-                <div style={{ paddingBottom: 20 }}>
-                    <Header as="h3" color="blue">
-                        How do I submit resources? What informations are required to submit a
-                        resource?
-                    </Header>
-                    <p>
-                        You must first{" "}
-                        <Link to={baseRoute + "/login"} className={styles.link}>
-                            SignUp{" "}
-                        </Link>{" "}
-                        and{" "}
-                        <Link to={baseRoute + "/login"} className={styles.link}>
-                            Login{" "}
-                        </Link>
-                        in order to submit a resource.
-                        <br />
-                        To submit a resource, you are required to input a website
-                        url and rate how useful it was to you.
-                        <br />
-                        <br />
-                        Optionally, you can search and select for tag to categorize
-                        your resource (eg. autism, ADHD, age). 
-                        <br />
-                        If you cannot find a tag that
-                        accurately categorize your resource, you can submit
-                        a new tag for us to review. We will try to add it to our
-                        database so that you can search and select it later.
-                        <br />
-                        <br />
-                        Optionally, you can also upload a file attachment related to the resource.
-                    </p>
-                </div>
-
-                <div>
-                    <Header as="h3" color="blue">
-                        How do I Signup to submit a resource?
-                    </Header>
-                    <p className={styles.inline}>
-                        We require your name, email address and password for a successful signup.
-                        <br />
-                        Optionally, we would like to know your affiliation (your role, occupation in
-                        relation to autism, intellectual disability and learning disability field).
-                        This information helps us better tailor our website.
-                        <br />
-                        After you fill out the sign up form, we will send you and email for
-                        verification. It is important that you read and consent to our{" "}  
-                    </p>
-                </div>
-                <div style={{ paddingBottom: 20 }}>
-                    <TermsOfService/>
-                </div>
-
-                <div style={{ paddingBottom: 20 }}>
-                    <Header as="h3" color="blue">
-                        Do I need to Signup and Login to submit a resource?
-                    </Header>
-                    <p>
-                        Unfortunately, yes you will have to{" "}
-                        <Link to={baseRoute + "/login"} className={styles.link}>
-                            Login{" "}
-                        </Link>
-                        in order to submit a resource. This is to assure the quality
-                        of resources submitted. 
-                        <br />
-                        As a logged in user, you will be able to track and see details of all
-                        your submitted resources. You can also gain points from each
-                        approved resource. 
-                    </p>
-                </div>
-
-                <div>
-                    <Header as="h3" color="blue">
-                        Still confused? Check out our other FAQs:
-                    </Header>
-                    <Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />
-                </div>
+            <div>
+                <Responsive {...Responsive.onlyMobile}>
+                    <div style={{ paddingTop: 30, paddingLeft: 15, paddingRight: 15, paddingBottom: 30 }}>
+                        {faq()}
+                    </div>
+                </Responsive>
+                <Responsive minWidth={768}>
+                    <div style={{ paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30 }}>
+                        {faq()}
+                    </div>
+                </Responsive>
             </div>
         );
     }
 }
 
 export default FAQ;
+
+

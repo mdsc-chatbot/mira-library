@@ -41,7 +41,7 @@ from ..models import Reviews
 class TestReviewSubmission(LiveServerTestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
-        self.driver.implicitly_wait(4)
+        self.driver.implicitly_wait(2)
         self.vars = {}
         self.setup_db()
         self.total_resources = 0
@@ -68,7 +68,7 @@ class TestReviewSubmission(LiveServerTestCase):
         website_category.save()
 
         future_approved_resource = Resource.objects.create(
-            url = "https://www.caddra.ca/",
+            url = "https://caddac.ca/adhd/resources/online-resources/",
             review_status = "pending",
             created_by_user='normal_user@test.com',
             created_by_user_pk = 1,
@@ -124,7 +124,7 @@ class TestReviewSubmission(LiveServerTestCase):
         self.review_a_resource(
             {
             "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/1\')]",
-            "review_comment":"https://www.caddra.ca/ resource is approved.",
+            "review_comment":"https://caddac.ca/adhd/resources/online-resources/ resource is approved.",
             "review_status":"approve",
             }
         )
@@ -138,7 +138,7 @@ class TestReviewSubmission(LiveServerTestCase):
         self.review_a_resource(
             {
             "review_item_xpath":"//a[contains(@href, \'/chatbotportal/app/review/3\')]",
-            "review_comment":"https://www.google.ca/ resource is rejected.",
+            "review_comment":"wikipedia resource is approved.",
             "review_status":"approve",
             "review_tag":True
             }
@@ -149,13 +149,17 @@ class TestReviewSubmission(LiveServerTestCase):
         self.driver.find_element(By.LINK_TEXT, "My Resources").click()
         self.driver.find_element(By.XPATH, (kwargs["resource_xpath"])).click()
         test_review_status = self.driver.find_element(By.ID, "review_status").text
+        test_review_comment = self.driver.find_element(By.ID, "review_comment").text
         assert test_review_status == kwargs["review_status"]
+        print("review", test_review_comment,kwargs["review_comment"])
+        assert test_review_comment == kwargs["review_comment"]
 
         # This resource has approved and rejected tags
-        if kwargs["review_status"] == "pending":
+        if "review_tag" in kwargs and kwargs["review_tag"]:
             test_tags = self.driver.find_element(
                 By.XPATH, ("//div[5]")).text
             test_tags = test_tags.replace("Tags:\n", "")
+            print("test tags", test_tags)
             assert test_tags == "Research"
 
     def normal_user_process(self):
@@ -164,23 +168,49 @@ class TestReviewSubmission(LiveServerTestCase):
             {
             "resource_xpath":"//a[1]/div/div",
             "review_status":"approved",
+            "review_comment":"https://caddac.ca/adhd/resources/online-resources/ resource is approved.",
             }
         )
         self.check_resource_review_status(
             {
             "resource_xpath":"//a[2]/div/div",
             "review_status":"rejected",
+            "review_comment":"https://www.google.ca/ resource is rejected.",
             }
         )
         self.check_resource_review_status(
             {
             "resource_xpath":"//a[3]/div/div",
             "review_status":"approved",
+            "review_comment":"wikipedia resource is approved.",
+            "review_tag":True,
             }
         )
+
+    def public_resource_process(self):
+
+        # Should not find rejected resource
+        try:
+            self.driver.find_element(By.LINK_TEXT, "Google")
+            assert False
+        except:
+            assert True
+
+        for resource_link_text in ["Online Resources - Centre for ADHD Awareness Canada", "Attention deficit hyperactivity disorder - Wikipedia"]:
+            # Public resources should not have review_comment
+            self.driver.find_element(By.LINK_TEXT, "Public Resources").click()
+            self.driver.find_element(By.LINK_TEXT, resource_link_text).click()
+            try:
+                self.driver.find_element(By.ID, "review_comment")
+                assert False
+            except:
+                assert True
 
     def test_review_submission(self):
 
         self.driver.get('%s%s' % (self.live_server_url, "/chatbotportal/app"))
         self.reviewer_user_process()
         self.normal_user_process()
+        self.public_resource_process()
+
+        

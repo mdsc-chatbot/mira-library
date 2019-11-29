@@ -37,8 +37,8 @@ export function FilterList({tags, categories, selectedTags, handleTagSelected, h
                         <List.Header>Categories</List.Header>
                         <List.Content>
                             {categories.map(category => (
-                                <List.Item>
-                                    <Checkbox name={category.name} label={category.name} id={category.id} onChange={handleCategorySelected}/>
+                                <List.Item key={category.id}>
+                                    <Checkbox name={category.name} label={category.name} category_id={category.id} onChange={handleCategorySelected}/>
                                 </List.Item>
                             ))}
                         </List.Content>
@@ -47,8 +47,8 @@ export function FilterList({tags, categories, selectedTags, handleTagSelected, h
                         <List.Header>Tags</List.Header>
                         <List.Content>
                             {tags.map(tag => (
-                                <List.Item>
-                                    <Checkbox name={tag.name} label={tag.name} id={tag.id} onChange={handleTagSelected} defaultChecked={selectedTags.includes(tag.id)}/>
+                                <List.Item key={tag.id}>
+                                    <Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} defaultChecked={selectedTags.includes(tag.id)}/>
                                 </List.Item>
                             ))}
                         </List.Content>

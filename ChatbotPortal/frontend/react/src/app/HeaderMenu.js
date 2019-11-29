@@ -52,13 +52,13 @@ export class HeaderMenu extends Component {
                 <Menu inverted fluid pointing secondary size="large">
                     <Menu.Item
                         as="a"
-                        style={{ paddingLeft: 50 }}
+                        style={{ paddingLeft: 10 }}
                         active={activeItem === "Home"}
                         onClick={this.handleItemClick}
                     >
                         <Link to={baseRoute}>
-                            <Header as="h2" style={{ color: "#3075c9" }}>
-                                <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
+                            <Header as="h2" style={{ color: "#0072BB"}}>
+                                <Image src={require("./logo/512.ico")} size='small' alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
                                 Chatbot Portal
                             </Header>
                         </Link>
@@ -155,13 +155,13 @@ export class HeaderMenu extends Component {
                 <Menu inverted pointing fluid widths = {2} size="small">
                     <Menu.Item
                         as="a"
-                        style={{ paddingLeft: 50 }}
+                        style={{ paddingLeft: 10 }}
                         active={activeItem === "Home"}
                         onClick={this.handleItemClick}
                     >
                         <Link to={baseRoute}>
                             <Header as="h4" style={{ color: "#3075c9" }}>
-                                <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
+                                <Image size='mini' src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
                                 Chatbot Portal
                             </Header>
                         </Link>
