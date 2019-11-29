@@ -9,6 +9,11 @@ Apart from all this, they can also browse through find a resource section where 
 
 # How to run
 
+#### Cybera Deployment URL
+```
+http://162.246.157.169:8000/chatbotportal/app = http://tinyurl.com/chatbotportal
+```
+
 #### Create mysql database
 ```
 mysql -u root -p
