@@ -94,7 +94,7 @@ def initialize_resources(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resource', '0006_resource_public_view_count'),
+        ('resource', '0007_resource_review_comments'),
     ]
 
     operations = [
