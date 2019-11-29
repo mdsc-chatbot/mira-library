@@ -188,25 +188,25 @@ class ProfilePage extends Component {
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='mail'/>
+                                    <Icon className={styles.iconColor} name='mail'/>
                                     <Header.Content id="email"> {this.state.email} </Header.Content>
                                 </Header>
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='pencil alternate'/>
+                                    <Icon className={styles.iconColor} name='pencil alternate'/>
                                     <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
                                 </Header>
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='trophy'/>
+                                    <Icon className={styles.iconColor} name='trophy'/>
                                     <Header.Content id="points"> Points = {this.state.points} </Header.Content>
                                 </Header>
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='certificate'/>
+                                    <Icon className={styles.iconColor} name='certificate'/>
                                     <Header.Content id="status"> 
                                         { this.state.is_staff ? (
                                             'Staff'
@@ -225,11 +225,11 @@ class ProfilePage extends Component {
                                 <Button.Content visible>
                                     Save Changes
                                 </Button.Content>
-                                <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                <Button.Content hidden><Icon color='black' name='chevron right' /></Button.Content>
                             </Button>
 
                             <Link to={baseRoute + "/password"}>
-                                <Button name="change_password" color='blue' fluid size='big'>
+                                <Button name="change_password" className={styles.changePW} color='blue' fluid size='big'>
                                     Change Password
                                 </Button>
                             </Link>
@@ -279,25 +279,25 @@ class ProfilePage extends Component {
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='mail'/>
+                                            <Icon className={styles.iconColor} name='mail'/>
                                             <Header.Content id="email"> {this.state.email} </Header.Content>
                                         </Header>
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='pencil alternate'/>
+                                            <Icon className={styles.iconColor} name='pencil alternate'/>
                                             <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
                                         </Header>
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='trophy'/>
+                                            <Icon className={styles.iconColor} name='trophy'/>
                                             <Header.Content id="points"> Points = {this.state.points} </Header.Content>
                                         </Header>
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='certificate'/>
+                                            <Icon className={styles.iconColor} name='certificate'/>
                                             <Header.Content id="status"> 
                                                 { this.state.is_staff ? (
                                                     'Staff'
@@ -315,7 +315,7 @@ class ProfilePage extends Component {
                                         <Button.Content visible>
                                             Save Changes
                                         </Button.Content>
-                                        <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                        <Button.Content hidden><Icon color='black' name='chevron right' /></Button.Content>
                                     </Button>
 
                                 <Link to={baseRoute + "/password"}>
