@@ -129,12 +129,12 @@ class TestResourceSubmission(LiveServerTestCase):
         self.valid_resource_submission(
             actual_resource_detail, "//a[1]/div/div")
 
-        actual_resource_detail = ["Unknown title",
-                                  "http://127.0.0.1:8000/", "",
-                                  "Even though this resource is not reachable, it is still accepted.",
-                                  "pending", "Website", ""]
-        self.valid_resource_submission(
-            actual_resource_detail, "//a[2]/div/div")
+        # actual_resource_detail = ["Unknown title",
+        #                           "http://127.0.0.1:8000/", "",
+        #                           "Even though this resource is not reachable, it is still accepted.",
+        #                           "pending", "Website", ""]
+        # self.valid_resource_submission(
+        #     actual_resource_detail, "//a[2]/div/div")
 
         # Test valid url and PDF attachment
         actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
@@ -144,7 +144,7 @@ class TestResourceSubmission(LiveServerTestCase):
                                   "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
                                   ]
         self.valid_resource_submission(
-            actual_resource_detail, "//a[3]/div/div")
+            actual_resource_detail, "//a[2]/div/div")
 
         self.compare_resource_submission_number()
 
@@ -214,7 +214,7 @@ class TestResourceSubmission(LiveServerTestCase):
         if test_category == "PDF":
             self.download_and_compare_attachments()
 
-            # Tags xpath
+        # Tags xpath
         try:
             test_tags = self.driver.find_element(
                 By.XPATH, ("//div[5]")).text
