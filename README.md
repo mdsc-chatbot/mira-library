@@ -13,7 +13,7 @@ Apart from all this, they can also browse through find a resource section where 
 
 #### Cybera Deployment URL
 
-http://162.246.157.169:8000/chatbotportal/app = http://tinyurl.com/chatbotportal
+http://162.246.157.169:8000/chatbotportal/app  &#8594;  http://tinyurl.com/chatbotportal
 
 #### Create mysql database
 ```
