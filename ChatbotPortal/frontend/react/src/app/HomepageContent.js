@@ -23,11 +23,9 @@
 import React, { Component } from "react";
 import {
     Header,
-    List,
     Loader,
     Card,
     Segment,
-    Container,
     Grid, Rating
 } from "semantic-ui-react";
 import axios from 'axios';
@@ -115,13 +113,13 @@ export class HomepageContent extends Component {
         return (
             <div>
                 <Segment vertical>
-                    <Grid container stackable verticalAlign="middle">
+                    <Grid className={styles.alignment} container stackable verticalAlign="middle">
                         <Grid.Row>
                             <Header
                                 as="h3"
                                 style={{
-                                    fontSize: "2em",
-                                    color: "#3075c9"
+                                    fontSize: "1.5em",
+                                    color: "#0072BB"
                                 }}
                             >
                                 Popular Resources
@@ -136,7 +134,7 @@ export class HomepageContent extends Component {
                                     </React.Fragment>
                                 ) : (
                                     <div>
-                                        <Loader active inline />
+                                        <Loader className={styles.inlineLoader}  active inline />
                                     </div>
                                 )}
                             </Card.Group>
@@ -145,7 +143,7 @@ export class HomepageContent extends Component {
                         <Grid.Row>
                             <Header
                                 as="h3"
-                                style={{ fontSize: "2em", color: "#3075c9" }}
+                                style={{ fontSize: "1.5em", color: "#0072BB" }}
                             >
                                 Recent Resources
                             </Header>
@@ -159,7 +157,7 @@ export class HomepageContent extends Component {
                                     </React.Fragment>
                                 ) : (
                                     <div>
-                                        <Loader active inline />
+                                        <Loader className={styles.inlineLoader} active inline />
                                     </div>
                                 )}
                             </Card.Group>
@@ -168,7 +166,7 @@ export class HomepageContent extends Component {
                         <Grid.Row>
                             <Header
                                 as="h3"
-                                style={{ fontSize: "2em", color: "#3075c9" }}
+                                style={{ fontSize: "1.5em", color: "#0072BB" }}
                             >
                                 Highest Rated Resources
                             </Header>
@@ -182,7 +180,7 @@ export class HomepageContent extends Component {
                                     </React.Fragment>
                                 ) : (
                                     <div>
-                                        <Loader active inline />
+                                        <Loader className={styles.inlineLoader} active inline />
                                     </div>
                                 )}
                             </Card.Group>

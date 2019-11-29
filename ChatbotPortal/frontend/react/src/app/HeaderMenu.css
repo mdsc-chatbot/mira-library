@@ -1,0 +1,9 @@
+:global(.ui.menu .right.menu).marginRightMenu {
+    margin-right: 1em;
+}
+
+:global(.right.menu).fullWidthListbox > :global(.ui.floating.labeled.item.dropdown) {
+    width : 100%;
+}
+
+

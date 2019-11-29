@@ -1,10 +1,33 @@
+/*
+ :File: HomepageHead.css
+ :Summary: Styles the homepage header and overrides regular Semantic CSS
+ :Author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ :Copyright: Copyright (c) 2019 BOLDDUC LABORATORY
+ :Credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ :Licence: MIT
+ :Version: 1.0
+ :Maintainer: BOLDDUC LABORATORY
+ */
+
+/*
+ * MIT License
+ *
+ * Copyright (c) 2019 BOLDDUC LABORATORY
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 :global(.ui.vertical.buttons .button).smallButtonStyle {
     float: right;
     width: auto;
 }
 
 :global(.ui.segments).segmentWeb{
-  margin: 0;
+    margin: 0;
     border: 0 solid rgba(34, 36, 38, 0.15);
     box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
 
@@ -13,4 +36,49 @@
 :global(h3.ui.header).marginMobile{
     margin-bottom: 1em !important;
     fontWeight: normal;
+}
+
+:global(.ui.buttons:not(.basic):not(.inverted)).buttonAlign{
+    display: flex !important;
+    justify-content: center !important;
+}
+
+:global(.ui.google.plus.button).firstButtonJustify {
+    background-color: #FF4C3B;
+    color: black;
+    text-shadow: none;
+    margin-top: 5px !important;
+    background-image: none;
+    box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+}
+
+:global(.ui.google.plus.button).buttonJustify {
+    background-color: #FF4C3B;
+    color: black;
+    text-shadow: none;
+    margin-top: 5px !important;
+    margin-left: 3px !important;
+    background-image: none;
+    box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+}
+:global(.ui.yellow.button).loginButton {
+    margin-left: 5px !important;
+    background-color: #FFD034;
+    color: black;
+    text-shadow: none;
+    background-image: none;
+    box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+}
+
+:global(.ui.yellow.button).publicResource {
+    background-color: #FFD034;
+    color: black;
+    text-shadow: none;
+    background-image: none;
+    box-shadow: 0px 0em 0px 0px rgba(34, 36, 38, 0.15) inset;
+}
+
+:global(h3.ui.header).header3 {
+    font-weight: normal !important;
+    margin-bottom: 1em !important;
 }
