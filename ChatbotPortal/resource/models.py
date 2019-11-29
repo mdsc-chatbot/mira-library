@@ -104,7 +104,7 @@ class Resource(models.Model):
     review_status = models.CharField(
         max_length=50, default="pending", blank=True, null=True)
     review_comments= models.TextField(
-        default="No Comment")
+        default="No Comment", blank=True, null=True)
     website_summary_metadata = models.TextField(default="", blank=True, null=True)
 
     public_view_count = models.IntegerField(default=0)
