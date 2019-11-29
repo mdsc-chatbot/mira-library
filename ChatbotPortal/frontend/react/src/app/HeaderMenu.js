@@ -27,6 +27,7 @@ import {Link} from "react-router-dom";
 import {SecurityContext} from "./contexts/SecurityContext";
 import {MenuContext} from "./contexts/MenuContext";
 import styles from "./App.css";
+import ownStyles from './HeaderMenu.css';
 
 /**
  * This class renders the Header Menu of a logged in user
@@ -165,7 +166,7 @@ export class HeaderMenu extends Component {
                             </Header>
                         </Link>
                     </Menu.Item>
-                    <Menu.Menu position = 'right'>
+                    <Menu.Menu position = 'right' className={`${ownStyles.fullWidthListbox} ${ownStyles.marginRightMenu}`}>
 
                         <Dropdown item text='Menu' floating labeled>
 

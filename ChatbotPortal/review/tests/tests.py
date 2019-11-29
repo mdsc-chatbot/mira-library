@@ -1,8 +1,9 @@
 '''
-views.py
-Django views for 
-- listing creating review, review resource
+test.py:
+
+
 '''
+
 __author__ = "Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen"
 __copyright__ = "Copyright (c) 2019 BOLDDUC LABORATORY"
 __credits__ = ["Apu Islam", "Henry Lo", "Jacy Mark", "Ritvik Khanna", "Yeva Nguyen"]
@@ -20,19 +21,25 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from rest_framework import permissions, status, generics
-from django.shortcuts import render
-from .models import Reviews
-from .reviewSerializer import ReviewSerializer
-from rest_framework import generics, viewsets
+from django.test import TestCase
+from django.core.exceptions import ValidationError
 
-# Create your views here.
-class ReviewListCreate(generics.ListCreateAPIView):
-    permission_classes = (permissions.IsAuthenticated, )
-    serializer_class = ReviewSerializer
-    queryset = Reviews.objects.all()
+from ..models import Reviews
 
-class ReviewResource(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = ReviewSerializer
-    queryset = Reviews.objects.all()
+
+class reviewTest(TestCase):
+    def createReview(self):
+        review = Reviews(
+            approved = False,
+            resource_url = "https://www.caddra.ca/",
+            resource_id = 1,
+            review_rating = 3,
+        )
+        return review
+
+    def testReviewRating(self):
+        Reviews.objects.all().delete()
+        review = self.createReview()
+        review.save()
+        db_review = Reviews.objects.get(pk=1)
+        self.assertTrue(3==db_review.review_rating)

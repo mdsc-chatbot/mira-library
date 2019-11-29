@@ -1,6 +1,6 @@
 /**
- * @file: ProfilePage.js
- * @summary: Renders user's profile page and allow the user change certain user information (name, profile picture, password)
+ * @file: reviewResource.js
+ * @summary: Component that renders a review (under resource detail componenet) and handles the review process
  * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
  * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
  * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
@@ -218,11 +218,15 @@ export default class ResourceDetail extends Component {
             })
         };
     
-    updateTagApproval = (id, status) =>{
+    updateTagApproval = (id) =>{
         this.setState(state => {
             const tags = this.state.tags.map((item) => {
                 if (item.id === id) {
-                  return item.approved=status;
+                    if (item.approved === true){
+                        return item.approved=false;
+                    }else{
+                        return item.approved=true;
+                    }
                   
                 } else {
                   return item;
@@ -233,26 +237,21 @@ export default class ResourceDetail extends Component {
 
     render() {
         return (
-            <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30,}}
-            >
+            
                 <SecurityContext.Consumer>
                     {(securityContext) => (
                         <div>
                             {securityContext.security.is_logged_in ?
-                                <div>
 
-                                    <Container>
-                                    <ResourceResponsive
-                                        resource_component={<ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />}
-                                    ></ResourceResponsive>
-                                    </Container>
-                                    
-                                    <Container>
+                                <ResourceResponsive
+                                    resource_component={
+                                        <div>
+                                    <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} />
+                                    <div>
                                     {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
                                         <Table class="ui celled table">
                                             <thead>
-                                                <tr><th>tag ID</th><th>Tag Name</th><th></th></tr>
+                                                <tr><th>tag ID</th><th>Tag Name</th><th>Approve</th></tr>
                                             </thead>
                                             <tbody>
                                                 {this.state.tags.map(tag => (
@@ -260,20 +259,16 @@ export default class ResourceDetail extends Component {
                                                         <tr key={tag} ref={tr => this.results = tr}>
                                                         <td>{tag.id}</td>
                                                         <td>{tag.name}</td>
-                                                        <td>
-                                                        <button class="positive ui button" onClick={() => this.updateTagApproval(tag.id, true)}>Approve</button>
-                                                        <button class="negative ui button" onClick={() => this.updateTagApproval(tag.id, false)}>Reject</button>
-                                                        </td>
-                                                        <td><Checkbox disabled/></td>
+                                                        <td><Checkbox onChange={() => this.updateTagApproval(tag.id)} toggle/></td>
                                                         </tr>
                                                     ):('')
                                                 ))}
                                             </tbody>
                                         </Table>
                                     ) : null}
-                                    </Container>
+                                    </div>
 
-                                    <Container style={{width: "50%", height: "10%"}}>
+                                    <div>
                                         <h2>Submit Review</h2>
                                         <div class="ui form">
                                             <div
@@ -309,6 +304,7 @@ export default class ResourceDetail extends Component {
                                             <div style={{display: "block"}}>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button
+                                                        name="approve"
                                                         class="positive ui button"
                                                         onClick={() =>
                                                             this.approve(this.state.resource)
@@ -319,6 +315,7 @@ export default class ResourceDetail extends Component {
                                                 </Link>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button
+                                                        name="reject"
                                                         class="negative ui button"
                                                         onClick={() =>
                                                             this.reject(this.state.resource)
@@ -329,11 +326,16 @@ export default class ResourceDetail extends Component {
                                                 </Link>
                                             </div>
                                         </div>
-                                    </Container>
-                                </div> : null}
+                                    </div>
+
+                                    </div>
+                                }
+                                ></ResourceResponsive>
+                                
+                                    
+                                : null}
                         </div>)}
                 </SecurityContext.Consumer>
-            </div>
         );
     }
 }
