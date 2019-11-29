@@ -21,7 +21,7 @@ mysql -u root -p
 SHOW DATABASES;
 DROP DATABASE test_main_db;
 DROP DATABASE main_db;
-GRANT ALL PRIVILEGES ON . TO 'root'@'localhost';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';
 CREATE DATABASE main_db;
 ```
 
