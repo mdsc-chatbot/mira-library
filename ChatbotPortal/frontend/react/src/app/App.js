@@ -1,3 +1,25 @@
+/**
+ * @file: App.js
+ * @summary: main react app, routing to different components
+ * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
+ * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @licence: MIT
+ * @version: 1.0
+ * @maintainer: BOLDDUC LABORATORY
+ */
+
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 BOLDDUC LABORATORY
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 import React from "react";
 import Homepage from "./Homepage";
 import {Route, Switch} from "react-router-dom";
@@ -18,11 +40,16 @@ import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
 import PasswordChangeForm from "./password/PasswordChangeForm"
-import {Responsive, Segment} from "semantic-ui-react";
+import {Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import {MenuContextProvider} from './contexts/MenuContext';
 import styles from "./App.css";
+
+/**
+ * This class renders the re-direction of the links, and menu, according
+ * to whether the user is logged in or not
+ */
 
 export default function App() {
     const mainPage = () => {
@@ -32,7 +59,7 @@ export default function App() {
                     <Segment  className={styles.headerMenu} inverted attached = 'top'>
                         <HeaderMenu/>
                     </Segment>
-                    <Segment className={styles.segmentWeb} attached>
+                    <Segment className={`${styles.segmentWeb} ${styles.segmentResponsive}`} attached>
                         <Switch>
                             <Route exact path={baseRoute + "/profile"}>
                                 <ProfilePage/>
@@ -108,6 +135,11 @@ export default function App() {
                 <Segment attached = 'bottom' inverted><Footer /></Segment>
             </SecurityContextProvider>);
     };
+
+    /**
+     * This renders the Page according to the user and link
+     * @returns {React.Fragment}
+     */
     return (
         <React.Fragment>
             {mainPage()}

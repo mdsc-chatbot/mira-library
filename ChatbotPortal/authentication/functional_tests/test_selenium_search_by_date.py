@@ -1,3 +1,22 @@
+"""test_selenium_search_by_date.py: Search by date range related functional testing (Regular window)."""
+
+__author__ = "Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen"
+__copyright__ = "Copyright (c) 2019 BOLDDUC LABORATORY"
+__credits__ = ["Apu Islam", "Henry Lo", "Jacy Mark", "Ritvik Khanna", "Yeva Nguyen"]
+__license__ = "MIT"
+__version__ = "1.0"
+__maintainer__ = "BOLDDUC LABORATORY"
+
+#  MIT License
+#
+#  Copyright (c) 2019 BOLDDUC LABORATORY
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 import time
 from datetime import date
 
@@ -10,7 +29,7 @@ HOME_PAGE = '/chatbotportal/app'
 LOGIN_PAGE = '/chatbotportal/app/login'
 SEARCH_PAGE = '/chatbotportal/app/search'
 
-WAIT_SECONDS = 3
+WAIT_SECONDS = 5
 IMPLICIT_WAIT_SECONDS = 50
 
 
@@ -119,6 +138,8 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.go_to_search_page_date_option_dropdown(2)  # Choose By Last Login option
 
+        self.browser.find_element_by_id('date_popup').click()
+
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
         self.assertIsNotNone(startDate)
@@ -148,6 +169,8 @@ class TestSearchByDate(LiveServerTestCase):
         :return: None
         """
         self.go_to_search_page_date_option_dropdown(3)  # Choose By Creation Date option
+
+        self.browser.find_element_by_id('date_popup').click()
 
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
@@ -200,6 +223,8 @@ class TestSearchByDate(LiveServerTestCase):
         """
         self.go_to_search_page_date_option_dropdown(3)  # Choose By Creation Date option
 
+        self.browser.find_element_by_id('date_popup').click()
+
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')
         self.assertIsNotNone(startDate)
@@ -250,6 +275,8 @@ class TestSearchByDate(LiveServerTestCase):
         :return: None
         """
         self.go_to_search_page_date_option_dropdown(1)  # Choose Unselected
+
+        self.browser.find_element_by_id('date_popup').click()
 
         # Setting up the date range
         startDate = self.browser.find_element_by_id('startDate')

@@ -1,10 +1,38 @@
+/**
+ * @file: reviewResource.js
+ * @summary: Component that renders a review (under resource detail componenet) and handles the review process
+ * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
+ * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @licence: MIT
+ * @version: 1.0
+ * @maintainer: BOLDDUC LABORATORY
+ */
+
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 BOLDDUC LABORATORY
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 import React, {Component} from "react";
-import axios from "axios";
-import {Container, Divider, Form, Header, Icon, Label, Rating} from "semantic-ui-react";
+import axios, {CancelToken} from "axios";
+import {Container, Form, Icon, Rating, Checkbox, Table} from "semantic-ui-react";
 import {SecurityContext} from "../contexts/SecurityContext";
 import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
+import ResourceResponsive from "../resource/ResourceResponsive";
+import { ResourceDetailView } from "../shared";
 
+
+/**
+ * This class renders the Resource Detail for the logged in User
+ */
 export default class ResourceDetail extends Component {
     static contextType = SecurityContext;
 
@@ -15,6 +43,7 @@ export default class ResourceDetail extends Component {
             resource: {},
             rating: 1,
             comments: "No comments",
+            tags: [],
         };
     }
 
@@ -31,24 +60,25 @@ export default class ResourceDetail extends Component {
             .then(res => {
                 this.setState({
                     resource: res.data
+                    
                 });
             });
     };
 
     componentDidMount() {
         this.get_resource_details();
+        this.handleSearchChange();
     }
 
     approve = data => {
         const review = this.format_data(data, true);
-        console.log(review);
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
+            .post("/api/review/", review, {headers: options})
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -57,14 +87,13 @@ export default class ResourceDetail extends Component {
 
     reject = data => {
         const review = this.format_data(data, false);
-        console.log(review);
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("http://127.0.0.1:8000/api/review/", review, {headers: options})
+            .post("/api/review/", review, {headers: options})
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -85,7 +114,7 @@ export default class ResourceDetail extends Component {
             axios
                 .put(
                     "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
-                    {"review_status": review_status},
+                    {"review_status": review_status, "rating": this.state.rating, "review_comments": this.state.comments},
                     {headers: options}
                 )
                 .then(
@@ -95,10 +124,24 @@ export default class ResourceDetail extends Component {
                         console.log(error);
                     }
                 );
-
+            for (var i = 0, len = this.state.tags.length; i < len; i++) {
+                    if (this.state.tags[i].approved === true){
+                        axios
+                            .put(
+                                "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
+                                {"approved": true},
+                                {headers: options}
+                            )
+                            .then(
+                                response => {
+                                },
+                                error => {
+                                    console.log(error);
+                                }
+                            );
+                    }
+                }
             // User
-            console.log(this.state.resource);
-            console.log(review_status);
             if (review_status === "approved") {
                 axios
                     .put(`/chatbotportal/authentication/${this.state.resource.created_by_user_pk}/update/approved_submissions/`, '', {
@@ -140,6 +183,7 @@ export default class ResourceDetail extends Component {
         this.setState({[event.target.name]: event.target.value});
     };
 
+
     downloadAttachment = () => {
         // Having the permission header loaded
         //TODO: Fix this. This file should be using the shared component for viewing a resource.
@@ -156,79 +200,78 @@ export default class ResourceDetail extends Component {
         //         fileDownload(response.data, fileName);
         //     });
     };
+    
+    handleSearchChange = () => {
+        const resourceID = this.props.match.params.resourceID;
+            // Fetch search results
+        axios
+            .get(`/chatbotportal/resource/get-tags/${resourceID}`, '',
+                {
+                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                }
+            )
+            
+            .then(response=>{
+                this.setState({
+                    tags: response.data
+                });
+            })
+        };
+    
+    updateTagApproval = (id) =>{
+        this.setState(state => {
+            const tags = this.state.tags.map((item) => {
+                if (item.id === id) {
+                    if (item.approved === true){
+                        return item.approved=false;
+                    }else{
+                        return item.approved=true;
+                    }
+                  
+                } else {
+                  return item;
+                }
+            });
+        });
+    }
 
     render() {
+        const reviewer = this.context.security.is_logged_in
+            ? this.context.security.id
+            : "Unknown user";
         return (
-            <div
-                style={{paddingTop: 30, paddingLeft: 100, paddingRight: 100, paddingBottom: 30,}}
-            >
+            
                 <SecurityContext.Consumer>
                     {(securityContext) => (
                         <div>
                             {securityContext.security.is_logged_in ?
-                                <div>
-                                    <Container>
-                                        <Header as="h3" style={{fontSize: "2em"}}>
-                                            <Icon name="globe"/>
-                                            <Header.Content>
-                                                {this.state.resource.title}
-                                            </Header.Content>
-                                        </Header>
 
-                                        <Divider></Divider>
-
-                                        <p style={{color: "grey", paddingTop: 25}}>
-                                            Submitted by {this.state.resource.created_by_user}
-                                        </p>
-                                        <p style={{color: "grey", marginTop: -10}}>
-                                            Date submitted: {this.state.resource.timestamp}
-                                        </p>
-
-                                        <a href={this.state.resource.url} target="_blank">
-                                            <h4>{this.state.resource.url}</h4>
-                                        </a>
-
-                                        {this.state.resource.rating ? (
-                                            <p>
-                                                <Rating
-                                                    icon="star"
-                                                    defaultRating={this.state.resource.rating}
-                                                    maxRating={5}
-                                                    disabled
-                                                    size="massive"
-                                                />
-                                            </p>
-                                        ) : null}
-                                        {this.state.resource.tags &&
-                                        this.state.resource.tags.length > 0 ? (
-                                            <p>
-                                                <span style={{color: "grey"}}>Tags:</span>
-                                                {this.state.resource.tags.map(tag => (
-                                                    <Label key={tag} size="large">
-                                                        {tag}
-                                                    </Label>
+                                <ResourceResponsive
+                                    resource_component={
+                                        <div>
+                                    <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer}/>
+                                    <div>
+                                    {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
+                                        <Table class="ui celled table">
+                                            <thead>
+                                                <tr><th>tag ID</th><th>Tag Name</th><th>Approve</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.state.tags.map(tag => (
+                                                    tag.approved !== true ?(
+                                                        <tr key={tag} ref={tr => this.results = tr}>
+                                                        <td>{tag.id}</td>
+                                                        <td>{tag.name}</td>
+                                                        <td><Checkbox onChange={() => this.updateTagApproval(tag.id)} toggle/></td>
+                                                        </tr>
+                                                    ):('')
                                                 ))}
-                                            </p>
-                                        ) : null}
-                                        {this.state.resource.attachment ? (
-                                            <Header as="h5" color="grey">
-                                                <a href="#" onClick={this.downloadAttachment}>
-                                                    <Icon name="download"/>
-                                                    <Header.Content>
-                                                        Download attachment
-                                                    </Header.Content>
-                                                </a>
-                                            </Header>
-                                        ) : null}
-                                        <Header as="h5" color="grey">
-                                            <Icon name="comment"/>
-                                            <Header.Content>Comments:</Header.Content>
-                                        </Header>
-                                        <p style={{color: "grey", marginTop: -10}}>
-                                            {this.state.resource.comments}
-                                        </p>
-                                    </Container>
-                                    <Container style={{width: "50%", height: "10%"}}>
+                                            </tbody>
+                                        </Table>
+                                    ) : null}
+                                    </div>
+
+                                    <div>
                                         <h2>Submit Review</h2>
                                         <div class="ui form">
                                             <div
@@ -261,10 +304,10 @@ export default class ResourceDetail extends Component {
                                                     placeholder="Enter any comments about this resource"
                                                 />
                                             </div>
-                                            {console.log(this.state.resource)}
                                             <div style={{display: "block"}}>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button
+                                                        name="approve"
                                                         class="positive ui button"
                                                         onClick={() =>
                                                             this.approve(this.state.resource)
@@ -275,6 +318,7 @@ export default class ResourceDetail extends Component {
                                                 </Link>
                                                 <Link to={baseRoute + "/review/"}>
                                                     <button
+                                                        name="reject"
                                                         class="negative ui button"
                                                         onClick={() =>
                                                             this.reject(this.state.resource)
@@ -285,11 +329,16 @@ export default class ResourceDetail extends Component {
                                                 </Link>
                                             </div>
                                         </div>
-                                    </Container>
-                                </div> : null}
+                                    </div>
+
+                                    </div>
+                                }
+                                ></ResourceResponsive>
+                                
+                                    
+                                : null}
                         </div>)}
                 </SecurityContext.Consumer>
-            </div>
         );
     }
 }

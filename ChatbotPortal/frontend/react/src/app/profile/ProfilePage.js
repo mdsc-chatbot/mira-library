@@ -1,3 +1,26 @@
+/**
+ * @file: ProfilePage.js
+ * @summary: Renders user's profile page and allow the user change certain user information (name, profile picture, password)
+ * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
+ * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @licence: MIT
+ * @version: 1.0
+ * @maintainer: BOLDDUC LABORATORY
+ */
+
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 BOLDDUC LABORATORY
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
@@ -165,25 +188,25 @@ class ProfilePage extends Component {
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='mail'/>
+                                    <Icon className={styles.iconColor} name='mail'/>
                                     <Header.Content id="email"> {this.state.email} </Header.Content>
                                 </Header>
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='pencil alternate'/>
+                                    <Icon className={styles.iconColor} name='pencil alternate'/>
                                     <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
                                 </Header>
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='trophy'/>
+                                    <Icon className={styles.iconColor} name='trophy'/>
                                     <Header.Content id="points"> Points = {this.state.points} </Header.Content>
                                 </Header>
                                 <Divider fitted />
 
                                 <Header as="h3">
-                                    <Icon color='blue' name='certificate'/>
+                                    <Icon className={styles.iconColor} name='certificate'/>
                                     <Header.Content id="status"> 
                                         { this.state.is_staff ? (
                                             'Staff'
@@ -202,11 +225,11 @@ class ProfilePage extends Component {
                                 <Button.Content visible>
                                     Save Changes
                                 </Button.Content>
-                                <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                <Button.Content hidden><Icon color='black' name='chevron right' /></Button.Content>
                             </Button>
 
                             <Link to={baseRoute + "/password"}>
-                                <Button name="change_password" color='blue' fluid size='big'>
+                                <Button name="change_password" className={styles.changePW} color='blue' fluid size='big'>
                                     Change Password
                                 </Button>
                             </Link>
@@ -256,25 +279,25 @@ class ProfilePage extends Component {
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='mail'/>
+                                            <Icon className={styles.iconColor} name='mail'/>
                                             <Header.Content id="email"> {this.state.email} </Header.Content>
                                         </Header>
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='pencil alternate'/>
+                                            <Icon className={styles.iconColor} name='pencil alternate'/>
                                             <Header.Content id="profile_num_submissions">  # of Submissions = {this.state.submissions} </Header.Content>
                                         </Header>
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='trophy'/>
+                                            <Icon className={styles.iconColor} name='trophy'/>
                                             <Header.Content id="points"> Points = {this.state.points} </Header.Content>
                                         </Header>
                                         <Divider fitted />
 
                                         <Header as="h4">
-                                            <Icon color='blue' name='certificate'/>
+                                            <Icon className={styles.iconColor} name='certificate'/>
                                             <Header.Content id="status"> 
                                                 { this.state.is_staff ? (
                                                     'Staff'
@@ -292,11 +315,11 @@ class ProfilePage extends Component {
                                         <Button.Content visible>
                                             Save Changes
                                         </Button.Content>
-                                        <Button.Content hidden><Icon name='chevron right' /></Button.Content>
+                                        <Button.Content hidden><Icon color='black' name='chevron right' /></Button.Content>
                                     </Button>
 
                                 <Link to={baseRoute + "/password"}>
-                                    <Button name="change_password" color='blue' fluid size='medium'>
+                                    <Button className={styles.changePW} name="change_password" color='blue' fluid size='medium'>
                                         Change Password
                                     </Button>
                                 </Link>

@@ -49,6 +49,11 @@ npm install
 npm run-script build
 ```
 
+#### Installing the chrome extension
+- Chrome > settings > extensions
+- Make sure developer mode is turned on
+- Click on 'Load Unpacked' button and load the extensions folder located at ChatbotPortal/extension
+
 # How to test (backend tests and selenium tests)
 ```
 python manage.py test --verbosity=3 --noinput authentication.tests

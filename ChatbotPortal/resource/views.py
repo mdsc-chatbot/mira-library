@@ -1,7 +1,33 @@
+'''
+views.py:
+- Django views for 
+1. create tag, fetch tag, get tags, Tag Create View, Tag Update View
+2. fetch categories
+3. download attachment
+4. Resource View (user resources only), Resource Retrieve View, Resource Update View, Resource Search View
+'''
+
+__author__ = "Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen"
+__copyright__ = "Copyright (c) 2019 BOLDDUC LABORATORY"
+__credits__ = ["Apu Islam", "Henry Lo", "Jacy Mark", "Ritvik Khanna", "Yeva Nguyen"]
+__license__ = "MIT"
+__version__ = "1.0"
+__maintainer__ = "BOLDDUC LABORATORY"
+
+#  MIT License
+#
+#  Copyright (c) 2019 BOLDDUC LABORATORY
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 from rest_framework import permissions, generics, viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
-from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer, TagSerializer
+from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer, TagSerializer, TagUpdateSerializer
 from .models import Resource, Tag, Category
 import json
 import mimetypes
@@ -31,17 +57,26 @@ def create_tags(request):
 def fetch_tags(request):
     try:
         tag_set = Tag.objects.filter(
-            name__contains=request.GET['name']).values('id', 'name')
+            name__contains=request.GET['name'], approved=True).values('id', 'name')
         return JsonResponse(list(tag_set), safe=False)
     except:
         # Return empty http response if can't find tags
         return HttpResponse()
 
-
 def fetch_categories(request):
     category_set = Category.objects.all().values()
     return JsonResponse(list(category_set), safe=False)
 
+def gettags(request, resource_id):
+    resource = Resource.objects.get(pk=int(resource_id))
+    tags = resource.tags.all()
+    tagSent = []
+    for item in tags:
+        print(item)
+        tag_set = {'id':item.id, 'name':item.name, 'approved':item.approved}
+        tagSent.append(tag_set)
+
+    return JsonResponse(tagSent, safe=False)
 
 # Downloads request attachment
 def download_attachment(request, resource_id):
@@ -80,6 +115,10 @@ class ResourceUpdateView(generics.RetrieveUpdateAPIView):
     serializer_class = ResourceUpdateSerializer
     queryset = Resource.objects.all()
 
+class TagUpdateView(generics.RetrieveUpdateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = TagUpdateSerializer
+    queryset = Tag.objects.all()
 
 class ResourceSearchView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -87,7 +126,7 @@ class ResourceSearchView(generics.ListAPIView):
     queryset = Resource.objects.filter(review_status="approved")
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
-
+    
 
 class TagCreateView(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)

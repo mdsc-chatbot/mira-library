@@ -1,3 +1,25 @@
+'''
+test_selenium.py:
+- test frontend selenium resource submission, resource listing and resource detail 
+'''
+
+__author__ = "Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen"
+__copyright__ = "Copyright (c) 2019 BOLDDUC LABORATORY"
+__credits__ = ["Apu Islam", "Henry Lo", "Jacy Mark", "Ritvik Khanna", "Yeva Nguyen"]
+__license__ = "MIT"
+__version__ = "1.0"
+__maintainer__ = "BOLDDUC LABORATORY"
+
+#  MIT License
+#
+#  Copyright (c) 2019 BOLDDUC LABORATORY
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 ''' 
 TEST CASES:
 --------------------------------------------------------------------------------------
@@ -70,7 +92,7 @@ class TestResourceSubmission(LiveServerTestCase):
         user.save()
 
         for tag_name in ["Alberta", "General_Health", "Public", "Research","Institution"]:
-            tag = Tag.objects.create(name=tag_name)
+            tag = Tag.objects.create(name=tag_name,approved=True)
             tag.save()
 
     def tearDown(self):
@@ -107,12 +129,12 @@ class TestResourceSubmission(LiveServerTestCase):
         self.valid_resource_submission(
             actual_resource_detail, "//a[1]/div/div")
 
-        actual_resource_detail = ["Unknown title",
-                                  "http://127.0.0.1:8000/", "",
-                                  "Even though this resource is not reachable, it is still accepted.",
-                                  "pending", "Website", ""]
-        self.valid_resource_submission(
-            actual_resource_detail, "//a[2]/div/div")
+        # actual_resource_detail = ["Unknown title",
+        #                           "http://127.0.0.1:8000/", "",
+        #                           "Even though this resource is not reachable, it is still accepted.",
+        #                           "pending", "Website", ""]
+        # self.valid_resource_submission(
+        #     actual_resource_detail, "//a[2]/div/div")
 
         # Test valid url and PDF attachment
         actual_resource_detail = ["The Autism Research Institute | #1 Advocate for Autism Research | Home",
@@ -122,7 +144,7 @@ class TestResourceSubmission(LiveServerTestCase):
                                   "ARI works to advance the understanding of autism by funding research and facilitating education on its causes and the potential treatments."
                                   ]
         self.valid_resource_submission(
-            actual_resource_detail, "//a[3]/div/div")
+            actual_resource_detail, "//a[2]/div/div")
 
         self.compare_resource_submission_number()
 
@@ -192,7 +214,7 @@ class TestResourceSubmission(LiveServerTestCase):
         if test_category == "PDF":
             self.download_and_compare_attachments()
 
-            # Tags xpath
+        # Tags xpath
         try:
             test_tags = self.driver.find_element(
                 By.XPATH, ("//div[5]")).text

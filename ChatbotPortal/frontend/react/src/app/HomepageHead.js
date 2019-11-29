@@ -1,15 +1,36 @@
+/**
+ * @file: HomepageHead.js
+ * @summary: Top of Homepage showing website description, buttons for viewing all resources or log in
+ * @author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @copyright: Copyright (c) 2019 BOLDDUC LABORATORY
+ * @credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
+ * @licence: MIT
+ * @version: 1.0
+ * @maintainer: BOLDDUC LABORATORY
+ */
+
+/**
+ * MIT License
+ *
+ * Copyright (c) 2019 BOLDDUC LABORATORY
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 import React, { Component } from "react";
-import {Container, Header, Button, Segment, Grid, Responsive, Divider,Icon} from "semantic-ui-react";
+import {Header, Button, Segment, Grid, Responsive, Icon} from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import { SecurityContext } from "./contexts/SecurityContext";
 import styles from './HomepageHead.css'
 
-
-
 export class HomepageHead extends Component {
     static contextType = SecurityContext;
 
+    // The constant homepage data
     homePageData = () => {
         return(
             <React.Fragment>
@@ -19,7 +40,7 @@ export class HomepageHead extends Component {
                     style={{
                         fontSize: "2em",
                         fontWeight: "bold",
-                        color: "#3075c9",
+                        color: "#0072BB",
                         marginTop: "1em"
                     }}
                 />
@@ -32,42 +53,59 @@ export class HomepageHead extends Component {
                     }}
                 />
 
-                <Button.Group>
-                    <Button.Group vertical>
-                        <Link to={baseRoute + "/public_resource"}>
-                            <Button size="big" color="orange">
-                                View all our public resources
-                            </Button>
-                        </Link>
+                <Segment className={styles.segmentWeb} textAlign="center" vertical>
+                    {this.context.security.is_logged_in ? (
+                        <Button.Group className={styles.buttonAlign} fluid widths='2' size ='large'>
+                            <Link to={baseRoute + "/public_resource"}>
+                                <Button fluid className={styles.publicResource} color="yellow">
+                                    View all our public resources
+                                </Button>
+                            </Link>
+                            <Link to={baseRoute + "/resource_submit"}>
+                                <Button className={styles.loginButton} color='yellow'>
+                                    Submit a resource
+                                </Button>
+                            </Link>
+                        </Button.Group>
+                    ) : (
+                        <Button.Group className={styles.buttonAlign} fluid widths='2' size ='large'>
+                            <Link to={baseRoute + "/public_resource"}>
+                                <Button className={styles.publicResource} fluid color="yellow">
+                                    View all our public resources
+                                </Button>
+                            </Link>
+                            <Link to={baseRoute + "/login"}>
+                                <Button className={styles.loginButton} fluid color="yellow">
+                                    Log in to submit resources
+                                </Button>
+                            </Link>
+                        </Button.Group>
+                    )
+                    }
+
+                    <Button.Group className={styles.buttonAlign} size='medium'>
                         <Link to={baseRoute + "/public_resource/59"}>
-                            <Button className={styles.smallButtonStyle} compact floated="right" size="medium" color="google plus">
-                                View resources about funding
+                            <Button className={styles.firstButtonJustify}  color="google plus">
+                                Funding Resources
                             </Button>
                         </Link>
                         <Link to={baseRoute + "/public_resource/46"}>
-                            <Button className={styles.smallButtonStyle} compact floated="right" size="medium" color="google plus">
-                                View resources about stress
+                            <Button className={styles.buttonJustify}   color="google plus">
+                                Stress Resources
                             </Button>
                         </Link>
                         <Link to={baseRoute + "/public_resource/47"}>
-                            <Button className={styles.smallButtonStyle} compact floated="right" size="medium" color="google plus">
-                                View resources about sleep
+                            <Button className={styles.buttonJustify}  color="google plus">
+                                Sleep Resources
                             </Button>
                         </Link>
                     </Button.Group>
-
-                    {!this.context.security.is_logged_in && (
-                        <Link to={baseRoute + "/login"}>
-                            <Button size="big" color="green">
-                                Log in to submit resources
-                            </Button>
-                        </Link>
-
-                    )}
-                </Button.Group>
+                </Segment>
             </React.Fragment>
         );
     };
+
+    // Home page layout and Data for Web & Tab Orientation
     homePageWeb = () => {
         return(
             <Segment className={styles.segmentWeb} textAlign="center" vertical>
@@ -76,6 +114,8 @@ export class HomepageHead extends Component {
 
         );
     };
+
+    // Home page Layout and Data for Mobile Orientation
     homePageMobile = () => {
         return(
             <React.Fragment>
@@ -94,40 +134,54 @@ export class HomepageHead extends Component {
                         <Header
                             as="h3"
                             content="Resources site providing information about autism, intellectual disability, and learning disability."
-                            style={{
-                                fontWeight: "normal"
-                            }}
+                            className={styles.header3}
                         />
                     </Grid.Column>
                 </Grid>
 
-                <Button.Group fluid widths='2' size ='medium'>
-                    <Link to={baseRoute + "/public_resource"}>
-                        <Button fluid color="orange">
-                            View all our public resources
-                        </Button>
-                    </Link>
 
-                    {!this.context.security.is_logged_in &&(<Link to={baseRoute + "/login"}>
-                        <Button fluid color="green">
-                            Log in to submit resources
-                        </Button>
-                    </Link>)}
-                </Button.Group>
+                {this.context.security.is_logged_in ? (
+                    <Button.Group className={styles.buttonAlign} fluid widths='2' size ='medium'>
+                        <Link to={baseRoute + "/public_resource"}>
+                            <Button fluid className={styles.publicResource} color='yellow'>
+                                View all our public resources
+                            </Button>
+                        </Link>
+                        <Link to={baseRoute + "/resource_submit"}>
+                            <Button className={styles.loginButton} color='yellow'>
+                                Submit a resource
+                            </Button>
+                        </Link>
+                    </Button.Group>
+                ) : (
+                    <Button.Group className={styles.buttonAlign} fluid widths='2' size ='small'>
+                        <Link to={baseRoute + "/public_resource"}>
+                            <Button className={styles.publicResource} color='yellow'>
+                                View all our public resources
+                            </Button>
+                        </Link>
+                        <Link to={baseRoute + "/login"}>
+                            <Button className={styles.loginButton} color='yellow'>
+                                Log in to submit resources
+                            </Button>
+                        </Link>
+                    </Button.Group>
+                )
+                }
 
-                <Button.Group widths='3' size='tiny'>
+                <Button.Group className={styles.buttonAlign} widths='3' size='tiny'>
                     <Link to={baseRoute + "/public_resource/59"}>
-                        <Button  color="google plus">
+                        <Button className={styles.firstButtonJustify} color="google plus">
                             Funding Resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/public_resource/46"}>
-                        <Button color="google plus">
+                        <Button className={styles.buttonJustify} color="google plus">
                             Stress Resources
                         </Button>
                     </Link>
                     <Link to={baseRoute + "/public_resource/47"}>
-                        <Button color="google plus">
+                        <Button className={styles.buttonJustify} color="google plus">
                             Sleep Resources
                         </Button>
                     </Link>
@@ -136,6 +190,11 @@ export class HomepageHead extends Component {
         );
     };
 
+
+    /**
+     * This renders the HomepPage
+     * @returns {React.Fragment}
+     */
     render() {
         return (
             <Segment.Group className={styles.segmentWeb}>
@@ -152,5 +211,4 @@ export class HomepageHead extends Component {
         );
     }
 }
-
 export default HomepageHead;

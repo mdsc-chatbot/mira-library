@@ -1,4 +1,5 @@
 {
+  "author": "Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen",
   "version": "1.0",
   "manifest_version": 2,
   "name": "Submit Resources to ChatbotPortal",
@@ -6,7 +7,7 @@
   "background": {
     "page": "lib/chrome/background.html"
   },
-  "homepage_url": "http://127.0.0.1:8000/chatbotportal/app/",
+  "homepage_url": "http://162.246.157.169:8000/chatbotportal/app/",
   "description": "This extension helps submitting resources directly to ChatbotPortal",
   "permissions": [
     "cookies",
