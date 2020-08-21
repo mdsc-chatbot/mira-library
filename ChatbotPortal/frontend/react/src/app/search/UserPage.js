@@ -146,6 +146,7 @@ class UserPage extends Component {
                 {headers: {'Authorization': `Bearer ${this.context.security.token}`}})
             .then(
                 response => {
+                    console.log(response.data)
                     this.setState(response.data);
                 },
                 error => {
