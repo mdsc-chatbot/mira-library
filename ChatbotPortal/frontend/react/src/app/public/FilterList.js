@@ -36,6 +36,7 @@ export function FilterList({tags, categories, selectedTags, handleTagSelected, h
                     <List.Item>
                         <List.Header>Categories</List.Header>
                         <List.Content>
+                            
                             {categories.map(category => (
                                 <List.Item key={category.id}>
                                     <Checkbox name={category.name} label={category.name} category_id={category.id} onChange={handleCategorySelected}/>

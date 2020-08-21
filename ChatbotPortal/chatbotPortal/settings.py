@@ -42,7 +42,7 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['162.246.157.169', '127.0.0.1']
+ALLOWED_HOSTS = ['162.246.157.169', '127.0.0.1','localhost']
 
 # Application definition
 
@@ -105,8 +105,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'main_db',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'admin',
+        'PASSWORD': 'admin@123',
         'HOST': '',
         'PORT': '',
         'TEST': {
@@ -208,11 +208,11 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 CSRF_COOKIE_NAME = "csrftoken"
 
 # Email Authentication Settings
-# EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_HOST_USER = '8cf7d64be71b92'
-EMAIL_HOST_PASSWORD = '64d7e07ce02e61'
-EMAIL_PORT = '2525'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'portalChatbot@gmail.com'
+EMAIL_HOST_PASSWORD = 'Bolduc@!'
+EMAIL_PORT = '587'
 
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_HOST_USER = 'testouremials@gmail.com'

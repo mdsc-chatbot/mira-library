@@ -48,7 +48,7 @@ class SignupForm extends React.Component {
         password: "",
         password2: '',
         password_matched: false,
-        consent:false,
+        consent:true,
         is_validated:true
     };
     baseState = this.state;
@@ -108,13 +108,21 @@ class SignupForm extends React.Component {
      * - email must not be the same (TODO)
      * - some field must not be empty (TODO)
      */
+    // validate_signup_form = (e, state) =>{
+    //     if (state.consent === false){
+    //         this.setState({is_validated:false});
+    //     }else{
+    //         this.props.handle_signup(e, state);
+    //         this.setState(this.baseState);
+    //     }
+    // };    
+
+
+
+    // Removing Consent Form
     validate_signup_form = (e, state) =>{
-        if (state.consent === false){
-            this.setState({is_validated:false});
-        }else{
             this.props.handle_signup(e, state);
             this.setState(this.baseState);
-        }
     };
 
     render() {
@@ -184,7 +192,7 @@ class SignupForm extends React.Component {
                                 onChange={this.handle_password2}
                             />
 
-                            {
+                            {/* {
                                 this.state.is_validated ? (
                                     <Form.Checkbox
                                         fluid
@@ -206,6 +214,11 @@ class SignupForm extends React.Component {
                                         }}
                                     />
                                 )
+                            } */}
+
+                            {/* Removing Consent form and setting the validated state to true */}
+                            {
+                                this.state.is_validated = true
                             }
 
                             <Button

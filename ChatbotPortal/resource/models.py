@@ -74,6 +74,7 @@ class ResourceManager(models.Manager):
 class Tag(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
+    tag_category = models.CharField(max_length = 100)
     approved = models.BooleanField(default=False)
 
 

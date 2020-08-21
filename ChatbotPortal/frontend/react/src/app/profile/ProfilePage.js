@@ -199,12 +199,12 @@ class ProfilePage extends Component {
                                 </Header>
                                 <Divider fitted />
 
-                                <Header as="h3">
+                                {/* <Header as="h3">
                                     <Icon className={styles.iconColor} name='trophy'/>
                                     <Header.Content id="points"> Points = {this.state.points} </Header.Content>
-                                </Header>
+                                </Header> */}
                                 <Divider fitted />
-
+{/* 
                                 <Header as="h3">
                                     <Icon className={styles.iconColor} name='certificate'/>
                                     <Header.Content id="status"> 
@@ -215,7 +215,7 @@ class ProfilePage extends Component {
                                         ) : 'Newbie'
                                         }
                                     </Header.Content>
-                                </Header>
+                                </Header> */}
                                 <Divider fitted/>
                                 
                             </Card.Description>

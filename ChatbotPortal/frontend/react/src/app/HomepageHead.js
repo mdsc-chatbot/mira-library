@@ -89,16 +89,7 @@ export class HomepageHead extends Component {
                                 Funding Resources
                             </Button>
                         </Link>
-                        <Link to={baseRoute + "/public_resource/46"}>
-                            <Button className={styles.buttonJustify}   color="google plus">
-                                Stress Resources
-                            </Button>
-                        </Link>
-                        <Link to={baseRoute + "/public_resource/47"}>
-                            <Button className={styles.buttonJustify}  color="google plus">
-                                Sleep Resources
-                            </Button>
-                        </Link>
+                       
                     </Button.Group>
                 </Segment>
             </React.Fragment>
@@ -175,16 +166,7 @@ export class HomepageHead extends Component {
                             Funding Resources
                         </Button>
                     </Link>
-                    <Link to={baseRoute + "/public_resource/46"}>
-                        <Button className={styles.buttonJustify} color="google plus">
-                            Stress Resources
-                        </Button>
-                    </Link>
-                    <Link to={baseRoute + "/public_resource/47"}>
-                        <Button className={styles.buttonJustify} color="google plus">
-                            Sleep Resources
-                        </Button>
-                    </Link>
+                    
                 </Button.Group>
             </React.Fragment>
         );

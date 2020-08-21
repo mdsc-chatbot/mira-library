@@ -44,13 +44,14 @@ def create_tags(request):
         }, status=400)
 
     # Saving it
-    tag = Tag.objects.create(name=form_data['name'])
+    tag = Tag.objects.create(name=form_data['name'],tag_category = form_data['tag_category'])
     tag.save()
 
     # Return tag so that frontend can dynamically add it to the dropdown
     return JsonResponse({
         'id': tag.id,
         'name': tag.name,
+        'tag_category': tag.tag_category
     })
 
 
