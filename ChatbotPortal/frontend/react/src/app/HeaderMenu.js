@@ -162,7 +162,7 @@ export class HeaderMenu extends Component {
                         <Link to={baseRoute}>
                             <Header as="h4" style={{ color: "#3075c9" }}>
                                 <Image size='mini' src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                Chatbot Portal
+                                NDD Resource Portal
                             </Header>
                         </Link>
                     </Menu.Item>
