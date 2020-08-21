@@ -59,7 +59,7 @@ export class HeaderMenu extends Component {
                         <Link to={baseRoute}>
                             <Header as="h2" style={{ color: "#0072BB"}}>
                                 <Image src={require("./logo/512.ico")} size='small' alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                Chatbot Portal
+                                NDD Resource Portal
                             </Header>
                         </Link>
                     </Menu.Item>
@@ -287,7 +287,7 @@ export class HeaderMenu extends Component {
                             <Menu inverted fluid pointing secondary size="large">
                                 <Header as="h2" style={{ color: "#3075c9", paddingLeft: 50 }}>
                                     <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                    Chatbot Portal
+                                    NDD Resource Portal
                                 </Header>
                             </Menu>
                         }
