@@ -149,6 +149,8 @@ class UserPage extends Component {
                 response => {
                     console.log(response.data)
                     this.setState(response.data);
+                    window.location.reload();
+
                 },
                 error => {
                     console.log(error);
