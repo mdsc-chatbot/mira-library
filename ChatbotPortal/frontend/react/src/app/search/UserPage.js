@@ -25,6 +25,7 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
+import Alert from 'react-bootstrap/Alert'
 import {
     Button,
     Card,
@@ -161,7 +162,6 @@ class UserPage extends Component {
      */
     handle_delete = (e) => {
         e.preventDefault();
-
         // Defining header and content-type for accessing authenticated information
         const options = {
             'Content-Type': 'application/json',
@@ -173,19 +173,22 @@ class UserPage extends Component {
          * Upon successful response, returns 204 not found.
          * Otherwise, send an error is thrown."
          */
-        axios
-            .delete(`/chatbotportal/authentication/delete/${this.state.id}/`, {headers: options})
-            .then(
-                response => {
-                    console.log(response.status)
-                },
-                error => {
-                    console.log(error);
-                }
-            );
+        if (this.context.security.id!= this.props.rowData.id){
+            axios
+                .delete(`/chatbotportal/authentication/delete/${this.props.rowData.id}/`, {headers: options})
+                .then(
+                    response => {
+                        console.log(response.status)
+                        window.location.reload();
 
-    };
+                    },
+                    error => {
+                        console.log(error);
+                    }
+                );
 
+        }
+    } 
     /**
      * This function handles the checkbox change options, and set the state accordingly
      * @param e : event

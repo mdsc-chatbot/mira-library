@@ -156,12 +156,12 @@ class UserUpdateByAdminSerializer(serializers.Serializer):
         :return: Updated instance
         """
         # Check if the validated data has an image
+        print(instance)
         if 'profile_picture' in validated_data:
             # If the validated data has an image, then check if the instance already has a valid image
             if os.path.isfile('media/' + instance.__dict__['profile_picture']):
                 # If the instance already has a valid image, then delete the image from the media
                 os.remove('media/' + instance.__dict__['profile_picture'])
-
         # Update the user instance
         instance.__dict__.update(validated_data)
 

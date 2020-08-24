@@ -57,7 +57,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         null=True,
     )
 
-    profile_picture = models.ImageField(blank=True, null=True, upload_to='profile_pics')
+    profile_picture = models.ImageField(blank=True, null=True, upload_to='profile_pics', default="profile_pic/default.png")
 
     submissions = models.IntegerField(blank=True, default=0)
     pending_submissions = models.IntegerField(blank=True, default=0)
