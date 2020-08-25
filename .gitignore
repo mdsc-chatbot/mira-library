@@ -1,22 +1,22 @@
-### IntelliJ IDEA ###
+# ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 /out/
 
-### Frontend ###
+# ### Frontend ###
 /ChatbotPortal/frontend/react/node_modules
 /ChatbotPortal/node_modules/
-/ChatbotPortal/frontend/react/webpack
+# # /ChatbotPortal/frontend/react/webpack
 /ChatbotPortal/frontend/react/package-lock.json
 
-### Backend ###
+# ### Backend ###
 /ChatbotPortal/db.sqlite3
 /ChatbotPortal/test_db.sqlite3
 /ChatbotPortal/media
 
-### Python ###
-__pycache__/
+# ### Python ###
+# __pycache__/
 
-.DS_Store
+# .DS_Store
