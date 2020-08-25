@@ -210,9 +210,9 @@ CSRF_COOKIE_NAME = "csrftoken"
 # Email Authentication Settings
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'portalChatbot@gmail.com'
-EMAIL_HOST_PASSWORD = 'Bolduc@!'
-EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'nddopen@ualberta.ca'
+EMAIL_HOST_PASSWORD = 'chatbot_portal'
+EMAIL_PORT = 587
 
 # EMAIL_HOST = 'smtp.gmail.com'
 # EMAIL_HOST_USER = 'testouremials@gmail.com'
