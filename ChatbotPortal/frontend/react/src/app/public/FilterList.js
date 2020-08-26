@@ -29,6 +29,18 @@ import styles from './FilterList.css';
 // Stores tags and categories
 export function FilterList({tags, categories, selectedTags, handleTagSelected, handleCategorySelected}) {
 
+    //Getting distinct tag sub-categories
+    const distinct = (value, index, self) => {
+        return self.indexOf(value)==index;
+    }
+    var allTagCategories = []
+    for(var i=0;i<tags.length;i++){
+        allTagCategories.push(tags[i].tag_category)
+    }
+    var distinctTagCategories = allTagCategories.filter(distinct)
+    distinctTagCategories.sort(function(a,b){
+        return a.localeCompare(b);
+    })
     if (tags.length > 0) {
         return (
             <Segment>
@@ -46,13 +58,28 @@ export function FilterList({tags, categories, selectedTags, handleTagSelected, h
                     </List.Item>
                     <List.Item>
                         <List.Header>Tags</List.Header>
-                        <List.Content>
-                            {tags.map(tag => (
-                                <List.Item key={tag.id}>
-                                    <Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} defaultChecked={selectedTags.includes(tag.id)}/>
-                                </List.Item>
-                            ))}
-                        </List.Content>
+                        <List>
+
+                            {distinctTagCategories.map(tag_category => (
+                            <List>
+                                <List.Header>{tag_category}</List.Header>
+
+                                <List.Content>
+                                {
+                                    tags.filter(tagCat => tagCat.tag_category == tag_category).map(tag => (
+                                        <List.Item key={tag.id}>
+                                            <Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} defaultChecked={selectedTags.includes(tag.id)}/>
+                                        </List.Item>
+                                    ))
+                                }
+                                </List.Content>
+                       
+                        </List>
+                         ))}
+                           
+                        
+                        </List>
+                        
                     </List.Item>
                 </List>
             </Segment>

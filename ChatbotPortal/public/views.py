@@ -122,7 +122,7 @@ class TagView(generics.ListAPIView):
     def get_queryset(self):
         # TODO: Only approved tags?? Waiting for client confirmation
         # TODO: Tag sorting? (Sort desc by most used)
-        return Tag.objects.filter(approved=True)
+        return Tag.objects.filter(approved=True).order_by('name')
 
 
 class CategoryView(generics.ListAPIView):

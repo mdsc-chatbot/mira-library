@@ -25,7 +25,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
-import Alert from 'react-bootstrap/Alert'
 import {
     Button,
     Card,
