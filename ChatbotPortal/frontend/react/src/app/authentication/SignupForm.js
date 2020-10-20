@@ -119,10 +119,13 @@ class SignupForm extends React.Component {
 
 
 
-    // Removing Consent Form
     validate_signup_form = (e, state) =>{
+        if (state.consent === false){
+            this.setState({is_validated:false});
+        }else{
             this.props.handle_signup(e, state);
             this.setState(this.baseState);
+        }
     };
 
     render() {
@@ -192,7 +195,7 @@ class SignupForm extends React.Component {
                                 onChange={this.handle_password2}
                             />
 
-                            {/* {
+{
                                 this.state.is_validated ? (
                                     <Form.Checkbox
                                         fluid
@@ -214,11 +217,6 @@ class SignupForm extends React.Component {
                                         }}
                                     />
                                 )
-                            } */}
-
-                            {/* Removing Consent form and setting the validated state to true */}
-                            {
-                                this.state.is_validated = true
                             }
 
                             <Button
