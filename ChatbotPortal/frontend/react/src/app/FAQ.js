@@ -95,12 +95,7 @@ export class FAQ extends Component {
                 </p>
             ),
 
-            // "What are points and how do I gain points?": (
-            //     <p>
-            //         Points are used for various benefits. As a user you can gain points by having
-            //         your submitted resource approved. Each approved resource is worth 1 points.
-            //     </p>
-            // ),
+
 
             "What are the rating on each resource and how is each submitted resource being rated?": (
                 <p>
