@@ -42,7 +42,7 @@ SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['162.246.157.169', '127.0.0.1','localhost','10.8.10.160']
+ALLOWED_HOSTS = ['142.244.23.73', '127.0.0.1','localhost','10.8.10.159']
 
 # Application definition
 
@@ -199,7 +199,8 @@ JWT_AUTH = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
+    'http://142.244.23.73:8000',
+    'http://localhost:8000'
 ]
 
 # Changes the built-in user model to ours

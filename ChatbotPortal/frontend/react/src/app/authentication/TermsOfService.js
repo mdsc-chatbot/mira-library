@@ -31,18 +31,22 @@ export class TermsOfService extends Component {
             <div>
                 <Modal trigger={<Header as="h5" color="blue" className={styles.link}>Terms of Service</Header>}
                        closeIcon>
-                    <Modal.Header>PRIVACY NOTICE – NDD RESOURCE PORTAL SUBMISSION </Modal.Header>
+                    <Modal.Header>ONLINE CONSENT AND PRIVACY NOTICE – Neurodevelopmental Disability Portal </Modal.Header>
                     <Modal.Content scrolling>
+                    <b>Study Title:</b>  <i>Canadian Network for Personalized Interventions in Intellectual Disability</i>
+                    
+                    <b>Principal Investigator:</b>  <i>Dr. Francois Bolduc, MD, PhD FRCPC</i>       Ph: 780-492-9616 <br/><br/>
                     Thank you for choosing to register at Neurodevelopmental Disability (NDD) Resource Portal. 
                     You are being asked to use a novel tool for providing and storing resources related to neurodevelopmental disability (NDD). 
                     Before you agree to participate in this project, please take the time to read the following consent form and make sure you understand its contents. <br/><br/>
                     
                     If you have any questions or concerns about this privacy notice,
-                    or our practices with regards to your personal information, please contact the research coordinator at <b>780-492-7034</b>. <br/>
+                    or our practices with regards to your personal information, please contact the research coordinator at <b>780-492-7034</b> or <a>nddopen@ualberta.ca</a>. <br/>
+                    
                     In this privacy notice, we seek to explain to you in the clearest way possible what information we collect, how we use it and what rights you have in relation to it. We hope you take some time to read through it carefully, 
                     as it is important. If there are any terms in this privacy notice that you do not agree with, please discontinue use of our Services immediately. 
 
-                    <b>Please read this privacy notice carefully as it will help you understand what we do with the</b><br/><br/>
+                    <b>Please read this privacy notice carefully as it will help you understand your participation in the project. </b><br/><br/>
 
                     <b>1. WHAT IS THE PURPOSE AND BACKGROUND OF THIS STUDY? </b><br/>
                     The main purpose of the study is to find new ways to improve access to services and information for individuals with intellectual disability and their families. 
