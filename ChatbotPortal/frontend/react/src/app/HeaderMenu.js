@@ -58,8 +58,7 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h2" style={{ color: "#0072BB"}}>
-                                <Image src={require("./logo/512.ico")} size='small' alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                NDD Resource Portal
+                                <img src={require("./logo/logo_transparent.ico")} size='large' alt={"NDD Portal"}/>
                             </Header>
                         </Link>
                     </Menu.Item>
@@ -161,8 +160,7 @@ export class HeaderMenu extends Component {
                     >
                         <Link to={baseRoute}>
                             <Header as="h4" style={{ color: "#3075c9" }}>
-                                <Image size='mini' src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                NDD Resource Portal
+                                <img size='mini' src={require("./logo/logo_transparent.ico")} alt={"NDD Portal"} ui wrapped/>
                             </Header>
                         </Link>
                     </Menu.Item>
@@ -286,8 +284,7 @@ export class HeaderMenu extends Component {
                             :
                             <Menu inverted fluid pointing secondary size="large">
                                 <Header as="h2" style={{ color: "#3075c9", paddingLeft: 50 }}>
-                                    <Image src={require("./logo/512.ico")} alt={"Icons made by Freepik from www.flaticon.com modified by The Fabulous Five"} ui wrapped/>
-                                    NDD Resource Portal
+                                    <img src={require("./logo/logo_transparent.ico")} alt={"NDD Portal"} size="medium" ui wrapped/>
                                 </Header>
                             </Menu>
                         }
