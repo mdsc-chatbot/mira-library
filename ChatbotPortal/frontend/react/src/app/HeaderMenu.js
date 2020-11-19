@@ -63,7 +63,7 @@ export class HeaderMenu extends Component {
             active={activeItem === 'Home'}
             onClick={this.handleItemClick}
           >
-            <img src='./logo/logo_transparent.png' />
+            <Image size='mini' src='./logo/logo_transparent.png' />
           </Menu.Item>
 
           <Menu.Item
