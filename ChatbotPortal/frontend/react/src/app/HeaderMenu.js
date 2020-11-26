@@ -60,11 +60,18 @@ export class HeaderMenu extends Component {
         <Menu inverted fluid pointing secondary size='large'>
           {/* https://ibb.co/XtcDn2K
 https://ibb.co/Kzt2YwF */}
-
-          <img
-            style={{ margin: '10px', maxWidth: '40px' }}
-            src='https://i.ibb.co/6Fj8KnT/logo1x.png'
-          />
+          <Menu.Item
+            as='a'
+            style={{ paddingLeft: 10 }}
+            active={activeItem === 'Home'}
+            onClick={this.handleItemClick}
+            to={baseRoute}
+          >
+            <img
+              style={{ margin: '10px', maxWidth: '70px' }}
+              src='https://i.ibb.co/6Fj8KnT/logo1x.png'
+            />
+          </Menu.Item>
 
           <Menu.Item
             name='Public Resources'
@@ -162,12 +169,12 @@ https://ibb.co/Kzt2YwF */}
             style={{ paddingLeft: 10 }}
             active={activeItem === 'Home'}
             onClick={this.handleItemClick}
+            to={baseRoute}
           >
-            <Link to={baseRoute}>
-              <Header as='h4' style={{ color: '#3075c9' }}>
-                <img src={logo} alt={'NDD Portal'} ui wrapped />
-              </Header>
-            </Link>
+            <img
+              style={{ margin: '10px', maxWidth: '50px' }}
+              src='https://i.ibb.co/6Fj8KnT/logo1x.png'
+            />
           </Menu.Item>
           <Menu.Menu
             position='right'
