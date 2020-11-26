@@ -36,6 +36,7 @@ import { SecurityContext } from './contexts/SecurityContext';
 import { MenuContext } from './contexts/MenuContext';
 import styles from './App.css';
 import ownStyles from './HeaderMenu.css';
+import logo from './logo/logo2x.png';
 
 /**
  * This class renders the Header Menu of a logged in user
@@ -63,7 +64,7 @@ export class HeaderMenu extends Component {
             active={activeItem === 'Home'}
             onClick={this.handleItemClick}
           >
-            <Image size='mini' src='./logo/logo_transparent.png' />
+            <Image src={logo} />
           </Menu.Item>
 
           <Menu.Item
