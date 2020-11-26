@@ -64,7 +64,7 @@ export class HeaderMenu extends Component {
             active={activeItem === 'Home'}
             onClick={this.handleItemClick}
           >
-            <Image src={logo} />
+            <img src={logo} alt={'NDD Portal'} ui wrapped />
           </Menu.Item>
 
           <Menu.Item
@@ -166,13 +166,7 @@ export class HeaderMenu extends Component {
           >
             <Link to={baseRoute}>
               <Header as='h4' style={{ color: '#3075c9' }}>
-                <img
-                  size='mini'
-                  src={require('./logo/logo_transparent.ico')}
-                  alt={'NDD Portal'}
-                  ui
-                  wrapped
-                />
+                <img src={logo} alt={'NDD Portal'} ui wrapped />
               </Header>
             </Link>
           </Menu.Item>
