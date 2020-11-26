@@ -58,14 +58,10 @@ export class HeaderMenu extends Component {
     return (
       <React.Fragment>
         <Menu inverted fluid pointing secondary size='large'>
-          <Menu.Item
-            as='a'
-            style={{ paddingLeft: 10 }}
-            active={activeItem === 'Home'}
-            onClick={this.handleItemClick}
-          >
-            <img src={logo} alt={'NDD Portal'} ui wrapped />
-          </Menu.Item>
+          <img
+            style={{ margin: '10px', maxWidth: '40px' }}
+            src='https://react.semantic-ui.com/logo.png'
+          />
 
           <Menu.Item
             name='Public Resources'
