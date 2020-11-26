@@ -61,21 +61,9 @@ export class HeaderMenu extends Component {
           {/* https://ibb.co/XtcDn2K
 https://ibb.co/Kzt2YwF */}
 
-          <Menu.Item
-            as='a'
-            style={{ marginLeft: '10px' }}
-            active={activeItem === 'Home'}
-            onClick={this.handleItemClick}
-          >
-            <img
-              style={{ maxWidth: '40px' }}
-              src='https://ibb.co/XtcDn2K'
-              alt={'NDD Portal'}
-            />
-          </Menu.Item>
           <img
             style={{ margin: '10px', maxWidth: '40px' }}
-            src='https://react.semantic-ui.com/logo.png'
+            src='https://i.ibb.co/6Fj8KnT/logo1x.png'
           />
 
           <Menu.Item
