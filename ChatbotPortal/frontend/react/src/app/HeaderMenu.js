@@ -58,7 +58,25 @@ export class HeaderMenu extends Component {
     return (
       <React.Fragment>
         <Menu inverted fluid pointing secondary size='large'>
-          <img style={{ margin: '10px', maxWidth: '40px' }} src={logo} />
+          {/* https://ibb.co/XtcDn2K
+https://ibb.co/Kzt2YwF */}
+
+          <Menu.Item
+            as='a'
+            style={{ marginLeft: '10px' }}
+            active={activeItem === 'Home'}
+            onClick={this.handleItemClick}
+          >
+            <img
+              style={{ maxWidth: '40px' }}
+              src='https://ibb.co/XtcDn2K'
+              alt={'NDD Portal'}
+            />
+          </Menu.Item>
+          <img
+            style={{ margin: '10px', maxWidth: '40px' }}
+            src='https://react.semantic-ui.com/logo.png'
+          />
 
           <Menu.Item
             name='Public Resources'
