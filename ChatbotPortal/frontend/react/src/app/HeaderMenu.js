@@ -60,18 +60,18 @@ export class HeaderMenu extends Component {
         <Menu inverted fluid pointing secondary size='large'>
           {/* https://ibb.co/XtcDn2K
 https://ibb.co/Kzt2YwF */}
-          <Menu.Item
-            as='a'
-            style={{ paddingLeft: 10 }}
+          <a
+            href={baseRoute}
             active={activeItem === 'Home'}
             onClick={this.handleItemClick}
-            to={baseRoute}
           >
             <img
-              style={{ margin: '10px', maxWidth: '70px' }}
-              src='https://i.ibb.co/6Fj8KnT/logo1x.png'
+              style={{ padding: '-10px', maxWidth: '170px' }}
+              src='https://i.ibb.co/0V0Ckth/logo2x.png'
+              alt='logo2x'
+              border='0'
             />
-          </Menu.Item>
+          </a>
 
           <Menu.Item
             name='Public Resources'
@@ -164,18 +164,19 @@ https://ibb.co/Kzt2YwF */}
     return (
       <React.Fragment>
         <Menu inverted pointing fluid widths={2} size='small'>
-          <Menu.Item
-            as='a'
-            style={{ paddingLeft: 10 }}
+          <a
+            href={baseRoute}
             active={activeItem === 'Home'}
             onClick={this.handleItemClick}
-            to={baseRoute}
           >
             <img
-              style={{ margin: '10px', maxWidth: '50px' }}
-              src='https://i.ibb.co/6Fj8KnT/logo1x.png'
+              style={{ padding: '-10px', maxWidth: '120px' }}
+              src='https://i.ibb.co/0V0Ckth/logo2x.png'
+              alt='logo2x'
+              border='0'
             />
-          </Menu.Item>
+          </a>
+
           <Menu.Menu
             position='right'
             className={`${ownStyles.fullWidthListbox} ${ownStyles.marginRightMenu}`}
