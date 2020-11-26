@@ -58,10 +58,7 @@ export class HeaderMenu extends Component {
     return (
       <React.Fragment>
         <Menu inverted fluid pointing secondary size='large'>
-          <img
-            style={{ margin: '10px', maxWidth: '40px' }}
-            src='https://react.semantic-ui.com/logo.png'
-          />
+          <img style={{ margin: '10px', maxWidth: '40px' }} src={logo} />
 
           <Menu.Item
             name='Public Resources'
