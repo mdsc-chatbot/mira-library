@@ -153,9 +153,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 
-STATICFILES_DIRS = (Jais
+STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'media', 'profile_pics'),
-     os.path.join(BASE_DIR, 'frontend','react','src','logo'),
+    os.path.join(BASE_DIR, 'frontend','react','src','logo'),
 )
 
 REST_FRAMEWORK = {
