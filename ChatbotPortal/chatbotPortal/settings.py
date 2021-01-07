@@ -102,21 +102,21 @@ WSGI_APPLICATION = 'chatbotPortal.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'main_db',
+    #     'USER': 'admin',
+    #     'PASSWORD': 'admin@123',
+    #     'HOST': '',
+    #     'PORT': '',
+    #     'TEST': {
+    #         'NAME': 'test_main_db'
+    #     }
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'main_db',
-        'USER': 'admin',
-        'PASSWORD': 'admin@123',
-        'HOST': '',
-        'PORT': '',
-        'TEST': {
-            'NAME': 'test_main_db'
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
 }
 # if 'test' in sys.argv:
 #     DATABASES['default'] = {
@@ -153,8 +153,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'
 
-STATICFILES_DIRS = (
+STATICFILES_DIRS = (Jais
     os.path.join(BASE_DIR, 'media', 'profile_pics'),
+     os.path.join(BASE_DIR, 'frontend','react','src','logo'),
 )
 
 REST_FRAMEWORK = {
