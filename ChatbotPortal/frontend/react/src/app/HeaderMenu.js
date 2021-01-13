@@ -58,8 +58,11 @@ export class HeaderMenu extends Component {
     return (
       <React.Fragment>
         <Menu inverted fluid pointing secondary size='large'>
-          {/* https://ibb.co/XtcDn2K
-https://ibb.co/Kzt2YwF */}
+          {/* 
+https://ibb.co/3fG4zSj
+https://ibb.co/KsctrDz
+https://ibb.co/9wx9pbr */}
+
           <a
             href={baseRoute}
             active={activeItem === 'Home'}
@@ -67,7 +70,7 @@ https://ibb.co/Kzt2YwF */}
           >
             <img
               style={{ padding: '-10px', maxWidth: '170px' }}
-              src='https://i.ibb.co/0V0Ckth/logo2x.png'
+              src='https://i.ibb.co/3fG4zSj/logo-1x.png'
               alt='logo2x'
               border='0'
             />
