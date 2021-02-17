@@ -49,6 +49,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=False,
         null=True,
     )
+
+    gender = models.CharField(
+        verbose_name='Gender',
+        blank= True,
+        max_length= 100,
+        unique= False,
+        null= True
+    )
     affiliation = models.TextField(
         verbose_name='Reason for opening account',
         blank=True,

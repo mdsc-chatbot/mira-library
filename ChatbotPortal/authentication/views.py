@@ -77,20 +77,25 @@ class CurrentUserView(generics.RetrieveAPIView):
         """
         # logout(request)
         # Check if the request has a session associated with it
-        if bool(request.session.session_key):
-            # if bool(request.session._session):
-            session_key = request.session.session_key
-            session = Session.objects.get(session_key=session_key)
-            session_data = session.get_decoded()
-            uid = session_data.get('_auth_user_id')
-            # uid = request.session._session['_auth_user_id']
-            user = CustomUser.objects.get(id=uid)
+        # if bool(request.session.session_key):
+        #     # if bool(request.session._session):
+        #     session_key = request.session.session_key
+        #     session = Session.objects.get(session_key=session_key)
+        #     session_data = session.get_decoded()
+        #     uid = session_data.get('_auth_user_id')
+        #     # uid = request.session._session['_auth_user_id']
+        #     user = CustomUser.objects.get(id=uid)
 
-            if user is not None:
-                serializer = CustomUserTokenSerializer(user, context={'request': request})
-                return Response(data=serializer.data, status=status.HTTP_200_OK)
+        #     if user is not None:
+        #         serializer = CustomUserTokenSerializer(user, context={'request': request})
+        #         return Response(data=serializer.data, status=status.HTTP_200_OK)
+        # return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        user = request.user
+        print(user)
+        if user.is_authenticated:
+            serializer = CustomUserTokenSerializer(user, context={'request': request})
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-
 
 class LoginView(generics.CreateAPIView):
     """

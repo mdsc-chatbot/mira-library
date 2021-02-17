@@ -101,6 +101,7 @@ class LoginPage extends Component {
                         response.data['is_logged_in'] = true;
                         this.context.setSecurity(response.data);
                         this.setState({login_error: false});
+                        localStorage.setItem('token',response.data.token)
                         console.log(this.context.security);
                     } else if (response.status === 203) {
                         this.setState({message: response.data.message, login_error: true});

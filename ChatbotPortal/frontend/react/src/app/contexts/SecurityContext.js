@@ -73,7 +73,9 @@ class InnerSecurityContextProvider extends React.Component {
     get_the_current_user = () => {
 
         axios
-            .get('/chatbotportal/authentication/currentuser/', {withCredentials: true})
+            .get('/chatbotportal/authentication/currentuser/', {
+                headers: {'Authorization': `Bearer ${localStorage.getItem('token')}`}
+            })
             .then(
                 response => {
                     /**

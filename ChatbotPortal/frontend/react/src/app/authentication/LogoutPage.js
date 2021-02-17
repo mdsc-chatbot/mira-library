@@ -62,6 +62,7 @@ class LogoutPage extends Component {
                         this.context.setSecurity({
                             is_logged_in: false
                         });
+                        localStorage.setItem('token', '')
                     }
                 },
                 error => {
