@@ -23,6 +23,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from enum import Enum
 from django.db import models
 
 import urllib
@@ -30,9 +31,10 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 from .validators import validate_file_size
-from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator
+from django.core.validators import URLValidator, MaxValueValidator, MinValueValidator, RegexValidator
 import ssl
 import requests
+from django.utils.translation import gettext as _
 
 class ResourceManager(models.Manager):
 
@@ -81,7 +83,7 @@ class Tag(models.Model):
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-
+      
 
 class Resource(models.Model):
 
@@ -111,3 +113,38 @@ class Resource(models.Model):
     public_view_count = models.IntegerField(default=0)
 
     objects = ResourceManager()
+
+    #fields added for MDSC chatbot portal
+    distress_level_min = models.IntegerField(default=0, validators = [MaxValueValidator(10), MinValueValidator(0)])
+    distress_level_max = models.IntegerField(default=6, validators = [MaxValueValidator(10), MinValueValidator(0)])
+
+    SERVICE = 'SR'#, _('Program/Service')
+    RESOURCE = 'RS'#, _("Educational/Informational")
+    BOTH = 'BT'#, _("Both")
+    ResourceTypeEnumChoices = [
+        (SERVICE, 'Program/Service'),
+        (RESOURCE, 'Educational/Informational'),
+        (BOTH, 'Service/Resource'),
+    ]
+    resource_type = models.CharField(
+        max_length=2,
+        choices=ResourceTypeEnumChoices,
+        default="RS",
+    )
+
+    #text the chatbot should give when presenting this resource
+    chatbot_text = models.TextField(
+        blank=True, null=True)
+
+    #both phone and text number fields expect the page to process the given numbers into the format "12345678;18263849;" etc with each number ending in a semicolon
+    phone_regex = RegexValidator(regex=r'^(\d{10,15}\;)*$', message="Phone number must be entered in the format: '9999999999', one per line. Up to 15 digits allowed per number.")
+    phone_numbers = models.TextField(validators=[phone_regex], blank=True) # validators should be a list
+
+    text_regex = RegexValidator(regex=r'^(\d{3,15}\;)*$', message="Text number must be entered in the format: '9999', one per line. Up to 15 digits allowed per number.")
+    text_numbers = models.TextField(validators=[text_regex], blank=True) # validators should be a list
+
+    email = models.EmailField(max_length=254, blank=True, null=True)
+
+    references = models.TextField(blank=True, null=True)
+
+    definition = models.TextField(blank=True, null=True)
