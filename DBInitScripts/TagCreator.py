@@ -1,13 +1,10 @@
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#THIS WILL TRUNCATE THE TAGS TABLE, USE WITH CAUTION!
-#YOU SHOULD CLEAR THE EXISTING RESOURCE, THEN
-#IMPORT THE MDSC ONES AFTER UPDATING THE TAGS
+#THIS WILL TRUNCATE BOTH TAG TABLES AND ALL RESOURCES! 
+#               USE WITH EXTREME CAUTION!
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-from re import MULTILINE
 import mysql.connector
-import csv
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -21,7 +18,12 @@ mycursor = mydb.cursor()
 sql = "SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE resource_tag;SET FOREIGN_KEY_CHECKS = 1;" 
 for result in mycursor.execute(sql, multi=True):
     print(result.fetchall())
-
+sql = "SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE resource_resource_tags;SET FOREIGN_KEY_CHECKS = 1;" 
+for result in mycursor.execute(sql, multi=True):
+    print(result.fetchall())
+    sql = "SET FOREIGN_KEY_CHECKS = 0;TRUNCATE TABLE resource_resource;SET FOREIGN_KEY_CHECKS = 1;" 
+for result in mycursor.execute(sql, multi=True):
+    print(result.fetchall())
 
 agetags = [
     "Infant (0-1 years)","Toddler (1-3 years)","Preschool (3-4 years)","Child/Youth (0-17 years)","Child/Youth (0-13 years)","Adolescents/Teens (13-17 years)",
@@ -39,7 +41,7 @@ langtags = [
     "Chinese Simplified","Chinese Traditional"
 ]
 for tag in langtags:
-    sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Language Group', 1);" 
+    sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Language', 1);" 
     mycursor.execute(sql)
 
 orgtags = ["MDSC"]
@@ -52,7 +54,7 @@ healthtag = [
     "All/Any","Anger","Anorexia","Antisocial Personality Disorder (ASPD), Psychopathy, and Conduct Disorder","Anxiety","Asperger Syndrome","Attachment Problems",
     "Attention Deficit Disorders (ADD/ADHD)","Auditory Processing Disorder (APD)","Autism and Autism Spectrum Disorders","Behaviour and Conduct Problems",
     "Bipolar Disorders","Borderline Personality Disorder (BPD)","Bulimia","Bullying","Cancer","Adjustment disorders ","Delirium","Dementia including Alzheimer''s",
-    "Depression","Depression","Developmental Coordination Disorder (DCD)","Developmental, Intellectual Delay and Disabilities","Personality disorders",
+    "Depression","Developmental Coordination Disorder (DCD)","Developmental, Intellectual Delay and Disabilities","Personality disorders",
     "Domestic Violence","Down syndrome","Eating Disorders including Anorexia and Bulimia","Elimination Disorders",
     "Fetal Alcohol and Fetal Alcohol Spectrum Disorders (FASD)","Firesetting","Gender Identity Issues","General well-being","General Distress",
     "Grief and Bereavement","Hoarding","Infant and Early Childhood Mental Health (IECMH)","Insomnia","Learning Disorders","Medication Treatment",
@@ -131,6 +133,16 @@ for tag in nsCityTags:
 nsRegionTags = ["Central Nova Scotia","Eastern Nova Scotia","Northern Nova Scotia","Western Nova Scotia"]
 for tag in nsRegionTags:
     sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Locations/Nova Scotia Regions', 1);" 
+    mycursor.execute(sql)
+
+resCatTags = ["Peer-Support","Crisis Support/Distress Counselling","Online Course/Webinar","Informational (text, document, and/or video for information only)"]
+for tag in resCatTags:
+    sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Resource Category', 1);" 
+    mycursor.execute(sql)
+
+resFormatTags = ["Website","Definition/Stat","Phone Number","Online Chat","Email","Online Course","Video","Picture/Graphic","Physical Address","Text Messaging"]
+for tag in resFormatTags:
+    sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Resource Format', 1);" 
     mycursor.execute(sql)
 
 mydb.commit()
