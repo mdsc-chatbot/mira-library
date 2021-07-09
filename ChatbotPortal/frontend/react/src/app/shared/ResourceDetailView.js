@@ -70,24 +70,47 @@ function reviews(reviewComments){
 
 function normal_header(resource) {
     return (
-        <Menu text>
-            <Menu.Item>
-                <Header as="h2">
-                    <div>
-                        <span>
-                            <Icon name="globe" />
-                            <Header.Content id="title_header">{resource.title}</Header.Content>
-                        </span>
-                        <a href={resource.url} target="_blank" id="url">
-                            <h4 className={linkStyles.link}>{resource.url}</h4>
-                        </a>
-                    </div>
-                </Header>
-            </Menu.Item>
-            <Menu.Item position="right">
-                <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
-            </Menu.Item>
-        </Menu>
+        <Container>
+            <Menu text>
+                <Menu.Item>
+                    <Header as="h2">
+                        <div>
+                            <span>
+                                <Icon name="globe" />
+                                <Header.Content id="title_header">{resource.title}</Header.Content>
+                            </span>
+                            <a href={resource.url} target="_blank" id="url">
+                                <h4 className={linkStyles.link}>{resource.url}</h4>
+                            </a>
+                        </div>
+                    </Header>
+                </Menu.Item>
+                <Menu.Item position="right">
+                    <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
+                </Menu.Item>
+            </Menu>
+            <Menu>
+                <Menu.Item>
+                    <h4>{resource.general_url}</h4>
+                </Menu.Item>
+                <Menu.Item position="right">
+                    <h4>{resource.phone_numbers}</h4>
+                </Menu.Item>
+            </Menu>
+            <Menu>
+                <Menu.Item>
+                    <h4>{resource.text_numbers}</h4>
+                </Menu.Item>
+                <Menu.Item position="right">
+                    <h4>{resource.email}</h4>
+                </Menu.Item>
+            </Menu>
+            <Menu>
+                <Menu.Item>
+                    <h4>{resource.definition}</h4>
+                </Menu.Item>
+            </Menu>
+        </Container>
     );
 }
 
