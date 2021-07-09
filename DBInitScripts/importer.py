@@ -37,16 +37,20 @@ with open('./data.csv',newline='\n') as csvfile:
             print("Stopping import. Import will be rolled back. See above error for details.")
             mydb.rollback()
             exit("Quitting.")
-          if tag <= 12:
+          if tag <= 15:
             #handle field entry
             if tag == 0: #skip tags
               continue 
             elif tag == 1: #username
               fields+="created_by_user, "
-              fieldvalues.append(str("FROM IMPORT: " + field))
+              fieldvalues.append(str(field + "- FROM IMPORT"))
               valuessql+="%s, "
             elif tag == 2: #title
               fields+="title, "
+              fieldvalues.append(field)
+              valuessql+="%s, "
+            elif tag == 3: #title
+              fields+="comments, "
               fieldvalues.append(field)
               valuessql+="%s, "
             elif tag == 4: #resource description
@@ -92,12 +96,28 @@ with open('./data.csv',newline='\n') as csvfile:
               fields+="`references`, "
               fieldvalues.append(field)
               valuessql+="%s, "
+            elif tag == 12:
+              fields+="phone_numbers, "
+              fieldvalues.append(field)
+              valuessql+="%s, "
+            elif tag == 13:
+              fields+="text_numbers, "
+              fieldvalues.append(field)
+              valuessql+="%s, "
+            elif tag == 14:
+              fields+="email, "
+              fieldvalues.append(field)
+              valuessql+="%s, "
+            elif tag == 15:
+              fields+="physical_address, "
+              fieldvalues.append(field)
+              valuessql+="%s, "
             else:
               print("Unknown field tag '" + tag + "'")
               mydb.rollback()
               exit("Rollback finished. Quitting.")
           else:
-            taglist.append(tag - 12)
+            taglist.append(tag - 15)
           
       #add final distress values for row
       if mindistress > 0 and maxdistress < 11:

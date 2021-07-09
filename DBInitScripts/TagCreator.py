@@ -26,7 +26,7 @@ for result in mycursor.execute(sql, multi=True):
     print(result.fetchall())
 
 agetags = [
-    "Infant (0-1 years)","Toddler (1-3 years)","Preschool (3-4 years)","Child/Youth (0-17 years)","Child/Youth (0-13 years)","Adolescents/Teens (13-17 years)",
+    "All ages","Infant (0-1 years)","Toddler (1-3 years)","Preschool (3-4 years)","Child/Youth (0-17 years)","Child/Youth (0-13 years)","Adolescents/Teens (13-17 years)",
     "Transitional age (16-24 years)","Adult (18+)","Older Adult (55+)"
 ]
 
@@ -96,7 +96,7 @@ for tag in timetags:
     mycursor.execute(sql)
 
 
-locationtags = ["All Canada","Alberta City","Alberta Region","Nova Scotia City","Nova Scotia Region"]
+locationtags = ["All Canada","Alberta Wide","Nova Scotia Wide","Alberta City","Alberta Region","Nova Scotia City","Nova Scotia Region"]
 for tag in locationtags:
     sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Locations', 1);" 
     mycursor.execute(sql)
