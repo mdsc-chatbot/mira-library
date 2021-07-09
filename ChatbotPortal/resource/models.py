@@ -152,3 +152,5 @@ class Resource(models.Model):
     general_url = models.TextField(blank=True, null=True)
 
     description = models.TextField(blank=True, null=True)
+
+    physical_address = models.TextField(blank=True, null=True)
