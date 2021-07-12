@@ -38,7 +38,7 @@ export default class ResourceSubmitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: "Unknown title",
+            title: "",
             url: "",
             rating: 1,
             attachment: null,
@@ -64,7 +64,7 @@ export default class ResourceSubmitForm extends Component {
         }
         const resourceFormData = new FormData();
 
-        resourceFormData.append("title", "Unknown title");
+        resourceFormData.append("title", this.state.title);
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
@@ -177,6 +177,16 @@ export default class ResourceSubmitForm extends Component {
                                 }/>
                                 {securityContext.security.is_logged_in ? (
                                     <div>
+                                        <Form.Input
+                                                fluid
+                                                required
+                                                name="title"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.title}
+                                                label="Enter Title"
+                                                placeholder="title"
+                                            />
                                         {this.state.url_validated ? (
                                             <Form.Input
                                                 required
