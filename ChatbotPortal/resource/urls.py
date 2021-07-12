@@ -31,6 +31,7 @@ from . import views
 urlpatterns = [
     re_path(r'^create-tag$', views.TagCreateView.as_view(), name='create-tag'),
     re_path(r'^fetch-tags$', views.fetch_tags, name='fetch-tags'),
+    re_path(r'^fetch-tags-by-cat$', views.fetch_tags_by_cat, name='fetch-tags-by-cat'),
     re_path(r'^download-attachment/(?P<resource_id>.*)$',
             views.download_attachment, name='download-attachment'),
     re_path(r'^get-tags/(?P<resource_id>.*)$', views.gettags, name='fetch-review-tags'),

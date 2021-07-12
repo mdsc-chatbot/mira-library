@@ -46,6 +46,7 @@ export default class TagDropdown extends React.Component {
             selectedOptions: [], // selected options so that the current values don't 'disappear' in the UI
             searchRequestCancelToken: null,
         };
+        this.tagCat = props.tagCat;
     }
 
     handleChange = (event, data) => {
@@ -87,16 +88,37 @@ export default class TagDropdown extends React.Component {
         // Prepare for promise cancellation
         const source = CancelToken.source();
 
+
+        var keyDict;
+        var fetchURL;
+        if(this.tagCat == null)
+        {
+            fetchURL = "/chatbotportal/resource/fetch-tags"
+            keyDict = {
+                params: {
+                    name: searchQuery
+                },
+                cancelToken: source.token
+            }
+        }
+        else
+        {
+            fetchURL = "/chatbotportal/resource/fetch-tags-by-cat"
+            keyDict = {
+                params: {
+                    name: searchQuery,
+                    tag_category: this.tagCat
+                },
+                cancelToken: source.token
+            }
+        }
+        
+
         // Fetch search results
         axios
             .get(
-                "/chatbotportal/resource/fetch-tags",
-                {
-                    params: {
-                        name: searchQuery
-                    },
-                    cancelToken: source.token
-                },
+                fetchURL,
+                keyDict,
                 {
                     headers: {Authorization: `Bearer ${this.context.security.token}`}
                 }
@@ -183,4 +205,5 @@ export default class TagDropdown extends React.Component {
 TagDropdown.propTypes = {
     value: PropTypes.array,
     onChange: PropTypes.func,
+    tagCat: PropTypes.string
 };

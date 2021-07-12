@@ -64,6 +64,15 @@ def fetch_tags(request):
         # Return empty http response if can't find tags
         return HttpResponse()
 
+def fetch_tags_by_cat(request):
+    try:
+        tag_set = Tag.objects.filter(
+            name__contains=request.GET['name'], tag_category__contains=request.GET['tag_category'], approved=True).values('id', 'name')
+        return JsonResponse(list(tag_set), safe=False)
+    except:
+        # Return empty http response if can't find tags
+        return HttpResponse()
+
 def fetch_categories(request):
     category_set = Category.objects.all().values()
     return JsonResponse(list(category_set), safe=False)

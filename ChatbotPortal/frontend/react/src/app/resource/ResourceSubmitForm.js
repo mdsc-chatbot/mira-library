@@ -44,6 +44,9 @@ export default class ResourceSubmitForm extends Component {
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
+            definition: "",
+            email: "",
+            phone_number: "",
 
             category: 1,
             tags: [],
@@ -71,6 +74,9 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
         resourceFormData.append("category", this.state.category);
+        resourceFormData.append("email", this.state.email);
+        resourceFormData.append("definition", this.state.definition);
+        resourceFormData.append("phone_number", this.state.phone_number);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -187,9 +193,26 @@ export default class ResourceSubmitForm extends Component {
                                                 label="Enter Title"
                                                 placeholder="title"
                                             />
+                                            <Form.Input
+                                                fluid
+                                                name="phone_number"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.phone_number}
+                                                label="Enter Phone Number"
+                                                placeholder="###########"
+                                            />
+                                            <Form.Input
+                                                fluid
+                                                name="email"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.email}
+                                                label="Enter Email Address"
+                                                placeholder="Email"
+                                            />
                                         {this.state.url_validated ? (
                                             <Form.Input
-                                                required
                                                 name="url"
                                                 onChange={this.handleChange}
                                                 width={16}
@@ -213,6 +236,7 @@ export default class ResourceSubmitForm extends Component {
                                                 placeholder="https://"
                                             />
                                         )}
+
                                         <Form.Field>
                                             <label>Resource Usefulness Rating</label>
                                             <Rating
@@ -227,7 +251,7 @@ export default class ResourceSubmitForm extends Component {
                                                 size="massive"
                                             />
                                         </Form.Field>
-
+                                        
                                         <Form.Field>
                                             <label>Category</label>
                                             <CategoryDropdown
@@ -237,7 +261,51 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field>
 
                                         <Form.Field>
-                                            <label>Tags</label>
+                                            <label>Age Tags</label>
+                                            <Form.Group className={styles.dropdownPadding}>
+                                                <TagDropdown
+                                                    name="tags"
+                                                    value={this.state.tags}
+                                                    tagCat="Age Group"
+                                                    onChange={tags => this.setState({ tags })}
+                                                />
+                                            </Form.Group>
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Location Tags</label>
+                                            <Form.Group className={styles.dropdownPadding}>
+                                                <TagDropdown
+                                                    name="tags"
+                                                    value={this.state.tags}
+                                                    tagCat="Locations"
+                                                    onChange={tags => this.setState({ tags })}
+                                                />
+                                            </Form.Group>
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Health Issue Tags</label>
+                                            <Form.Group className={styles.dropdownPadding}>
+                                                <TagDropdown
+                                                    name="tags"
+                                                    value={this.state.tags}
+                                                    tagCat="Health Issue Group"
+                                                    onChange={tags => this.setState({ tags })}
+                                                />
+                                            </Form.Group>
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Language Tags</label>
+                                            <Form.Group className={styles.dropdownPadding}>
+                                                <TagDropdown
+                                                    name="tags"
+                                                    value={this.state.tags}
+                                                    tagCat="Language"
+                                                    onChange={tags => this.setState({ tags })}
+                                                />
+                                            </Form.Group>
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Misc Tags</label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     name="tags"
@@ -246,6 +314,15 @@ export default class ResourceSubmitForm extends Component {
                                                 />
                                             </Form.Group>
                                         </Form.Field>
+
+                                        <Form.TextArea
+                                            name="definition"
+                                            onChange={this.handleChange}
+                                            value={this.state.definition}
+                                            label="Definition"
+                                            placeholder="Enter a definition, if applicable."
+                                        />
+
                                         <Form.TextArea
                                             name="comments"
                                             onChange={this.handleChange}
