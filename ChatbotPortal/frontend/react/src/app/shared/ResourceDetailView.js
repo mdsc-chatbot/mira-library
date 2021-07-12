@@ -91,23 +91,23 @@ function normal_header(resource) {
             </Menu>
             <Menu>
                 <Menu.Item>
-                    <h4>{resource.general_url}</h4>
+                    <h4>General URL: {resource.general_url}</h4>
                 </Menu.Item>
                 <Menu.Item position="right">
-                    <h4>{resource.phone_numbers}</h4>
+                    <h4>Phone Number: {resource.phone_numbers}</h4>
                 </Menu.Item>
             </Menu>
             <Menu>
                 <Menu.Item>
-                    <h4>{resource.text_numbers}</h4>
+                    <h4>Text Number: {resource.text_numbers}</h4>
                 </Menu.Item>
                 <Menu.Item position="right">
-                    <h4>{resource.email}</h4>
+                    <h4>Email: {resource.email}</h4>
                 </Menu.Item>
             </Menu>
             <Menu>
                 <Menu.Item>
-                    <h4>{resource.definition}</h4>
+                    <h4>Definition: {resource.definition}</h4>
                 </Menu.Item>
             </Menu>
         </Container>
