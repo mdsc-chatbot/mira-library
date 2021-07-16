@@ -40,7 +40,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'yg02jq5jph8wdedfby4rq*3g$ew_k)!%hya_f5*t90gaaain5b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -105,8 +105,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'main_db',
-        'USER': 'admin',
-        'PASSWORD': 'admin@123',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': '',
         'PORT': '',
         'TEST': {
@@ -224,3 +224,23 @@ EMAIL_PORT = 587
 # EMAIL_HOST_USER = 'testouremials@gmail.com'
 # EMAIL_HOST_PASSWORD = 'testtheemail'
 # EMAIL_PORT = 587
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'debug.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    },
+}

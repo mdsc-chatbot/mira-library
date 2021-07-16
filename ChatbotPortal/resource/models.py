@@ -88,7 +88,7 @@ class Category(models.Model):
 class Resource(models.Model):
 
     title = models.TextField(default="",blank=True, null=True)
-    url = models.TextField(blank=True, null=True)
+    url = models.TextField(blank=True, null=True, unique=True)
     rating = models.IntegerField(
         validators=[MaxValueValidator(5), MinValueValidator(1)], default=1, blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
@@ -136,11 +136,11 @@ class Resource(models.Model):
     chatbot_text = models.TextField(
         blank=True, null=True)
 
-    #both phone and text number fields expect the page to process the given numbers into the format "12345678;18263849;" etc with each number ending in a semicolon
-    phone_regex = RegexValidator(regex=r'^(\d{10,15}\;)*$', message="Phone number must be entered in the format: '9999999999', one per line. Up to 15 digits allowed per number.")
+    #both phone and text number fields expect the page to process the given numbers into the format "1234567890;" etc with each number ending in a semicolon
+    phone_regex = RegexValidator(regex=r'^(\d{10,15}\;)*$', message="Phone number must be entered in the format: 1234567890; , one per line. Up to 15 digits allowed per number.")
     phone_numbers = models.TextField(validators=[phone_regex], blank=True, null=True) # validators should be a list
 
-    text_regex = RegexValidator(regex=r'^(\d{3,15}\;)*$', message="Text number must be entered in the format: '9999', one per line. Up to 15 digits allowed per number.")
+    text_regex = RegexValidator(regex=r'^(\d{3,15}\;)*$', message="Text number must be entered in the format: 1234567890; , one per line. Up to 15 digits allowed per number.")
     text_numbers = models.TextField(validators=[text_regex], blank=True, null=True) # validators should be a list
 
     email = models.EmailField(max_length=100, blank=True, null=True)

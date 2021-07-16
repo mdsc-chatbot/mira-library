@@ -46,8 +46,8 @@ export default class ResourceSubmitForm extends Component {
             comments: "",
             definition: "",
             email: "",
-            phone_number: "",
-
+            phone_numbers: "",
+            errors: {},
             category: 1,
             tags: [],
             url_validated: true,
@@ -76,7 +76,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("category", this.state.category);
         resourceFormData.append("email", this.state.email);
         resourceFormData.append("definition", this.state.definition);
-        resourceFormData.append("phone_number", this.state.phone_number);
+        resourceFormData.append("phone_numbers", this.state.phone_numbers);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -104,23 +104,26 @@ export default class ResourceSubmitForm extends Component {
                 this.set_submitted_state(1, "POST SUCESS");
             })
             .catch(error => {
-                console.error(error);
-                this.set_submitted_state(-1, "POST FAILURE");
+                console.error(error.response);
+                var errors = Object.keys(error.response.data).map(function (key) { 
+                    return " " + error.response.data[key]; 
+                  });
+                this.set_submitted_state(-1, errors);
             });
 
     };
 
-    set_submitted_state = (submitted_value, submitted_message) => {
+    set_submitted_state = (submitted_value, submitted_error) => {
         console.log(this.state, submitted_value)
         if (submitted_value === 1) {
             this.update_user_submissions();
         }
-        this.setState({submitted: submitted_value}, () => {
+        this.setState({submitted: submitted_value, errors: submitted_error}, () => {
             setTimeout(() => {
                 this.setState(this.baseState);
-            }, 1000);
+            }, 10000);
         });
-        console.log(submitted_message);
+        console.log(submitted_error);
     };
 
     update_user_submissions = () => {
@@ -195,12 +198,12 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                             <Form.Input
                                                 fluid
-                                                name="phone_number"
+                                                name="phone_numbers"
                                                 onChange={this.handleChange}
                                                 width={16}
-                                                value={this.state.phone_number}
-                                                label="Enter Phone Number"
-                                                placeholder="###########"
+                                                value={this.state.phone_numbers}
+                                                label="Enter Phone Number(s) - currect format: 1234567890;...;"
+                                                placeholder="1234567890;"
                                             />
                                             <Form.Input
                                                 fluid
@@ -358,7 +361,7 @@ export default class ResourceSubmitForm extends Component {
                                                             error header="Submit failure">
                                                             <Message.Content name="submit_failure">
                                                                 Something went wrong! Your resource
-                                                                is not submitted.
+                                                                is not submitted. {this.state.errors}
                                                             </Message.Content>
                                                         </Message>
                                                     );
