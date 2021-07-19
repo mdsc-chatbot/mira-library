@@ -69,6 +69,33 @@ function reviews(reviewComments){
 }
 
 function normal_header(resource) {
+    var data = [];
+    if(resource.general_url!= null)data.push({name:"General URL: ", value:resource.general_url});
+    if(resource.phone_numbers!= null)data.push({name:"Phone Number: ", value:resource.phone_numbers});
+    if(resource.text_numbers!= null)data.push({name:"Text Numbers: ", value:resource.text_numbers});
+    if(resource.email!= null)data.push({name:"Email: ",value:resource.email});
+
+    var numPresent = 0;
+    var menuEntries = [];
+    for (var i = 1; i < data.length; i+=2) 
+    {
+        menuEntries.push(<Menu>
+                            <Menu.Item>
+                                <h4>{data[i-1].name}{data[i-1].value}</h4>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <h4>{data[i].name}{data[i].value}</h4>
+                            </Menu.Item>
+                        </Menu>);
+    }
+    if(data.length%2==1)
+    {
+        menuEntries.push(<Menu>
+                            <Menu.Item>
+                                <h4>{data[data.length-1].name}{data[data.length-1].value}</h4>
+                            </Menu.Item>
+                        </Menu>);
+    }
     return (
         <Container>
             <Menu text>
@@ -89,27 +116,8 @@ function normal_header(resource) {
                     <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
                 </Menu.Item>
             </Menu>
-            <Menu>
-                <Menu.Item>
-                    <h4>General URL: {resource.general_url}</h4>
-                </Menu.Item>
-                <Menu.Item position="right">
-                    <h4>Phone Number: {resource.phone_numbers}</h4>
-                </Menu.Item>
-            </Menu>
-            <Menu>
-                <Menu.Item>
-                    <h4>Text Number: {resource.text_numbers}</h4>
-                </Menu.Item>
-                <Menu.Item position="right">
-                    <h4>Email: {resource.email}</h4>
-                </Menu.Item>
-            </Menu>
-            <Menu>
-                <Menu.Item>
-                    <h4>Definition: {resource.definition}</h4>
-                </Menu.Item>
-            </Menu>
+            {menuEntries}
+            {resource.definition!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Definition: {resource.definition}</p>}
         </Container>
     );
 }
