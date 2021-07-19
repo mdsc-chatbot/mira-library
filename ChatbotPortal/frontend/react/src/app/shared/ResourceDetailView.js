@@ -74,6 +74,9 @@ function normal_header(resource) {
     if(resource.phone_numbers!= null)data.push({name:"Phone Number: ", value:resource.phone_numbers});
     if(resource.text_numbers!= null)data.push({name:"Text Numbers: ", value:resource.text_numbers});
     if(resource.email!= null)data.push({name:"Email: ",value:resource.email});
+    if(resource.physical_address!= null)data.push({name:"Address: ",value:resource.physical_address});
+    data.push({name:"Distress Level: ",value:resource.distress_level_min+"-"+resource.distress_level_max});
+    data.push({name:"Resource Type: ",value:resource.resource_type});
 
     var numPresent = 0;
     var menuEntries = [];
@@ -118,6 +121,9 @@ function normal_header(resource) {
             </Menu>
             {menuEntries}
             {resource.definition!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Definition: {resource.definition}</p>}
+            {resource.references!=null && <p style={{display: "flex", flexWrap: "wrap"}}>References: {resource.references}</p>}
+            {resource.description!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Description: {resource.description}</p>}
+            {resource.chatbot_text!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Chatbot Text: {resource.chatbot_text}</p>}
         </Container>
     );
 }
