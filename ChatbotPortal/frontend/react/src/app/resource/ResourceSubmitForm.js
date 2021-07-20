@@ -28,6 +28,7 @@ import {Container, Form, Header, Input, Message, Rating, Icon} from "semantic-ui
 
 import TagDropdown from "./TagDropdown";
 import CategoryDropdown from './CategoryDropdown';
+import ResourceTypeDropdown from './ResourceTypeDropdown';
 import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
 import ResourceSubmissionHelp from "./ResourceSubmissionHelp.js"
@@ -40,13 +41,21 @@ export default class ResourceSubmitForm extends Component {
         this.state = {
             title: "",
             url: "",
+            general_url: "",
             rating: 1,
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
             definition: "",
+            description: "",
+            chatbot_text: "",
             email: "",
             phone_numbers: "",
+            text_numbers: "",
+            physical_address: "",
+            distress_level_min: 1,
+            distress_level_max: 1,
+            resource_type: "SR",
             errors: {},
             category: 1,
             tags: [],
@@ -69,6 +78,7 @@ export default class ResourceSubmitForm extends Component {
 
         resourceFormData.append("title", this.state.title);
         resourceFormData.append("url", this.state.url);
+        resourceFormData.append("general_url", this.state.general_url);
         resourceFormData.append("rating", this.state.rating);
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
@@ -76,7 +86,14 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("category", this.state.category);
         resourceFormData.append("email", this.state.email);
         resourceFormData.append("definition", this.state.definition);
+        resourceFormData.append("distress_level_min", this.state.distress_level_min);
+        resourceFormData.append("distress_level_max", this.state.distress_level_max);
+        resourceFormData.append("description", this.state.description);
+        resourceFormData.append("chatbot_text", this.state.chatbot_text);
+        resourceFormData.append("physical_address", this.state.physical_address);
+        resourceFormData.append("resource_type", this.state.resource_type);
         resourceFormData.append("phone_numbers", this.state.phone_numbers);
+        resourceFormData.append("text_numbers", this.state.text_numbers);
         this.state.attachment !== null
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
@@ -202,8 +219,25 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.phone_numbers}
-                                                label="Enter Phone Number(s) - currect format: 1234567890;...;"
-                                                placeholder="1234567890;"
+                                                label="Enter Phone Number(s)"
+                                                placeholder="correct format: 1234567890;...;"
+                                            />
+                                            <Form.Input
+                                                fluid
+                                                name="text_numbers"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.text_numbers}
+                                                label="Enter Text Number(s)"
+                                                placeholder="correct format: 1234567890;...;"
+                                            />
+                                            <Form.Input
+                                                fluid
+                                                name="physical_address"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.physical_address}
+                                                label="Enter the physical address of this resource."
                                             />
                                             <Form.Input
                                                 fluid
@@ -214,13 +248,14 @@ export default class ResourceSubmitForm extends Component {
                                                 label="Enter Email Address"
                                                 placeholder="Email"
                                             />
+                                            
                                         {this.state.url_validated ? (
                                             <Form.Input
                                                 name="url"
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.url}
-                                                label="Enter URL"
+                                                label="Enter Primary URL"
                                                 placeholder="https://"
                                             />
                                         ) : (
@@ -240,6 +275,16 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         )}
 
+                                        <Form.Input
+                                            fluid
+                                            name="general_url"
+                                            onChange={this.handleChange}
+                                            width={16}
+                                            value={this.state.general_url}
+                                            label="Enter a Secondary URL:"
+                                            placeholder="https://"
+                                        />
+
                                         <Form.Field>
                                             <label>Resource Usefulness Rating</label>
                                             <Rating
@@ -255,6 +300,26 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         
+                                        <Form.Input
+                                            fluid
+                                            name="distress_level_min"
+                                            onChange={this.handleChange}
+                                            width={16}
+                                            value={this.state.distress_level_min}
+                                            label="Minimum Distress Level(1-10)"
+                                            placeholder="1-10"
+                                        />
+
+                                        <Form.Input
+                                            fluid
+                                            name="distress_level_max"
+                                            onChange={this.handleChange}
+                                            width={16}
+                                            value={this.state.distress_level_max}
+                                            label="Max Distress Level(1-10)"
+                                            placeholder="1-10"
+                                        />
+
                                         <Form.Field>
                                             <label>Category</label>
                                             <CategoryDropdown
@@ -262,7 +327,13 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={category => this.setState({ category })}
                                             />
                                         </Form.Field>
-
+                                        <Form.Field>
+                                            <label>Resource Type</label>
+                                            <ResourceTypeDropdown
+                                                value={this.state.resource_type}
+                                                onChange={resource_type => this.setState({ resource_type })}
+                                            />
+                                        </Form.Field>
                                         <Form.Field>
                                             <label>Age Tags</label>
                                             <Form.Group className={styles.dropdownPadding}>
@@ -308,7 +379,7 @@ export default class ResourceSubmitForm extends Component {
                                             </Form.Group>
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Misc Tags</label>
+                                            <label>All Tags</label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     name="tags"
@@ -324,6 +395,22 @@ export default class ResourceSubmitForm extends Component {
                                             value={this.state.definition}
                                             label="Definition"
                                             placeholder="Enter a definition, if applicable."
+                                        />
+
+                                        <Form.TextArea
+                                            name="description"
+                                            onChange={this.handleChange}
+                                            value={this.state.description}
+                                            label="Description"
+                                            placeholder="Enter a description of the resource."
+                                        />
+
+                                        <Form.TextArea
+                                            name="chatbot_text"
+                                            onChange={this.handleChange}
+                                            value={this.state.chatbot_text}
+                                            label="Chatbot Text"
+                                            placeholder="Enter what the chatbot should say about this resource."
                                         />
 
                                         <Form.TextArea

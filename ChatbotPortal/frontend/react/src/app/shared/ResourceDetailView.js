@@ -70,11 +70,11 @@ function reviews(reviewComments){
 
 function normal_header(resource) {
     var data = [];
-    if(resource.general_url!= null)data.push({name:"General URL: ", value:resource.general_url});
-    if(resource.phone_numbers!= null)data.push({name:"Phone Number: ", value:resource.phone_numbers});
-    if(resource.text_numbers!= null)data.push({name:"Text Numbers: ", value:resource.text_numbers});
-    if(resource.email!= null)data.push({name:"Email: ",value:resource.email});
-    if(resource.physical_address!= null)data.push({name:"Address: ",value:resource.physical_address});
+    if(resource.general_url!= null && resource.general_url!= "")data.push({name:"General URL: ", value:resource.general_url});
+    if(resource.phone_numbers!= null && resource.phone_numbers!= "")data.push({name:"Phone Number: ", value:resource.phone_numbers});
+    if(resource.text_numbers!= null && resource.text_numbers!= "")data.push({name:"Text Numbers: ", value:resource.text_numbers});
+    if(resource.email!= null && resource.email!= "")data.push({name:"Email: ",value:resource.email});
+    if(resource.physical_address!= null && resource.physical_address!= "")data.push({name:"Address: ",value:resource.physical_address});
     data.push({name:"Distress Level: ",value:resource.distress_level_min+"-"+resource.distress_level_max});
     data.push({name:"Resource Type: ",value:resource.resource_type});
 
@@ -120,10 +120,10 @@ function normal_header(resource) {
                 </Menu.Item>
             </Menu>
             {menuEntries}
-            {resource.definition!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Definition: {resource.definition}</p>}
-            {resource.references!=null && <p style={{display: "flex", flexWrap: "wrap"}}>References: {resource.references}</p>}
-            {resource.description!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Description: {resource.description}</p>}
-            {resource.chatbot_text!=null && <p style={{display: "flex", flexWrap: "wrap"}}>Chatbot Text: {resource.chatbot_text}</p>}
+            {resource.definition!=null && resource.definition!="" && <p style={{display: "flex", flexWrap: "wrap"}}>Definition: {resource.definition}</p>}
+            {resource.references!=null && resource.references!="" && <p style={{display: "flex", flexWrap: "wrap"}}>References: {resource.references}</p>}
+            {resource.description!=null && resource.description!="" && <p style={{display: "flex", flexWrap: "wrap"}}>Description: {resource.description}</p>}
+            {resource.chatbot_text!=null && resource.chatbot_text!="" && <p style={{display: "flex", flexWrap: "wrap"}}>Chatbot Text: {resource.chatbot_text}</p>}
         </Container>
     );
 }
