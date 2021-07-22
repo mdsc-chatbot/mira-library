@@ -36,7 +36,7 @@ export class HomepageHead extends Component {
             <React.Fragment>
                 <Header
                     as="h1"
-                    content="Welcome to NDD Resource Portal"
+                    content="Welcome to the MIRA Resource Portal"
                     style={{
                         fontSize: "2em",
                         fontWeight: "bold",
@@ -46,7 +46,7 @@ export class HomepageHead extends Component {
                 />
                 <Header
                     as="h3"
-                    content="Resources site providing information about autism, intellectual disability, and learning disability."
+                    content="An information repository for mental health resources."
                     style={{
                         fontWeight: "normal",
                         marginBottom: "1em"
