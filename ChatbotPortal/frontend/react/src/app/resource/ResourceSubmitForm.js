@@ -172,15 +172,63 @@ export default class ResourceSubmitForm extends Component {
         });
     };
 
-    handleSubmit = event => {
-        // Validations
-        if (!validator.isURL(this.state.url) || !this.state.url) {
-            this.setState({url_validated: false});
-        } else {
-            this.post_resource();
+    addFieldTag(tagName){
+
+        var fetchURL = "/chatbotportal/resource/fetch-tags-by-cat"
+        var keyDict = {
+            params: {
+                name: tagName,
+                tag_category: "Resource Format"
+            }
         }
+        
+
+        // Fetch search results
+        axios
+            .get(
+                fetchURL,
+                keyDict,
+                {
+                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                }
+            )
+            .then(response => {
+                // Transform JSON tag into tag that semantic ui's dropdown can read
+                let tags = [];
+                if (response.data) {
+                    tags = response.data.map(tag => (tag.id));
+                }
+
+                // Add any options that didn't come back from the server, but are selected
+                if (this.state.tags) {
+                    for (const selectedOption of this.state.tags) {
+                        if (
+                            tags.find(
+                                tags => tags === selectedOption
+                            ) === undefined
+                        ) {
+                            tags.push(selectedOption);
+                        }
+                    }
+                }
+                this.setState({tags});
+            });
+
+    }
+
+    handleSubmit = event => {
+
+        //add field tags
+        if(this.state.phone_numbers!= "") this.addFieldTag("Phone Number")
+        if(this.state.text_numbers!= "") this.addFieldTag("Text Messaging")
+        if(this.state.url!= "" || this.state.general_url!= "") this.addFieldTag("Website")
+        if(this.state.definition!= "") this.addFieldTag("Definition/Stat")
+        if(this.state.email!= "") this.addFieldTag("Email")
+
+        this.post_resource();
         event.preventDefault();
     };
+    
 
     render() {
         return (
@@ -210,7 +258,7 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.title}
-                                                label="Enter Title"
+                                                label="Resource Title"
                                                 placeholder="title"
                                             />
                                             <Form.Input
@@ -219,7 +267,7 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.phone_numbers}
-                                                label="Enter Phone Number(s)"
+                                                label="Phone Number(s)"
                                                 placeholder="correct format: 1234567890;...;"
                                             />
                                             <Form.Input
@@ -228,7 +276,7 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.text_numbers}
-                                                label="Enter Text Number(s)"
+                                                label="Text Number(s)"
                                                 placeholder="correct format: 1234567890;...;"
                                             />
                                             <Form.Input
@@ -237,7 +285,7 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.physical_address}
-                                                label="Enter the physical address of this resource."
+                                                label="Physical Address"
                                             />
                                             <Form.Input
                                                 fluid
@@ -245,35 +293,20 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 width={16}
                                                 value={this.state.email}
-                                                label="Enter Email Address"
+                                                label="Email Address"
                                                 placeholder="Email"
                                             />
                                             
-                                        {this.state.url_validated ? (
-                                            <Form.Input
-                                                name="url"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.url}
-                                                label="Enter Primary URL"
-                                                placeholder="https://"
-                                            />
-                                        ) : (
-                                            <Form.Input
-                                                error={{
-                                                    content: "Please enter a valid url",
-                                                    pointing: "below"
-                                                }}
-                                                fluid
-                                                required
-                                                name="url"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.url}
-                                                label="Enter URL"
-                                                placeholder="https://"
-                                            />
-                                        )}
+                                        <Form.Input
+                                            fluid
+                                            name="url"
+                                            onChange={this.handleChange}
+                                            width={16}
+                                            value={this.state.url}
+                                            label="Primary URL"
+                                            placeholder="https://"
+                                        />
+                                        
 
                                         <Form.Input
                                             fluid
@@ -281,7 +314,7 @@ export default class ResourceSubmitForm extends Component {
                                             onChange={this.handleChange}
                                             width={16}
                                             value={this.state.general_url}
-                                            label="Enter a Secondary URL:"
+                                            label="Secondary URL:"
                                             placeholder="https://"
                                         />
 
