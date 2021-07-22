@@ -36,7 +36,6 @@ import { SecurityContext } from './contexts/SecurityContext';
 import { MenuContext } from './contexts/MenuContext';
 import styles from './App.css';
 import ownStyles from './HeaderMenu.css';
-import logo from './logo/logo2x.png';
 
 /**
  * This class renders the Header Menu of a logged in user
@@ -55,6 +54,7 @@ export class HeaderMenu extends Component {
    */
   headerMenuWeb = () => {
     const { activeItem } = this.state;
+    var static_url = "{% get_static_prefix %}";
     return (
       <React.Fragment>
         <Menu inverted fluid pointing secondary size='large'>
@@ -70,11 +70,12 @@ https://ibb.co/9wx9pbr */}
           >
             <img
               style={{ padding: '-10px', maxWidth: '170px' }}
-              src='https://i.ibb.co/3fG4zSj/logo-1x.png'
+              src="/static/logo.png"
               alt='logo2x'
               border='0'
             />
           </a>
+          
 
           <Menu.Item
             name='Public Resources'
