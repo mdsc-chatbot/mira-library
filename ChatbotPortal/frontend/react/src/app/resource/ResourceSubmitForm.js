@@ -42,7 +42,7 @@ export default class ResourceSubmitForm extends Component {
             title: "",
             url: "",
             general_url: "",
-            rating: 1,
+            rating: 0,
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
@@ -326,7 +326,7 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleChange}
                                                 value={this.state.rating}
                                                 label="Rating"
-                                                defaultRating={this.state.rating}
+                                                defaultRating={0}
                                                 maxRating={5}
                                                 icon="star"
                                                 size="massive"
