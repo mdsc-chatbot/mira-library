@@ -16,21 +16,28 @@ taglist = []
 fields = "("
 fieldvalues = []
 valuessql = "("
+comments = ""
 
 maxdistress = -1
 mindistress = 11
 #try:
-with open('./data.csv',newline='\n') as csvfile:
+with open('./data.csv', newline='\n', encoding='utf-8-sig') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-    #get row lables
     needHeader = True
+    skipEntry = False
     for row in reader:
+      #get row lables
       if needHeader:
         version = getVer(row)
         needHeader = False
         continue
       for i in range(len(row)):
         field = row[i]
+        if(i == 0):
+          if field != "Complete":
+            #skip if incomplete entry
+            skipEntry = True
+            break
         if field != "":
           tag = getSQLIndex(version, i, field)
           if tag == -1:
@@ -41,6 +48,8 @@ with open('./data.csv',newline='\n') as csvfile:
             #handle field entry
             if tag == 0: #skip tags
               continue 
+            elif tag == -2:
+              comments += "Recommended New Tag: " + field + '\n'
             elif tag == 1: #username
               fields+="created_by_user, "
               fieldvalues.append(str(field + "- FROM IMPORT"))
@@ -50,9 +59,7 @@ with open('./data.csv',newline='\n') as csvfile:
               fieldvalues.append(field)
               valuessql+="%s, "
             elif tag == 3: #title
-              fields+="comments, "
-              fieldvalues.append(field)
-              valuessql+="%s, "
+              comments += (field+'\n')
             elif tag == 4: #resource description
               fields+="description, "
               fieldvalues.append(field)
@@ -118,7 +125,17 @@ with open('./data.csv',newline='\n') as csvfile:
               exit("Rollback finished. Quitting.")
           else:
             taglist.append(tag - 15)
-          
+
+      if skipEntry:
+        #skip submit
+        skipEntry = False
+        continue
+
+      #apply final comments
+      fields+="comments, "
+      fieldvalues.append(field)
+      valuessql+="%s, "
+
       #add final distress values for row
       if mindistress > 0 and maxdistress < 11:
         fields+="distress_level_min, "

@@ -64,15 +64,15 @@ healthtag = [
     "Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse","Resiliency","Schizophrenia and Psychosis","School Refusal (and School Phobia)",
     "Self-harm including Self-cutting","Sensory Processing Disorders and Self-Regulation Problems","Separation and Divorce","Sleep Problems and Disorders",
     "Social Skills and Life Skills","Somatoform Disorders","Speech and Language","Stress","Substance use","Suicidal Ideation",
-    "Technology Issues, including Internet, Cellphone, Social Media Addiction","Tourette Syndrome and Tic Disorders",
+    "Technology Issues, including Internet, Cellphone, Social Media Addiction","Tourette Syndrome and Tic Disorders", "COVID-19"
 ]
 for tag in healthtag:
     sql = "INSERT INTO resource_tag(name, tag_category, approved) VALUES ('" + tag + "', 'Health Issue Group', 1);" 
     mycursor.execute(sql)
 
 usertags = [
-    "Healtcare worker/Nurse","Healtcare worker/Practising or Retired Physician","Healtcare worker/Other","Healtcare worker/First Responder",
-    "Healtcare worker/Medical Student","Healtcare worker/Resident Doctor","Military","Veterans","General Public / All",
+    "Healthcare worker/Nurse","Healthcare worker/Practising or Retired Physician","Healthcare worker/Other","Healthcare worker/First Responder",
+    "Healthcare worker/Medical Student","Healthcare worker/Resident Doctor","Military","Veterans","General Public / All",
     "Family member of physician or medical learner","Family member of healthcare worker (other)"
 ]
 for tag in usertags:
