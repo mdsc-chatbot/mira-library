@@ -42,15 +42,18 @@ def ResourceViewQuerySet(query_params):
     # Taken from PR #164
     queryset = Resource.objects.filter(review_status="approved")
 
-    # Search parameters is matched between two fields currently:
+    # Search parameters is matched between four fields currently:
     #   - title
+    #   - url
     #   - website summary
+    #   - definition
     search_param = query_params.get('search')
     if (search_param != None and search_param != ""):
         matching_titles = Resource.objects.filter(title__icontains=search_param)
         matching_url = Resource.objects.filter(url__icontains=search_param)
         matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
-        queryset = queryset.filter(id__in=[resource.id for resource in matching_titles.union(matching_url, matching_summary)])
+        matching_definition = Resource.objects.filter(definition__icontains=search_param)
+        queryset = queryset.filter(id__in=[resource.id for resource in matching_titles.union(matching_url, matching_summary, matching_definition)])
 
     # Filter resources by categories
     category_param = query_params.get('categories')
