@@ -59,6 +59,7 @@ export default class ResourceSubmitForm extends Component {
             errors: {},
             category: 1,
             tags: [],
+            langTags: [],
             url_validated: true,
             currentTags: null,
             submitted: 0
@@ -134,12 +135,15 @@ export default class ResourceSubmitForm extends Component {
         console.log(this.state, submitted_value)
         if (submitted_value === 1) {
             this.update_user_submissions();
+            this.setState({submitted: submitted_value}, () => {
+                setTimeout(() => {
+                    this.setState(this.baseState);
+                }, 10000);
+            });
         }
-        this.setState({submitted: submitted_value, errors: submitted_error}, () => {
-            setTimeout(() => {
-                this.setState(this.baseState);
-            }, 10000);
-        });
+        else {
+            this.setState({submitted: submitted_value, errors: submitted_error});
+        }
         console.log(submitted_error);
     };
 
@@ -225,6 +229,30 @@ export default class ResourceSubmitForm extends Component {
         if(this.state.definition!= "") this.addFieldTag("Definition/Stat")
         if(this.state.email!= "") this.addFieldTag("Email")
 
+        //check field states before submitting
+        if(this.state.rating == 0)
+        {
+            this.setState({submitted: -1, errors: "Please rate your resource usefulness."});
+            return;
+        }
+        if(this.state.tags.length<1||this.state.langTags.length<1)
+        {
+            this.setState({submitted: -1, errors: "Please enter at a language tag and at least one other tag."});
+            return;
+        }
+        var localTags = this.state.tags;
+        if (localTags) {
+            for (const langtags of this.state.langTags) {
+                if (
+                    localTags.find(
+                        localTags => localTags === langtags
+                    ) === undefined
+                ) {
+                    localTags.push(langtags);
+                }
+            }
+        }
+        this.setState({tags: localTags});
         this.post_resource();
         event.preventDefault();
     };
@@ -404,10 +432,10 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Language Tags</label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
-                                                    name="tags"
-                                                    value={this.state.tags}
+                                                    name="langTags"
+                                                    value={this.state.langTags}
                                                     tagCat="Language"
-                                                    onChange={tags => this.setState({ tags })}
+                                                    onChange={langTags => this.setState({ langTags })}
                                                 />
                                             </Form.Group>
                                         </Form.Field>
