@@ -303,7 +303,7 @@ export default class ResourceSubmitForm extends Component {
                                             onChange={this.handleChange}
                                             width={16}
                                             value={this.state.url}
-                                            label="Primary URL"
+                                            label="Resource URL"
                                             placeholder="https://"
                                         />
                                         
@@ -314,7 +314,7 @@ export default class ResourceSubmitForm extends Component {
                                             onChange={this.handleChange}
                                             width={16}
                                             value={this.state.general_url}
-                                            label="Secondary URL:"
+                                            label="General URL"
                                             placeholder="https://"
                                         />
 
