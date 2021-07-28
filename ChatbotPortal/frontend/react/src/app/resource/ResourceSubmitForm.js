@@ -27,6 +27,7 @@ import validator from "validator";
 import {Container, Form, Header, Input, Message, Rating, Icon} from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
+import TitleDropdown from "./TitleDropdown";
 import CategoryDropdown from './CategoryDropdown';
 import ResourceTypeDropdown from './ResourceTypeDropdown';
 import {SecurityContext} from '../contexts/SecurityContext';
@@ -279,7 +280,7 @@ export default class ResourceSubmitForm extends Component {
                                 }/>
                                 {securityContext.security.is_logged_in ? (
                                     <div>
-                                        <Form.Input
+                                        {/*<Form.Input
                                                 fluid
                                                 required
                                                 name="title"
@@ -288,7 +289,16 @@ export default class ResourceSubmitForm extends Component {
                                                 value={this.state.title}
                                                 label="Resource Title"
                                                 placeholder="title"
-                                            />
+                                        />-->*/}
+                                            <Form.Field>
+                                                <label>Title</label>
+                                                <TitleDropdown
+                                                    name="title"
+                                                    value={this.state.title}
+                                                    label="Title"
+                                                    onChange={title => this.setState({ title })}
+                                                />
+                                            </Form.Field>
                                             <Form.Input
                                                 fluid
                                                 name="phone_numbers"
