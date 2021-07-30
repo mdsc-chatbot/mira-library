@@ -154,3 +154,5 @@ class Resource(models.Model):
     description = models.TextField(blank=True, null=True)
 
     physical_address = models.TextField(blank=True, null=True)
+
+    hours_of_operation = models.TextField(blank=True, null=True)

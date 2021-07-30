@@ -24,11 +24,12 @@
 import React, {Component} from "react";
 import axios from "axios";
 import validator from "validator";
-import {Container, Form, Header, Input, Message, Rating, Icon} from "semantic-ui-react";
+import {Container, Form, Header, Input, Message, Rating, Icon, Tab, Checkbox, Divider} from "semantic-ui-react";
 
 import TagDropdown from "./TagDropdown";
 import TitleDropdown from "./TitleDropdown";
 import CategoryDropdown from './CategoryDropdown';
+import HoursOfOperationWidget from "./HoursOfOperationWidget";
 import ResourceTypeDropdown from './ResourceTypeDropdown';
 import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
@@ -63,7 +64,17 @@ export default class ResourceSubmitForm extends Component {
             langTags: [],
             url_validated: true,
             currentTags: null,
-            submitted: 0
+            submitted: 0,
+            alwaysAvailable: true,
+            hourBools : [
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+            ]
         };
         this.baseState = this.state;
     }
@@ -106,6 +117,41 @@ export default class ResourceSubmitForm extends Component {
             this.state.tags.forEach(value => {
                 resourceFormData.append(`tags`, value);
             });
+        }
+
+        //if we need to, deal with the hour bools
+        if(!this.state.alwaysAvailable)
+        {
+            var hourstring = "";
+            hourstring +="MON:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[0][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="TUE:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[1][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="WED:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[2][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="THU:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[3][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="FRI:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[4][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="SAT:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[5][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="SUN:";
+            for(var i = 0; i < 24; i++)
+                if(this.state.hourBools[6][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            resourceFormData.append(`hours_of_operation`, hourstring);
         }
 
         return resourceFormData;
@@ -258,8 +304,16 @@ export default class ResourceSubmitForm extends Component {
         event.preventDefault();
     };
     
+    toggle = () => this.setState((prevState) => ({ alwaysAvailable: !prevState.alwaysAvailable }))
 
     render() {
+
+        var dateTabs=null;
+        if(!this.state.alwaysAvailable)
+        {
+            dateTabs = <HoursOfOperationWidget hourBools={this.state.hourBools}/>
+        }
+
         return (
             <div style={{ paddingTop: "3%", paddingLeft: "10%", paddingRight: "10%", paddingBottom: "3%" }}>
                 <SecurityContext.Consumer>
@@ -370,7 +424,7 @@ export default class ResourceSubmitForm extends Component {
                                                 size="massive"
                                             />
                                         </Form.Field>
-                                        
+                                        <Divider hidden />
                                         <Form.Input
                                             fluid
                                             name="distress_level_min"
@@ -390,7 +444,16 @@ export default class ResourceSubmitForm extends Component {
                                             label="Max Distress Level(1-10)"
                                             placeholder="1-10"
                                         />
-
+                                        <Divider hidden />
+                                        <Form.Field>
+                                            <Checkbox
+                                                label='Resource Available 24/7'
+                                                onChange={this.toggle}
+                                                checked={this.state.alwaysAvailable}
+                                            />
+                                        </Form.Field>
+                                        {dateTabs}
+                                        <Divider hidden />
                                         <Form.Field>
                                             <label>Category</label>
                                             <CategoryDropdown
@@ -459,7 +522,7 @@ export default class ResourceSubmitForm extends Component {
                                                 />
                                             </Form.Group>
                                         </Form.Field>
-
+                                        <Divider hidden />
                                         <Form.TextArea
                                             name="definition"
                                             onChange={this.handleChange}
