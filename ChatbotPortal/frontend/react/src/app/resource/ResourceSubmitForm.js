@@ -269,6 +269,12 @@ export default class ResourceSubmitForm extends Component {
 
     handleSubmit = event => {
 
+        if(document.activeElement.getAttribute('name')!="submit")
+        {
+            this.setState({});
+            return;
+        } 
+
         //add field tags
         if(this.state.phone_numbers!= "") this.addFieldTag("Phone Number")
         if(this.state.text_numbers!= "") this.addFieldTag("Text Messaging")
