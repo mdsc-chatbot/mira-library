@@ -28,6 +28,7 @@ import {baseRoute} from "../App";
 import {Link} from "react-router-dom";
 import ResourceResponsive from "../resource/ResourceResponsive";
 import { ResourceDetailView } from "../shared";
+import ReviewMatrix from "./ReviewMatrixControl";
 
 
 /**
@@ -270,15 +271,14 @@ export default class ResourceDetail extends Component {
                                         </Table>
                                     ) : null}
                                     </div>
-
+                                    <ReviewMatrix/>
                                     <div>
-                                        <h2>Submit Review</h2>
                                         <div class="ui form">
                                             <div
                                                 class="required field"
                                                 style={{display: "block"}}
                                             >
-                                                <h4>Submission Quality</h4>
+                                                <h4>Based on the answers to all of the above questions, rate the overall quality of the resource.</h4>
                                                 <Form.Field>
                                                     <Rating
                                                         name="rating"
