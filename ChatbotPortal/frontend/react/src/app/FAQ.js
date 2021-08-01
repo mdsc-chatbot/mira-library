@@ -52,32 +52,40 @@ export class FAQ extends Component {
 
         const panels = [];
         const faq_title_content = {
-            "What are resources again and how do I view them?": (
+            
+            "What are resources and how do I view them?": (
                 <p>
-                    Resources are information gathered regarding autism, intellectual disability and
-                    learning disability. They are mainly website urls.
+                    Resources are any useful information gathered regarding mental health. They are mainly website urls.
                     <br />
                     <br />
                     The resources approved by us are shown under{" "}
                     <Link to={baseRoute + "/public_resource"} className={styles.link}>
                         Public Resources
                     </Link>{" "}
-                    . We encourage everyone to submit resources (website urls) they found useful
-                    relating to autism, intellectual disability and learning disability.
+                    . We encourage everyone to submit resources they've found useful
+                    relating to mental health/wellbeing.
                     <br />
                     The resources submitted by you are shown under{" "}
                     {conditionally_render("/resource", "My Resources")}
                 </p>
             ),
 
+            "How are the resources used?": (
+                <p>
+                    High quality resources will be made accessible from the {" "}
+                    <Link to={baseRoute + "/public_resource"} className={styles.link}>
+                        public resource repository
+                    </Link>{" "}
+                    , and contextually made available to the MIRA chatbot.
+                </p>),
+
             "What happens after I submit a resource?": (
                 <p>
                     After you submit a resource, it will show up on{" "}
                     {conditionally_render("/resource", "My Resources")}. This is the page where all
-                    your submitted resources are shown. You can track whether your submitted
-                    resource is approved or rejected by clicking on a specific one.
+                    your submitted resources are shown.
                     <br /> <br />
-                    The submitted resource will need to be reviewed/ approved by us or reviewers
+                    The submitted resource will need to be reviewed/ approved by reviewers
                     before it is shown on{" "}
                     <Link to={baseRoute + "/public_resource"} className={styles.link}>
                         Public Resources
@@ -86,11 +94,15 @@ export class FAQ extends Component {
                 </p>
             ),
 
-            "What is a reviewer status and how do I obtain it?": (
+            "What is the review process?": (
                 <p>
-                    A reviewer status is given to users of our website by us. A reviewer can approve
-                    or reject a submitted resource, they are also required to give a review comment.
-                    <br /> Reviewer can see pending resources they need to review under{" "}
+                    Reviewers will check the quality of submitted resources according to a carefully
+                    chosen set of metrics. After two seperate reviewers approve a resource, they will
+                    eventually be available under {" "}
+                    <Link to={baseRoute + "/public_resource"} className={styles.link}>
+                        Public Resources
+                    </Link>.
+                    <br /> Reviewers can see pending resources they need to review under{" "}
                     {conditionally_render("/review", "My Reviews")}
                 </p>
             ),
@@ -100,7 +112,7 @@ export class FAQ extends Component {
             "What are the rating on each resource and how is each submitted resource being rated?": (
                 <p>
                     The rating on each resource shows how useful it is. Your submitted resource is
-                    rated first by you, then manually adjusted by us or reviewers. Each resource is
+                    rated first by you, then manually adjusted by reviewers. Each resource is
                     rated from 0-5 stars.
                 </p>
             )
@@ -128,13 +140,12 @@ export class FAQ extends Component {
                     <Divider />
                     <div style={{ paddingBottom: 20 }}>
                         <Header as="h3" color="blue">
-                            What is Chatbot Resources and how do I use this site?
+                            What is the MIRA Chatbot Portal and how do I use this site?
                         </Header>
                         <p>
-                            Chatbot Resources is a website dedicated to providing and gathering
-                            information regarding autism, intellectual disability and learning
-                            disability. These information are gathered from variety of sources such as
-                            health professionals, educators and approved resource submission.
+                            The MIRA Chatbot Portal is a website dedicated to providing and gathering
+                            information regarding mental health. This information is gathered and reviewed by a 
+                            variety of sources such as health professionals, experts, and educators.
                             <br />
                             You can use this site either as a visitor or a logged in user.
                             <br />
@@ -156,13 +167,13 @@ export class FAQ extends Component {
 
                     <div style={{ paddingBottom: 20 }}>
                         <Header as="h3" color="blue">
-                            How do I submit resources? What informations are required to submit a
+                            How do I submit resources? What information is required to submit a
                             resource?
                         </Header>
                         <p>
                             You must first{" "}
                             <Link to={baseRoute + "/login"} className={styles.link}>
-                                SignUp{" "}
+                                Sign Up{" "}
                             </Link>{" "}
                             and{" "}
                             <Link to={baseRoute + "/login"} className={styles.link}>
@@ -170,12 +181,10 @@ export class FAQ extends Component {
                             </Link>
                             in order to submit a resource.
                             <br />
-                            To submit a resource, you are required to input a website
-                            url and rate how useful it was to you.
+                            To submit a resource, you are required to input a url, definition, etc
+                            and provide any additional information you feel is relevent using tags. 
+                            Finally, you can rate how useful you feel the resource is.
                             <br />
-                            <br />
-                            Optionally, you can search and select for tag to categorize
-                            your resource (eg. Autism, ADHD and Age etc.). 
                             <br />
                             If you cannot find a tag that
                             accurately categorize your resource, you can submit
@@ -194,9 +203,8 @@ export class FAQ extends Component {
                         <p className={styles.inline}>
                             We require your name, email address and password for a successful signup.
                             <br />
-                            Optionally, we would like to know your affiliation (your role, occupation in
-                            relation to autism, intellectual disability and learning disability field).
-                            This information helps us better tailor our website.
+                            Optionally, we would like to know your affiliation (your role or occupation in
+                            the mental health field). This information helps us better maintain the portal.
                             <br />
                             After you fill out the sign up form, we will send you and email for
                             verification. It is important that you read and consent to our{" "}  
@@ -211,7 +219,7 @@ export class FAQ extends Component {
                             Do I need to sign up and login to submit a resource?
                         </Header>
                         <p>
-                            Unfortunately, yes you will have to{" "}
+                            Yes, you will need to{" "}
                             <Link to={baseRoute + "/login"} className={styles.link}>
                                 Login{" "}
                             </Link>
@@ -219,8 +227,7 @@ export class FAQ extends Component {
                             of resources submitted. 
                             <br />
                             As a logged in user, you will be able to track and see details of all
-                            your submitted resources. You can also gain points from each
-                            approved resource.
+                            your submitted resources.
                         </p>
                     </div>
 

@@ -12,15 +12,6 @@ export default class HoursOfOperationWidget extends React.Component {
         super(props);
 
         this.state = {
-            hourBools : [
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-                [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
-            ]
         };
     }
 
@@ -30,6 +21,8 @@ export default class HoursOfOperationWidget extends React.Component {
 
         //I'm sorry for the mess, but it's 5am and my programatic solution isn't working
         return (
+            <div>
+                <h4>Enter hours of operation for this resource (GMT-6)</h4>
                 <Tab
                     panes= 
                     {
@@ -968,6 +961,7 @@ export default class HoursOfOperationWidget extends React.Component {
                             ]
                     }
                 />
+                </div>
         )
     }
 }
