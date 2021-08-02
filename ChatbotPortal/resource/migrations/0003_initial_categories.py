@@ -9,6 +9,10 @@ def initialize_categories(apps, schema_editor):
         Category(name="Website"),
         Category(name="Video"),
         Category(name="PDF"),
+        Category(name="Definition/Stat"),
+        Category(name="Service/Facility"),
+        Category(name="Image"),
+        Category(name="Helpline"),
     ])
 
 
