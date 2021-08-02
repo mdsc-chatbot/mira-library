@@ -63,7 +63,7 @@ urlpatterns = [
 
     path('super/total/users/', TotalNumberOfUserView.as_view(), name='get-total-users'),
     path(
-        'super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/',
+        'super/search/status/<str:is_active>/<str:is_reviewer>/<str:is_staff>/<str:is_superuser>/<str:is_editor>/date_range/<str:search_option>/<str:start_date>/<str:end_date>/id_range/<str:start_id>/<str:end_id>/submission_range/<str:start_submission>/<str:end_submission>/<str:submission_range_option>/search_value/',
         SearchByAnythingWithFilterDateIdView.as_view(), name='search-anything-by-filter-date-id'),
 
     # path to get token, it uses a built in view

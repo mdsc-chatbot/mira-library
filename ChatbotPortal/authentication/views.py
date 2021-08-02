@@ -435,6 +435,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
         is_reviewer = self.kwargs['is_reviewer']
         is_staff = self.kwargs['is_staff']
         is_superuser = self.kwargs['is_superuser']
+        is_editor = self.kwargs['is_editor']
 
         search_option = self.kwargs['search_option']
         start_date = self.kwargs['start_date']
@@ -468,6 +469,12 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
         if is_superuser != "''":
             try:
                 queryset = queryset.filter(is_superuser=eval(is_superuser.capitalize()))
+            except NameError:
+                return queryset.none()
+
+        if is_editor != "''":
+            try:
+                queryset = queryset.filter(is_editor=eval(is_editor.capitalize()))
             except NameError:
                 return queryset.none()
 

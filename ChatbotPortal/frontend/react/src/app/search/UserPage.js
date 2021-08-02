@@ -62,6 +62,7 @@ class UserPage extends Component {
             is_active: '',
             is_reviewer: '',
             is_staff: '',
+            is_editor: '',
             profile_picture: '',
 
             horizontal_state: ''
@@ -75,6 +76,7 @@ class UserPage extends Component {
             is_active: this.props.rowData.is_active,
             is_reviewer: this.props.rowData.is_reviewer,
             is_staff: this.props.rowData.is_staff,
+            is_editor: this.props.rowData.is_editor,
             profile_picture: this.props.rowData.profile_picture
         });
 
@@ -129,6 +131,7 @@ class UserPage extends Component {
         formData.append('is_active', editedData.is_active);
         formData.append('is_reviewer', editedData.is_reviewer);
         formData.append('is_staff', editedData.is_staff);
+        formData.append('is_editor', editedData.is_editor);
 
         // Checking if an image update is required
         // If the image is selected then it should be a file object, otherwise a string of file url
@@ -354,6 +357,16 @@ class UserPage extends Component {
                                                     label='Staff'
                                                     name='is_staff'
                                                     value={this.state.is_staff}
+                                                    onChange={this.handle_toggle}
+                                                    slider
+                                                />
+                                            </Segment>
+                                            <Segment color='red'>
+                                                <Checkbox
+                                                    checked={this.state.is_editor}
+                                                    label='Editor'
+                                                    name='is_editor'
+                                                    value={this.state.is_editor}
                                                     onChange={this.handle_toggle}
                                                     slider
                                                 />

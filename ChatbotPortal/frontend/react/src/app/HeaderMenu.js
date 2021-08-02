@@ -123,7 +123,18 @@ https://ibb.co/9wx9pbr */}
                 active={activeItem === 'My reviews'}
                 onClick={this.handleItemClick}
               />
-            )}
+          )}
+
+          {this.context.security.is_logged_in &&
+            this.context.security.is_editor && (
+              <Menu.Item
+                name='Manage reviews'
+                as={Link}
+                to={baseRoute + '/managereviews'}
+                active={activeItem === 'Manage reviews'}
+                onClick={this.handleItemClick}
+              />
+          )}
 
           {this.context.security.is_logged_in &&
             this.context.security.is_staff && (
@@ -175,7 +186,7 @@ https://ibb.co/9wx9pbr */}
           >
             <img
               style={{ padding: '-10px', maxWidth: '120px' }}
-              src='https://i.ibb.co/0V0Ckth/logo2x.png'
+              src='/static/logo.png'
               alt='logo2x'
               border='0'
             />
@@ -233,7 +244,18 @@ https://ibb.co/9wx9pbr */}
                         onClick={this.handleItemClick}
                       />
                     </Dropdown.Item>
-                  )}
+                )}
+
+                {this.context.security.is_logged_in &&
+                  this.context.security.is_editor && (
+                    <Menu.Item
+                      name='Manage reviews'
+                      as={Link}
+                      to={baseRoute + '/managereviews'}
+                      active={activeItem === 'Manage reviews'}
+                      onClick={this.handleItemClick}
+                    />
+                )}
 
                 {this.context.security.is_logged_in &&
                   this.context.security.is_staff && (

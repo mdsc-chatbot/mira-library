@@ -76,7 +76,7 @@ class SearchPage extends Component {
 
             search_string: '',
 
-            url: "/chatbotportal/authentication/super/search/status/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=",
+            url: "/chatbotportal/authentication/super/search/status/''/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=",
 
             sidebar_visible: true,
             checkbox_visible: false,

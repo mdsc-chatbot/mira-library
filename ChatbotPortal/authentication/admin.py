@@ -40,6 +40,7 @@ class CustomUserAdmin(UserAdmin):
         'is_reviewer',
         'is_staff',
         'is_superuser',
+        'is_editor',
         'last_login',
         'profile_picture',
         'submissions',
@@ -55,6 +56,7 @@ class CustomUserAdmin(UserAdmin):
         'is_reviewer',
         'is_staff',
         'is_superuser',
+        'is_editor',
         'last_login',
     ]
 
@@ -65,7 +67,7 @@ class CustomUserAdmin(UserAdmin):
          {'fields': ['first_name', 'last_name', 'affiliation', 'date_joined', 'last_login',
                      'profile_picture', 'submissions', 'pending_submissions',
                      'approved_submissions', 'points']}),
-        ('Permissions', {'fields': ['is_active', 'is_reviewer', 'is_staff', 'is_superuser']}),
+        ('Permissions', {'fields': ['is_active', 'is_reviewer', 'is_staff', 'is_superuser', 'is_editor']}),
     ]
 
     # Searching attributes for the admin
@@ -97,6 +99,7 @@ class CustomUserAdmin(UserAdmin):
                 'is_reviewer',
                 'is_active',
                 'is_superuser',
+                'is_editor',
                 'first_name',
                 'last_name',
                 'affiliation',

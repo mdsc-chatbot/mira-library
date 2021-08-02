@@ -48,6 +48,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             'is_reviewer',
             'is_staff',
             'is_superuser',
+            'is_editor',
             'profile_picture',
             'submissions',
             'pending_submissions',
@@ -96,6 +97,7 @@ class CustomUserTokenSerializer(serializers.ModelSerializer):
             'is_reviewer',
             'is_staff',
             'is_superuser',
+            'is_editor',
             'token',
             'profile_picture',
             'submissions',
@@ -147,6 +149,7 @@ class UserUpdateByAdminSerializer(serializers.Serializer):
     is_active = serializers.BooleanField()
     is_reviewer = serializers.BooleanField()
     is_staff = serializers.BooleanField()
+    is_editor = serializers.BooleanField()
 
     def update(self, instance, validated_data):
         """

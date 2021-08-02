@@ -84,6 +84,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # A user; with more rights than regular users
     is_staff = models.BooleanField(default=False)
 
+    # A user who can assign reviews to given users
+    is_editor = models.BooleanField(default=False)
+
     # A superuser; with all rights
     is_superuser = models.BooleanField(default=False)
 

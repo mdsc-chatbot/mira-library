@@ -36,6 +36,7 @@ import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
 import PublicResourcePage from "./public/PublicResourcePage";
 import SearchPage from "./search/SearchPage";
+import ManageReviews from "./managereviews/ManageReviews"
 import FAQ from "./FAQ.js";
 import PasswordResetPage from "./password/PasswordResetPage"
 import PasswordResetRequestPage from "./password/PasswordResetRequestPage"
@@ -69,6 +70,9 @@ export default function App() {
                             </Route>
                             <Route exact path={baseRoute + "/review"}>
                                 <ReviewPage />
+                            </Route>
+                            <Route exact path={baseRoute + "/managereviews"}>
+                                <ManageReviews />
                             </Route>
                             <Route exact path={baseRoute + "/login"}>
                                 <LoginPage />
