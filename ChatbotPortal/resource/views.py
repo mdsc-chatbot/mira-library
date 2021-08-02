@@ -134,6 +134,7 @@ class ResourceSearchView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ResourceSerializer
     queryset = Resource.objects.filter(review_status="approved")
+    queryset = queryset.filter(review_status_2="approved")
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
     

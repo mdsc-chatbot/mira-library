@@ -166,7 +166,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer }) {
             <Grid>
                 {resource.created_by_user ? grid_element("Submitted by:", resource.created_by_user) : null}
                 {grid_element("Date submitted:", resource.timestamp)}
-                {grid_element("Review status:", <p id="review_status"> {resource.review_status}</p>)}
+                {grid_element("First review status:", <p id="review_status"> {resource.review_status}</p>)}
+                {grid_element("Second review status:", <p id="review_status_2"> {resource.review_status_2}</p>)}
                 {grid_element("Category:", <p id="category"> {resource.category} </p>)}
                 {resource.tags && resource.tags.length > 0
                     ? grid_element(

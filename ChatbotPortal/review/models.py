@@ -28,7 +28,7 @@ class Reviews(models.Model):
 
     reviewer_user_email = models.IntegerField(default=-1)
     approved = models.BooleanField()
-    resource_url = models.TextField()
+    resource_url = models.TextField(null=True)
     resource_id = models.PositiveIntegerField()
     review_comments = models.TextField(default="No Comment")
     review_rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])

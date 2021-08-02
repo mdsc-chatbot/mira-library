@@ -41,6 +41,7 @@ class HomepageResultSetPagination(PageNumberPagination):
 def ResourceViewQuerySet(query_params):
     # Taken from PR #164
     queryset = Resource.objects.filter(review_status="approved")
+    queryset = queryset.filter(review_status_2="approved")
 
     # Search parameters is matched between four fields currently:
     #   - title

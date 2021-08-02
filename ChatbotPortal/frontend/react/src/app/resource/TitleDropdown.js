@@ -83,7 +83,7 @@ export default class TitleDropdown extends React.Component {
         .then(res => {
             let titleOptions = [];
             if (res.data) {
-                titleOptions = res.data.results.filter(resource => resource.review_status === "approved").map(TitleDropdown.mapResponseToDropdownOption);
+                titleOptions = res.data.results.filter(resource => resource.review_status === "approved" && resource.review_status_2 === "approved").map(TitleDropdown.mapResponseToDropdownOption);
                 for (var i=0; i < titleOptions.length; i++) {
                     titleOptions[i].text = '-> ' + titleOptions[i].text;
                 }

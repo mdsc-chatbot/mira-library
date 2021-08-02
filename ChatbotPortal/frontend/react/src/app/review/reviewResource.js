@@ -104,7 +104,18 @@ export default class ResourceDetail extends Component {
     update_resource_user = (review_status) => {
 
         this.get_resource_details();
-        if (this.state.resource.review_status === "pending") {
+
+        console.log(submitCmd);
+
+        if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending") {
+
+            //check if second approval or not
+            //serializer forces us to include both review statuses in the proper state
+            var rs1 = this.state.resource.review_status;
+            var rs2 = this.state.resource.review_status_2;
+            if(rs1 === "pending") rs1 = review_status;
+            else if(rs2 === "pending") rs2 = review_status;
+            var submitCmd = {"review_status": rs1, "review_status_2": rs2, "rating": this.state.rating, "review_comments": this.state.comments};
 
             const options = {
                 "Content-Type": "application/json",
@@ -115,7 +126,7 @@ export default class ResourceDetail extends Component {
             axios
                 .put(
                     "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
-                    {"review_status": review_status, "rating": this.state.rating, "review_comments": this.state.comments},
+                    submitCmd,
                     {headers: options}
                 )
                 .then(
