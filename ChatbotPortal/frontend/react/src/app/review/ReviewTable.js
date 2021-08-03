@@ -22,7 +22,7 @@
  */
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Header, Rating, Dropdown } from "semantic-ui-react";
+import { Table, Header, Rating, Dropdown, Checkbox } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -34,12 +34,13 @@ export default class ReviewTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        resources: [],
-        reviews: [],
-        pending: 'Completed Reviews',
-        header:'Review new resources and tags here!',
-        resourceData:{},
-        order:"newest"
+            resources: [],
+            reviews: [],
+            pending: 'Completed Reviews',
+            header:'Review new resources and tags here!',
+            resourceData:{},
+            order:"newest",
+            assignedOnly: true
         };
     }
 
@@ -170,7 +171,8 @@ export default class ReviewTable extends Component {
         console.log(this.state.order,this.state.resources)
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            ids.includes(r.id) !== true && r.created_by_user_pk !== currentReviewer ?(
+            ids.includes(r.id) !== true && r.created_by_user_pk !== currentReviewer 
+            && ((r.assigned_reviewer === currentReviewer || r.assigned_reviewer_2 === currentReviewer) || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ?(
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -238,7 +240,8 @@ export default class ReviewTable extends Component {
                         />
                         </div>
                     :null}
-                    <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button>
+                    <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button> 
+                    <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/>
                     <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
                         <Table class="ui celled table">
                             <thead>
