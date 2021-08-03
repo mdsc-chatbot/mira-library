@@ -142,3 +142,10 @@ class ResourceSearchView(generics.ListAPIView):
 class TagCreateView(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = TagSerializer
+
+class ResourcePartialUpdate(generics.GenericAPIView, mixins.UpdateModelMixin):
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = Resource.objects.all()
+    serializer_class = ResourceSerializer
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)

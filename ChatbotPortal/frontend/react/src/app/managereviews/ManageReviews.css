@@ -42,3 +42,15 @@
     box-shadow: none !important;
     background: white !important;
 }
+
+table {
+    background-color:#EBEBEB;
+    table-layout:fixed;
+}
+th {
+    text-align:center;
+    min-width:90px;
+}
+td {
+    text-align:center;
+}
