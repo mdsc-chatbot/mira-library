@@ -1,8 +1,3 @@
-'''
-urls.pyu
-url linked to view for
-- listing reviews
-'''
 __author__ = "Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen"
 __copyright__ = "Copyright (c) 2019 BOLDDUC LABORATORY"
 __credits__ = ["Apu Islam", "Henry Lo", "Jacy Mark", "Ritvik Khanna", "Yeva Nguyen"]
@@ -20,10 +15,26 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from django.urls import path
-from . import views
+"""
+WSGI config for ChatbotPortal project.
 
-urlpatterns = [
-    path('api/review/', views.ReviewListCreate.as_view() ),
-    #path('',views.ReviewResource),
-]
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
+"""
+
+import os, sys
+
+from django.core.wsgi import get_wsgi_application
+
+#This is very bad, but the portal has been configuered wiered and it's the only way I can get wsgi to recognize things correctly
+#this will need to change with every deployment
+sys.path.append('/mnt/d/VAWork/GithubForkVer/MDSC-Portal/ChatbotPortal')
+sys.path.append('/mnt/d/VAWork/GithubForkVer/MDSC-Portal/ChatbotPortal/resource/')
+sys.path.append('/mnt/d/VAWork/GithubForkVer/MDSC-Portal/ChatbotPortal/review')
+sys.path.append('/mnt/d/VAWork/GithubForkVer/MDSC-Portal/ChatbotPortal/frontend')
+sys.path.append('/mnt/d/VAWork/GithubForkVer/MDSC-Portal/ChatbotPortal/chatbotPortal')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatbotPortal.settings')
+
+application = get_wsgi_application()
