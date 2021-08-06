@@ -360,7 +360,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Phone Number(s) <Popup content='Phone number(s) relevent to the resource. Formart: 1234567890;...;' trigger={<Icon name='question circle'/>}/></label>
+                                            <label>Phone Number(s) <Popup content='Phone number(s) relevent to the resource. Format: 1234567890;...;' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="phone_numbers"
@@ -371,7 +371,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Text Number(s) <Popup content='Text number(s) relevent to the resource. Can include letters. Formart: 1234567890;...;' trigger={<Icon name='question circle'/>}/></label>
+                                            <label>Text Number(s) <Popup content='Text number(s) relevent to the resource. Can include letters. Format: 1234567890;...;' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="text_numbers"

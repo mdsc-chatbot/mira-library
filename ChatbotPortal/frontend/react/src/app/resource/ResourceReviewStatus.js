@@ -28,11 +28,9 @@ export class ResourceReviewStatus extends Component {
     render() {
         return (
             <div>
-                {this.props.resource.review_status === "approved" &&
+                {(this.props.resource.review_status === "approved" ||
+                this.props.resource.review_status === "rejected") &&
                     <Icon name="thumbs up" color="olive" />
-                }
-                {this.props.resource.review_status === "rejected" &&
-                    <Icon name="thumbs down" color="red" />
                 }
                 {this.props.resource.review_status === "pending" &&
                     <Icon name="sync alternate" color="yellow" />

@@ -116,9 +116,6 @@ function normal_header(resource) {
                         </div>
                     </Header>
                 </Menu.Item>
-                <Menu.Item position="right">
-                    <Rating icon="star" rating={resource.rating} maxRating={5} disabled size="massive" />
-                </Menu.Item>
             </Menu>
             {menuEntries}
             {resource.definition!=null && resource.definition!="" && <p style={{display: "flex", flexWrap: "wrap"}}>Definition: {resource.definition}</p>}
@@ -139,14 +136,6 @@ function mobile_header(resource) {
                 <a href={resource.url} target="_blank" id="url">
                     <h4 className={linkStyles.link}>{resource.url}</h4>
                 </a>
-                <Rating
-                    icon="star"
-                    rating={resource.rating}
-                    maxRating={5}
-                    disabled
-                    size="massive"
-                    style={{ paddingTop: 10 }}
-                />
             </Header>
         </div>
     );
@@ -166,8 +155,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer }) {
             <Grid>
                 {resource.created_by_user ? grid_element("Submitted by:", resource.created_by_user) : null}
                 {grid_element("Date submitted:", resource.timestamp)}
-                {grid_element("First review status:", <p id="review_status"> {resource.review_status}</p>)}
-                {grid_element("Second review status:", <p id="review_status_2"> {resource.review_status_2}</p>)}
+                {grid_element("First review status:", <p id="review_status"> {resource.review_status==="pending" ? "Pending" : "Reviewed"}</p>)}
+                {grid_element("Second review status:", <p id="review_status_2"> {resource.review_status_2==="pending" ? "Pending" : "Reviewed"}</p>)}
                 {grid_element("Category:", <p id="category"> {resource.category} </p>)}
                 {resource.tags && resource.tags.length > 0
                     ? grid_element(

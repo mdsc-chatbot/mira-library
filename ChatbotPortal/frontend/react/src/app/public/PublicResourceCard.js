@@ -40,17 +40,6 @@ export function PublicResourceCard({resource, locationPrefix}) {
                         {resource.url}
                     </a>
                 </Card.Meta>
-                <Card.Description>
-                    <Rating
-                        icon="star"
-                        rating={resource.rating}
-                        maxRating={5}
-                        disabled
-                    />
-                    <div className={styles.overflowContentText} title={resource.website_summary_metadata}>
-                        {resource.website_summary_metadata}
-                    </div>
-                </Card.Description>
             </Card.Content>
         </Card>
     );
