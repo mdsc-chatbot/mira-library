@@ -205,10 +205,7 @@ JWT_AUTH = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://142.244.23.73:8000',
-    'http://localhost:8000'
-]
+CSRF_TRUSTED_ORIGINS = ['*']
 
 # Changes the built-in user model to ours
 AUTH_USER_MODEL = 'authentication.CustomUser'

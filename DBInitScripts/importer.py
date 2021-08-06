@@ -41,9 +41,12 @@ with open('./data.csv', newline='\n', encoding='utf-8-sig') as csvfile:
         if field != "":
           tag = getSQLIndex(version, i, field)
           if tag == -1:
-            print("Stopping import. Import will be rolled back. See above error for details.")
-            mydb.rollback()
-            exit("Quitting.")
+            print("Skipping Entry.")
+            skipEntry = True
+            break
+            #print("Stopping import. Import will be rolled back. See above error for details.")
+            #mydb.rollback()
+            #exit("Quitting.")
           if tag <= 15:
             #handle field entry
             if tag == 0: #skip tags
@@ -129,6 +132,12 @@ with open('./data.csv', newline='\n', encoding='utf-8-sig') as csvfile:
       if skipEntry:
         #skip submit
         skipEntry = False
+        taglist = []
+        fields = "("
+        fieldvalues = []
+        valuessql = "("
+        maxdistress = -1
+        mindistress = 11
         continue
 
       #apply final comments
@@ -145,12 +154,15 @@ with open('./data.csv', newline='\n', encoding='utf-8-sig') as csvfile:
         fieldvalues.append(maxdistress)
         valuessql+="%s, "
 
-      fields+="attachment, category_id, public_view_count, review_status)"
+      fields+="attachment, category_id, public_view_count, review_status, review_status_2, assigned_reviewer, assigned_reviewer_2)"
       fieldvalues.append('')
       fieldvalues.append(1)
       fieldvalues.append(0)
-      fieldvalues.append("approved")
-      valuessql+="%s, %s, %s, %s)"
+      fieldvalues.append("pending")
+      fieldvalues.append("pending")
+      fieldvalues.append(-1)
+      fieldvalues.append(-1)
+      valuessql+="%s, %s, %s, %s, %s, %s, %s)"
 
       #insert record and return auto-id
       sql = "INSERT INTO resource_resource " + fields + " VALUES " + valuessql +";"
