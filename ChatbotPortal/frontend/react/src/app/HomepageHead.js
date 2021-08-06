@@ -82,15 +82,6 @@ export class HomepageHead extends Component {
                         </Button.Group>
                     )
                     }
-
-                    <Button.Group className={styles.buttonAlign} size='medium'>
-                        <Link to={baseRoute + "/public_resource/59"}>
-                            <Button className={styles.firstButtonJustify}  color="google plus">
-                                Funding Resources
-                            </Button>
-                        </Link>
-                       
-                    </Button.Group>
                 </Segment>
             </React.Fragment>
         );
@@ -159,15 +150,6 @@ export class HomepageHead extends Component {
                     </Button.Group>
                 )
                 }
-
-                <Button.Group className={styles.buttonAlign} widths='3' size='tiny'>
-                    <Link to={baseRoute + "/public_resource/59"}>
-                        <Button className={styles.firstButtonJustify} color="google plus">
-                            Funding Resources
-                        </Button>
-                    </Link>
-                    
-                </Button.Group>
             </React.Fragment>
         );
     };

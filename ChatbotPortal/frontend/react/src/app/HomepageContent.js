@@ -81,14 +81,6 @@ export class HomepageContent extends Component {
                             {resource.title}
                         </Card.Header>
                         <Card.Meta>{resource.url}</Card.Meta>
-                        <Card.Description>
-                            <Rating
-                                icon="star"
-                                rating={resource.rating}
-                                maxRating={5}
-                                disabled
-                            />
-                        </Card.Description>
                     </Link>
                 </Card.Content>
             </Card>
@@ -114,78 +106,6 @@ export class HomepageContent extends Component {
             <div>
                 <Segment vertical>
                     <Grid className={styles.alignment} container stackable verticalAlign="middle">
-                        <Grid.Row>
-                            <Header
-                                as="h3"
-                                style={{
-                                    fontSize: "1.5em",
-                                    color: "#0072BB"
-                                }}
-                            >
-                                Popular Resources
-                            </Header>
-                            <Card.Group itemsPerRow={5} stackable>
-                                {this.state.popularResources.length ? (
-                                    <React.Fragment>
-                                        {this.state.popularResources.map((resource) => (
-                                            <PublicResourceCard resource={resource} locationPrefix="/public_resource/detail" />
-                                        ))}
-                                        {this.showMoreCard()}
-                                    </React.Fragment>
-                                ) : (
-                                    <div>
-                                        <Loader className={styles.inlineLoader}  active inline />
-                                    </div>
-                                )}
-                            </Card.Group>
-                        </Grid.Row>
-
-                        <Grid.Row>
-                            <Header
-                                as="h3"
-                                style={{ fontSize: "1.5em", color: "#0072BB" }}
-                            >
-                                Recent Resources
-                            </Header>
-                            <Card.Group itemsPerRow={5} stackable>
-                                {this.state.recentResources.length ? (
-                                    <React.Fragment>
-                                        {this.state.recentResources.map((resource) => (
-                                            <PublicResourceCard resource={resource} locationPrefix="/public_resource/detail" />
-                                        ))}
-                                        {this.showMoreCard()}
-                                    </React.Fragment>
-                                ) : (
-                                    <div>
-                                        <Loader className={styles.inlineLoader} active inline />
-                                    </div>
-                                )}
-                            </Card.Group>
-                        </Grid.Row>
-
-                        <Grid.Row>
-                            <Header
-                                as="h3"
-                                style={{ fontSize: "1.5em", color: "#0072BB" }}
-                            >
-                                Highest Rated Resources
-                            </Header>
-                            <Card.Group itemsPerRow={5} stackable>
-                                {this.state.ratingResources.length ? (
-                                    <React.Fragment>
-                                        {this.state.ratingResources.map((resource) => (
-                                            <PublicResourceCard resource={resource} locationPrefix="/public_resource/detail" />
-                                        ))}
-                                        {this.showMoreCard()}
-                                    </React.Fragment>
-                                ) : (
-                                    <div>
-                                        <Loader className={styles.inlineLoader} active inline />
-                                    </div>
-                                )}
-                            </Card.Group>
-                        </Grid.Row>
-
                     </Grid>
                 </Segment>
             </div>

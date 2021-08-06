@@ -139,7 +139,7 @@ https://ibb.co/9wx9pbr */}
           {this.context.security.is_logged_in &&
             this.context.security.is_staff && (
               <Menu.Item
-                name='Search'
+                name='Manage users'
                 as={Link}
                 to={baseRoute + '/search'}
                 active={activeItem === 'Search'}
@@ -261,7 +261,7 @@ https://ibb.co/9wx9pbr */}
                   this.context.security.is_staff && (
                     <Dropdown.Item>
                       <Menu.Item
-                        name='Search'
+                        name='Manage users'
                         as={Link}
                         to={baseRoute + '/search'}
                         active={activeItem === 'Search'}
