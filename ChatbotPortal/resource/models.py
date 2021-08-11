@@ -160,3 +160,6 @@ class Resource(models.Model):
     physical_address = models.TextField(blank=True, null=True)
 
     hours_of_operation = models.TextField(blank=True, null=True)
+
+    is_free = models.IntegerField(
+        validators=[MaxValueValidator(1), MinValueValidator(0)], default=1, blank=True, null=True)

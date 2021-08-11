@@ -42,6 +42,7 @@ export default class ResourceSubmitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isFreeChecked: false,
             title: "",
             organization_name: "",
             url: "",
@@ -114,6 +115,11 @@ export default class ResourceSubmitForm extends Component {
             ? resourceFormData.append("attachment", this.state.attachment)
             : null;
 
+        this.state.isFreeChecked
+            ? resourceFormData.append("is_free", 1)
+            : resourceFormData.append("is_free", 0);
+
+
         // Submission for tags
         // Lists have to be submitted in a certain way in order for the server to recognize it
         if (this.state.tags && this.state.tags.length) {
@@ -121,6 +127,8 @@ export default class ResourceSubmitForm extends Component {
                 resourceFormData.append(`tags`, value);
             });
         }
+
+        console.log(resourceFormData);
 
         //if we need to, deal with the hour bools
         if(!this.state.alwaysAvailable)
@@ -313,6 +321,11 @@ export default class ResourceSubmitForm extends Component {
         event.preventDefault();
     };
     
+    handleIsFreeCheckbox = () => {
+        console.log('checkbox chnged')
+        this.setState({isFreeChecked: !this.state.isFreeChecked})
+    };
+
     toggle = () => this.setState((prevState) => ({ alwaysAvailable: !prevState.alwaysAvailable }))
 
     render() {
@@ -409,7 +422,16 @@ export default class ResourceSubmitForm extends Component {
                                                 placeholder="https://"
                                             />
                                         </Form.Field>
-
+                                        <Divider hidden />
+                                        <Form.Field>
+                                            {/* <label>is this service free?</label> */}
+                                            <Checkbox
+                                                name="is_free"
+                                                label='is this service free?'
+                                                onChange={this.handleIsFreeCheckbox}
+                                            />
+                                        </Form.Field>
+                                        <Divider hidden />
                                         <Form.Field>
                                             <label>Phone Number(s) <Popup content='Phone number(s) relevent to the resource. Format: 1234567890;...;' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Input
