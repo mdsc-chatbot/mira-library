@@ -164,3 +164,5 @@ class Resource(models.Model):
 
     is_free = models.IntegerField(
         validators=[MaxValueValidator(1), MinValueValidator(0)], default=1, blank=True, null=True)
+
+    informational_resource_text = models.TextField(blank=True, null=True)

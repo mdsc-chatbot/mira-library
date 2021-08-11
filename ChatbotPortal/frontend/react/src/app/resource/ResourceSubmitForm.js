@@ -44,6 +44,8 @@ export default class ResourceSubmitForm extends Component {
         this.state = {
             isFreeChecked: false,
             title: "",
+            informational_resource_text: "",
+            resourceTypeIsInformative: false,
             organization_name: "",
             url: "",
             general_url: "",
@@ -93,6 +95,7 @@ export default class ResourceSubmitForm extends Component {
         const resourceFormData = new FormData();
 
         resourceFormData.append("title", this.state.title);
+        resourceFormData.append("informational_resource_text", this.state.informational_resource_text);
         resourceFormData.append("organization_name", this.state.organization_name);
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("general_url", this.state.general_url);
@@ -325,9 +328,25 @@ export default class ResourceSubmitForm extends Component {
         this.setState({isFreeChecked: !this.state.isFreeChecked})
     };
 
+    handleResTypeChange = (resource_type) => {
+        this.setState({ resource_type })
+        if(resource_type != "SR"){
+            this.setState({resourceTypeIsInformative: true});
+        }else{
+            this.setState({resourceTypeIsInformative: false});
+            this.setState({informational_resource_text: ""});
+        }
+    }
+
     toggle = () => this.setState((prevState) => ({ alwaysAvailable: !prevState.alwaysAvailable }))
 
     render() {
+
+        var dateTabs=null;
+        if(!this.state.alwaysAvailable)
+        {
+            dateTabs = <HoursOfOperationWidget hourBools={this.state.hourBools}/>
+        }
 
         var dateTabs=null;
         if(!this.state.alwaysAvailable)
@@ -347,7 +366,7 @@ export default class ResourceSubmitForm extends Component {
                                 }}
                                 color="blue"
                             >
-                                Resource submission {/*<ResourceSubmissionHelp style={{display:'inline-block'}} trigger={
+                                Resource Submission {/*<ResourceSubmissionHelp style={{display:'inline-block'}} trigger={
                                     (<Icon name='question circle'/>)
                                 }/>*/}
                             </Header>
@@ -366,7 +385,7 @@ export default class ResourceSubmitForm extends Component {
                                                 placeholder="title"
                                         />-->*/}
                                         <Form.Field>
-                                            <label>Resource Title (format: [name of organization][type of resource] - Example: Crisis Services Canada PhoneLine)</label>
+                                            <label>Resource Title &nbsp;&nbsp;&nbsp;(Format: [name of organization][type of resource] - Example: Crisis Services Canada PhoneLine)</label>
                                             <TitleDropdown
                                                 required
                                                 name="title"
@@ -376,7 +395,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Name of Company or Organization Providing Resource (Example: Crisis Services Canada)</label>
+                                            <label>Name of Company or Organization Providing Resource &nbsp;&nbsp;&nbsp;(Example: Crisis Services Canada)</label>
                                             <OrganizationNameDropdown
                                                 required
                                                 name="organization_name"
@@ -387,7 +406,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Brief description of the company or organization (up to 3 sentences.)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Brief description of the company or organization &nbsp;&nbsp;&nbsp;(up to 3 sentences.)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.TextArea
                                                 name="description"
                                                 onChange={this.handleChange}
@@ -397,7 +416,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Brief description of the service the resource provides (up to 3 sentences.)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Brief description of the service the resource provides &nbsp;&nbsp;&nbsp;(up to 3 sentences.)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.TextArea
                                                 name="definition"
                                                 onChange={this.handleChange}
@@ -408,7 +427,7 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field>
                                         
                                         <Form.Field>
-                                            <label>Resource Homepage URL (Example: https://mdsc.ca)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Resource Homepage URL &nbsp;&nbsp;&nbsp;(Example: https://mdsc.ca) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="url"
@@ -420,7 +439,7 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field>
 
                                         <Form.Field>
-                                            <label>Source URL (if different from homepage) <Popup content='URL pointing to where the resource was obtained from.' trigger={<Icon name='question circle'/>}/><Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Source URL &nbsp;&nbsp;&nbsp;(FILL ONLY if different from homepage) <Popup content='URL pointing to where the resource was obtained from.' trigger={<Icon name='question circle'/>}/><Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="general_url"
@@ -435,7 +454,7 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Is this service free?</label>
                                             <Checkbox
                                                 name="is_free"
-                                                label='Service is free'
+                                                label='Yes, service is free'
                                                 onChange={this.handleIsFreeCheckbox}
                                             />
                                         </Form.Field>
@@ -448,14 +467,31 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={category => this.setState({ category })}
                                             />
                                         </Form.Field>
+
                                         <Form.Field>
                                             <label>Resource Type <Popup content='Indicate if this resource is primarily a service, informational, or both.' trigger={<Icon name='question circle'/>}/></label>
                                             <ResourceTypeDropdown
                                                 required
                                                 value={this.state.resource_type}
-                                                onChange={resource_type => this.setState({ resource_type })}
+                                                onChange={this.handleResTypeChange}
                                             />
                                         </Form.Field>
+                                        {(() => {
+                                                if (this.state.resourceTypeIsInformative)
+                                                    return (
+                                                            <Form.Field>
+                                                                <Form.TextArea
+                                                                    name="informational_resource_text"
+                                                                    onChange={this.handleChange}
+                                                                    value={this.state.informational_resource_text}
+                                                                    label="Informational Resource Text &nbsp;&nbsp;&nbsp;(example a definition or statistical information)"
+                                                                    rows={2}
+                                                                />  
+                                                            </Form.Field>
+                                                    );
+                                                else 
+                                                    return ('')                                                    
+                                            })()}
                                         {/* <Form.Field>
                                             <label>Resource Usefulness Rating <Popup content='Rate the resource based on how useful you feel it is in general.' trigger={<Icon name='question circle'/>}/></label>
                                             <Rating
@@ -469,7 +505,6 @@ export default class ResourceSubmitForm extends Component {
                                                 size="massive"
                                             />
                                         </Form.Field> */}
-                                        <Divider hidden />
                                         <Divider hidden />
                                         <Form.Field>
                                             <label>Age Tags <Popup content='Age groups tags to indicate who this resource might apply to.' trigger={<Icon name='question circle'/>}/></label>
@@ -555,7 +590,7 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field>
                                         <Divider hidden />
                                         <Form.Field>
-                                            <label>Resource Email Address, if applicable (Example: j.m.nobel@ualberta.ca)<Popup content='this field is optional' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Resource Email Address, &nbsp;&nbsp;&nbsp;if applicable (Example: j.m.nobel@ualberta.ca)<Popup content='this field is optional' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="email"
@@ -566,7 +601,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Resource Phone Number(s), if applicable (Example: 1234567890;...;)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Resource Phone Number(s), &nbsp;&nbsp;&nbsp;if applicable (Example: 1234567890;...;)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="phone_numbers"
@@ -577,7 +612,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Text Number(s), if applicable (Format: enter either just the text number, or include instructions if applicable - Example: text "help" to 1234;...;) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Text Number(s), &nbsp;&nbsp;&nbsp;if applicable (Format: enter either just the text number, or include instructions if applicable - Example: text "help" to 1234;...;) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="text_numbers"
@@ -588,7 +623,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Physical Address, FILL ONLY if services are in person (Example: 123 Jasper Avenue, Edmonton, AB, T4F 1A9, Canada)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Physical Address, &nbsp;&nbsp;&nbsp;FILL ONLY if services are in person (Example: 123 Jasper Avenue, Edmonton, AB, T4F 1A9, Canada)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                             fluid
                                             name="physical_address"
@@ -609,24 +644,26 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field>
                                         {dateTabs}
                                         <Divider hidden />
-                                        <Form.TextArea
-                                            name="chatbot_text"
-                                            onChange={this.handleChange}
-                                            value={this.state.chatbot_text}
-                                            label="Chatbot Text"
-                                            placeholder="Enter what the chatbot should say about this resource."
-                                            rows={2}
-                                        />
-
-                                        <Form.TextArea
-                                            name="comments"
-                                            onChange={this.handleChange}
-                                            value={this.state.comments}
-                                            label="Comments"
-                                            placeholder="Enter any comments (Optional)"
-                                            rows={2}
-                                        />
-
+                                        <Form.Field>
+                                            <Form.TextArea
+                                                name="chatbot_text"
+                                                onChange={this.handleChange}
+                                                value={this.state.chatbot_text}
+                                                label="Chatbot Text"
+                                                placeholder="Enter what the chatbot should say about this resource."
+                                                rows={2}
+                                            />  
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <Form.TextArea
+                                                name="comments"
+                                                onChange={this.handleChange}
+                                                value={this.state.comments}
+                                                label="Comments"
+                                                placeholder="Enter any comments (Optional)"
+                                                rows={2}
+                                            />
+                                        </Form.Field>
                                         <Form.Field>
                                             <label>Upload an attachment</label>
                                             <Input
