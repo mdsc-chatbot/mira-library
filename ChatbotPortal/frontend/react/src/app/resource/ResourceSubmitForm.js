@@ -406,7 +406,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Brief description of the company or organization &nbsp;&nbsp;&nbsp;(up to 3 sentences.)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Brief description of the company or organization &nbsp;&nbsp;&nbsp;(up to 3 sentences.) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.TextArea
                                                 name="description"
                                                 onChange={this.handleChange}
@@ -416,7 +416,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Brief description of the service the resource provides &nbsp;&nbsp;&nbsp;(up to 3 sentences.)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Brief description of the service the resource provides &nbsp;&nbsp;&nbsp;(up to 3 sentences.) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.TextArea
                                                 name="definition"
                                                 onChange={this.handleChange}

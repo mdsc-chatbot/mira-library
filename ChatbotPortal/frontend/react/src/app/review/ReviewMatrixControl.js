@@ -22,7 +22,7 @@
  */
  import React from 'react';
  import PropTypes from 'prop-types';
- import {Table, Checkbox, Rating} from 'semantic-ui-react';
+ import {Table, Checkbox, Rating, Popup, Icon} from 'semantic-ui-react';
  import {SecurityContext} from "../contexts/SecurityContext";
  
  
@@ -65,20 +65,22 @@
     };
 
     handleRTChange = (event, position, rating, maxRating ) => {
-        console.log(rating)
         const updatedRateState = this.state.questionScores.map((item, index) =>
             index === position ? rating : this.state.questionScores[index]
         );
-        console.log(updatedRateState)
         this.setState({questionScores: updatedRateState});
     
         const totalScore = updatedRateState.reduce(
             (sum, currentState) => {
+                if(currentState==2){
+                    currentState =3;
+                }else if(currentState==3){
+                    currentState =5;
+                }
                 return sum+currentState;
             },
             0
         );
-        console.log(totalScore)
         this.setState({rScore: totalScore});
     };
 
@@ -92,8 +94,8 @@
                 <Table collapsing>
                     <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={20}>Section 1: Source of Resource</Table.HeaderCell>
-                        <Table.HeaderCell width={10}></Table.HeaderCell>
+                        <Table.HeaderCell width={5}>Section 1: Source of Resource</Table.HeaderCell>
+                        <Table.HeaderCell width={5}></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 
@@ -113,8 +115,8 @@
                 <Table collapsing>
                     <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={20}>Section 2: Readability</Table.HeaderCell>
-                        <Table.HeaderCell width={10}></Table.HeaderCell>
+                        <Table.HeaderCell width={5}>Section 2: Readability</Table.HeaderCell>
+                        <Table.HeaderCell width={5}></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 
@@ -142,8 +144,8 @@
                 <Table collapsing>
                     <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={20}>Section 3: Accessibility</Table.HeaderCell>
-                        <Table.HeaderCell width={10}></Table.HeaderCell>
+                        <Table.HeaderCell width={5}>Section 3: Accessibility</Table.HeaderCell>
+                        <Table.HeaderCell width={5}></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 
@@ -177,62 +179,81 @@
                 <Table collapsing>
                     <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={20}>Section 4: Resource Quality</Table.HeaderCell>
-                        <Table.HeaderCell width={10}></Table.HeaderCell>
+                        <Table.HeaderCell width={5}>Section 4: Resource Quality</Table.HeaderCell>
+                        <Table.HeaderCell width={5}></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
                         <Table.Row>
-                            <Table.Cell>Are the aims clear?</Table.Cell>
+                            <Table.Cell>Are the aims clear? <Popup content='look for a clear indication at the begining of the resource of: 1)what is it about?  2)what it is meant to cover(and what topics are meant to be excluded) 3)who might find it useful' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 0, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 0, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Does it achieve it's aims?</Table.Cell>
+                            <Table.Cell>Does it achieve it's aims? <Popup content='Consider whether the resource provides the information and/or service it amed to as outlined in previous question.' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 1, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 1, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Is it relevent?</Table.Cell>
+                            <Table.Cell>Is it relevent? <Popup content='Consider whether: 1)the resource addresses the questions that client might ask. 2)The resource addresses the need the client may have in accessing it.' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 2, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 2, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Is it clear what sources of information were used to compile the resource (other than the author or producer)?</Table.Cell>
+                            <Table.Cell>Is it clear what sources of information were used to compile the resource (other than the author or producer)? <Popup content='HINT
+                                Check whether the main claims or statements made about mental health topics are accompanied by a reference to the sources used as evidence, e.g. a research study or expert opinion.
+                                Look for a means of checking the sources used such as a bibliography/reference list or the addresses of the experts or organisations quoted, or external links to the online sources.
+                                Rating note: In order to score a full "5" the resources should fulfill both hints. Lists of additional sources of support and information (Question 4.7) are not necessarily sources of evidence for the current resource.' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 3, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 3, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Is it clear when the information used or reported in the resource was produced?</Table.Cell>
+                            <Table.Cell>Is it clear when the information used or reported in the resource was produced?<Popup content='HINT: Look for:
+                                dates of the main sources of information used to compile the resource
+                                date of any revisions of the resource 
+                                date of resource (copyright date).
+                                If the resource is a forum, check to ensure responses to client questions are being addressed in a timely manner (less than 24 hours for a response to an initial post). 
+                                Rating note: The hints are placed in order of importance - in order to score a full "5" the dates relating to the first hint should be found.
+                                ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 4, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 4, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Is it balanced or unbiased?</Table.Cell>
+                            <Table.Cell>Is it balanced or unbiased?<Popup content='HINT: Look for:
+                                a clear indication of whether the resource is written from a personal or objective point of view
+                                evidence that a range of sources of information was used to compile the resource, e.g. more than one research study or expert (if applicable)
+                                evidence of an external assessment of the resource.
+                                Be wary if:
+                                the resource relies primarily on evidence from single cases (if applicable) 
+                                the information is presented in a sensational, emotive or alarmist way.
+                                ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 5, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 5, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Does it provide details of additional sources of support and information?</Table.Cell>
+                            <Table.Cell>Does it provide details of additional sources of support and information?<Popup content='HINT Look for suggestions for further reading or for details of other organisations providing advice and information about the mental health topic.
+                                ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={0} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 6, rating, maxRating)}/></div>
+                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 6, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Is the resource patient facing?</Table.Cell>
+                            <Table.Cell>Is the resource patient facing?<Popup content='Is the resource relevant for an individual with the condition specified? Is it intended for patient use generally?' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox onChange={(e)=>this.handleCBChange(e, 7)}/></div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Does the resource provide any cautions?</Table.Cell>
+                            <Table.Cell>Does the resource provide any cautions?<Popup content='Is there any warning for a user that the resource is not intended to replace medical care?
+                                    Is there an emergency phone number on the website to help direct someone in significant distress?
+                                ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox onChange={(e)=>this.handleCBChange(e, 8)}/></div>
                             </Table.Cell>
@@ -242,20 +263,25 @@
                 <Table collapsing>
                     <Table.Header>
                     <Table.Row>
-                        <Table.HeaderCell width={20}>Section 5: Overall</Table.HeaderCell>
-                        <Table.HeaderCell width={10}></Table.HeaderCell>
+                        <Table.HeaderCell width={5}>Section 5: Overall</Table.HeaderCell>
+                        <Table.HeaderCell width={5}></Table.HeaderCell>
                     </Table.Row>
                     </Table.Header>
 
                     <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>Is the resource still viable/functional?</Table.Cell>
+                        <Table.Row positive>
+                            <Table.Cell>Is the resource still viable/functional? <Popup content='Do the links to access the resource still work (please test them)
+                                If appropriate, is the phone number still in service? (other than 911, please phone numbers provided)
+                                *If the answer to this question is no, then the resource will be noted as rejected and flagged for follow-up by the Resource Portal Editor.
+                                ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox onChange={this.toggleViable} checked={this.state.bViable}/></div>
                             </Table.Cell>
                         </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Can the resource cause harm?</Table.Cell>
+                        <Table.Row negative>
+                            <Table.Cell>Can the resource cause harm?<Popup content='Does the resource make recommendations or suggestions that directly defy clinical guidance? Does it include false information, like a suicide hotline number that doesn’t actually work?
+                                *If the answer to this question is yes, then the resource will be noted as rejected and flagged for follow-up by the Resource Portal Editor. 
+                                ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox onChange={this.toggleHarm} checked={this.state.bHarmful}/></div>
                             </Table.Cell>
@@ -268,11 +294,12 @@
                         </Table.Row>*/}
                     </Table.Body>
                 </Table>
-                <h3> {(((this.state.bScore+this.state.rScore)*100)/49).toFixed(0) > 75 && !this.state.bHarmful && this.state.bViable
-                    ? 'This resource passes all given criteria. Approval is recommended. If you feel it necessary to reject this resource, please explain why in the review comments.'
-                    : 'This resource does not meet the minimum standards for approval. If you feel it necessary to approve this resource, please explain why in the review comments.'
+                 {
+                (((this.state.bScore+this.state.rScore)*100)/49).toFixed(0) > 75 && !this.state.bHarmful && this.state.bViable
+                    ? <h3 class="ui green header">Score:{(((this.state.bScore+this.state.rScore)*100)/49).toFixed(0)}/90&nbsp;&nbsp; This resource passes all given criteria. Approval is recommended. If you feel it necessary to reject this resource, please explain why in the review comments.</h3>
+                    : <h3 class="ui red header">Score:{(((this.state.bScore+this.state.rScore)*100)/49).toFixed(0)}/90&nbsp;&nbsp;This resource does not meet the minimum standards for approval. If you feel it necessary to approve this resource, please explain why in the review comments.</h3>
                 }
-                </h3>
+                
              </React.Fragment>
          );
      }
