@@ -20,3 +20,6 @@
 __pycache__/
 
 .DS_Store
+ChatbotPortal/frontend/react/package-lock.json
+ChatbotPortal/frontend/react/webpack/js/app-3029d15ac0cadb753cdd.js
+ChatbotPortal/frontend/react/webpack/index.html
