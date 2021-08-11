@@ -47,7 +47,7 @@ export default class ResourceSubmitForm extends Component {
             organization_name: "",
             url: "",
             general_url: "",
-            rating: 0,
+            rating: 5,
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
@@ -294,11 +294,11 @@ export default class ResourceSubmitForm extends Component {
         if(this.state.email!= "") this.addFieldTag("Email")
 
         //check field states before submitting
-        if(this.state.rating == 0)
-        {
-            this.setState({submitted: -1, errors: "Please rate your resource usefulness."});
-            return;
-        }
+        // if(this.state.rating == 0)
+        // {
+        //     this.setState({submitted: -1, errors: "Please rate your resource usefulness."});
+        //     return;
+        // }
         if(this.state.tags.length<1||this.state.langTags.length<1)
         {
             this.setState({submitted: -1, errors: "Please enter at a language tag and at least one other tag."});
@@ -456,7 +456,7 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={resource_type => this.setState({ resource_type })}
                                             />
                                         </Form.Field>
-                                        <Form.Field>
+                                        {/* <Form.Field>
                                             <label>Resource Usefulness Rating <Popup content='Rate the resource based on how useful you feel it is in general.' trigger={<Icon name='question circle'/>}/></label>
                                             <Rating
                                                 name="rating"
@@ -468,7 +468,7 @@ export default class ResourceSubmitForm extends Component {
                                                 icon="star"
                                                 size="massive"
                                             />
-                                        </Form.Field>
+                                        </Form.Field> */}
                                         <Divider hidden />
                                         <Divider hidden />
                                         <Form.Field>
