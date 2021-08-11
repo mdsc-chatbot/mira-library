@@ -49,4 +49,4 @@ class RetrievePublicResourceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Resource
-        fields = ['id', 'title', 'url', 'rating', 'comments', 'tags', 'attachment', 'timestamp', 'review_status', 'website_summary_metadata']
+        fields = ['id', 'title', 'url', 'rating', 'comments', 'tags', 'attachment', 'timestamp', 'review_status', 'website_summary_metadata', 'organization_name', 'description']

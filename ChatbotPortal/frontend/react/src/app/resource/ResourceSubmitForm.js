@@ -28,6 +28,7 @@ import {Container, Form, Header, Input, Message, Rating, Icon, Popup, Checkbox, 
 
 import TagDropdown from "./TagDropdown";
 import TitleDropdown from "./TitleDropdown";
+import OrganizationNameDropdown from "./OrganizationNameDropdown";
 import CategoryDropdown from './CategoryDropdown';
 import HoursOfOperationWidget from "./HoursOfOperationWidget";
 import ResourceTypeDropdown from './ResourceTypeDropdown';
@@ -42,6 +43,7 @@ export default class ResourceSubmitForm extends Component {
         super(props);
         this.state = {
             title: "",
+            organization_name: "",
             url: "",
             general_url: "",
             rating: 0,
@@ -90,6 +92,7 @@ export default class ResourceSubmitForm extends Component {
         const resourceFormData = new FormData();
 
         resourceFormData.append("title", this.state.title);
+        resourceFormData.append("organization_name", this.state.organization_name);
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("general_url", this.state.general_url);
         resourceFormData.append("rating", this.state.rating);
@@ -351,7 +354,7 @@ export default class ResourceSubmitForm extends Component {
                                                 placeholder="title"
                                         />-->*/}
                                         <Form.Field>
-                                            <label>Title <Popup content='Title to identify the resource.' trigger={<Icon name='question circle'/>}/></label>
+                                            <label>Resource Title (format: [name of organization][type of resource] - Example: Crisis Services Canada PhoneLine) <Popup content='Title of resource.' trigger={<Icon name='question circle'/>}/></label>
                                             <TitleDropdown
                                                 name="title"
                                                 value={this.state.title}
@@ -359,6 +362,54 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={title => this.setState({ title })}
                                             />
                                         </Form.Field>
+                                        <Form.Field>
+                                            <label>Name of Company or Organization Providing Resource (Example: Crisis Services Canada) <Popup content='Name of resource provider.' trigger={<Icon name='question circle'/>}/></label>
+                                            <OrganizationNameDropdown
+                                                name="organization_name"
+                                                value={this.state.organization_name}
+                                                label="Company or Organization name"
+                                                onChange={organization_name => this.setState({ organization_name })}
+                                                organization_description = {description => this.setState({ description })} 
+                                            />
+                                        </Form.Field>
+                                        <Form.TextArea
+                                            name="description"
+                                            onChange={this.handleChange}
+                                            value={this.state.description}
+                                            label="Brief description of the company or organization (up to 3 sentences.)"
+                                            placeholder="Enter Company or Organization Description"
+                                        />
+                                        <Form.TextArea
+                                            name="definition"
+                                            onChange={this.handleChange}
+                                            value={this.state.definition}
+                                            label="Brief description of the service the resource provides (up to 3 sentences.)"
+                                            placeholder="Enter Service Description."
+                                        />
+                                        <Form.Field>
+                                            <label>Resource Homepage URL (Example: https://mdsc.ca)<Popup content='If the resource is a URL, enter it here.' trigger={<Icon name='question circle'/>}/></label>
+                                            <Form.Input
+                                                fluid
+                                                name="url"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.url}
+                                                placeholder="https://"
+                                            />
+                                        </Form.Field>
+
+                                        <Form.Field>
+                                            <label>Source URL (if different from homepage) <Popup content='URL pointing to where the resource was obtained from.' trigger={<Icon name='question circle'/>}/></label>
+                                            <Form.Input
+                                                fluid
+                                                name="general_url"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.general_url}
+                                                placeholder="https://"
+                                            />
+                                        </Form.Field>
+
                                         <Form.Field>
                                             <label>Phone Number(s) <Popup content='Phone number(s) relevent to the resource. Format: 1234567890;...;' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Input
@@ -403,29 +454,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         
-                                        <Form.Field>
-                                            <label>Resource URL <Popup content='If the resource is a URL, enter it here.' trigger={<Icon name='question circle'/>}/></label>
-                                            <Form.Input
-                                                fluid
-                                                name="url"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.url}
-                                                placeholder="https://"
-                                            />
-                                        </Form.Field>
-
-                                        <Form.Field>
-                                            <label>Source URL <Popup content='URL pointing to where the resource was obtained from.' trigger={<Icon name='question circle'/>}/></label>
-                                            <Form.Input
-                                                fluid
-                                                name="general_url"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.general_url}
-                                                placeholder="https://"
-                                            />
-                                        </Form.Field>
+                                        
                                         <Form.Field>
                                             <label>Resource Usefulness Rating <Popup content='Rate the resource based on how useful you feel it is in general.' trigger={<Icon name='question circle'/>}/></label>
                                             <Rating
@@ -542,21 +571,6 @@ export default class ResourceSubmitForm extends Component {
                                             </Form.Group>
                                         </Form.Field>
                                         <Divider hidden />
-                                        <Form.TextArea
-                                            name="definition"
-                                            onChange={this.handleChange}
-                                            value={this.state.definition}
-                                            label="Definition"
-                                            placeholder="Enter a definition, if applicable."
-                                        />
-
-                                        <Form.TextArea
-                                            name="description"
-                                            onChange={this.handleChange}
-                                            value={this.state.description}
-                                            label="Description"
-                                            placeholder="Enter a description of the resource."
-                                        />
 
                                         <Form.TextArea
                                             name="chatbot_text"

@@ -46,12 +46,15 @@ export default class TitleDropdown extends React.Component {
 
     handleChange = (event, data) => {
         // Change value
-        //this.props.onChange(data.value);
+        let searchQuery = event.target.textContent.substring(3);
+        this.setState({searchQuery});
     };
 
     handleSearch = (options, query) => {
         let noptions = options.filter((opt) => opt.text.toLowerCase().includes(query.toLowerCase()));
-        noptions.unshift({text: "Similar Resources:"});
+        if(noptions[0] && noptions[0].text !== "Similar Resources:"){
+            noptions.unshift({text: "Similar Resources:"});
+        }
         return noptions;
       };
 
@@ -83,11 +86,13 @@ export default class TitleDropdown extends React.Component {
         .then(res => {
             let titleOptions = [];
             if (res.data) {
-                titleOptions = res.data.results.filter(resource => resource.review_status === "approved" && resource.review_status_2 === "approved").map(TitleDropdown.mapResponseToDropdownOption);
+                titleOptions = res.data.results.filter(resource => resource.review_status === "approved").map(TitleDropdown.mapResponseToDropdownOption);
                 for (var i=0; i < titleOptions.length; i++) {
                     titleOptions[i].text = '-> ' + titleOptions[i].text;
                 }
-                titleOptions.unshift({text: "Similar Resources:"})
+                if(titleOptions[0] && titleOptions[0].text !== "Similar Resources:"){
+                    titleOptions.unshift({text: "Similar Resources:"})
+                }
             }
             this.setState({titleOptions})
         });
@@ -108,7 +113,7 @@ export default class TitleDropdown extends React.Component {
                     onChange={this.handleChange}
                     onSearchChange={this.handleSearchChange}
                     options={this.state.titleOptions}
-                    placeholder='Enter title'
+                    placeholder='Enter Resource Title'
                     search={this.handleSearch}
                     searchQuery={this.state.searchQuery}
                 />
