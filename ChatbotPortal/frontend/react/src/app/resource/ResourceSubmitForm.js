@@ -32,6 +32,7 @@ import OrganizationNameDropdown from "./OrganizationNameDropdown";
 import CategoryDropdown from './CategoryDropdown';
 import HoursOfOperationWidget from "./HoursOfOperationWidget";
 import ResourceTypeDropdown from './ResourceTypeDropdown';
+import ResourceFormatDropdown from './ResourceFormatDropdown';
 import {SecurityContext} from '../contexts/SecurityContext';
 import styles from "./ResourceSubmitForm.css";
 import ResourceSubmissionHelp from "./ResourceSubmissionHelp.js"
@@ -63,6 +64,7 @@ export default class ResourceSubmitForm extends Component {
             distress_level_min: 1,
             distress_level_max: 1,
             resource_type: "SR",
+            resource_format: "", //resource format = resource type in Front-End
             errors: {},
             category: 1,
             tags: [],
@@ -112,6 +114,7 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("chatbot_text", this.state.chatbot_text);
         resourceFormData.append("physical_address", this.state.physical_address);
         resourceFormData.append("resource_type", this.state.resource_type);
+        resourceFormData.append("resource_format", this.state.resource_format);
         resourceFormData.append("phone_numbers", this.state.phone_numbers);
         resourceFormData.append("text_numbers", this.state.text_numbers);
         this.state.attachment !== null
@@ -338,6 +341,10 @@ export default class ResourceSubmitForm extends Component {
         }
     }
 
+    handleResFormatChange = (resource_format) => {
+        this.setState({ resource_format })
+    }
+
     toggle = () => this.setState((prevState) => ({ alwaysAvailable: !prevState.alwaysAvailable }))
 
     render() {
@@ -459,21 +466,23 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Divider hidden />
-                                        <Form.Field>
-                                            <label>Resource Category <Popup content='Select the category this resource primarily falls under.' trigger={<Icon name='question circle'/>}/></label>
-                                            <CategoryDropdown
-                                                required
-                                                value={this.state.category}
-                                                onChange={category => this.setState({ category })}
-                                            />
-                                        </Form.Field>
 
                                         <Form.Field>
-                                            <label>Resource Type <Popup content='Indicate if this resource is primarily a service, informational, or both.' trigger={<Icon name='question circle'/>}/></label>
+                                            <label>Resource Category <Popup content='Indicate if this resource is primarily a service, informational, or both.' trigger={<Icon name='question circle'/>}/></label>
                                             <ResourceTypeDropdown
                                                 required
                                                 value={this.state.resource_type}
                                                 onChange={this.handleResTypeChange}
+                                            />
+                                        </Form.Field>
+
+                                        <Form.Field>
+                                            <label>Resource Type </label>
+                                            <ResourceFormatDropdown
+                                                required
+                                                is_informational={this.state.resource_type}
+                                                onChange={this.handleResFormatChange}
+                                                value={this.state.resource_format}
                                             />
                                         </Form.Field>
                                         {(() => {
@@ -492,6 +501,14 @@ export default class ResourceSubmitForm extends Component {
                                                 else 
                                                     return ('')                                                    
                                             })()}
+                                        <Form.Field>
+                                            <label>Resource Format <Popup content='Select the format this resource primarily falls under.' trigger={<Icon name='question circle'/>}/></label>
+                                            <CategoryDropdown
+                                                required
+                                                value={this.state.category}
+                                                onChange={category => this.setState({ category })}
+                                            />
+                                        </Form.Field>
                                         {/* <Form.Field>
                                             <label>Resource Usefulness Rating <Popup content='Rate the resource based on how useful you feel it is in general.' trigger={<Icon name='question circle'/>}/></label>
                                             <Rating
