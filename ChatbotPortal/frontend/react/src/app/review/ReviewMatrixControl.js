@@ -72,11 +72,6 @@
     
         const totalScore = updatedRateState.reduce(
             (sum, currentState) => {
-                if(currentState==2){
-                    currentState =3;
-                }else if(currentState==3){
-                    currentState =5;
-                }
                 return sum+currentState;
             },
             0
@@ -188,19 +183,19 @@
                         <Table.Row>
                             <Table.Cell>Are the aims clear? <Popup content='look for a clear indication at the begining of the resource of: 1)what is it about?  2)what it is meant to cover(and what topics are meant to be excluded) 3)who might find it useful' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 0, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 0, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>Does it achieve it's aims? <Popup content='Consider whether the resource provides the information and/or service it amed to as outlined in previous question.' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 1, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 1, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>Is it relevent? <Popup content='Consider whether: 1)the resource addresses the questions that client might ask. 2)The resource addresses the need the client may have in accessing it.' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 2, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 2, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -209,7 +204,7 @@
                                 Look for a means of checking the sources used such as a bibliography/reference list or the addresses of the experts or organisations quoted, or external links to the online sources.
                                 Rating note: In order to score a full "5" the resources should fulfill both hints. Lists of additional sources of support and information (Question 4.7) are not necessarily sources of evidence for the current resource.' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 3, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 3, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -221,7 +216,7 @@
                                 Rating note: The hints are placed in order of importance - in order to score a full "5" the dates relating to the first hint should be found.
                                 ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 4, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 4, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -234,14 +229,14 @@
                                 the information is presented in a sensational, emotive or alarmist way.
                                 ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 5, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 5, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
                             <Table.Cell>Does it provide details of additional sources of support and information?<Popup content='HINT Look for suggestions for further reading or for details of other organisations providing advice and information about the mental health topic.
                                 ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Rating min={1} maxRating={3} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 6, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;2)Partially&nbsp;&nbsp;3)Yes</div>
+                                <div><Rating min={1} maxRating={5} onRate={(e, {rating, maxRating})=>this.handleRTChange(e, 6, rating, maxRating)}/> &nbsp;&nbsp;&nbsp;1)No&nbsp;&nbsp;3)Partially&nbsp;&nbsp;5)Yes</div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>

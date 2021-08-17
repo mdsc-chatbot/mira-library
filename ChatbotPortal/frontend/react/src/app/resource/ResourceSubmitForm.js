@@ -44,6 +44,7 @@ export default class ResourceSubmitForm extends Component {
         super(props);
         this.state = {
             isFreeChecked: false,
+            require_membership: false,
             title: "",
             informational_resource_text: "",
             resourceTypeIsInformative: false,
@@ -125,6 +126,9 @@ export default class ResourceSubmitForm extends Component {
             ? resourceFormData.append("is_free", 1)
             : resourceFormData.append("is_free", 0);
 
+        this.state.require_membership
+            ? resourceFormData.append("require_membership", 1)
+            : resourceFormData.append("require_membership", 0);
 
         // Submission for tags
         // Lists have to be submitted in a certain way in order for the server to recognize it
@@ -202,10 +206,12 @@ export default class ResourceSubmitForm extends Component {
             this.setState({submitted: submitted_value}, () => {
                 setTimeout(() => {
                     this.setState(this.baseState);
-                }, 10000);
+                    setTimeout(()=>{
+                        window.location.reload(false);
+                    }, 900);
+                }, 2500);
             });
-        }
-        else {
+        }else {
             this.setState({submitted: submitted_value, errors: submitted_error});
         }
         console.log(submitted_error);
@@ -230,6 +236,19 @@ export default class ResourceSubmitForm extends Component {
 
     handleChange = event => {
         this.setState({[event.target.name]: event.target.value});
+    };
+
+    handleChangeResURL = event => {
+        var baseUrl='';
+        try{
+            const urlOne = new URL(this.state.general_url);
+            baseUrl = urlOne.origin;
+        }catch(e){
+            baseUrl = "";
+        }
+        
+        if(baseUrl!=''){this.setState({url:baseUrl});}
+        this.setState({general_url:event.target.value})
     };
 
     // event.target.value holds the pathname of a file
@@ -329,6 +348,10 @@ export default class ResourceSubmitForm extends Component {
     
     handleIsFreeCheckbox = () => {
         this.setState({isFreeChecked: !this.state.isFreeChecked})
+    };
+
+    handleReqMemCheckbox = () => {
+        this.setState({require_membership: !this.state.require_membership})
     };
 
     handleResTypeChange = (resource_type) => {
@@ -432,7 +455,18 @@ export default class ResourceSubmitForm extends Component {
                                                 rows={2}
                                             />
                                         </Form.Field>
-                                        
+                                        <Form.Field>
+                                            <label>Source URL &nbsp;&nbsp;&nbsp;(Example: https://mdsc.ca/resources/56)<Popup content='URL pointing to where the resource was obtained from.' trigger={<Icon name='question circle'/>}/><Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <Form.Input
+                                                fluid
+                                                name="general_url"
+                                                onChange={this.handleChangeResURL}
+                                                onBlur={this.handleChangeResURL}
+                                                width={16}
+                                                value={this.state.general_url}
+                                                placeholder="https://"
+                                            />
+                                        </Form.Field>
                                         <Form.Field>
                                             <label>Resource Homepage URL &nbsp;&nbsp;&nbsp;(Example: https://mdsc.ca) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
@@ -445,24 +479,21 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
 
-                                        <Form.Field>
-                                            <label>Source URL &nbsp;&nbsp;&nbsp;(FILL ONLY if different from homepage) <Popup content='URL pointing to where the resource was obtained from.' trigger={<Icon name='question circle'/>}/><Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
-                                            <Form.Input
-                                                fluid
-                                                name="general_url"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.general_url}
-                                                placeholder="https://"
-                                            />
-                                        </Form.Field>
                                         <Divider hidden />
                                         <Form.Field>
                                             <label>Is this service free?</label>
                                             <Checkbox
                                                 name="is_free"
-                                                label='Yes, service is free'
+                                                label='Service is free'
                                                 onChange={this.handleIsFreeCheckbox}
+                                            />
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Does this resource/service require membership?</label>
+                                            <Checkbox
+                                                name="require_membership"
+                                                label='This requires membership of some kind.'
+                                                onChange={this.handleReqMemCheckbox}
                                             />
                                         </Form.Field>
                                         <Divider hidden />
@@ -618,7 +649,7 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Resource Phone Number(s), &nbsp;&nbsp;&nbsp;if applicable (Example: 1234567890;...;)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <label>Resource Phone Number(s), &nbsp;&nbsp;&nbsp;if applicable (Example: 1234;...;)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
                                             <Form.Input
                                                 fluid
                                                 name="phone_numbers"

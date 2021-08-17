@@ -241,7 +241,7 @@ export default class ReviewTable extends Component {
                         </div>
                     :null}
                     <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button> 
-                    <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/>
+                    {/* <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/> */}
                     <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
                         <Table class="ui celled table">
                             <thead>

@@ -76,10 +76,11 @@
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("/chatbotportal/authentication/super/search/status/''/''/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=", {headers: options}).then(res => {
+        axios.get("/chatbotportal/authentication/super/search/status/1/1/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=&page_size=100", {headers: options}).then(res => {
             this.setState({
                 users: res.data.results
             });
+            console.log('users: '+res.data.results.length);
         });
     }
  
@@ -201,10 +202,10 @@
                  <tr key={r.id} ref={tr => this.results = tr}>
                      <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                      <td>
-                         <h4><Dropdown options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, {value})=>this.handleAssign("assigned_reviewer", value, r.id)}/></h4>
+                         <h4><Dropdown search selection options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, {value})=>this.handleAssign("assigned_reviewer", value, r.id)}/></h4>
                      </td>
                      <td>
-                        <h4>{<Dropdown options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event,  {value})=>this.handleAssign("assigned_reviewer_2", value, r.id)}></Dropdown>}</h4>
+                        <h4>{<Dropdown search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event,  {value})=>this.handleAssign("assigned_reviewer_2", value, r.id)}></Dropdown>}</h4>
                      </td>
                  </tr>
              ):(<p></p>)
