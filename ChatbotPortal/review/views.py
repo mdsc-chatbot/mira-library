@@ -32,7 +32,9 @@ class ReviewListCreate(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
     queryset = Reviews.objects.all()
 
-class ReviewResource(viewsets.ModelViewSet):
+class ReviewResource(generics.ListCreateAPIView
+    #viewsets.ModelViewSet
+    ):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ReviewSerializer
     queryset = Reviews.objects.all()

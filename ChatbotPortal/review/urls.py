@@ -24,6 +24,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('api/review/', views.ReviewListCreate.as_view() ),
-    path('',views.ReviewResource),
+    path('api/review/', views.ReviewListCreate.as_view(), name='get_reviews' ),
+    path('',views.ReviewResource.as_view(), name='get_reviewss'),
 ]

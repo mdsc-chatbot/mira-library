@@ -67,6 +67,7 @@ export default class ReviewTable extends Component {
             this.setState({
                 reviews: res.data
             });
+            console.log('reviews' + res.data);
         });
     }
 
@@ -172,7 +173,7 @@ export default class ReviewTable extends Component {
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             ids.includes(r.id) !== true && r.created_by_user_pk !== currentReviewer 
-            && ((r.assigned_reviewer === currentReviewer || r.assigned_reviewer_2 === currentReviewer) || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ?(
+            && ((this.state.assignedOnly && (r.assigned_reviewer === currentReviewer || r.assigned_reviewer_2 === currentReviewer)) || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ?(
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -200,7 +201,7 @@ export default class ReviewTable extends Component {
         ? this.context.security.id
         : "Unknown user";
 
-        const reviewsI = this.state.reviews.filter(review => review.reviewer_user_email === reviewer);
+        const reviewsI = this.state.reviews;
         var ids = []
         reviewsI.forEach(function (item){
             ids.push(item.resource_id)
@@ -241,7 +242,7 @@ export default class ReviewTable extends Component {
                         </div>
                     :null}
                     <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button> 
-                    {/* <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/> */}
+                    { (this.context.security.is_editor) ? <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/> : null }
                     <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
                         <Table class="ui celled table">
                             <thead>
