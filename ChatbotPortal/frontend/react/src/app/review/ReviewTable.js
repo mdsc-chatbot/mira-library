@@ -44,6 +44,55 @@ export default class ReviewTable extends Component {
         };
     }
 
+    format_data = (url, resourceID, comments, rating, approval) => {
+        // Get current logged in user
+        const reviewer = this.context.security.is_logged_in
+            ? this.context.security.id
+            : "Unknown user";
+
+        const formatted_review = {
+            reviewer_user_email: reviewer,
+            approved: approval,
+            resource_url: url,
+            resource_id: resourceID,
+            review_comments: comments,
+            review_rating: rating,
+            final_decision: true
+        };
+        return formatted_review;
+    };
+
+    approve = (url, resourceID, comments, rating) => {
+        const review = this.format_data(url, resourceID, comments, rating, true);
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        axios
+            .post("/api/review/", review, {headers: options})
+            .then(res => {})
+            .catch(error => console.error(error));
+
+        this.componentDidMount();
+        
+    };
+
+    reject = (url, resourceID, comments, rating) => {
+        const review = this.format_data(url, resourceID, comments, rating, false);
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        axios
+            .post("/api/review/", review, {headers: options})
+            .then(res => {})
+            .catch(error => console.error(error));
+
+        this.componentDidMount();
+    };
+
     get_resources = () => {
         // Having the permission header loaded
         const options = {
@@ -77,9 +126,10 @@ export default class ReviewTable extends Component {
     }
 
 
-    completedReviews = (ids, reviews) => {
+    completedReviews = (ids, reviews, reviews_2) => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            ids.includes(r.id) === true ?(
+            (ids.includes(r.id) === true) && 
+            ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0])))))  ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>{reviews.get(r.id)[1]}</td>
@@ -94,10 +144,35 @@ export default class ReviewTable extends Component {
                         {reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
                     </td>
                 </tr>
+            ):(reviews_2.has(r.id)) ? (
+                <tr key={r.id} ref={tr => this.results = tr}>
+                    <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                    <td>
+                        {(this.context.security.is_editor) ?
+                            <button
+                                name="approve"
+                                class="positive ui button"
+                                onClick={() =>this.approve(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Approve
+                            </button>
+                        : null}
+                        {(this.context.security.is_editor) ?
+                            <button
+                                name="reject"
+                                class="negative ui button"
+                                onClick={() =>this.reject(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Reject
+                            </button>
+                        : null}
+                    </td>
+                    <td>
+                        <p>A)</p>{reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                    </td>
+                    <td>
+                        <p>B)</p>{reviews_2.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                    </td>
+                </tr>
             ):(<p></p>)
         ));
         return resources_get
-
     }
     
     switchView = () =>{
@@ -186,10 +261,10 @@ export default class ReviewTable extends Component {
         return resources_get
     }
     pendingHeader = () =>{
-        return <tr><th>Resource</th><th></th></tr>
+        return <tr><th>Pending Resource</th><th></th></tr>
     }
     completedHeader = () =>{
-        return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
+        return <tr><th>Completed/not finilized Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
     }
 
     sorting = (options) =>{
@@ -208,8 +283,18 @@ export default class ReviewTable extends Component {
         })
 
         var reviewsApproval = new Map();
+        var reviewsApproval_2 = new Map();
+
         reviewsI.forEach(function (item){
-            reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating]);
+            if(reviewsApproval.has(item.resource_id)){
+                reviewsApproval_2.set(item.resource_id, [item.approved, item.review_comments, item.review_rating, item.final_decision])
+            }else{
+                reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating, item.final_decision]);
+            }
+
+            if(item.final_decision){
+                reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating, item.final_decision]);
+            }
         })
 
         const choices= [
@@ -249,7 +334,7 @@ export default class ReviewTable extends Component {
                                 {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
                             </thead>
                             <tbody>
-                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids,reviewer)):(this.completedReviews(ids, reviewsApproval))}
+                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids,reviewer)):(this.completedReviews(ids, reviewsApproval, reviewsApproval_2))}
                             </tbody>
                         </Table>
                     </div>

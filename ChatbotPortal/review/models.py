@@ -32,3 +32,4 @@ class Reviews(models.Model):
     resource_id = models.PositiveIntegerField()
     review_comments = models.TextField(default="No Comment")
     review_rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
+    final_decision = models.BooleanField(null=True, blank=True, default='False')
