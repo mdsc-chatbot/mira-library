@@ -45,7 +45,10 @@ export default class ResourceSubmitForm extends Component {
         this.state = {
             isFreeChecked: false,
             require_membership: false,
+            resourceId: null,
             title: "",
+            catText: "",
+            tagInitValue: "",
             informational_resource_text: "",
             resourceTypeIsInformative: false,
             organization_name: "",
@@ -85,6 +88,58 @@ export default class ResourceSubmitForm extends Component {
             ]
         };
         this.baseState = this.state;
+    }
+
+    get_resource_details = (resourceID) => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        axios
+            .get(`/chatbotportal/resource/retrieve/${resourceID}`, {headers: options})
+            .then(res => {
+                console.log('I got resources', res.data)
+                if(res.data.resource_type != "SR"){
+                    this.setState({resourceTypeIsInformative: true});
+                }else{
+                    this.setState({resourceTypeIsInformative: false});
+                }
+                this.setState({resource_type:res.data.resource_type}); 
+                this.setState({isFreeChecked:res.data.is_free});
+                this.setState({require_membership:res.data.require_membership});
+                this.setState({title:res.data.title});
+                this.setState({informational_resource_text:res.data.informational_resource_text});
+                this.setState({organization_name:res.data.organization_name});
+                this.setState({url:res.data.url});
+                this.setState({general_url:res.data.general_url});
+                this.setState({rating:res.data.rating});
+                this.setState({comments:res.data.comments});
+                this.setState({definition:res.data.definition});
+                this.setState({description:res.data.description});
+                this.setState({chatbot_text:res.data.chatbot_text});
+                this.setState({email:res.data.email});
+                this.setState({phone_numbers:res.data.phone_numbers});
+                this.setState({text_numbers:res.data.text_numbers});
+                this.setState({physical_address:res.data.physical_address});
+                this.setState({distress_level_min:res.data.distress_level_min});
+                this.setState({distress_level_max:res.data.distress_level_max});
+                this.setState({resource_format:res.data.resource_format});
+                this.setState({catText:res.data.category});
+                this.setState({tagInitValue:res.data.tags});
+                this.setState({hours_of_operation:res.data.hours_of_operation});
+                if(res.data.hours_of_operation!=null){
+                    this.setState({alwaysAvailable:false});
+                    this.decodeHours(res.data.hours_of_operation);
+                }
+                // let submit btn know we are in edit mode
+                this.setState({resourceId:resourceID});
+            });
+    };
+
+    componentDidMount(){
+        const resourceId = this.props.location.search ? this.props.location.search.substring(4) : '';
+        if(resourceId != '') this.get_resource_details(resourceId);
     }
 
     create_resource = () => {
@@ -177,6 +232,87 @@ export default class ResourceSubmitForm extends Component {
 
         return resourceFormData;
     };
+
+    //get string from db and represent it in the hour selection buttons
+    decodeHours = (hoursFromDB) => {
+        console.log('hoursFromDB', hoursFromDB);
+        var weekIndex ;    
+        var newHourBools = this.state.hourBools;
+        var dayArray = hoursFromDB.split(';');
+        dayArray.forEach((day, index) => {
+            if(day==''){
+                return;
+            }
+            switch (dayArray[index].substring(0,3)) {
+                case "MON":
+                    weekIndex=0
+                    break;
+                case "TUE":
+                    weekIndex=1
+                    break;
+                case "WED":
+                    weekIndex=2
+                    break;
+                case "THU":
+                    weekIndex=3
+                    break;
+                case "FRI":
+                    weekIndex=4
+                    break;
+                case "SAT":
+                    weekIndex=5
+                    break;
+                case "SUN":
+                    weekIndex=6
+                    break;
+            }
+            const hourArray = day.substring(4).split(',');
+            hourArray.forEach(hour => {
+                if(hour==''){
+                    return;
+                }
+                newHourBools[weekIndex][hour-1] = true;
+            });
+        });
+
+        console.log('new bool', newHourBools);
+        this.setState({hourBools:newHourBools});
+    }
+
+    encodeHours = (hoursBool) => {
+            var hourstring = "";
+            hourstring +="MON:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[0][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="TUE:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[1][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="WED:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[2][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="THU:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[3][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="FRI:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[4][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="SAT:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[5][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            hourstring +="SUN:";
+            for(var i = 0; i < 24; i++)
+                if(hoursBool[6][i]) hourstring += (i+1).toString() + ",";
+            hourstring +=";";
+            resourceFormData.append(`hours_of_operation`, hourstring);
+
+            return hourstring;
+    }
 
     post_resource = () => {
         const resourceFormData = this.create_resource();
@@ -311,6 +447,11 @@ export default class ResourceSubmitForm extends Component {
             return;
         } 
 
+        if(this.state.resourceId !== null){
+            this.update_resource_user();
+            return;
+        }
+
         //add field tags
         if(this.state.phone_numbers!= "") this.addFieldTag("Phone Number")
         if(this.state.text_numbers!= "") this.addFieldTag("Text Messaging")
@@ -318,12 +459,6 @@ export default class ResourceSubmitForm extends Component {
         if(this.state.definition!= "") this.addFieldTag("Definition/Stat")
         if(this.state.email!= "") this.addFieldTag("Email")
 
-        //check field states before submitting
-        // if(this.state.rating == 0)
-        // {
-        //     this.setState({submitted: -1, errors: "Please rate your resource usefulness."});
-        //     return;
-        // }
         if(this.state.tags.length<1||this.state.langTags.length<1)
         {
             this.setState({submitted: -1, errors: "Please enter at a language tag and at least one other tag."});
@@ -367,6 +502,60 @@ export default class ResourceSubmitForm extends Component {
     handleResFormatChange = (resource_format) => {
         this.setState({ resource_format })
     }
+
+    update_resource_user = () => {
+
+        var submitCmd = { 
+            'title':this.state.title,
+            'url':this.state.url,
+            'rating':this.state.rating,
+            'comments': this.state.comments,
+            'category_id': this.state.category,
+            'chatbot_text': this.state.chatbot_text,
+            'definition': this.state.definition,
+            'distress_level_max' : this.state.distress_level_max,
+            'distress_level_min' : this.state.distress_level_min,
+            'email' : this.state.email,
+            'phone_numbers' : this.state.phone_numbers,
+            'refrences' : this.state.refrences,
+            'resource_type' : this.state.resource_type,
+            'description' : this.state.description,
+            'general_url' : this.state.general_url,
+            'physical_address' : this.state.physical_address,
+            'hours_of_operation' : this.encodeHours(this.state.hourBools),
+            'organization_name' : this.state.organization_name,
+            'is_free' : this.state.is_free,
+            'informational_resource_text' : this.state.informational_resource_text,
+            'resource_format' : this.state.resource_format,
+            'equire_membership' : this.state.require_membership,
+            'attachment' : this.state.attachment,
+        };
+
+        const options = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.context.security.token}`
+        };
+
+        // Resource
+        axios
+            .put(
+                "/chatbotportal/resource/" + this.state.resourceId + "/updatepartial/",
+                submitCmd,
+                {headers: options}
+            ).then(
+                response => {
+                    setTimeout(() => {
+                        this.setState(this.baseState);
+                        setTimeout(()=>{
+                            this.props.history.push('/chatbotportal/app/resource')
+                        }, 900);
+                    }, 1000);
+                },
+                error => {
+                    console.log('error', error);
+                }
+            );
+    };
 
     toggle = () => this.setState((prevState) => ({ alwaysAvailable: !prevState.alwaysAvailable }))
 
@@ -485,6 +674,7 @@ export default class ResourceSubmitForm extends Component {
                                             <Checkbox
                                                 name="is_free"
                                                 label='Service is free'
+                                                checked={this.state.isFreeChecked}
                                                 onChange={this.handleIsFreeCheckbox}
                                             />
                                         </Form.Field>
@@ -494,6 +684,7 @@ export default class ResourceSubmitForm extends Component {
                                                 name="require_membership"
                                                 label='This requires membership of some kind.'
                                                 onChange={this.handleReqMemCheckbox}
+                                                checked={this.state.require_membership}
                                             />
                                         </Form.Field>
                                         <Divider hidden />
@@ -536,6 +727,7 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Resource Format <Popup content='Select the format this resource primarily falls under.' trigger={<Icon name='question circle'/>}/></label>
                                             <CategoryDropdown
                                                 required
+                                                catText={this.state.catText}
                                                 value={this.state.category}
                                                 onChange={category => this.setState({ category })}
                                             />
@@ -605,6 +797,7 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Other Tags <Popup content='For anything that might not fall under the other categories such as services provided, relevent gender groups, organizations, user groups, etc.' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
+                                                    initValue={this.state.tagInitValue}
                                                     name="tags"
                                                     value={this.state.tags}
                                                     onChange={tags => this.setState({ tags })}
@@ -704,6 +897,7 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field>
                                         <Form.Field>
                                             <Form.TextArea
+                                                spellcheck 
                                                 name="comments"
                                                 onChange={this.handleChange}
                                                 value={this.state.comments}

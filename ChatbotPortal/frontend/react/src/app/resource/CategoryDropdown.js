@@ -65,6 +65,13 @@ export default class CategoryDropdown extends React.Component {
         this.props.onChange(data.value);
     };
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.catText !== this.props.catText) {
+            const newValue = this.state.options.filter(option=>option.text==this.props.catText)[0].value;
+            this.props.onChange(newValue);
+        }
+    }
+
     render() {
         return (
             <Dropdown

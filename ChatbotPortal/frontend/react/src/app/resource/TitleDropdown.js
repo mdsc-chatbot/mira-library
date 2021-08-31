@@ -36,12 +36,17 @@ export default class TitleDropdown extends React.Component {
 
     constructor(props) {
         super(props);
-
         this.state = {
             searchQuery: '',
             titleOptions: [], // options to show to user (to click)
             searchRequestCancelToken: null,
         };
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.value !== this.props.value) {
+            this.setState({searchQuery:this.props.value});
+        }
     }
 
     handleChange = (event, data) => {
@@ -121,8 +126,3 @@ export default class TitleDropdown extends React.Component {
         );
     }
 }
-
-TitleDropdown.propTypes = {
-    value: PropTypes.array,
-    onChange: PropTypes.func
-};

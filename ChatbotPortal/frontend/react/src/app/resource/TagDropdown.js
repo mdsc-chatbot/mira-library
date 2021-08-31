@@ -175,6 +175,49 @@ export default class TagDropdown extends React.Component {
         });
     };
 
+    componentDidUpdate(prevProps){
+        console.log('look at me', this.state.tagOptions, this.props.initValue);
+        if(this.props.initValue != prevProps.initValue){
+            this.getAllTags();
+        }
+    }
+
+    getAllTags(){
+         // Prepare for promise cancellation
+         const source = CancelToken.source();
+         var keyDict= {
+            params: {
+                name: ''
+            },
+            cancelToken: source.token
+        };
+        var fetchURL =  "/chatbotportal/resource/fetch-tags";
+
+        axios
+            .get(
+                fetchURL,
+                keyDict,
+                {
+                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                }
+            )
+            .then(response => {
+                // Transform JSON tag into tag that semantic ui's dropdown can read
+                let allTags = [];
+                if (response.data) {
+                    console.log('getAllTags', response.data);
+                    allTags = response.data;
+                    const initValuePairs = allTags.filter(tagOption => this.props.initValue.includes(tagOption.name));
+                    console.log('initValuePairs',initValuePairs);
+                    if(initValuePairs.length>0){
+                        initValuePairs.forEach(initValuePair=>this.handleNewTagAdded(initValuePair)) 
+                    }
+                }
+            });
+
+    }
+
+
     render() {
         return (
             <React.Fragment>
@@ -204,6 +247,7 @@ export default class TagDropdown extends React.Component {
 
 TagDropdown.propTypes = {
     value: PropTypes.array,
+    initValue: PropTypes.array,
     onChange: PropTypes.func,
     tagCat: PropTypes.string
 };

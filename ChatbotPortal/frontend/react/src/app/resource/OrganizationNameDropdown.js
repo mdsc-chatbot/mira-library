@@ -63,6 +63,11 @@ export default class OrganizationNameDropdown extends React.Component {
         return noptions;
       };
 
+      componentDidUpdate(prevProps) {
+        if (prevProps.value !== this.props.value) {
+            this.setState({searchQuery:this.props.value});
+        }
+      }
 
     handleSearchChange = (event, {searchQuery}) => {
         // Cancel previous search requests if possible

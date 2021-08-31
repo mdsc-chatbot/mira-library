@@ -202,10 +202,12 @@
                  <tr key={r.id} ref={tr => this.results = tr}>
                      <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                      <td>
-                         <h4><Dropdown search selection options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, {value})=>this.handleAssign("assigned_reviewer", value, r.id)}/></h4>
+                         <h4>{r.review_status==="approved"?(<i class="green check icon"></i>):(<i class="red x icon"></i>) }
+                         {<Dropdown ui read search selection options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, {value})=>this.handleAssign("assigned_reviewer", value, r.id)}/>}</h4>
                      </td>
                      <td>
-                        <h4>{<Dropdown search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event,  {value})=>this.handleAssign("assigned_reviewer_2", value, r.id)}></Dropdown>}</h4>
+                        <h4>{r.review_status_2==="approved"?(<i class="green check icon"></i>):(<i class="red x icon"></i>) }
+                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event,  {value})=>this.handleAssign("assigned_reviewer_2", value, r.id)}/>}</h4>
                      </td>
                  </tr>
              ):(<p></p>)

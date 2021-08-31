@@ -2,6 +2,8 @@ import React from "react";
 import { Container, Divider, Icon, Label, Rating, Menu, Header, Grid, Responsive } from "semantic-ui-react";
 import styles from "./ResourceDetailView.css";
 import linkStyles from "../shared/Link.css";
+import { Link } from "react-router-dom";
+import { baseRoute } from "../App";
 
 // Originally copied from ResourceDetail
 /**
@@ -122,6 +124,9 @@ function normal_header(resource) {
             {resource.references!=null && resource.references!="" && <p style={{display: "flex", flexWrap: "wrap"}}>References: {resource.references}</p>}
             {resource.description!=null && resource.description!="" && <p style={{display: "flex", flexWrap: "wrap"}}>Description: {resource.description}</p>}
             {resource.chatbot_text!=null && resource.chatbot_text!="" && <p style={{display: "flex", flexWrap: "wrap"}}>Chatbot Text: {resource.chatbot_text}</p>}
+            <Link to={baseRoute+"/resource_submit?id="+resource.id}>
+                <button color="blue" fluid size="large">Edit Resource</button>
+            </Link>
         </Container>
     );
 }

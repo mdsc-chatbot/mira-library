@@ -32,9 +32,9 @@ export class ResourceStatistic extends Component {
 
         this.props.resources.forEach((resource) => {
             total_resources += 1;
-            if (resource.review_status === "approved" || resource.review_status === "rejected"){
+            if (resource.review_status !== "pending" && resource.review_status_2 !== "pending"){
                 reviewed_resources += 1;
-            }else if (resource.review_status === "pending"){
+            }else{
                 pending_resources += 1;
             }
         });
