@@ -6,13 +6,14 @@ def initialize_categories(apps, schema_editor):
     Category = apps.get_model('resource', 'Category')
     db_alias = schema_editor.connection.alias
     Category.objects.using(db_alias).bulk_create([
-        Category(name="Website"),
-        Category(name="Video"),
-        Category(name="PDF"),
-        Category(name="Definition/Stat"),
-        Category(name="Service/Facility"),
-        Category(name="Image"),
-        Category(name="Helpline"),
+        Category(name="document/PDF"),
+        Category(name="email"),
+        Category(name="phone number"),
+        Category(name="physical address"),
+        Category(name="picture/graphic"),
+        Category(name="Text (definition/statistic)"),
+        Category(name="video"),
+        Category(name="website"),
     ])
 
 

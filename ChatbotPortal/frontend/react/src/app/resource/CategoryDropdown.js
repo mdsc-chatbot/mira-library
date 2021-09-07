@@ -58,6 +58,10 @@ export default class CategoryDropdown extends React.Component {
                         text: category.name
                     }))
                 });
+
+                this.setState({
+                    options: this.state.options.sort((a, b) => a.text.localeCompare(b.text))
+                })
             });
     }
 
