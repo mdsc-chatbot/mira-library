@@ -66,7 +66,7 @@ export default class ResourceSubmitForm extends Component {
             text_numbers: "",
             physical_address: "",
             distress_level_min: 1,
-            distress_level_max: 1,
+            distress_level_max: 10,
             resource_type: "SR",
             resource_format: "", //resource format = resource type in Front-End
             errors: {},
@@ -794,6 +794,17 @@ export default class ResourceSubmitForm extends Component {
                                             </Form.Group>
                                         </Form.Field>
                                         <Form.Field>
+                                            <label>Specialty Resource Tag - If this resource was made to support members of a particular group (e.g., LGBTQ2S+) or profession (e.g., doctors, veterans) please add group type here<Popup content='For anything that might not fall under the other categories such as services provided, relevent gender groups, organizations, user groups, etc.' trigger={<Icon name='question circle'/>}/></label>
+                                            <Form.Group className={styles.dropdownPadding}>
+                                                <TagDropdown
+                                                    initValue={this.state.tagInitValue}
+                                                    name="professionTags"
+                                                    value={this.state.tags}
+                                                    onChange={tags => this.setState({ tags })}
+                                                />
+                                            </Form.Group>
+                                        </Form.Field>
+                                        <Form.Field>
                                             <label>Other Tags <Popup content='For anything that might not fall under the other categories such as services provided, relevent gender groups, organizations, user groups, etc.' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
@@ -804,8 +815,8 @@ export default class ResourceSubmitForm extends Component {
                                                 />
                                             </Form.Group>
                                         </Form.Field>
-                                        <Divider hidden />
-                                        <Form.Field>
+                                        {/* <Divider hidden /> */}
+                                        {/* <Form.Field>
                                             <label>Minimum Distress Level(1-10) <Popup content='The lowest distress level this resource is relevent at. (1-Not distressed, 10-Extremely distressed)' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Input
                                                 fluid
@@ -816,8 +827,8 @@ export default class ResourceSubmitForm extends Component {
                                                 value={this.state.distress_level_min}
                                                 placeholder="1-10"
                                             />
-                                        </Form.Field>
-                                        <Form.Field>
+                                        </Form.Field> */}
+                                        {/* <Form.Field>
                                             <label>Maximum Distress Level(1-10) <Popup content='The highest distress level this resource is relevent at. (1-Not distressed, 10-Extremely distressed)' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Input
                                                 fluid
@@ -828,7 +839,7 @@ export default class ResourceSubmitForm extends Component {
                                                 value={this.state.distress_level_max}
                                                 placeholder="1-10"
                                             />
-                                        </Form.Field>
+                                        </Form.Field> */}
                                         <Divider hidden />
                                         <Form.Field>
                                             <label>Resource Email Address, &nbsp;&nbsp;&nbsp;if applicable (Example: j.m.nobel@ualberta.ca)<Popup content='this field is optional' trigger={<Icon name='flag' color='green'/>}/></label>
