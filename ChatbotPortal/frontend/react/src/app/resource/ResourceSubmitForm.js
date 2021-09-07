@@ -799,6 +799,7 @@ export default class ResourceSubmitForm extends Component {
                                                 <TagDropdown
                                                     initValue={this.state.tagInitValue}
                                                     name="professionTags"
+                                                    tagCat="professionTags"
                                                     value={this.state.tags}
                                                     onChange={tags => this.setState({ tags })}
                                                 />
