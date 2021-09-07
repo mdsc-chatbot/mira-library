@@ -26,6 +26,55 @@ export default class ResourceFormatDropdown extends React.Component {
         onChange : PropTypes.func.isRequired,
     };
 
+    PROGRAMS_AND_SERVICES =[
+        'Addiction and recovery',
+        'Clinical Inpatient Mental Health',
+        'Clinical Outpatient Mental Health',
+        'Community Support',
+        'Crisis Support/Distress Counselling',
+        'Family Doctor',
+        'Group therapy',
+        'Housing - Emergency',
+        'Housing - Long term',
+        'Legal Counselling',
+        'Medical services',
+        'Newsletter',
+        'Online chat',
+        'Peer Support',
+        'Pets - Boarding and care',
+        'Phone',
+        'Psychiatrist',
+        'Psychologist',
+        'Rehabilitation',
+        'Short term treatment',
+        'Text',
+        'Therapist/Counsellor/Psychotherapist',
+        'Traditional Indigenous Healeer',
+        'Violence intervention'
+    ];
+
+    EDUCATIONAL_INFORMATIONAL =[
+        'Classes/course (in person)',
+        'Definition',
+        'Email newsletter',
+        'Forum',
+        'Mobile App',
+        'Online course (asynchronous)',
+        'Online course (synchronous)',
+        'Online screening tool',
+        'Podcast/audio recording',
+        'Statistic',
+        'Subtitles',
+        'Symptoms',
+        'Training',
+        'Transcript',
+        'Treatments',
+        'Video',
+        'Webinar (asynchronous)',
+        'Webinar (synchronous)',
+        'Worksheet'
+    ];
+
     constructor(props) {
         super(props);
 
@@ -38,116 +87,39 @@ export default class ResourceFormatDropdown extends React.Component {
     componentDidMount() {
         const prevOptions = this.state.options;
         var serviceOptions = [];
-        if(!this.props.is_informational=='RS'){
-            serviceOptions = [
-                {
-                    key: 'definition',
-                    text: 'definition',
-                    value: 'definition'
-                },
-                {
-                    key: 'statistic',
-                    text: 'statistic',
-                    value: 'statistic'
-                },
-                {
-                    key: 'symptoms',
-                    text: 'symptoms',
-                    value: 'symptoms'
-                },
-                {
-                    key: 'treatments',
-                    text: 'treatments',
-                    value: 'treatments'
-                }
-            ];
+        if(this.props.is_informational=='RS'){
+            this.EDUCATIONAL_INFORMATIONAL.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
         }else if(this.props.is_informational=='SR'){
-            serviceOptions = [
-                {
-                    key: 'peer-support',
-                    text: 'peer-support',
-                    value: 'peer-support'
-                },
-                {
-                    key: 'crisis support/distress counselling',
-                    text: 'crisis support/distress counselling',
-                    value: 'crisis support/distress counselling'
-                },
-                {
-                    key: 'online course/webinar',
-                    text: 'online course/webinar',
-                    value: 'online course/webinar'
-                },
-                {
-                    key: 'Therapist/Counsellor',
-                    text: 'Therapist/Counsellor',
-                    value: 'Therapist/Counsellor'
-                },
-                {
-                    key: 'Psychologist',
-                    text: 'Psychologist',
-                    value: 'Psychologist'
-                },
-                {
-                    key: 'Family Doctor',
-                    text: 'Family Doctor',
-                    value: 'Family Doctor'
-                }
-            ];
+            this.PROGRAMS_AND_SERVICES.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
         }else{
-            serviceOptions = [
-                {
-                    key: 'peer-support',
-                    text: 'peer-support',
-                    value: 'peer-support'
-                },
-                {
-                    key: 'crisis support/distress counselling',
-                    text: 'crisis support/distress counselling',
-                    value: 'crisis support/distress counselling'
-                },
-                {
-                    key: 'online course/webinar',
-                    text: 'online course/webinar',
-                    value: 'online course/webinar'
-                },
-                {
-                    key: 'Therapist/Counsellor',
-                    text: 'Therapist/Counsellor',
-                    value: 'Therapist/Counsellor'
-                },
-                {
-                    key: 'Psychologist',
-                    text: 'Psychologist',
-                    value: 'Psychologist'
-                },
-                {
-                    key: 'Family Doctor',
-                    text: 'Family Doctor',
-                    value: 'Family Doctor'
-                },
-                {
-                    key: 'definition',
-                    text: 'definition',
-                    value: 'definition'
-                },
-                {
-                    key: 'statistic',
-                    text: 'statistic',
-                    value: 'statistic'
-                },
-                {
-                    key: 'symptoms',
-                    text: 'symptoms',
-                    value: 'symptoms'
-                },
-                {
-                    key: 'treatments',
-                    text: 'treatments',
-                    value: 'treatments'
-                }
-            ];
+            this.PROGRAMS_AND_SERVICES.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
+            this.EDUCATIONAL_INFORMATIONAL.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
         }
+        serviceOptions.sort((a, b) => a.key.localeCompare(b.key))
         if(prevOptions.length != serviceOptions.length){
             this.setState({options: serviceOptions});
         }
@@ -157,116 +129,40 @@ export default class ResourceFormatDropdown extends React.Component {
     componentDidUpdate() { 
         const prevOptions = this.state.options;
         var serviceOptions = [];
-        if(!this.props.is_informational=='RS'){
-            serviceOptions = [
-                {
-                    key: 'definition',
-                    text: 'definition',
-                    value: 'definition'
-                },
-                {
-                    key: 'statistic',
-                    text: 'statistic',
-                    value: 'statistic'
-                },
-                {
-                    key: 'symptoms',
-                    text: 'symptoms',
-                    value: 'symptoms'
-                },
-                {
-                    key: 'treatments',
-                    text: 'treatments',
-                    value: 'treatments'
-                }
-            ];
+        if(this.props.is_informational=='RS'){
+            this.EDUCATIONAL_INFORMATIONAL.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
         }else if(this.props.is_informational=='SR'){
-            serviceOptions = [
-                {
-                    key: 'peer-support',
-                    text: 'peer-support',
-                    value: 'peer-support'
-                },
-                {
-                    key: 'crisis support/distress counselling',
-                    text: 'crisis support/distress counselling',
-                    value: 'crisis support/distress counselling'
-                },
-                {
-                    key: 'online course/webinar',
-                    text: 'online course/webinar',
-                    value: 'online course/webinar'
-                },
-                {
-                    key: 'Therapist/Counsellor',
-                    text: 'Therapist/Counsellor',
-                    value: 'Therapist/Counsellor'
-                },
-                {
-                    key: 'Psychologist',
-                    text: 'Psychologist',
-                    value: 'Psychologist'
-                },
-                {
-                    key: 'Family Doctor',
-                    text: 'Family Doctor',
-                    value: 'Family Doctor'
-                }
-            ];
+            this.PROGRAMS_AND_SERVICES.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
         }else{
-            serviceOptions = [
-                {
-                    key: 'peer-support',
-                    text: 'peer-support',
-                    value: 'peer-support'
-                },
-                {
-                    key: 'crisis support/distress counselling',
-                    text: 'crisis support/distress counselling',
-                    value: 'crisis support/distress counselling'
-                },
-                {
-                    key: 'online course/webinar',
-                    text: 'online course/webinar',
-                    value: 'online course/webinar'
-                },
-                {
-                    key: 'Therapist/Counsellor',
-                    text: 'Therapist/Counsellor',
-                    value: 'Therapist/Counsellor'
-                },
-                {
-                    key: 'Psychologist',
-                    text: 'Psychologist',
-                    value: 'Psychologist'
-                },
-                {
-                    key: 'Family Doctor',
-                    text: 'Family Doctor',
-                    value: 'Family Doctor'
-                },
-                {
-                    key: 'definition',
-                    text: 'definition',
-                    value: 'definition'
-                },
-                {
-                    key: 'statistic',
-                    text: 'statistic',
-                    value: 'statistic'
-                },
-                {
-                    key: 'symptoms',
-                    text: 'symptoms',
-                    value: 'symptoms'
-                },
-                {
-                    key: 'treatments',
-                    text: 'treatments',
-                    value: 'treatments'
-                }
-            ];
+            this.PROGRAMS_AND_SERVICES.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
+            this.EDUCATIONAL_INFORMATIONAL.forEach(element => {
+                serviceOptions.push({
+                    key: element,
+                    text: element,
+                    value: element
+                });
+            });
         }
+
+        serviceOptions.sort((a, b) => a.key.localeCompare(b.key))
 
         if(prevOptions.length != serviceOptions.length){
             this.setState({options: serviceOptions});
