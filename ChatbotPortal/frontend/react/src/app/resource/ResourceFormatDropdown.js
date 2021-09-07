@@ -38,7 +38,7 @@ export default class ResourceFormatDropdown extends React.Component {
     componentDidMount() {
         const prevOptions = this.state.options;
         var serviceOptions = [];
-        if(this.props.is_informational){
+        if(!this.props.is_informational=='RS'){
             serviceOptions = [
                 {
                     key: 'definition',
@@ -59,6 +59,39 @@ export default class ResourceFormatDropdown extends React.Component {
                     key: 'treatments',
                     text: 'treatments',
                     value: 'treatments'
+                }
+            ];
+        }else if(this.props.is_informational=='SR'){
+            serviceOptions = [
+                {
+                    key: 'peer-support',
+                    text: 'peer-support',
+                    value: 'peer-support'
+                },
+                {
+                    key: 'crisis support/distress counselling',
+                    text: 'crisis support/distress counselling',
+                    value: 'crisis support/distress counselling'
+                },
+                {
+                    key: 'online course/webinar',
+                    text: 'online course/webinar',
+                    value: 'online course/webinar'
+                },
+                {
+                    key: 'Therapist/Counsellor',
+                    text: 'Therapist/Counsellor',
+                    value: 'Therapist/Counsellor'
+                },
+                {
+                    key: 'Psychologist',
+                    text: 'Psychologist',
+                    value: 'Psychologist'
+                },
+                {
+                    key: 'Family Doctor',
+                    text: 'Family Doctor',
+                    value: 'Family Doctor'
                 }
             ];
         }else{
@@ -92,6 +125,26 @@ export default class ResourceFormatDropdown extends React.Component {
                     key: 'Family Doctor',
                     text: 'Family Doctor',
                     value: 'Family Doctor'
+                },
+                {
+                    key: 'definition',
+                    text: 'definition',
+                    value: 'definition'
+                },
+                {
+                    key: 'statistic',
+                    text: 'statistic',
+                    value: 'statistic'
+                },
+                {
+                    key: 'symptoms',
+                    text: 'symptoms',
+                    value: 'symptoms'
+                },
+                {
+                    key: 'treatments',
+                    text: 'treatments',
+                    value: 'treatments'
                 }
             ];
         }
@@ -104,7 +157,7 @@ export default class ResourceFormatDropdown extends React.Component {
     componentDidUpdate() { 
         const prevOptions = this.state.options;
         var serviceOptions = [];
-        if(this.props.is_informational=='SR'){
+        if(!this.props.is_informational=='RS'){
             serviceOptions = [
                 {
                     key: 'definition',
@@ -127,7 +180,7 @@ export default class ResourceFormatDropdown extends React.Component {
                     value: 'treatments'
                 }
             ];
-        }else if(this.props.is_informational=='RS'){
+        }else if(this.props.is_informational=='SR'){
             serviceOptions = [
                 {
                     key: 'peer-support',
