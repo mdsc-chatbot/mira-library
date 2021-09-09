@@ -50,14 +50,14 @@ class ResourceManager(models.Manager):
     def create(self, **obj_data):
 
         # Get website title
-        try:
-            url = obj_data['url']
-            soup = self.get_soup(url)
-            title = soup.find('title').string
-            if title:
-                obj_data['title'] = title
-        except Exception:
-            pass
+        # try:
+        #     url = obj_data['url']
+        #     soup = self.get_soup(url)
+        #     title = soup.find('title').string
+        #     if title:
+        #         obj_data['title'] = title
+        # except Exception:
+        #     pass
 
         # Get website description
         try:

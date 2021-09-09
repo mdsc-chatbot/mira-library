@@ -193,7 +193,7 @@ export default class ResourceSubmitForm extends Component {
             });
         }
 
-        console.log(resourceFormData);
+        console.log('inja' , resourceFormData);
 
         //if we need to, deal with the hour bools
         if(!this.state.alwaysAvailable)
@@ -309,7 +309,6 @@ export default class ResourceSubmitForm extends Component {
             for(var i = 0; i < 24; i++)
                 if(hoursBool[6][i]) hourstring += (i+1).toString() + ",";
             hourstring +=";";
-            resourceFormData.append(`hours_of_operation`, hourstring);
 
             return hourstring;
     }
@@ -528,7 +527,7 @@ export default class ResourceSubmitForm extends Component {
             'informational_resource_text' : this.state.informational_resource_text,
             'resource_format' : this.state.resource_format,
             'equire_membership' : this.state.require_membership,
-            'attachment' : this.state.attachment,
+            // 'attachment' : this.state.attachment ? this.state.attachment : '',
         };
 
         const options = {
@@ -545,9 +544,10 @@ export default class ResourceSubmitForm extends Component {
             ).then(
                 response => {
                     setTimeout(() => {
-                        this.setState(this.baseState);
+                        // this.setState(this.baseState);
                         setTimeout(()=>{
-                            this.props.history.push('/chatbotportal/app/resource')
+                            var url = window.location.origin + '/chatbotportal/app/resource';
+                            window.location.href = url;
                         }, 900);
                     }, 1000);
                 },
@@ -797,7 +797,6 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Specialty Resource Tag - If this resource was made to support members of a particular group (e.g., LGBTQ2S+) or profession (e.g., doctors, veterans) please add group type here<Popup content='For anything that might not fall under the other categories such as services provided, relevent gender groups, organizations, user groups, etc.' trigger={<Icon name='question circle'/>}/></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
-                                                    initValue={this.state.tagInitValue}
                                                     name="professionTags"
                                                     tagCat="professionTags"
                                                     value={this.state.tags}

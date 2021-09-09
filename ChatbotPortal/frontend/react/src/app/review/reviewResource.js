@@ -83,6 +83,25 @@ export default class ResourceDetail extends Component {
             .then(res => {
             })
             .catch(error => console.error(error));
+
+            
+    //submit second review record if both revieweers are same
+        const reviewer = this.context.security.is_logged_in
+        ? this.context.security.id
+        : "Unknown user";
+
+        var rs1 = this.state.resource.review_status;
+        var rs2 = this.state.resource.review_status_2;
+        if ((rs1 === "pending" && this.state.resource.assigned_reviewer  === reviewer)&&
+            (rs2 === "pending" && this.state.resource.assigned_reviewer_2  === reviewer)){
+                axios
+                .post("/api/review/", review, {headers: options})
+                .then(res => {
+                })
+                .catch(error => console.error(error));
+        }
+        
+
         this.update_resource_user("approved");
     };
 
@@ -109,12 +128,16 @@ export default class ResourceDetail extends Component {
 
         if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending") {
 
+            const reviewer = this.context.security.is_logged_in
+            ? this.context.security.id
+            : "Unknown user";
+
             //check if second approval or not
             //serializer forces us to include both review statuses in the proper state
             var rs1 = this.state.resource.review_status;
             var rs2 = this.state.resource.review_status_2;
-            if(rs1 === "pending") rs1 = review_status;
-            else if(rs2 === "pending") rs2 = review_status;
+            if(rs1 === "pending" && this.state.resource.assigned_reviewer  === reviewer) rs1 = review_status;
+            if(rs2 === "pending" && this.state.resource.assigned_reviewer_2  === reviewer) rs2 = review_status;
             var submitCmd = {"review_status": rs1, "review_status_2": rs2, "rating": this.state.rating, "review_comments": this.state.comments};
 
             const options = {

@@ -126,9 +126,9 @@ export default class ReviewTable extends Component {
     }
 
 
-    completedReviews = (ids, reviews, reviews_2) => {
+    completedReviews = (ids, reviews, reviews_2, currentReviewer) => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (ids.includes(r.id) === true) && 
+            (ids.includes(r.id) === true) && ((this.state.assignedOnly  === true && (r.assigned_reviewer==currentReviewer || r.assigned_reviewer_2==currentReviewer)) || (this.state.assignedOnly  === false)) &&
             ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0])))))  ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
@@ -141,10 +141,11 @@ export default class ReviewTable extends Component {
                                 size="massive"/>
                     </td>
                     <td>
-                        {reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                        {reviews.get(r.id)[0]===true?(<i class="check icon green"></i>):(<i class="x icon red"></i>)}
                     </td>
                 </tr>
-            ):(reviews_2.has(r.id)) ? (
+            ):(reviews_2.has(r.id)) 
+            && ((this.state.assignedOnly === true && (r.assigned_reviewer==currentReviewer || r.assigned_reviewer_2==currentReviewer)) || (this.state.assignedOnly === false)) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -164,10 +165,10 @@ export default class ReviewTable extends Component {
                         : null}
                     </td>
                     <td>
-                        <p>A)</p>{reviews.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                        <p>A)</p>{reviews.get(r.id)[0]===true?(<i class="check icon green"></i>):(<i class="x icon red"></i>)}
                     </td>
                     <td>
-                        <p>B)</p>{reviews_2.get(r.id)[0]===true?(<i class="check icon"></i>):(<i class="x icon"></i>)}
+                        <p>B)</p>{reviews_2.get(r.id)[0]===true?(<i class="check icon green"></i>):(<i class="x icon red"></i>)}
                     </td>
                 </tr>
             ):(<p></p>)
@@ -247,8 +248,9 @@ export default class ReviewTable extends Component {
         console.log(this.state.order,this.state.resources)
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            ids.includes(r.id) !== true && r.created_by_user_pk !== currentReviewer 
-            && ((this.state.assignedOnly && (r.assigned_reviewer === currentReviewer || r.assigned_reviewer_2 === currentReviewer)) || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ?(
+            (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending' ))
+            || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending')))
+            || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -334,7 +336,7 @@ export default class ReviewTable extends Component {
                                 {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
                             </thead>
                             <tbody>
-                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids,reviewer)):(this.completedReviews(ids, reviewsApproval, reviewsApproval_2))}
+                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids,reviewer)):(this.completedReviews(ids, reviewsApproval, reviewsApproval_2,reviewer))}
                             </tbody>
                         </Table>
                     </div>
