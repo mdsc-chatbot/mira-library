@@ -75,6 +75,7 @@ export default class TagPopup extends React.Component {
 					) : null}
 					<Form.Group>
 						<Input
+							spellcheck='true'
 							error={!!this.state.validation}
 							placeholder="New Tag"
 							onChange={this.handleChange}

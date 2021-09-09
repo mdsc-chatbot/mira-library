@@ -224,6 +224,7 @@ export default class TagDropdown extends React.Component {
                 <SegmentGroup size={"mini"} style={{width: "100%"}} compact horizontal>
                         <Segment style={{width: "100%"}}>
                             <Dropdown
+                                spellcheck='true'
                                 fluid
                                 multiple
                                 onChange={this.handleChange}
