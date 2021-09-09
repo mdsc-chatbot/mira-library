@@ -127,6 +127,67 @@ export default class ReviewTable extends Component {
 
 
     completedReviews = (ids, reviews, reviews_2, currentReviewer) => {
+        var allReviews = this.state.reviews;
+        function numRevs(id){var numReviews = allReviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id);
+        }, 0); return numReviews}
+        function numRevsApproved(id){var numReviews = allReviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === true);
+        }, 0); return numReviews}
+        function numRevsRejected(id){var numReviews = allReviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === false);
+        }, 0); return numReviews}
+        function revHasFinalDecision(id){var numReviews = allReviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === true && reviews.final_decision === true);
+        }, 0); return numReviews}
+        function compareOldest( a, b ) {
+            if ((new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000)){
+              return -1;
+            }
+            if ( (new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000) ){
+              return 1;
+            }
+            return 0;
+          }
+          function compareNewest( a, b ) {
+            if ((new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000)){
+              return -1;
+            }
+            if ( (new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000) ){
+              return 1;
+            }
+            return 0;
+          }
+          function compareReviews( a, b) {
+              if(numRevs(a.id) < numRevs(b.id)){
+                  return -1;
+              }
+              if(numRevs(a.id) > numRevs(b.id)){
+                return 1;
+              }
+              return 0;
+          }
+          function compareTieBreak(a){
+            if( revHasFinalDecision(a.id) == 0 &&
+                ((a.review_status_2 === 'approved' && a.review_status === 'rejected') 
+                || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))){
+                    console.log('-1 ',a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
+                return -1;
+            }
+                console.log('+1 ',a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
+            return 1;
+          }
+
+        if (this.state.order === 'oldest'){
+            this.state.resources = this.state.resources.sort(compareOldest)
+        }else if(this.state.order === 'newest'){
+            this.state.resources = this.state.resources.sort(compareNewest)
+        }else if(this.state.order === 'least reviewed'){
+            this.state.resources = this.state.resources.sort(compareReviews)
+        }else if(this.state.order === 'tie breakers'){
+            this.state.resources = this.state.resources.sort(compareTieBreak)
+        }
+
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             (ids.includes(r.id) === true) && ((this.state.assignedOnly  === true && (r.assigned_reviewer==currentReviewer || r.assigned_reviewer_2==currentReviewer)) || (this.state.assignedOnly  === false)) &&
             ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0])))))  ? (
@@ -197,6 +258,9 @@ export default class ReviewTable extends Component {
         function numRevsRejected(id){var numReviews = reviews.reduce(function (n, reviews) {
             return n + (reviews.resource_id == id && reviews.approved === false);
         }, 0); return numReviews}
+        function revHasFinalDecision(id){var numReviews = reviews.reduce(function (n, reviews) {
+            return n + (reviews.resource_id == id && reviews.approved === true && reviews.final_decision === true);
+        }, 0); return numReviews}
         function compareOldest( a, b ) {
             if ((new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000)){
               return -1;
@@ -224,16 +288,13 @@ export default class ReviewTable extends Component {
               }
               return 0;
           }
-          function compareTieBreak( a){
-            if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) === numRevsRejected(a.id)){
-                console.log(a.id)
+          function compareTieBreak(a){
+            if( revHasFinalDecision(a.id) === 0 &&
+                ((a.review_status_2 === 'approved' && a.review_status === 'rejected') 
+                || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))){
                 return -1;
             }
-            if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) !== numRevsRejected(a.id)){
-                return 0;
-            }
             return 1;
-            //console.log(a.id,numRevsApproved(a.id))
           }
 
         if (this.state.order === 'oldest'){
@@ -315,7 +376,7 @@ export default class ReviewTable extends Component {
                     <div style={{ padding: "2em 0em",textAlign: "center" }}
                         vertical>
                     </div>
-                    {this.state.pending === 'Completed Reviews'?
+                    {/* {this.state.pending === 'Completed Reviews'? */}
                         <div style={{display:'inline-block'}}>
                         <h4>Order Submissions By </h4>
                         <Dropdown class="ui inline dropdown"
@@ -327,7 +388,7 @@ export default class ReviewTable extends Component {
                             value={value}
                         />
                         </div>
-                    :null}
+                     {/* :null} */}
                     <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button> 
                     { (this.context.security.is_editor) ? <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/> : null }
                     <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>

@@ -155,16 +155,12 @@
                }
                return 0;
            }
-           function compareTieBreak( a){
-             if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) === numRevsRejected(a.id)){
-                 //console.log(a.id)
+           function compareTieBreak(a){
+             if((a.review_status_2 === 'approved' && a.review_status === 'rejected') 
+             || (a.review_status === 'approved' && a.review_status_2 === 'rejected')){
                  return -1;
              }
-             if(numRevsApproved(a.id) > 0 && numRevsApproved(a.id) !== numRevsRejected(a.id)){
-                 return 0;
-             }
              return 1;
-             //console.log(a.id,numRevsApproved(a.id))
            }
  
          if (this.state.order === 'oldest'){

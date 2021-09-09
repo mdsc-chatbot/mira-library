@@ -667,6 +667,51 @@ export default class ResourceSubmitForm extends Component {
                                                 placeholder="https://"
                                             />
                                         </Form.Field>
+                                        <Divider hidden />
+                                        <Form.Field>
+                                            <label>Resource Email Address, &nbsp;&nbsp;&nbsp;if applicable (Example: j.m.nobel@ualberta.ca)<Popup content='this field is optional' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <Form.Input
+                                                fluid
+                                                name="email"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.email}
+                                                placeholder="Enter Email (OPTIONAL)"
+                                            />
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Resource Phone Number(s), &nbsp;&nbsp;&nbsp;if applicable (Example: 1234;...;)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <Form.Input
+                                                fluid
+                                                name="phone_numbers"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.phone_numbers}
+                                                placeholder="Enter Phone Numbers (OPTIONAL)"
+                                            />
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Text Number(s), &nbsp;&nbsp;&nbsp;if applicable (Format: enter either just the text number, or include instructions if applicable - Example: text "help" to 1234;...;) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <Form.Input
+                                                fluid
+                                                name="text_numbers"
+                                                onChange={this.handleChange}
+                                                width={16}
+                                                value={this.state.text_numbers}
+                                                placeholder='Enter Text Numbers (OPTIONAL)'
+                                            />
+                                        </Form.Field>
+                                        <Form.Field>
+                                            <label>Physical Address, &nbsp;&nbsp;&nbsp;FILL ONLY if services are in person (Example: 123 Jasper Avenue, Edmonton, AB, T4F 1A9, Canada)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
+                                            <Form.Input
+                                            fluid
+                                            name="physical_address"
+                                            onChange={this.handleChange}
+                                            width={16}
+                                            value={this.state.physical_address}
+                                            placeholder="Enter Address (OPTIONAL)"
+                                        />
+                                        </Form.Field>
 
                                         <Divider hidden />
                                         <Form.Field>
@@ -840,51 +885,6 @@ export default class ResourceSubmitForm extends Component {
                                                 placeholder="1-10"
                                             />
                                         </Form.Field> */}
-                                        <Divider hidden />
-                                        <Form.Field>
-                                            <label>Resource Email Address, &nbsp;&nbsp;&nbsp;if applicable (Example: j.m.nobel@ualberta.ca)<Popup content='this field is optional' trigger={<Icon name='flag' color='green'/>}/></label>
-                                            <Form.Input
-                                                fluid
-                                                name="email"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.email}
-                                                placeholder="Enter Email (OPTIONAL)"
-                                            />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Resource Phone Number(s), &nbsp;&nbsp;&nbsp;if applicable (Example: 1234;...;)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
-                                            <Form.Input
-                                                fluid
-                                                name="phone_numbers"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.phone_numbers}
-                                                placeholder="Enter Phone Numbers (OPTIONAL)"
-                                            />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Text Number(s), &nbsp;&nbsp;&nbsp;if applicable (Format: enter either just the text number, or include instructions if applicable - Example: text "help" to 1234;...;) <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
-                                            <Form.Input
-                                                fluid
-                                                name="text_numbers"
-                                                onChange={this.handleChange}
-                                                width={16}
-                                                value={this.state.text_numbers}
-                                                placeholder='Enter Text Numbers (OPTIONAL)'
-                                            />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Physical Address, &nbsp;&nbsp;&nbsp;FILL ONLY if services are in person (Example: 123 Jasper Avenue, Edmonton, AB, T4F 1A9, Canada)<Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green'/>}/></label>
-                                            <Form.Input
-                                            fluid
-                                            name="physical_address"
-                                            onChange={this.handleChange}
-                                            width={16}
-                                            value={this.state.physical_address}
-                                            placeholder="Enter Address (OPTIONAL)"
-                                        />
-                                        </Form.Field>
                                         <Divider hidden />
                                         <Form.Field>
                                             <label>Resource Availability <Popup content='If the resource is not always available, uncheck this and fill in the times below.' trigger={<Icon name='question circle'/>}/></label>
