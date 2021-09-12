@@ -22,7 +22,7 @@
  */
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Header, Rating, Dropdown, Checkbox } from "semantic-ui-react";
+import { Table, Header, Rating, Dropdown, Checkbox, Popup } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -194,15 +194,17 @@ export default class ReviewTable extends Component {
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>{reviews.get(r.id)[1]}</td>
-                    <td><Rating
+                    <td>
+                        {reviews_2.get(r.id)[1]}
+                        {/* <Rating
                                 icon="star"
                                 defaultRating={reviews.get(r.id)[2]}
                                 maxRating={5}
                                 disabled
-                                size="massive"/>
+                                size="massive"/> */}
                     </td>
                     <td>
-                        {reviews.get(r.id)[0]===true?(<i class="check icon green"></i>):(<i class="x icon red"></i>)}
+                        {reviews.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)}
                     </td>
                 </tr>
             ):(reviews_2.has(r.id)) 
@@ -226,10 +228,11 @@ export default class ReviewTable extends Component {
                         : null}
                     </td>
                     <td>
-                        <p>A)</p>{reviews.get(r.id)[0]===true?(<i class="check icon green"></i>):(<i class="x icon red"></i>)}
+                    
+                        <p>A)</p>{reviews.get(r.id)[0]===true?(<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)}
                     </td>
                     <td>
-                        <p>B)</p>{reviews_2.get(r.id)[0]===true?(<i class="check icon green"></i>):(<i class="x icon red"></i>)}
+                        <p>B)</p>{reviews_2.get(r.id)[0]===true?(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)}
                     </td>
                 </tr>
             ):(<p></p>)
@@ -327,7 +330,7 @@ export default class ReviewTable extends Component {
         return <tr><th>Pending Resource</th><th></th></tr>
     }
     completedHeader = () =>{
-        return <tr><th>Completed/not finilized Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
+        return <tr><th>Completed/not finilized Resource</th><th>#1 Review Comment</th><th>#2 Review Comment</th><th></th></tr>
     }
 
     sorting = (options) =>{

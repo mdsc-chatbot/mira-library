@@ -77,7 +77,6 @@ function normal_header(resource) {
     if(resource.text_numbers!= null && resource.text_numbers!= "")data.push({name:"Text Numbers: ", value:resource.text_numbers});
     if(resource.email!= null && resource.email!= "")data.push({name:"Email: ",value:resource.email});
     if(resource.physical_address!= null && resource.physical_address!= "")data.push({name:"Address: ",value:resource.physical_address});
-    data.push({name:"Distress Level: ",value:resource.distress_level_min+"-"+resource.distress_level_max});
     data.push({name:"Resource Type: ",value:resource.resource_type});
     if(resource.hours_of_operation!=null&&resource.hours_of_operation!="")data.push({name:"Hours of Operation: ",value:resource.hours_of_operation});
 

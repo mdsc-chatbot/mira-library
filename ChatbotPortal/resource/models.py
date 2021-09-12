@@ -82,7 +82,7 @@ class Tag(models.Model):
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=400)
       
 
 class Resource(models.Model):
@@ -118,9 +118,6 @@ class Resource(models.Model):
 
     objects = ResourceManager()
 
-    #fields added for MDSC chatbot portal
-    distress_level_min = models.IntegerField(default=0, validators = [MaxValueValidator(10), MinValueValidator(0)])
-    distress_level_max = models.IntegerField(default=6, validators = [MaxValueValidator(10), MinValueValidator(0)])
 
     SERVICE = 'SR'#, _('Program/Service')
     RESOURCE = 'RS'#, _("Educational/Informational")
@@ -161,12 +158,6 @@ class Resource(models.Model):
     physical_address = models.TextField(validators=[physical_address_regex], blank=True, null=True)
 
     hours_of_operation = models.TextField(blank=True, null=True)
-
-    is_free = models.IntegerField(
-        validators=[MaxValueValidator(1), MinValueValidator(0)], blank=True, null=True)
-
-    require_membership = models.IntegerField(
-        validators=[MaxValueValidator(1), MinValueValidator(0)], blank=True, null=True)
 
     informational_resource_text = models.TextField(blank=True, null=True)
 
