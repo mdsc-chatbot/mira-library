@@ -22,7 +22,7 @@
  */
  import React, { Component } from "react";
  import axios from "axios";
- import { Table, Header, Rating, Dropdown } from "semantic-ui-react";
+ import { Table, Popup, Dropdown, Grid } from "semantic-ui-react";
  import { SecurityContext } from "../contexts/SecurityContext";
  import { baseRoute } from "../App";
  import { Link } from "react-router-dom";
@@ -198,11 +198,11 @@
                  <tr key={r.id} ref={tr => this.results = tr}>
                      <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                      <td>
-                         <h4>{r.review_status==="approved"?(<i class="green check icon"></i>): r.review_status==="pending"?(<i class="x icon"></i>) : (<i class="red x icon"></i>) }
+                         <h4>{r.review_status==="approved"?(<i class="green check icon large"></i>): r.review_status==="pending"?(<i class="x icon large"></i>) : (<i class="red x icon large"></i>) }
                          {<Dropdown ui read search selection options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, {value})=>this.handleAssign("assigned_reviewer", value, r.id)}/>}</h4>
                      </td>
                      <td>
-                        <h4>{r.review_status_2==="approved"?(<i class="green check icon"></i>): r.review_status==="pending"?(<i class="x icon"></i>):(<i class="red x icon"></i>) }
+                        <h4>{r.review_status_2==="approved"?(<i class="green check icon large"></i>): r.review_status==="pending"?(<i class="x icon large"></i>):(<i class="red x icon large"></i>) }
                             {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event,  {value})=>this.handleAssign("assigned_reviewer_2", value, r.id)}/>}</h4>
                      </td>
                  </tr>
@@ -211,9 +211,82 @@
          //console.log(resources_get)
          return resources_get
      }
+
+     getDataUsers = (reviews,ids,currentReviewer) =>{
+        var usersData = [];
+        for(var i = 0; i < this.state.users.length; i++)
+        {
+            usersData.push( 
+               {
+                   id: this.state.users[i].id, 
+                   fName: this.state.users[i].first_name,
+                   lName: this.state.users[i].last_name,
+                   numApproved: 0,
+                   numRejected: 0,
+                   numPending:  0
+               }
+           )
+        }
+
+        console.log('usersData', usersData);
+
+        this.state.resources.forEach(r => { 
+
+            if(r.assigned_reviewer != -1){
+                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer);
+                if (indx != -1){       
+                    if(r.review_status === 'pending'){
+                        usersData[indx].numPending ++;
+                    } else if(r.review_status === 'approved'){
+                        usersData[indx].numApproved ++;
+                    } else if(r.review_status === 'rejected'){
+                        usersData[indx].numRejected ++;
+                    }
+                }
+            }
+
+            if(r.assigned_reviewer_2 != -1){
+                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer_2);
+                if (indx != -1){
+                    if(r.review_status_2 === 'pending'){
+                        usersData[indx].numPending ++;
+                    } else if(r.review_status_2 === 'approved'){
+                        usersData[indx].numApproved ++;
+                    } else if(r.review_status_2 === 'rejected'){
+                        usersData[indx].numRejected ++;
+                    }
+                }
+            }
+        });
+
+        const resources_get = usersData.map(usr =>               
+            (<tr key={usr.id} ref={tr => this.results = tr}>
+                <td>
+                    <Popup content={usr.fName +' '+usr.lName} trigger={<p>{usr.lName}</p>}/>
+                </td>
+                <td class="positive">
+                    <h4>{usr.numApproved}</h4>
+                </td>
+                <td class="negative">
+                    <h4 >{usr.numRejected}</h4>
+                </td>
+                <td>
+                    <h4>{usr.numPending}</h4>
+                </td>
+            </tr>)
+        );
+
+        console.log('resources_get', resources_get);
+
+        return resources_get
+    }
+
      pendingHeader = () =>{
          return <tr><th style={{width: 300}}>Resource</th><th style={{width: 200}}>Reviewer One</th><th style={{width: 200}}>Reviewer Two</th></tr>
      }
+     usersHeader = () =>{
+        return <tr><th style={{width: 300}}>User</th><th>A</th><th>R</th><th>P</th></tr>
+    }
 
      idToUserString = (idnum) =>
      {
@@ -268,16 +341,35 @@
                          />
                          </div>
                      :null}
+                     <Grid celled>
+                     <Grid.Row>
+                     <Grid.Column width={4}>
                      <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
-                         <Table class="ui celled table">
-                             <thead>
-                                 {this.pendingHeader()}
-                             </thead>
-                             <tbody>
-                                 {this.getData(this.state.reviews,ids,reviewer)}
-                             </tbody>
-                         </Table>
-                     </div>
+                            <Table class="ui definition table">
+                                <thead>
+                                    {this.usersHeader()}
+                                </thead>
+                                <tbody>
+                                    {this.getDataUsers(this.state.reviews,ids,reviewer)}
+                                </tbody>
+                            </Table>
+                        </div>
+                        </Grid.Column>
+                        <Grid.Column width={12}>
+                        <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
+                            <Table class="ui celled table">
+                                <thead>
+                                    {this.pendingHeader()}
+                                </thead>
+                                <tbody>
+                                    {this.getData(this.state.reviews,ids,reviewer)}
+                                </tbody>
+                            </Table>
+                        </div>
+                        </Grid.Column>
+                     </Grid.Row>
+                     </Grid>
+                     
                  </div>
              </div>
          );

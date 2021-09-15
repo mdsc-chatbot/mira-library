@@ -41,7 +41,7 @@ export default class TagDropdown extends React.Component {
         super(props);
 
         this.state = {
-            searchQuery: '',
+            searchQuery: ' ',
             tagOptions: [], // options to show to user (to click)
             selectedOptions: [], // selected options so that the current values don't 'disappear' in the UI
             searchRequestCancelToken: null,
@@ -176,10 +176,14 @@ export default class TagDropdown extends React.Component {
     };
 
     componentDidUpdate(prevProps){
-        console.log('look at me', this.state.tagOptions, this.props.initValue);
         if(this.props.initValue != prevProps.initValue){
             this.getAllTags();
         }
+    }
+
+    componentDidMount(prevProps){
+        // fill the options so it is not empty when users clicks on it.
+        this.handleSearchChange(null, {searchQuery:''})
     }
 
     getAllTags(){
@@ -214,7 +218,6 @@ export default class TagDropdown extends React.Component {
                     }
                 }
             });
-
     }
 
 

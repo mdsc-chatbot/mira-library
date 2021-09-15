@@ -133,10 +133,6 @@ class Resource(models.Model):
         default="RS",
     )
 
-    #text the chatbot should give when presenting this resource
-    chatbot_text = models.TextField(
-        blank=True, null=True)
-
     #both phone and text number fields expect the page to process the given numbers into the format "1234567890;" etc with each number ending in a semicolon
     phone_regex = RegexValidator(regex=r'^(\d{3,15}\;)*$', message="Phone number must be entered in the format: 1234567890; , one per line. Up to 15 digits allowed per number.")
     phone_numbers = models.TextField(validators=[phone_regex], blank=True, null=True) # validators should be a list
@@ -162,3 +158,8 @@ class Resource(models.Model):
     informational_resource_text = models.TextField(blank=True, null=True)
 
     resource_format = models.TextField(blank=True, null=True)
+
+    max_age = models.IntegerField(
+        validators=[MaxValueValidator(120), MinValueValidator(0)], default=120, blank=True, null=True)
+    min_age = models.IntegerField(
+        validators=[MaxValueValidator(120), MinValueValidator(0)], default=0, blank=True, null=True)

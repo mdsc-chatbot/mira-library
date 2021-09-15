@@ -22,7 +22,7 @@
  */
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Header, Rating, Dropdown, Checkbox, Popup } from "semantic-ui-react";
+import { Table, Dropdown, Checkbox, Popup } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -228,11 +228,19 @@ export default class ReviewTable extends Component {
                         : null}
                     </td>
                     <td>
-                    
-                        <p>A)</p>{reviews.get(r.id)[0]===true?(<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)}
+                        {(this.context.security.is_editor) 
+                            ?[<p>A)</p>,reviews.get(r.id)[0]===true? (<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
+                            :
+                            [<p>A)</p>,reviews.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
+                        }
                     </td>
                     <td>
-                        <p>B)</p>{reviews_2.get(r.id)[0]===true?(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)}
+                        {(this.context.security.is_editor) ?
+                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
+                            :
+                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
+
+                        }
                     </td>
                 </tr>
             ):(<p></p>)

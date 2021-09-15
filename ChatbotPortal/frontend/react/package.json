@@ -46,6 +46,7 @@
     "react-infinite-loader": "^1.0.4",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "react-semantic-ui-range": "^0.7.1",
     "react-validation": "^3.0.7",
     "react-virtualized": "^9.21.2",
     "react-window-table": "^1.0.26",
