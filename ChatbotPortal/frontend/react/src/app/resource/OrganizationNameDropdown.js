@@ -127,7 +127,7 @@ export default class OrganizationNameDropdown extends React.Component {
                     onChange={this.handleChange}
                     onSearchChange={this.handleSearchChange}
                     options={this.state.titleOptions}
-                    placeholder='Enter Company/Organization Name'
+                    placeholder='Example: Crisis Services Canada'
                     search={this.handleSearch}
                     searchQuery={this.state.searchQuery}
                 />

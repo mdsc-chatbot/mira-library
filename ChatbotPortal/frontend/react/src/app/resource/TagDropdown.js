@@ -70,6 +70,7 @@ export default class TagDropdown extends React.Component {
             const newSelectedOptions = this.state.selectedOptions.slice();
             newSelectedOptions.push(selectedOption);
             this.setState({selectedOptions: newSelectedOptions})
+            this.checkTagRelatedBooleans(selectedText);
         } else {
             // Unselected
             const indexOfSelectedOption = this.state.selectedOptions.find(option => option.text === selectedText);
@@ -167,13 +168,28 @@ export default class TagDropdown extends React.Component {
             selectedOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
             const tagOptions = prevState.tagOptions.slice();
             tagOptions.push(TagDropdown.mapResponseToDropdownOption(tag));
-
             return {
                 selectedOptions,
                 tagOptions
             };
         });
     };
+
+    checkTagRelatedBooleans = (tagName) => {
+        if(tagName.toLowerCase().includes('email')){
+            this.props.isRelatedToEmail('true');
+            console.log('related to email', this.props);
+        }else if(tagName.toLowerCase().includes('physical address')){
+            this.props.isRelatedToAddress('true');
+            console.log('related to address', this.props);
+        }else if(tagName.toLowerCase().includes('phone number')){
+            this.props.isRelatedToPhonenumber('true');
+            console.log('related to Phone number', this.props);
+        }else if(tagName.toLowerCase().includes('text message number')){
+            this.props.isRelatedToEmail('true');
+            console.log('related to text message number', this.props);
+        }
+    }
 
     componentDidUpdate(prevProps){
         if(this.props.initValue != prevProps.initValue){

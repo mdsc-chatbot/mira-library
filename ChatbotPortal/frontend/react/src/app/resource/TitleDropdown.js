@@ -118,7 +118,7 @@ export default class TitleDropdown extends React.Component {
                     onChange={this.handleChange}
                     onSearchChange={this.handleSearchChange}
                     options={this.state.titleOptions}
-                    placeholder='Enter Resource Title'
+                    placeholder='[name of organization][type of resource]'
                     search={this.handleSearch}
                     searchQuery={this.state.searchQuery}
                 />
