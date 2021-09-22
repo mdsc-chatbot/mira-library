@@ -45,6 +45,7 @@ export default class ResourceDetail extends Component {
             rating: 1,
             comments: "No comments",
             tags: [],
+            reviewData: {},
         };
     }
 
@@ -205,7 +206,8 @@ export default class ResourceDetail extends Component {
             resource_url: data.url,
             resource_id: resourceID,
             review_comments: this.state.comments,
-            review_rating: this.state.rating
+            review_rating: this.state.rating,
+            question_answers: JSON.stringify(this.state.reviewData),
         };
         return formatted_review;
     };
@@ -305,7 +307,9 @@ export default class ResourceDetail extends Component {
                                         </Table>
                                     ) : null} */}
                                     </div>
-                                    <ReviewMatrix/>
+                                    <ReviewMatrix
+                                        onChange={reviewData => this.setState({ reviewData })}
+                                    />
                                     <div>
                                         <div class="ui form">
                                             <div
@@ -343,9 +347,7 @@ export default class ResourceDetail extends Component {
                                                     <button
                                                         name="approve"
                                                         class="positive ui button"
-                                                        onClick={() =>
-                                                            this.approve(this.state.resource)
-                                                        }
+                                                        onClick={() =>this.approve(this.state.resource)}
                                                     >
                                                         Approve
                                                     </button>
@@ -354,9 +356,7 @@ export default class ResourceDetail extends Component {
                                                     <button
                                                         name="reject"
                                                         class="negative ui button"
-                                                        onClick={() =>
-                                                            this.reject(this.state.resource)
-                                                        }
+                                                        onClick={() =>this.reject(this.state.resource)}
                                                     >
                                                         &nbsp;&nbsp;Reject&nbsp;&nbsp;
                                                     </button>

@@ -44,7 +44,14 @@
              treshholdScore: 73, //if the score goes beyond the resource is better to be accepted
              maxScore: 90, //max possible score that a resource can get (it can be changed by makinga question Not applicable)
              bHarmful: false,
-             bViable: false
+             bViable: false,
+             reviewData: {},
+             isGoverment: false,
+             isProfitCompanyOrDeveloper: false,
+             isNonProfitCompany: false,
+             isRegisteredCharity: false,
+             isPublicHealthcareProvider: false,
+             isAcademicInst: false,
          };
 
          for(var i = 0; i < 10; i++) this.state.questionBools.push(false);
@@ -202,6 +209,15 @@
         // isChecked ? this.setState({maxScore: this.state.maxScore - 10}) : this.setState({maxScore: this.state.maxScore + 10});
     };
 
+    handleOrgCBChange = (checkBoxName) => {
+        checkBoxName=='isGoverment' ? this.setState({isGoverment:!this.state.isGoverment}) :
+        checkBoxName=='isProfitCompanyOrDeveloper' ? this.setState({isProfitCompanyOrDeveloper:!this.state.isProfitCompanyOrDeveloper}) :
+        checkBoxName=='isNonProfitCompany' ? this.setState({isNonProfitCompany:!this.state.isNonProfitCompany}) :
+        checkBoxName=='isRegisteredCharity' ? this.setState({isRegisteredCharity:!this.state.isRegisteredCharity}) :
+        checkBoxName=='isPublicHealthcareProvider' ? this.setState({isPublicHealthcareProvider:!this.state.isPublicHealthcareProvider}) :
+        checkBoxName=='isAcademicInst' ? this.setState({isAcademicInst:!this.state.isAcademicInst}) : null;
+    }
+
     componentDidUpdate(previousProps, previousState){
         console.log('calculating...', this.state.questionScores, previousState.questionScores)
         if(previousState.questionBools != this.state.questionBools ||
@@ -218,20 +234,37 @@
         var maxScore = 0;
         var questionBools = this.state.questionBools;
         var questionScores = this.state.questionScores;
+        var reviewData = {};
+        var reviewAnswers = new Array();
 
         //checkboxes
         for(var i=0; i<questionBools.length; i++){
             const isNA = this.state.boolQuestionIsNA[i];
             if(isNA){
                 // NA
+                reviewAnswers.push({question:'bool question '+i, answer:'NA'})
             }else{
                 // Assigned
                 if (this.state.negativeCBoxQuestions.includes(i)){
-                    // A - negative impact
-                    if(questionBools[i]) bScore=parseInt(bScore)-1
+                    // negative impact
+                    if(questionBools[i]){
+                        // checked
+                        reviewAnswers.push({question:'bool question '+i, answer:'-2'})
+                        bScore=parseInt(bScore)-1
+                    }else{
+                        // not checked
+                        reviewAnswers.push({question:'bool question '+i, answer:'0'})
+                    }
                 }else{
-                    // A - positive impact
-                    if(questionBools[i]) bScore=parseInt(bScore)+1
+                    // positive impact
+                    if(questionBools[i]) {
+                        // checked
+                        bScore=parseInt(bScore)+1
+                        reviewAnswers.push({question:'bool question '+i, answer:'2'})
+                    }else{
+                        // not checked
+                        reviewAnswers.push({question:'bool question '+i, answer:'0'})
+                    }
                     maxScore=parseInt(maxScore)+2;
                 }
             }
@@ -241,16 +274,36 @@
             const isNA = this.state.rateQuestionIsNA[i];
             if(isNA){
                 // NA
+                reviewAnswers.push({question:'rating question '+i, answer:'NA'})
             }else{
                 // ratings - A
                 rScore=parseInt(questionScores[i])+rScore;
                 maxScore=parseInt(maxScore)+10;
+                reviewAnswers.push({question:'rating question '+i, answer:questionScores[i]*2})
             }
         }
         this.setState({bScore});
         this.setState({rScore});
         this.setState({maxScore});
-        console.log('rscore',rScore,'bscore',bScore,'maxScore',maxScore)
+        this.setState({bViable: this.state.bViable});
+        this.setState({bHarmful: this.state.bHarmful});
+
+        reviewData = {
+            maxScore:maxScore,
+            bScore:(bScore*4),
+            rScore:(rScore*2),
+            QA_array: reviewAnswers,
+            organizationType: {
+                isGoverment: this.state.isGoverment,
+                isProfitCompanyOrDeveloper: this.state.isProfitCompanyOrDeveloper,
+                isNonProfitCompany: this.state.isNonProfitCompany,
+                isRegisteredCharity: this.state.isRegisteredCharity,
+                isPublicHealthcareProvider: this.state.isPublicHealthcareProvider,
+                isAcademicInst: this.state.isAcademicInst,
+            }
+        };
+        console.log('reviewData',reviewData)
+        this.props.onChange(reviewData);
     }
 
     toggleHarm = () => this.setState((prevState) => ({ bHarmful: !prevState.bHarmful }))
@@ -273,12 +326,12 @@
                         <Table.Row>
                             <Table.Cell >Where does the resource come from? (Check all that apply)</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox label='Government' /></div>
-                                <div><Checkbox label='For profit company or developer' /></div>
-                                <div><Checkbox label='Non-profit company' /></div>
-                                <div><Checkbox label='Registered charity' /></div>
-                                <div><Checkbox label='A public healthcare provider' /></div>
-                                <div><Checkbox label='Academic institution' /></div>
+                                <div><Checkbox onChange={(e)=>this.handleOrgCBChange('isGoverment')} checked={this.state.isGoverment} label='Government' /></div>
+                                <div><Checkbox onChange={(e)=>this.handleOrgCBChange('isProfitCompanyOrDeveloper')} checked={this.state.isProfitCompanyOrDeveloper} label='For profit company or developer' /></div>
+                                <div><Checkbox onChange={(e)=>this.handleOrgCBChange('isNonProfitCompany')} checked={this.state.isNonProfitCompany} label='Non-profit company' /></div>
+                                <div><Checkbox onChange={(e)=>this.handleOrgCBChange('isRegisteredCharity')} checked={this.state.isRegisteredCharity} label='Registered charity' /></div>
+                                <div><Checkbox onChange={(e)=>this.handleOrgCBChange('isPublicHealthcareProvider')} checked={this.state.isPublicHealthcareProvider} label='A public healthcare provider' /></div>
+                                <div><Checkbox onChange={(e)=>this.handleOrgCBChange('isAcademicInst')} checked={this.state.isAcademicInst} label='Academic institution' /></div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
