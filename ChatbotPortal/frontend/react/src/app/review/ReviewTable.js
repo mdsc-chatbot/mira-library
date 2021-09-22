@@ -193,24 +193,39 @@ export default class ReviewTable extends Component {
             ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0])))))  ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>{reviews.get(r.id)[1]}</td>
                     <td>
-                        {reviews_2.get(r.id)[1]}
-                        {/* <Rating
-                                icon="star"
-                                defaultRating={reviews.get(r.id)[2]}
-                                maxRating={5}
-                                disabled
-                                size="massive"/> */}
+                        {(this.context.security.is_editor) ?
+                            reviews.get(r.id)[1]
+                        : '-'}
                     </td>
                     <td>
-                        {reviews.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)}
+                        {(this.context.security.is_editor) ?
+                            reviews_2.get(r.id)[1]
+                        : '-'}
+                    </td>
+                    <td>
+                        {reviews.get(r.id)[0]===true?(<i class="check icon green big"></i>):(<i class="x icon red big"></i>)}
                     </td>
                 </tr>
             ):(reviews_2.has(r.id)) 
             && ((this.state.assignedOnly === true && (r.assigned_reviewer==currentReviewer || r.assigned_reviewer_2==currentReviewer)) || (this.state.assignedOnly === false)) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                    <td>
+                        {(this.context.security.is_editor) 
+                            ?[<p>A)</p>,reviews.get(r.id)[0]===true? (<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
+                            :
+                            [<p>A)</p>,reviews.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
+                        }
+                    </td>
+                    <td>
+                        {(this.context.security.is_editor) ?
+                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
+                            :
+                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
+
+                        }
+                    </td>
                     <td>
                         {(this.context.security.is_editor) ?
                             <button
@@ -226,21 +241,6 @@ export default class ReviewTable extends Component {
                                 onClick={() =>this.reject(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Reject
                             </button>
                         : null}
-                    </td>
-                    <td>
-                        {(this.context.security.is_editor) 
-                            ?[<p>A)</p>,reviews.get(r.id)[0]===true? (<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
-                            :
-                            [<p>A)</p>,reviews.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
-                        }
-                    </td>
-                    <td>
-                        {(this.context.security.is_editor) ?
-                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
-                            :
-                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
-
-                        }
                     </td>
                 </tr>
             ):(<p></p>)

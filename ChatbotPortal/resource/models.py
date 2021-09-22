@@ -93,7 +93,7 @@ class Resource(models.Model):
         validators=[MaxValueValidator(5), MinValueValidator(1)], default=1, blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
     tags = models.ManyToManyField(Tag, blank=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     attachment = models.FileField(
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
     organization_name = models.TextField(default="",blank=True, null=True)
@@ -144,20 +144,18 @@ class Resource(models.Model):
 
     references = models.TextField(blank=True, null=True)
 
-    definition = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     general_url = models.TextField(blank=True, null=True)
 
-    description = models.TextField(blank=True, null=True)
+    organization_description = models.TextField(blank=True, null=True)
 
     physical_address_regex = RegexValidator(regex=r'^((.)+\,)*((.{1,100}))$', message="Address format is not correct.")
     physical_address = models.TextField(validators=[physical_address_regex], blank=True, null=True)
 
     hours_of_operation = models.TextField(blank=True, null=True)
 
-    informational_resource_text = models.TextField(blank=True, null=True)
-
-    resource_format = models.TextField(blank=True, null=True)
+    definition = models.TextField(blank=True, null=True)
 
     max_age = models.IntegerField(
         validators=[MaxValueValidator(120), MinValueValidator(0)], default=120, blank=True, null=True)

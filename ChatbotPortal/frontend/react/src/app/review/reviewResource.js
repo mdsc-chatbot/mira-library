@@ -85,7 +85,7 @@ export default class ResourceDetail extends Component {
             .catch(error => console.error(error));
 
             
-    //submit second review record if both revieweers are same
+    //submit second review record in this try, if reviewer_1 == assigned_reviewer_2
         const reviewer = this.context.security.is_logged_in
         ? this.context.security.id
         : "Unknown user";
@@ -286,7 +286,7 @@ export default class ResourceDetail extends Component {
                                         <div>
                                     <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer}/>
                                     <div>
-                                    {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
+                                    {/* {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
                                         <Table class="ui celled table">
                                             <thead>
                                                 <tr><th>tag ID</th><th>Tag Name</th><th>Approve</th></tr>
@@ -303,7 +303,7 @@ export default class ResourceDetail extends Component {
                                                 ))}
                                             </tbody>
                                         </Table>
-                                    ) : null}
+                                    ) : null} */}
                                     </div>
                                     <ReviewMatrix/>
                                     <div>
@@ -358,7 +358,7 @@ export default class ResourceDetail extends Component {
                                                             this.reject(this.state.resource)
                                                         }
                                                     >
-                                                        Reject
+                                                        &nbsp;&nbsp;Reject&nbsp;&nbsp;
                                                     </button>
                                                 </Link>
                                             </div>

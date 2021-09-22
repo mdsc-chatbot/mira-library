@@ -50,7 +50,7 @@ export default class ResourceSubmitForm extends Component {
             title: "",
             catText: "",
             tagInitValue: "",
-            informational_resource_text: "",
+            definition: "",
             resourceTypeIsInformative: false,
             organization_name: "",
             url: "",
@@ -59,16 +59,16 @@ export default class ResourceSubmitForm extends Component {
             attachment: null,
             attachmentPath: "", // To clear the file after submitting it
             comments: "",
-            definition: "",
             description: "",
+            organization_description: "",
             email: "",
             phone_numbers: "",
             text_numbers: "",
             physical_address: "",
             resource_type: "SR",
-            resource_format: "", //resource format = resource type in Front-End
+            //resource format = resource type in Front-End
             errors: {},
-            category: 1,
+            // category: 1,
             tags: [],
             langTags: [],
             url_validated: true,
@@ -115,14 +115,14 @@ export default class ResourceSubmitForm extends Component {
                 }
                 this.setState({resource_type:res.data.resource_type}); 
                 this.setState({title:res.data.title});
-                this.setState({informational_resource_text:res.data.informational_resource_text});
+                this.setState({definition:res.data.definition});
                 this.setState({organization_name:res.data.organization_name});
                 this.setState({url:res.data.url});
                 this.setState({general_url:res.data.general_url});
                 this.setState({rating:res.data.rating});
                 this.setState({comments:res.data.comments});
-                this.setState({definition:res.data.definition});
                 this.setState({description:res.data.description});
+                this.setState({organization_description:res.data.organization_description});
 
                 res.data.email &&
                 this.setState({resourceTypeRelateEmail:true}) &&
@@ -139,9 +139,6 @@ export default class ResourceSubmitForm extends Component {
                 res.data.physical_address && 
                 this.setState({resourceTypeRelateAddress:true}) &&
                 this.setState({physical_address:res.data.physical_address});
-
-                this.setState({resource_format:res.data.resource_format});
-                this.setState({catText:res.data.category});
                 this.setState({tagInitValue:res.data.tags});
                 this.setState({hours_of_operation:res.data.hours_of_operation});
                 this.setState({ageArray:[res.data.min_age, res.max_age]});
@@ -171,7 +168,7 @@ export default class ResourceSubmitForm extends Component {
         const resourceFormData = new FormData();
 
         resourceFormData.append("title", this.state.title);
-        resourceFormData.append("informational_resource_text", this.state.informational_resource_text);
+        resourceFormData.append("definition", this.state.definition);
         resourceFormData.append("organization_name", this.state.organization_name);
         resourceFormData.append("url", this.state.url);
         resourceFormData.append("general_url", this.state.general_url);
@@ -179,13 +176,11 @@ export default class ResourceSubmitForm extends Component {
         resourceFormData.append("comments", this.state.comments);
         resourceFormData.append("created_by_user", created_by_user);
         resourceFormData.append("created_by_user_pk", created_by_user_pk);
-        resourceFormData.append("category", this.state.category);
         resourceFormData.append("email", this.state.email);
-        resourceFormData.append("definition", this.state.definition);
         resourceFormData.append("description", this.state.description);
+        resourceFormData.append("organization_description", this.state.organization_description);
         resourceFormData.append("physical_address", this.state.physical_address);
         resourceFormData.append("resource_type", this.state.resource_type);
-        resourceFormData.append("resource_format", this.state.resource_format);
         resourceFormData.append("phone_numbers", this.state.phone_numbers);
         resourceFormData.append("text_numbers", this.state.text_numbers);
         resourceFormData.append("min_age", this.state.ageArray[0]);
@@ -468,7 +463,7 @@ export default class ResourceSubmitForm extends Component {
         if(this.state.phone_numbers!= "") this.addFieldTag("Phone Number")
         if(this.state.text_numbers!= "") this.addFieldTag("Text Messaging")
         if(this.state.url!= "" || this.state.general_url!= "") this.addFieldTag("Website")
-        if(this.state.definition!= "") this.addFieldTag("Definition/Stat")
+        if(this.state.description!= "") this.addFieldTag("Description")
         if(this.state.email!= "") this.addFieldTag("Email")
 
         if(this.state.tags.length<1||this.state.langTags.length<1)
@@ -504,12 +499,8 @@ export default class ResourceSubmitForm extends Component {
             this.setState({resourceTypeIsInformative: true});
         }else{
             this.setState({resourceTypeIsInformative: false});
-            this.setState({informational_resource_text: ""});
+            this.setState({definition: ""});
         }
-    }
-
-    handleResFormatChange = (resource_format) => {
-        this.setState({ resource_format })
     }
 
     update_resource_user = () => {
@@ -519,21 +510,19 @@ export default class ResourceSubmitForm extends Component {
             'url':this.state.url,
             'rating':this.state.rating,
             'comments': this.state.comments,
-            'category_id': this.state.category,
-            'definition': this.state.definition,
+            'description': this.state.description,
             'email' : this.state.email,
             'phone_numbers' : this.state.phone_numbers,
             'refrences' : this.state.refrences,
             'resource_type' : this.state.resource_type,
-            'description' : this.state.description,
+            'organization_description' : this.state.organization_description,
             'general_url' : this.state.general_url,
             'physical_address' : this.state.physical_address,
             'hours_of_operation' : this.encodeHours(this.state.hourBools),
             'min_age' : this.state.ageArray[0],
             'max_age' : this.state.ageArray[1],
             'organization_name' : this.state.organization_name,
-            'informational_resource_text' : this.state.informational_resource_text,
-            'resource_format' : this.state.resource_format,
+            'definition' : this.state.definition,
             // 'attachment' : this.state.attachment ? this.state.attachment : '',
         };
 
@@ -617,7 +606,7 @@ export default class ResourceSubmitForm extends Component {
                                                 value={this.state.organization_name}
                                                 label="Enter Company or Organization name"
                                                 onChange={organization_name => this.setState({ organization_name })}
-                                                organization_description = {description => this.setState({ description })} 
+                                                organization_description = {organization_description => this.setState({ organization_description })} 
                                             />
                                         </Form.Field>
                                         <Form.Field>
@@ -625,9 +614,9 @@ export default class ResourceSubmitForm extends Component {
                                             <Form.TextArea
                                                 required
                                                 spellcheck='true'
-                                                name="description"
+                                                name="organization_description"
                                                 onChange={this.handleChange}
-                                                value={this.state.description}
+                                                value={this.state.organization_description}
                                                 placeholder="Enter Company or Organization Description"
                                                 rows={2}
                                             />
@@ -635,9 +624,9 @@ export default class ResourceSubmitForm extends Component {
                                         <Form.Field>
                                             <label>Brief description of the service the resource provides &nbsp;(up to 3 sentences).</label>
                                             <Form.TextArea
-                                                name="definition"
+                                                name="description"
                                                 onChange={this.handleChange}
-                                                value={this.state.definition}
+                                                value={this.state.description}
                                                 placeholder="Enter Service Description."
                                                 rows={2}
                                             />
@@ -732,12 +721,12 @@ export default class ResourceSubmitForm extends Component {
                                                 if (this.state.resourceTypeIsInformative)
                                                     return (
                                                             <Form.Field>
-                                                                <label>Informational Resource Text <Popup content='Example a definition or statistical information' trigger={<Icon name='question circle'/>}/> </label>
+                                                                <label>Informational Resource Text <Popup content='Example: a definition or statistical information' trigger={<Icon name='question circle'/>}/> </label>
                                                                 <Form.TextArea
                                                                     spellcheck='true'
-                                                                    name="informational_resource_text"
+                                                                    name="definition"
                                                                     onChange={this.handleChange}
-                                                                    value={this.state.informational_resource_text}
+                                                                    value={this.state.definition}
                                                                     label=""
                                                                     rows={2}
                                                                 />  
@@ -849,7 +838,7 @@ export default class ResourceSubmitForm extends Component {
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     name="tags"
-                                                    tagCat="freeTag"
+                                                    tagCat="Costs"
                                                     value={this.state.tags}
                                                     onChange={tags => this.setState({ tags })}
                                                 />
@@ -952,7 +941,7 @@ export default class ResourceSubmitForm extends Component {
                                                     required
                                                     name="tags"
                                                     value={this.state.tags}
-                                                    tagCat="Locations"
+                                                    tagCat="Location"
                                                     onChange={tags => this.setState({ tags })}
                                                 />
                                             </Form.Group>
@@ -964,7 +953,7 @@ export default class ResourceSubmitForm extends Component {
                                                     required
                                                     name="tags"
                                                     value={this.state.tags}
-                                                    tagCat="Health Issue Group"
+                                                    tagCat="Health Issue"
                                                     onChange={tags => this.setState({ tags })}
                                                 />
                                             </Form.Group>
@@ -986,7 +975,7 @@ export default class ResourceSubmitForm extends Component {
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     name="professionTags"
-                                                    tagCat="professionTags"
+                                                    tagCat="Profession"
                                                     value={this.state.tags}
                                                     onChange={tags => this.setState({ tags })}
                                                 />
