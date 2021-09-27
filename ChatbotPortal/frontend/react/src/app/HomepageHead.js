@@ -105,7 +105,7 @@ export class HomepageHead extends Component {
                     <Grid.Column>
                         <Header
                             as="h1"
-                            content="Welcome to NDD Resource Portal"
+                            content="Welcome to the MIRA Resource Portal"
                             style={{
                                 fontWeight: "bold",
                                 color: "#3075c9",
@@ -115,7 +115,7 @@ export class HomepageHead extends Component {
                     <Grid.Column>
                         <Header
                             as="h3"
-                            content="Resources site providing information about autism, intellectual disability, and learning disability."
+                            content="An information repository for mental health resources."
                             className={styles.header3}
                         />
                     </Grid.Column>
