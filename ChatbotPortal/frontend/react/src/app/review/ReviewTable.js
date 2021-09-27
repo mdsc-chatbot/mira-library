@@ -338,7 +338,7 @@ export default class ReviewTable extends Component {
         return <tr><th>Pending Resource</th><th></th></tr>
     }
     completedHeader = () =>{
-        return <tr><th>Completed/not finilized Resource</th><th>#1 Review Comment</th><th>#2 Review Comment</th><th></th></tr>
+        return <tr><th>Completed Resource</th><th>#1 Review Comment</th><th>#2 Review Comment</th><th></th></tr>
     }
 
     sorting = (options) =>{

@@ -134,8 +134,8 @@ class Resource(models.Model):
     )
 
     #both phone and text number fields expect the page to process the given numbers into the format "1234567890;" etc with each number ending in a semicolon
-    phone_regex = RegexValidator(regex=r'^(\d{3,15}\;)*$', message="Phone number must be entered in the format: 1234567890; , one per line. Up to 15 digits allowed per number.")
-    phone_numbers = models.TextField(validators=[phone_regex], blank=True, null=True) # validators should be a list
+    # phone_regex = RegexValidator(regex=r'^(\d{3,15}\;)*$', message="Phone number must be entered in the format: 1234567890; , one per line. Up to 15 digits allowed per number.")
+    phone_numbers = models.TextField(blank=True, null=True) # validators should be a list
 
     # text_regex = RegexValidator(regex=r'^(\w{3,15}\;)*$', message="Text number must be entered in the format: 1234567890; , one per line. Up to 15 digits allowed per number.")
     text_numbers = models.TextField(blank=True, null=True)

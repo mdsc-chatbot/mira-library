@@ -57,26 +57,26 @@ export default class TagDropdown extends React.Component {
             searchQuery: ''
         });
 
+        console.log('selected text =', event.target.textContent)
+        console.log('data.value ', data.value)
+
         // Find out if the newest value was selected/unselected
         // If selected, add the selected option to selectedOptions
         // If unselected, remove the selected option in selectedOptions
         // This is to make sure the UI is consistent.
         // First, find the selected option using the text of the dropdown
+        
         const selectedText = event.target.textContent;
         const selectedOption = data.options.find(option => option.text === selectedText);
-
         if (selectedOption !== undefined) {
             // Selected
             const newSelectedOptions = this.state.selectedOptions.slice();
             newSelectedOptions.push(selectedOption);
             this.setState({selectedOptions: newSelectedOptions})
-            this.checkTagRelatedBooleans(selectedText);
         } else {
             // Unselected
-            const indexOfSelectedOption = this.state.selectedOptions.find(option => option.text === selectedText);
             const newSelectedOptions = this.state.selectedOptions.slice();
-            newSelectedOptions.splice(indexOfSelectedOption, 1);
-            this.setState({selectedOptions: newSelectedOptions})
+            this.setState({selectedOptions: newSelectedOptions.filter(e => data.value.includes(e.key))})
         }
     };
 
@@ -175,26 +175,44 @@ export default class TagDropdown extends React.Component {
         });
     };
 
-    checkTagRelatedBooleans = (tagName) => {
-        if(tagName.toLowerCase().includes('email')){
-            this.props.isRelatedToEmail('true');
-            console.log('related to email', this.props);
-        }else if(tagName.toLowerCase().includes('physical address')){
-            this.props.isRelatedToAddress('true');
-            console.log('related to address', this.props);
-        }else if(tagName.toLowerCase().includes('phone number')){
-            this.props.isRelatedToPhonenumber('true');
-            console.log('related to Phone number', this.props);
-        }else if(tagName.toLowerCase().includes('text message number')){
-            this.props.isRelatedToEmail('true');
-            console.log('related to text message number', this.props);
-        }
+    checkTagRelatedBooleans = () => {
+        console.log('checkTagRelatedBooleans', this.state.selectedOptions)
+            this.props.isRelatedToEmail(false);        
+            this.props.isRelatedToAddress(false);
+            this.props.isRelatedToPhonenumber(false);
+            this.props.isRelatedToPhonetext(false);
+            this.props.isRelatedToDefinition(false);
+
+            
+
+        if(this.state.selectedOptions != null)
+        this.state.selectedOptions.forEach(
+            tagName => {
+                tagName = tagName.text.toLowerCase();
+                console.log('tagName', tagName)
+                if(tagName.includes('email')){
+                    this.props.isRelatedToEmail(true);
+                }else if(tagName.includes('physical address')){
+                    this.props.isRelatedToAddress(true);
+                }else if(tagName.includes('phone number')){
+                    this.props.isRelatedToPhonenumber(true);
+                }else if(tagName.includes('text message number')){
+                    this.props.isRelatedToPhonetext(true);
+                }else if(tagName.includes('informational text')){
+                    this.props.isRelatedToDefinition(true);
+                }
+            }
+        )
     }
 
-    componentDidUpdate(prevProps){
+    componentDidUpdate(prevProps, prevState){
         if(this.props.initValue != prevProps.initValue){
             this.getAllTags();
         }
+        if(this.state.selectedOptions != prevState.selectedOptions){
+            this.checkTagRelatedBooleans();
+        }
+        
     }
 
     componentDidMount(prevProps){

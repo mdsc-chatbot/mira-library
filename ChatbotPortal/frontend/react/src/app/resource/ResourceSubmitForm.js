@@ -108,7 +108,7 @@ export default class ResourceSubmitForm extends Component {
             .get(`/chatbotportal/resource/retrieve/${resourceID}`, {headers: options})
             .then(res => {
                 console.log('I got resources', res.data)
-                if(res.data.resource_type != "SR"){
+                if(res.data.definition){
                     this.setState({resourceTypeIsInformative: true});
                 }else{
                     this.setState({resourceTypeIsInformative: false});
@@ -443,11 +443,9 @@ export default class ResourceSubmitForm extends Component {
                 }
                 this.setState({tags});
             });
-
     }
 
     handleSubmit = event => {
-
         if(document.activeElement.getAttribute('name')!="submit")
         {
             this.setState({});
@@ -495,16 +493,9 @@ export default class ResourceSubmitForm extends Component {
 
     handleResTypeChange = (resource_type) => {
         this.setState({ resource_type })
-        if(resource_type != "SR"){
-            this.setState({resourceTypeIsInformative: true});
-        }else{
-            this.setState({resourceTypeIsInformative: false});
-            this.setState({definition: ""});
-        }
     }
 
     update_resource_user = () => {
-
         var submitCmd = { 
             'title':this.state.title,
             'url':this.state.url,
@@ -686,8 +677,6 @@ export default class ResourceSubmitForm extends Component {
                                                 onChange={this.handleResFormatChange}
                                                 value={this.state.resource_format}
                                             /> */}
-                                            
-
                                         </Form.Field>
                                         <Form.Field>
                                             <label>Resource Format <Popup content='Select the format this resource primarily falls under.' trigger={<Icon name='question circle'/>}/></label>
@@ -701,6 +690,7 @@ export default class ResourceSubmitForm extends Component {
                                                     isRelatedToPhonetext={resourceTypeRelateTextnumber => this.setState({resourceTypeRelateTextnumber})}
                                                     isRelatedToPhonenumber={resourceTypeRelatePhonenumber => this.setState({resourceTypeRelatePhonenumber})}
                                                     isRelatedToAddress={resourceTypeRelateAddress => this.setState({resourceTypeRelateAddress})}
+                                                    isRelatedToDefinition={resourceTypeIsInformative => this.setState({resourceTypeIsInformative})}
                                                     onChange={tags => this.setState({ tags })}
                                                 />
                                             </Form.Group>
@@ -715,7 +705,6 @@ export default class ResourceSubmitForm extends Component {
                                                     this.setState({ category })
                                                 }}
                                             /> */}
-                                            
                                         </Form.Field>
                                         {(() => {
                                                 if (this.state.resourceTypeIsInformative)
@@ -862,7 +851,6 @@ export default class ResourceSubmitForm extends Component {
                                                 checked={this.state.require_membership}
                                             />
                                         </Form.Field> */}
-                                        
                                         {/* <Form.Field>
                                             <label>Resource Usefulness Rating <Popup content='Rate the resource based on how useful you feel it is in general.' trigger={<Icon name='question circle'/>}/></label>
                                             <Rating

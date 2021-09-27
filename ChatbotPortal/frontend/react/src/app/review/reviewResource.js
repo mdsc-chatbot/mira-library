@@ -47,7 +47,7 @@ export default class ResourceDetail extends Component {
             tags: [],
             reviewData: {},
         };
-    }
+    };
 
     get_resource_details = () => {
         const resourceID = this.props.match.params.resourceID;
@@ -70,7 +70,7 @@ export default class ResourceDetail extends Component {
     componentDidMount() {
         this.get_resource_details();
         this.handleSearchChange();
-    }
+    };
 
     approve = data => {
         const review = this.format_data(data, true);
@@ -220,7 +220,6 @@ export default class ResourceDetail extends Component {
         this.setState({[event.target.name]: event.target.value});
     };
 
-
     downloadAttachment = () => {
         // Having the permission header loaded
         //TODO: Fix this. This file should be using the shared component for viewing a resource.
@@ -253,7 +252,7 @@ export default class ResourceDetail extends Component {
                     tags: response.data
                 });
             })
-        };
+    };
     
     updateTagApproval = (id) =>{
         this.setState(state => {
@@ -270,7 +269,7 @@ export default class ResourceDetail extends Component {
                 }
             });
         });
-    }
+    };
 
     render() {
         const reviewer = this.context.security.is_logged_in

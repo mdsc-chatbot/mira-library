@@ -94,7 +94,7 @@ https://ibb.co/9wx9pbr */}
             onClick={this.handleItemClick}
           />
 
-          {this.context.security.is_logged_in && (
+          {/* {this.context.security.is_logged_in && (
             <Menu.Item
               name='My Profile'
               as={Link}
@@ -102,7 +102,7 @@ https://ibb.co/9wx9pbr */}
               active={activeItem === 'My Profile'}
               onClick={this.handleItemClick}
             />
-          )}
+          )} */}
 
           {this.context.security.is_logged_in && (
             <Menu.Item
@@ -209,7 +209,7 @@ https://ibb.co/9wx9pbr */}
                   />
                 </Dropdown.Item>
 
-                {this.context.security.is_logged_in && (
+                {/* {this.context.security.is_logged_in && (
                   <Dropdown.Item>
                     <Menu.Item
                       name='My Profile'
@@ -219,7 +219,7 @@ https://ibb.co/9wx9pbr */}
                       onClick={this.handleItemClick}
                     />
                   </Dropdown.Item>
-                )}
+                )} */}
 
                 {this.context.security.is_logged_in && (
                   <Dropdown.Item>

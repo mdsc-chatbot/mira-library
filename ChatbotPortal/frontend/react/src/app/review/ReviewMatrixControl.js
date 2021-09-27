@@ -337,7 +337,7 @@
                         <Table.Row>
                             <Table.Cell>Could this organization or company have a conflict of interest in providing this resource?</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[9]} id='checkbox9' onChange={(e)=>this.handleCBChange(e, 9)}/></div>
+                                <div><Checkbox label="yes" checked={this.state.questionBools[9]} id='checkbox9' onChange={(e)=>this.handleCBChange(e, 9)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[9]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 9)}/></div>
@@ -357,7 +357,7 @@
                         <Table.Row>
                             <Table.Cell>The material uses common, everyday language</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[0]} id='checkbox0' onChange={(e)=>this.handleCBChange(e, 0)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[0]} id='checkbox0' onChange={(e)=>this.handleCBChange(e, 0)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[0]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 0)}/></div>
@@ -366,7 +366,7 @@
                         <Table.Row>
                             <Table.Cell>Medical terms are used only to familiarize the audience with the terms. When used, medical terms are defined</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[1]} id='checkbox1' onChange={(e)=>this.handleCBChange(e, 1)} /></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[1]} id='checkbox1' onChange={(e)=>this.handleCBChange(e, 1)} /></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[1]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 1)}/></div>
@@ -375,7 +375,7 @@
                         <Table.Row>
                             <Table.Cell>The material uses the active voice</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[2]} id='checkbox2' onChange={(e)=>this.handleCBChange(e, 2)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[2]} id='checkbox2' onChange={(e)=>this.handleCBChange(e, 2)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[2]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 2)}/></div>
@@ -396,7 +396,7 @@
                         <Table.Row>
                             <Table.Cell>Does it have at least one accessibility feature (like adjust text size, text to voice, or colourblind colour scheme)?</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[3]} id='checkbox3' onChange={(e)=>this.handleCBChange(e, 3)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[3]} id='checkbox3' onChange={(e)=>this.handleCBChange(e, 3)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[3]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 3)}/></div>
@@ -405,7 +405,7 @@
                         <Table.Row>
                             <Table.Cell>Does it work with French?</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[4]} id='checkbox4' onChange={(e)=>this.handleCBChange(e, 4)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[4]} id='checkbox4' onChange={(e)=>this.handleCBChange(e, 4)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[4]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 4)}/></div>
@@ -414,7 +414,7 @@
                         <Table.Row>
                             <Table.Cell>Does it work with a language other than English and French?</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[5]} id='checkbox5' onChange={(e)=>this.handleCBChange(e, 5)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[5]} id='checkbox5' onChange={(e)=>this.handleCBChange(e, 5)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[5]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 5)}/></div>
@@ -423,7 +423,7 @@
                         <Table.Row>
                             <Table.Cell>Is the resource free?</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[6]} id='checkbox6' onChange={(e)=>this.handleCBChange(e, 6)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[6]} id='checkbox6' onChange={(e)=>this.handleCBChange(e, 6)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[6]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 6)}/></div>
@@ -524,7 +524,7 @@
                         <Table.Row>
                             <Table.Cell>Is the resource patient facing?<Popup content='Is the resource relevant for an individual with the condition specified? Is it intended for patient use generally?' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[7]} id='checkbox7' onChange={(e)=>this.handleCBChange(e, 7)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[7]} id='checkbox7' onChange={(e)=>this.handleCBChange(e, 7)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[7]} label='Not Applicable (NA)' onChange={(e)=>this.handleCBNAChange(e, 7)}/></div>
@@ -535,7 +535,7 @@
                                     Is there an emergency phone number on the website to help direct someone in significant distress?
                                 ' trigger={<Icon name='question circle'/>}/></Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox checked={this.state.questionBools[8]} id='checkbox8' onChange={(e)=>this.handleCBChange(e, 8)}/></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[8]} id='checkbox8' onChange={(e)=>this.handleCBChange(e, 8)}/></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[8]} label='Not Applicable (NA)'  onChange={(e)=>this.handleCBNAChange(e, 8)}/></div>
@@ -573,7 +573,7 @@
                 </Table>
                 { this.state.bHarmful ? <h3 class="ui red header">Score:{(this.state.bScore+this.state.rScore)*2}/{this.state.maxScore} &nbsp;&nbsp; Harmful resource is not accepted</h3> :
                     !this.state.bViable ? <h3 class="ui red header">Score:{(this.state.bScore+this.state.rScore)*2}/{this.state.maxScore} &nbsp;&nbsp; Resources should be functional/viable</h3> :
-                    (this.state.bScore+this.state.rScore*2/this.state.maxScore).toFixed(2) > (this.state.treshholdScore/100) && !this.state.bHarmful && this.state.bViable
+                    ((this.state.bScore+this.state.rScore)*2/this.state.maxScore).toFixed(2) > (this.state.treshholdScore/100) && !this.state.bHarmful && this.state.bViable
                     ? <h3 class="ui green header">Score:{(this.state.bScore+this.state.rScore)*2}/{this.state.maxScore} &nbsp;&nbsp; This resource passes all given criteria. Approval is recommended. If you feel it necessary to reject this resource, please explain why in the review comments.</h3>
                     :                    
                     <h3 class="ui red header">Score:{(this.state.bScore+this.state.rScore)*2}/{this.state.maxScore} &nbsp;&nbsp;This resource does not meet the minimum standards for approval. If you feel it necessary to approve this resource, please explain why in the review comments.</h3>
