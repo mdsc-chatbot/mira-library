@@ -22,7 +22,7 @@
  */
 import React from 'react';
 import ReviewTable from './ReviewTable';
-import {SecurityContext} from "../contexts/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 export default class ResourcePage extends React.Component {
     constructor(props) {
@@ -36,7 +36,7 @@ export default class ResourcePage extends React.Component {
                     {(securityContext) => (
                         <container>
                             {securityContext.security.is_logged_in ?
-                                <ReviewTable/>
+                                <ReviewTable />
                                 : null}
                         </container>
                     )}

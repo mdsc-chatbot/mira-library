@@ -20,12 +20,12 @@
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-import React, {Component} from "react";
-import axios, {CancelToken} from "axios";
-import {Container, Form, Icon, Rating, Checkbox, Table} from "semantic-ui-react";
-import {SecurityContext} from "../contexts/SecurityContext";
-import {baseRoute} from "../App";
-import {Link} from "react-router-dom";
+import React, { Component } from "react";
+import axios, { CancelToken } from "axios";
+import { Container, Form, Icon, Rating, Checkbox, Table } from "semantic-ui-react";
+import { SecurityContext } from "../contexts/SecurityContext";
+import { baseRoute } from "../App";
+import { Link } from "react-router-dom";
 import ResourceResponsive from "../resource/ResourceResponsive";
 import { ResourceDetailView } from "../shared";
 import ReviewMatrix from "./ReviewMatrixControl";
@@ -58,11 +58,11 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .get(`/chatbotportal/resource/retrieve/${resourceID}`, {headers: options})
+            .get(`/chatbotportal/resource/retrieve/${resourceID}`, { headers: options })
             .then(res => {
                 this.setState({
                     resource: res.data
-                    
+
                 });
             });
     };
@@ -80,28 +80,28 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("/api/review/", review, {headers: options})
+            .post("/api/review/", review, { headers: options })
             .then(res => {
             })
             .catch(error => console.error(error));
 
-            
-    //submit second review record in this try, if reviewer_1 == assigned_reviewer_2
+
+        //submit second review record in this try, if reviewer_1 == assigned_reviewer_2
         const reviewer = this.context.security.is_logged_in
-        ? this.context.security.id
-        : "Unknown user";
+            ? this.context.security.id
+            : "Unknown user";
 
         var rs1 = this.state.resource.review_status;
         var rs2 = this.state.resource.review_status_2;
-        if ((rs1 === "pending" && this.state.resource.assigned_reviewer  === reviewer)&&
-            (rs2 === "pending" && this.state.resource.assigned_reviewer_2  === reviewer)){
-                axios
-                .post("/api/review/", review, {headers: options})
+        if ((rs1 === "pending" && this.state.resource.assigned_reviewer === reviewer) &&
+            (rs2 === "pending" && this.state.resource.assigned_reviewer_2 === reviewer)) {
+            axios
+                .post("/api/review/", review, { headers: options })
                 .then(res => {
                 })
                 .catch(error => console.error(error));
         }
-        
+
 
         this.update_resource_user("approved");
     };
@@ -114,7 +114,7 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("/api/review/", review, {headers: options})
+            .post("/api/review/", review, { headers: options })
             .then(res => {
             })
             .catch(error => console.error(error));
@@ -130,16 +130,16 @@ export default class ResourceDetail extends Component {
         if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending") {
 
             const reviewer = this.context.security.is_logged_in
-            ? this.context.security.id
-            : "Unknown user";
+                ? this.context.security.id
+                : "Unknown user";
 
             //check if second approval or not
             //serializer forces us to include both review statuses in the proper state
             var rs1 = this.state.resource.review_status;
             var rs2 = this.state.resource.review_status_2;
-            if(rs1 === "pending" && this.state.resource.assigned_reviewer  === reviewer) rs1 = review_status;
-            if(rs2 === "pending" && this.state.resource.assigned_reviewer_2  === reviewer) rs2 = review_status;
-            var submitCmd = {"review_status": rs1, "review_status_2": rs2, "rating": this.state.rating, "review_comments": this.state.comments};
+            if (rs1 === "pending" && this.state.resource.assigned_reviewer === reviewer) rs1 = review_status;
+            if (rs2 === "pending" && this.state.resource.assigned_reviewer_2 === reviewer) rs2 = review_status;
+            var submitCmd = { "review_status": rs1, "review_status_2": rs2, "rating": this.state.rating, "review_comments": this.state.comments };
 
             const options = {
                 "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export default class ResourceDetail extends Component {
                 .put(
                     "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
                     submitCmd,
-                    {headers: options}
+                    { headers: options }
                 )
                 .then(
                     response => {
@@ -161,22 +161,22 @@ export default class ResourceDetail extends Component {
                     }
                 );
             for (var i = 0, len = this.state.tags.length; i < len; i++) {
-                    if (this.state.tags[i].approved === true){
-                        axios
-                            .put(
-                                "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
-                                {"approved": true},
-                                {headers: options}
-                            )
-                            .then(
-                                response => {
-                                },
-                                error => {
-                                    console.log(error);
-                                }
-                            );
-                    }
+                if (this.state.tags[i].approved === true) {
+                    axios
+                        .put(
+                            "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
+                            { "approved": true },
+                            { headers: options }
+                        )
+                        .then(
+                            response => {
+                            },
+                            error => {
+                                console.log(error);
+                            }
+                        );
                 }
+            }
             // User
             if (review_status === "approved") {
                 axios
@@ -184,7 +184,7 @@ export default class ResourceDetail extends Component {
                         headers: { 'Authorization': `Bearer ${this.context.security.token}` }
                     })
                     .then(
-                        response => {},
+                        response => { },
                         error => {
                             console.log(error);
                         }
@@ -213,11 +213,11 @@ export default class ResourceDetail extends Component {
     };
 
     handleRate = (event, data) => {
-        this.setState({rating: data.rating});
+        this.setState({ rating: data.rating });
     };
 
     handleChange = event => {
-        this.setState({[event.target.name]: event.target.value});
+        this.setState({ [event.target.name]: event.target.value });
     };
 
     downloadAttachment = () => {
@@ -236,36 +236,36 @@ export default class ResourceDetail extends Component {
         //         fileDownload(response.data, fileName);
         //     });
     };
-    
+
     handleSearchChange = () => {
         const resourceID = this.props.match.params.resourceID;
-            // Fetch search results
+        // Fetch search results
         axios
             .get(`/chatbotportal/resource/get-tags/${resourceID}`, '',
                 {
-                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
                 }
             )
-            
-            .then(response=>{
+
+            .then(response => {
                 this.setState({
                     tags: response.data
                 });
             })
     };
-    
-    updateTagApproval = (id) =>{
+
+    updateTagApproval = (id) => {
         this.setState(state => {
             const tags = this.state.tags.map((item) => {
                 if (item.id === id) {
-                    if (item.approved === true){
-                        return item.approved=false;
-                    }else{
-                        return item.approved=true;
+                    if (item.approved === true) {
+                        return item.approved = false;
+                    } else {
+                        return item.approved = true;
                     }
-                  
+
                 } else {
-                  return item;
+                    return item;
                 }
             });
         });
@@ -276,18 +276,18 @@ export default class ResourceDetail extends Component {
             ? this.context.security.id
             : "Unknown user";
         return (
-            
-                <SecurityContext.Consumer>
-                    {(securityContext) => (
-                        <div>
-                            {securityContext.security.is_logged_in ?
 
-                                <ResourceResponsive
-                                    resource_component={
-                                        <div>
-                                    <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer}/>
+            <SecurityContext.Consumer>
+                {(securityContext) => (
+                    <div>
+                        {securityContext.security.is_logged_in ?
+
+                            <ResourceResponsive
+                                resource_component={
                                     <div>
-                                    {/* {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
+                                        <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer} />
+                                        <div>
+                                            {/* {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
                                         <Table class="ui celled table">
                                             <thead>
                                                 <tr><th>tag ID</th><th>Tag Name</th><th>Approve</th></tr>
@@ -305,73 +305,73 @@ export default class ResourceDetail extends Component {
                                             </tbody>
                                         </Table>
                                     ) : null} */}
-                                    </div>
-                                    <ReviewMatrix
-                                        onChange={reviewData => this.setState({ reviewData })}
-                                    />
-                                    <div>
-                                        <div class="ui form">
-                                            <div
-                                                class="required field"
-                                                style={{display: "block"}}
-                                            >
-                                                <h4>Based on the answers to all of the above questions, rate the overall quality of the resource.</h4>
-                                                <Form.Field>
-                                                    <Rating
-                                                        name="rating"
-                                                        onRate={this.handleRate}
+                                        </div>
+                                        <ReviewMatrix
+                                            onChange={reviewData => this.setState({ reviewData })}
+                                        />
+                                        <div>
+                                            <div class="ui form">
+                                                <div
+                                                    class="required field"
+                                                    style={{ display: "block" }}
+                                                >
+                                                    <h4>Based on the answers to all of the above questions, rate the overall quality of the resource.</h4>
+                                                    <Form.Field>
+                                                        <Rating
+                                                            name="rating"
+                                                            onRate={this.handleRate}
+                                                            onChange={this.handleChange}
+                                                            value={this.state.rating}
+                                                            defaultRating={this.state.rating}
+                                                            maxRating={5}
+                                                            icon="star"
+                                                            size="massive"
+                                                        />
+                                                    </Form.Field>
+                                                </div>
+                                                <div
+                                                    class="required field"
+                                                    style={{ display: "block" }}
+                                                >
+                                                    <h4>Review Comments</h4>
+                                                    <Form.TextArea
+                                                        name="comments"
                                                         onChange={this.handleChange}
-                                                        value={this.state.rating}
-                                                        defaultRating={this.state.rating}
-                                                        maxRating={5}
-                                                        icon="star"
-                                                        size="massive"
+                                                        value={this.state.comments}
+                                                        placeholder="Enter any comments about this resource"
                                                     />
-                                                </Form.Field>
-                                            </div>
-                                            <div
-                                                class="required field"
-                                                style={{display: "block"}}
-                                            >
-                                                <h4>Review Comments</h4>
-                                                <Form.TextArea
-                                                    name="comments"
-                                                    onChange={this.handleChange}
-                                                    value={this.state.comments}
-                                                    placeholder="Enter any comments about this resource"
-                                                />
-                                            </div>
-                                            <div style={{display: "block"}}>
-                                                <Link to={baseRoute + "/review/"}>
-                                                    <button
-                                                        name="approve"
-                                                        class="positive ui button"
-                                                        onClick={() =>this.approve(this.state.resource)}
-                                                    >
-                                                        Approve
-                                                    </button>
-                                                </Link>
-                                                <Link to={baseRoute + "/review/"}>
-                                                    <button
-                                                        name="reject"
-                                                        class="negative ui button"
-                                                        onClick={() =>this.reject(this.state.resource)}
-                                                    >
-                                                        &nbsp;&nbsp;Reject&nbsp;&nbsp;
-                                                    </button>
-                                                </Link>
+                                                </div>
+                                                <div style={{ display: "block" }}>
+                                                    <Link to={baseRoute + "/review/"}>
+                                                        <button
+                                                            name="approve"
+                                                            class="positive ui button"
+                                                            onClick={() => this.approve(this.state.resource)}
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                    </Link>
+                                                    <Link to={baseRoute + "/review/"}>
+                                                        <button
+                                                            name="reject"
+                                                            class="negative ui button"
+                                                            onClick={() => this.reject(this.state.resource)}
+                                                        >
+                                                            &nbsp;&nbsp;Reject&nbsp;&nbsp;
+                                                        </button>
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
                                     </div>
                                 }
-                                ></ResourceResponsive>
-                                
-                                    
-                                : null}
-                        </div>)}
-                </SecurityContext.Consumer>
+                            ></ResourceResponsive>
+
+
+                            : null}
+                    </div>)}
+            </SecurityContext.Consumer>
         );
     }
 }

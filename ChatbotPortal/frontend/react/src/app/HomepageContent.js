@@ -29,9 +29,9 @@ import {
     Grid, Rating
 } from "semantic-ui-react";
 import axios from 'axios';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './HomepageContent.css';
-import {PublicResourceCard} from './public/PublicResourceCard';
+import { PublicResourceCard } from './public/PublicResourceCard';
 
 /**
  * Includes:
@@ -43,9 +43,9 @@ export class HomepageContent extends Component {
         super(props);
 
         this.state = {
-            recentResources : [],
-            popularResources : [],
-            ratingResources : [],
+            recentResources: [],
+            popularResources: [],
+            ratingResources: [],
         };
     }
 
@@ -76,7 +76,7 @@ export class HomepageContent extends Component {
         return (
             <Card>
                 <Card.Content>
-                    <Link to={location => ({...location, pathname: `${location.pathname}/public_resource/detail/${resource.id}`})}>
+                    <Link to={location => ({ ...location, pathname: `${location.pathname}/public_resource/detail/${resource.id}` })}>
                         <Card.Header>
                             {resource.title}
                         </Card.Header>
@@ -91,7 +91,7 @@ export class HomepageContent extends Component {
         return (
             <Card>
                 <Card.Content className={styles.centerAlignment}>
-                    <Link className={styles.centerAlignment} to={location => ({...location, pathname: `${location.pathname}/public_resource`})}>
+                    <Link className={styles.centerAlignment} to={location => ({ ...location, pathname: `${location.pathname}/public_resource` })}>
                         <Card.Header>
                             Show More...
                         </Card.Header>

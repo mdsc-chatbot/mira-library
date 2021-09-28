@@ -21,7 +21,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 import React, { Component } from "react";
-import {Header, Button, Segment, Grid, Responsive, Icon} from "semantic-ui-react";
+import { Header, Button, Segment, Grid, Responsive, Icon } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import { SecurityContext } from "./contexts/SecurityContext";
@@ -32,7 +32,7 @@ export class HomepageHead extends Component {
 
     // The constant homepage data
     homePageData = () => {
-        return(
+        return (
             <React.Fragment>
                 <Header
                     as="h1"
@@ -55,7 +55,7 @@ export class HomepageHead extends Component {
 
                 <Segment className={styles.segmentWeb} textAlign="center" vertical>
                     {this.context.security.is_logged_in ? (
-                        <Button.Group className={styles.buttonAlign} fluid widths='2' size ='large'>
+                        <Button.Group className={styles.buttonAlign} fluid widths='2' size='large'>
                             <Link to={baseRoute + "/public_resource"}>
                                 <Button fluid className={styles.publicResource} color="yellow">
                                     View all our public resources
@@ -68,7 +68,7 @@ export class HomepageHead extends Component {
                             </Link>
                         </Button.Group>
                     ) : (
-                        <Button.Group className={styles.buttonAlign} fluid widths='2' size ='large'>
+                        <Button.Group className={styles.buttonAlign} fluid widths='2' size='large'>
                             <Link to={baseRoute + "/public_resource"}>
                                 <Button className={styles.publicResource} fluid color="yellow">
                                     View all our public resources
@@ -89,7 +89,7 @@ export class HomepageHead extends Component {
 
     // Home page layout and Data for Web & Tab Orientation
     homePageWeb = () => {
-        return(
+        return (
             <Segment className={styles.segmentWeb} textAlign="center" vertical>
                 {this.homePageData()}
             </Segment>
@@ -99,7 +99,7 @@ export class HomepageHead extends Component {
 
     // Home page Layout and Data for Mobile Orientation
     homePageMobile = () => {
-        return(
+        return (
             <React.Fragment>
                 <Grid centered stackable columns={2} className={styles.segmentWeb}>
                     <Grid.Column>
@@ -123,7 +123,7 @@ export class HomepageHead extends Component {
 
 
                 {this.context.security.is_logged_in ? (
-                    <Button.Group className={styles.buttonAlign} fluid widths='2' size ='medium'>
+                    <Button.Group className={styles.buttonAlign} fluid widths='2' size='medium'>
                         <Link to={baseRoute + "/public_resource"}>
                             <Button fluid className={styles.publicResource} color='yellow'>
                                 View all our public resources
@@ -136,7 +136,7 @@ export class HomepageHead extends Component {
                         </Link>
                     </Button.Group>
                 ) : (
-                    <Button.Group className={styles.buttonAlign} fluid widths='2' size ='small'>
+                    <Button.Group className={styles.buttonAlign} fluid widths='2' size='small'>
                         <Link to={baseRoute + "/public_resource"}>
                             <Button className={styles.publicResource} color='yellow'>
                                 View all our public resources

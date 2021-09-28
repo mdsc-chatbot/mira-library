@@ -22,10 +22,10 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import axios, {CancelToken} from 'axios';
-import {Dropdown, Responsive, Segment, SegmentGroup} from 'semantic-ui-react';
+import axios, { CancelToken } from 'axios';
+import { Dropdown, Responsive, Segment, SegmentGroup } from 'semantic-ui-react';
 import TagPopup from "./TagPopup";
-import {SecurityContext} from "../contexts/SecurityContext";
+import { SecurityContext } from "../contexts/SecurityContext";
 
 
 export default class TagDropdown extends React.Component {
@@ -65,22 +65,22 @@ export default class TagDropdown extends React.Component {
         // If unselected, remove the selected option in selectedOptions
         // This is to make sure the UI is consistent.
         // First, find the selected option using the text of the dropdown
-        
+
         const selectedText = event.target.textContent;
         const selectedOption = data.options.find(option => option.text === selectedText);
         if (selectedOption !== undefined) {
             // Selected
             const newSelectedOptions = this.state.selectedOptions.slice();
             newSelectedOptions.push(selectedOption);
-            this.setState({selectedOptions: newSelectedOptions})
+            this.setState({ selectedOptions: newSelectedOptions })
         } else {
             // Unselected
             const newSelectedOptions = this.state.selectedOptions.slice();
-            this.setState({selectedOptions: newSelectedOptions.filter(e => data.value.includes(e.key))})
+            this.setState({ selectedOptions: newSelectedOptions.filter(e => data.value.includes(e.key)) })
         }
     };
 
-    handleSearchChange = (event, {searchQuery}) => {
+    handleSearchChange = (event, { searchQuery }) => {
         // Cancel previous search requests if possible
         if (this.state.searchRequestCancelToken) {
             this.state.searchRequestCancelToken.cancel()
@@ -92,8 +92,7 @@ export default class TagDropdown extends React.Component {
 
         var keyDict;
         var fetchURL;
-        if(this.tagCat == null)
-        {
+        if (this.tagCat == null) {
             fetchURL = "/chatbotportal/resource/fetch-tags"
             keyDict = {
                 params: {
@@ -102,8 +101,7 @@ export default class TagDropdown extends React.Component {
                 cancelToken: source.token
             }
         }
-        else
-        {
+        else {
             fetchURL = "/chatbotportal/resource/fetch-tags-by-cat"
             keyDict = {
                 params: {
@@ -113,7 +111,7 @@ export default class TagDropdown extends React.Component {
                 cancelToken: source.token
             }
         }
-        
+
 
         // Fetch search results
         axios
@@ -121,7 +119,7 @@ export default class TagDropdown extends React.Component {
                 fetchURL,
                 keyDict,
                 {
-                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
                 }
             )
             .then(response => {
@@ -176,67 +174,68 @@ export default class TagDropdown extends React.Component {
     };
 
     checkTagRelatedBooleans = () => {
-        console.log('checkTagRelatedBooleans', this.state.selectedOptions)
-            this.props.isRelatedToEmail(false);        
+        if (this.props.tagCat == 'Resource format') {
+            this.props.isRelatedToEmail(false);
             this.props.isRelatedToAddress(false);
             this.props.isRelatedToPhonenumber(false);
             this.props.isRelatedToPhonetext(false);
             this.props.isRelatedToDefinition(false);
 
-            
 
-        if(this.state.selectedOptions != null)
-        this.state.selectedOptions.forEach(
-            tagName => {
-                tagName = tagName.text.toLowerCase();
-                console.log('tagName', tagName)
-                if(tagName.includes('email')){
-                    this.props.isRelatedToEmail(true);
-                }else if(tagName.includes('physical address')){
-                    this.props.isRelatedToAddress(true);
-                }else if(tagName.includes('phone number')){
-                    this.props.isRelatedToPhonenumber(true);
-                }else if(tagName.includes('text message number')){
-                    this.props.isRelatedToPhonetext(true);
-                }else if(tagName.includes('informational text')){
-                    this.props.isRelatedToDefinition(true);
-                }
-            }
-        )
+
+            if (this.state.selectedOptions != null)
+                this.state.selectedOptions.forEach(
+                    tagName => {
+                        tagName = tagName.text.toLowerCase();
+                        console.log('tagName', tagName)
+                        if (tagName.includes('email')) {
+                            this.props.isRelatedToEmail(true);
+                        } else if (tagName.includes('physical address')) {
+                            this.props.isRelatedToAddress(true);
+                        } else if (tagName.includes('phone number')) {
+                            this.props.isRelatedToPhonenumber(true);
+                        } else if (tagName.includes('text message number')) {
+                            this.props.isRelatedToPhonetext(true);
+                        } else if (tagName.includes('informational text')) {
+                            this.props.isRelatedToDefinition(true);
+                        }
+                    }
+                )
+        }
     }
 
-    componentDidUpdate(prevProps, prevState){
-        if(this.props.initValue != prevProps.initValue){
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.initValue != prevProps.initValue) {
             this.getAllTags();
         }
-        if(this.state.selectedOptions != prevState.selectedOptions){
+        if (this.state.selectedOptions != prevState.selectedOptions) {
             this.checkTagRelatedBooleans();
         }
-        
+
     }
 
-    componentDidMount(prevProps){
+    componentDidMount(prevProps) {
         // fill the options so it is not empty when users clicks on it.
-        this.handleSearchChange(null, {searchQuery:''})
+        this.handleSearchChange(null, { searchQuery: '' })
     }
 
-    getAllTags(){
-         // Prepare for promise cancellation
-         const source = CancelToken.source();
-         var keyDict= {
+    getAllTags() {
+        // Prepare for promise cancellation
+        const source = CancelToken.source();
+        var keyDict = {
             params: {
                 name: ''
             },
             cancelToken: source.token
         };
-        var fetchURL =  "/chatbotportal/resource/fetch-tags";
+        var fetchURL = "/chatbotportal/resource/fetch-tags";
 
         axios
             .get(
                 fetchURL,
                 keyDict,
                 {
-                    headers: {Authorization: `Bearer ${this.context.security.token}`}
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
                 }
             )
             .then(response => {
@@ -246,9 +245,9 @@ export default class TagDropdown extends React.Component {
                     console.log('getAllTags', response.data);
                     allTags = response.data;
                     const initValuePairs = allTags.filter(tagOption => this.props.initValue.includes(tagOption.name));
-                    console.log('initValuePairs',initValuePairs);
-                    if(initValuePairs.length>0){
-                        initValuePairs.forEach(initValuePair=>this.handleNewTagAdded(initValuePair)) 
+                    console.log('initValuePairs', initValuePairs);
+                    if (initValuePairs.length > 0) {
+                        initValuePairs.forEach(initValuePair => this.handleNewTagAdded(initValuePair))
                     }
                 }
             });
@@ -258,25 +257,25 @@ export default class TagDropdown extends React.Component {
     render() {
         return (
             <React.Fragment>
-                <SegmentGroup size={"mini"} style={{width: "100%"}} compact horizontal>
-                        <Segment style={{width: "100%"}}>
-                            <Dropdown
-                                spellcheck='true'
-                                fluid
-                                multiple
-                                onChange={this.handleChange}
-                                onSearchChange={this.handleSearchChange}
-                                options={this.state.tagOptions}
-                                placeholder='Enter tags'
-                                search
-                                searchQuery={this.state.searchQuery}
-                                selection
-                                value={this.props.value}
-                            />
-                        </Segment>
-                        <Segment>
-                            <TagPopup onNewTag={this.handleNewTagAdded}/>
-                        </Segment>
+                <SegmentGroup size={"mini"} style={{ width: "100%" }} compact horizontal>
+                    <Segment style={{ width: "100%" }}>
+                        <Dropdown
+                            spellcheck='true'
+                            fluid
+                            multiple
+                            onChange={this.handleChange}
+                            onSearchChange={this.handleSearchChange}
+                            options={this.state.tagOptions}
+                            placeholder='Enter tags'
+                            search
+                            searchQuery={this.state.searchQuery}
+                            selection
+                            value={this.props.value}
+                        />
+                    </Segment>
+                    <Segment>
+                        <TagPopup onNewTag={this.handleNewTagAdded} />
+                    </Segment>
                 </SegmentGroup>
             </React.Fragment>
         );

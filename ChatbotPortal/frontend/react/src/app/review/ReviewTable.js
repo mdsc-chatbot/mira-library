@@ -30,16 +30,16 @@ import { Link } from "react-router-dom";
 
 export default class ReviewTable extends Component {
     static contextType = SecurityContext;
-    
+
     constructor(props) {
         super(props);
         this.state = {
             resources: [],
             reviews: [],
             pending: 'Completed Reviews',
-            header:'Review new resources and tags here!',
-            resourceData:{},
-            order:"newest",
+            header: 'Review new resources and tags here!',
+            resourceData: {},
+            order: "newest",
             assignedOnly: true
         };
     }
@@ -70,12 +70,12 @@ export default class ReviewTable extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("/api/review/", review, {headers: options})
-            .then(res => {})
+            .post("/api/review/", review, { headers: options })
+            .then(res => { })
             .catch(error => console.error(error));
 
         this.componentDidMount();
-        
+
     };
 
     reject = (url, resourceID, comments, rating) => {
@@ -86,8 +86,8 @@ export default class ReviewTable extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .post("/api/review/", review, {headers: options})
-            .then(res => {})
+            .post("/api/review/", review, { headers: options })
+            .then(res => { })
             .catch(error => console.error(error));
 
         this.componentDidMount();
@@ -99,20 +99,20 @@ export default class ReviewTable extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("/chatbotportal/resource", {headers: options}).then(res => {
+        axios.get("/chatbotportal/resource", { headers: options }).then(res => {
             this.setState({
                 resources: res.data
             });
         });
     };
 
-    get_reviews = () =>{
+    get_reviews = () => {
         // Having the permission header loaded
         const options = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("/api/review", {headers: options}).then(res => {
+        axios.get("/api/review", { headers: options }).then(res => {
             this.setState({
                 reviews: res.data
             });
@@ -128,101 +128,109 @@ export default class ReviewTable extends Component {
 
     completedReviews = (ids, reviews, reviews_2, currentReviewer) => {
         var allReviews = this.state.reviews;
-        function numRevs(id){var numReviews = allReviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id);
-        }, 0); return numReviews}
-        function numRevsApproved(id){var numReviews = allReviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id && reviews.approved === true);
-        }, 0); return numReviews}
-        function numRevsRejected(id){var numReviews = allReviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id && reviews.approved === false);
-        }, 0); return numReviews}
-        function revHasFinalDecision(id){var numReviews = allReviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id && reviews.approved === true && reviews.final_decision === true);
-        }, 0); return numReviews}
-        function compareOldest( a, b ) {
-            if ((new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000)){
-              return -1;
-            }
-            if ( (new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000) ){
-              return 1;
-            }
-            return 0;
-          }
-          function compareNewest( a, b ) {
-            if ((new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000)){
-              return -1;
-            }
-            if ( (new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000) ){
-              return 1;
-            }
-            return 0;
-          }
-          function compareReviews( a, b) {
-              if(numRevs(a.id) < numRevs(b.id)){
-                  return -1;
-              }
-              if(numRevs(a.id) > numRevs(b.id)){
-                return 1;
-              }
-              return 0;
-          }
-          function compareTieBreak(a){
-            if( revHasFinalDecision(a.id) == 0 &&
-                ((a.review_status_2 === 'approved' && a.review_status === 'rejected') 
-                || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))){
-                    console.log('-1 ',a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
+        function numRevs(id) {
+            var numReviews = allReviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id);
+            }, 0); return numReviews
+        }
+        function numRevsApproved(id) {
+            var numReviews = allReviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id && reviews.approved === true);
+            }, 0); return numReviews
+        }
+        function numRevsRejected(id) {
+            var numReviews = allReviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id && reviews.approved === false);
+            }, 0); return numReviews
+        }
+        function revHasFinalDecision(id) {
+            var numReviews = allReviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id && reviews.approved === true && reviews.final_decision === true);
+            }, 0); return numReviews
+        }
+        function compareOldest(a, b) {
+            if ((new Date(a.timestamp).getTime() / 1000) < (new Date(b.timestamp).getTime() / 1000)) {
                 return -1;
             }
-                console.log('+1 ',a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
+            if ((new Date(a.timestamp).getTime() / 1000) > (new Date(b.timestamp).getTime() / 1000)) {
+                return 1;
+            }
+            return 0;
+        }
+        function compareNewest(a, b) {
+            if ((new Date(a.timestamp).getTime() / 1000) > (new Date(b.timestamp).getTime() / 1000)) {
+                return -1;
+            }
+            if ((new Date(a.timestamp).getTime() / 1000) < (new Date(b.timestamp).getTime() / 1000)) {
+                return 1;
+            }
+            return 0;
+        }
+        function compareReviews(a, b) {
+            if (numRevs(a.id) < numRevs(b.id)) {
+                return -1;
+            }
+            if (numRevs(a.id) > numRevs(b.id)) {
+                return 1;
+            }
+            return 0;
+        }
+        function compareTieBreak(a) {
+            if (revHasFinalDecision(a.id) == 0 &&
+                ((a.review_status_2 === 'approved' && a.review_status === 'rejected')
+                    || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))) {
+                console.log('-1 ', a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
+                return -1;
+            }
+            console.log('+1 ', a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
             return 1;
-          }
+        }
 
-        if (this.state.order === 'oldest'){
+        if (this.state.order === 'oldest') {
             this.state.resources = this.state.resources.sort(compareOldest)
-        }else if(this.state.order === 'newest'){
+        } else if (this.state.order === 'newest') {
             this.state.resources = this.state.resources.sort(compareNewest)
-        }else if(this.state.order === 'least reviewed'){
+        } else if (this.state.order === 'least reviewed') {
             this.state.resources = this.state.resources.sort(compareReviews)
-        }else if(this.state.order === 'tie breakers'){
+        } else if (this.state.order === 'tie breakers') {
             this.state.resources = this.state.resources.sort(compareTieBreak)
         }
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (ids.includes(r.id) === true) && ((this.state.assignedOnly  === true && (r.assigned_reviewer==currentReviewer || r.assigned_reviewer_2==currentReviewer)) || (this.state.assignedOnly  === false)) &&
-            ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0])))))  ? (
+            (ids.includes(r.id) === true) && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer)) || (this.state.assignedOnly === false)) &&
+                ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0]))))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
                         {(this.context.security.is_editor) ?
                             reviews.get(r.id)[1]
-                        : '-'}
+                            : '-'}
                     </td>
                     <td>
                         {(this.context.security.is_editor) ?
                             reviews_2.get(r.id)[1]
-                        : '-'}
+                            : '-'}
                     </td>
                     <td>
-                        {reviews.get(r.id)[0]===true?(<i class="check icon green big"></i>):(<i class="x icon red big"></i>)}
+                        {reviews.get(r.id)[0] === true ? (<i class="check icon green big"></i>) : (<i class="x icon red big"></i>)}
                     </td>
                 </tr>
-            ):(reviews_2.has(r.id)) 
-            && ((this.state.assignedOnly === true && (r.assigned_reviewer==currentReviewer || r.assigned_reviewer_2==currentReviewer)) || (this.state.assignedOnly === false)) ? (
+            ) : (reviews_2.has(r.id))
+                && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer)) || (this.state.assignedOnly === false)) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
-                        {(this.context.security.is_editor) 
-                            ?[<p>A)</p>,reviews.get(r.id)[0]===true? (<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
+                        {(this.context.security.is_editor)
+                            ? [<p>A)</p>, reviews.get(r.id)[0] === true ? (<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>} />) : (<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>} />)]
                             :
-                            [<p>A)</p>,reviews.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
+                            [<p>A)</p>, reviews.get(r.id)[0] === true ? (<i class="check icon green large"></i>) : (<i class="x icon red large"></i>)]
                         }
                     </td>
                     <td>
                         {(this.context.security.is_editor) ?
-                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>}/>):(<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>}/>)]
+                            [<p>B)</p>, reviews_2.get(r.id)[0] === true ? (<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>} />) : (<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>} />)]
                             :
-                            [<p>B)</p>,reviews_2.get(r.id)[0]===true?(<i class="check icon green large"></i>):(<i class="x icon red large"></i>)]
+                            [<p>B)</p>, reviews_2.get(r.id)[0] === true ? (<i class="check icon green large"></i>) : (<i class="x icon red large"></i>)]
 
                         }
                     </td>
@@ -231,184 +239,192 @@ export default class ReviewTable extends Component {
                             <button
                                 name="approve"
                                 class="positive ui button"
-                                onClick={() =>this.approve(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Approve
+                                onClick={() => this.approve(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Approve
                             </button>
-                        : null}
+                            : null}
                         {(this.context.security.is_editor) ?
                             <button
                                 name="reject"
                                 class="negative ui button"
-                                onClick={() =>this.reject(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Reject
+                                onClick={() => this.reject(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Reject
                             </button>
-                        : null}
+                            : null}
                     </td>
                 </tr>
-            ):(<p></p>)
+            ) : (<p></p>)
         ));
         return resources_get
     }
-    
-    switchView = () =>{
-        if (this.state.pending === 'Completed Reviews'){
-            this.setState({pending:'Pending Reviews',header:'View a list of your review actions here!'});
+
+    switchView = () => {
+        if (this.state.pending === 'Completed Reviews') {
+            this.setState({ pending: 'Pending Reviews', header: 'View a list of your review actions here!' });
         } else {
-            this.setState({pending:'Completed Reviews',header:'Review new resources and tags here!'})
+            this.setState({ pending: 'Completed Reviews', header: 'Review new resources and tags here!' })
         }
     }
 
-    handleOrder = (e, {value}) => {this.setState({ order: {value}.value})}
+    handleOrder = (e, { value }) => { this.setState({ order: { value }.value }) }
 
-    
-    getData = (reviews,ids,currentReviewer) =>{
-        function numRevs(id){var numReviews = reviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id);
-        }, 0); return numReviews}
-        function numRevsApproved(id){var numReviews = reviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id && reviews.approved === true);
-        }, 0); return numReviews}
-        function numRevsRejected(id){var numReviews = reviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id && reviews.approved === false);
-        }, 0); return numReviews}
-        function revHasFinalDecision(id){var numReviews = reviews.reduce(function (n, reviews) {
-            return n + (reviews.resource_id == id && reviews.approved === true && reviews.final_decision === true);
-        }, 0); return numReviews}
-        function compareOldest( a, b ) {
-            if ((new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000)){
-              return -1;
+
+    getData = (reviews, ids, currentReviewer) => {
+        function numRevs(id) {
+            var numReviews = reviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id);
+            }, 0); return numReviews
+        }
+        function numRevsApproved(id) {
+            var numReviews = reviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id && reviews.approved === true);
+            }, 0); return numReviews
+        }
+        function numRevsRejected(id) {
+            var numReviews = reviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id && reviews.approved === false);
+            }, 0); return numReviews
+        }
+        function revHasFinalDecision(id) {
+            var numReviews = reviews.reduce(function (n, reviews) {
+                return n + (reviews.resource_id == id && reviews.approved === true && reviews.final_decision === true);
+            }, 0); return numReviews
+        }
+        function compareOldest(a, b) {
+            if ((new Date(a.timestamp).getTime() / 1000) < (new Date(b.timestamp).getTime() / 1000)) {
+                return -1;
             }
-            if ( (new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000) ){
-              return 1;
-            }
-            return 0;
-          }
-          function compareNewest( a, b ) {
-            if ((new Date(a.timestamp).getTime()/1000) > (new Date(b.timestamp).getTime()/1000)){
-              return -1;
-            }
-            if ( (new Date(a.timestamp).getTime()/1000) < (new Date(b.timestamp).getTime()/1000) ){
-              return 1;
-            }
-            return 0;
-          }
-          function compareReviews( a, b) {
-              if(numRevs(a.id) < numRevs(b.id)){
-                  return -1;
-              }
-              if(numRevs(a.id) > numRevs(b.id)){
+            if ((new Date(a.timestamp).getTime() / 1000) > (new Date(b.timestamp).getTime() / 1000)) {
                 return 1;
-              }
-              return 0;
-          }
-          function compareTieBreak(a){
-            if( revHasFinalDecision(a.id) === 0 &&
-                ((a.review_status_2 === 'approved' && a.review_status === 'rejected') 
-                || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))){
+            }
+            return 0;
+        }
+        function compareNewest(a, b) {
+            if ((new Date(a.timestamp).getTime() / 1000) > (new Date(b.timestamp).getTime() / 1000)) {
+                return -1;
+            }
+            if ((new Date(a.timestamp).getTime() / 1000) < (new Date(b.timestamp).getTime() / 1000)) {
+                return 1;
+            }
+            return 0;
+        }
+        function compareReviews(a, b) {
+            if (numRevs(a.id) < numRevs(b.id)) {
+                return -1;
+            }
+            if (numRevs(a.id) > numRevs(b.id)) {
+                return 1;
+            }
+            return 0;
+        }
+        function compareTieBreak(a) {
+            if (revHasFinalDecision(a.id) === 0 &&
+                ((a.review_status_2 === 'approved' && a.review_status === 'rejected')
+                    || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))) {
                 return -1;
             }
             return 1;
-          }
+        }
 
-        if (this.state.order === 'oldest'){
+        if (this.state.order === 'oldest') {
             this.state.resources = this.state.resources.sort(compareOldest)
-        }else if(this.state.order === 'newest'){
+        } else if (this.state.order === 'newest') {
             this.state.resources = this.state.resources.sort(compareNewest)
-        }else if(this.state.order === 'least reviewed'){
+        } else if (this.state.order === 'least reviewed') {
             this.state.resources = this.state.resources.sort(compareReviews)
-        }else if(this.state.order === 'tie breakers'){
+        } else if (this.state.order === 'tie breakers') {
             this.state.resources = this.state.resources.sort(compareTieBreak)
         }
-        console.log(this.state.order,this.state.resources)
+        console.log(this.state.order, this.state.resources)
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending' ))
-            || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending')))
-            || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ? (
+            (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending'))
+                || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending')))
+                    || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
-                        <button class="right floated ui button"><Link to={baseRoute + "/review/"+r.id}>Review</Link></button>
+                        <button class="right floated ui button"><Link to={baseRoute + "/review/" + r.id}>Review</Link></button>
                     </td>
                 </tr>
-            ):(<p></p>)
+            ) : (<p></p>)
         ));
         console.log(resources_get)
         return resources_get
     }
-    pendingHeader = () =>{
+    pendingHeader = () => {
         return <tr><th>Pending Resource</th><th></th></tr>
     }
-    completedHeader = () =>{
+    completedHeader = () => {
         return <tr><th>Completed Resource</th><th>#1 Review Comment</th><th>#2 Review Comment</th><th></th></tr>
     }
 
-    sorting = (options) =>{
+    sorting = (options) => {
         return <tr><th>Resource</th><th>Review Comments</th><th>Review Rating</th><th></th></tr>
     }
-    render() {    
+    render() {
         // Get current logged in user, take this function out of format_data and consolidate it later
         const reviewer = this.context.security.is_logged_in
-        ? this.context.security.id
-        : "Unknown user";
+            ? this.context.security.id
+            : "Unknown user";
 
         const reviewsI = this.state.reviews;
         var ids = []
-        reviewsI.forEach(function (item){
+        reviewsI.forEach(function (item) {
             ids.push(item.resource_id)
         })
 
         var reviewsApproval = new Map();
         var reviewsApproval_2 = new Map();
 
-        reviewsI.forEach(function (item){
-            if(reviewsApproval.has(item.resource_id)){
+        reviewsI.forEach(function (item) {
+            if (reviewsApproval.has(item.resource_id)) {
                 reviewsApproval_2.set(item.resource_id, [item.approved, item.review_comments, item.review_rating, item.final_decision])
-            }else{
+            } else {
                 reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating, item.final_decision]);
             }
 
-            if(item.final_decision){
+            if (item.final_decision) {
                 reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating, item.final_decision]);
             }
         })
 
-        const choices= [
-            {text:'most recent', value: 'newest'},
-            {text:'oldest', value: 'oldest'},
-            {text:'least reviewed', value: 'least reviewed'},
-            {text:'tie breaker needed', value:'tie breakers'}
-          ]
+        const choices = [
+            { text: 'most recent', value: 'newest' },
+            { text: 'oldest', value: 'oldest' },
+            { text: 'least reviewed', value: 'least reviewed' },
+            { text: 'tie breaker needed', value: 'tie breakers' }
+        ]
 
         const { value } = this.state.order;
         const resources = this.state.resources
         var viewPending = true
         return (
             <div>
-                <div style={{paddingTop:'2%', paddingLeft:'6%', paddingRight:'6%'}}>
-                    <div style={{ padding: "2em 0em",textAlign: "center" }}
+                <div style={{ paddingTop: '2%', paddingLeft: '6%', paddingRight: '6%' }}>
+                    <div style={{ padding: "2em 0em", textAlign: "center" }}
                         vertical>
                     </div>
                     {/* {this.state.pending === 'Completed Reviews'? */}
-                        <div style={{display:'inline-block'}}>
+                    <div style={{ display: 'inline-block' }}>
                         <h4>Order Submissions By </h4>
                         <Dropdown class="ui inline dropdown"
                             name="subject"
                             placeholder='most recent'
-                            selection 
+                            selection
                             onChange={this.handleOrder}
-                            options={choices} 
+                            options={choices}
                             value={value}
                         />
-                        </div>
-                     {/* :null} */}
-                    <button class="ui right floated button" style={{display:'inline'}} onClick={() => this.switchView()}>{this.state.pending}</button> 
-                    { (this.context.security.is_editor) ? <Checkbox onChange={()=>this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only"/> : null }
-                    <div style={{height: '500px',overflowX: "scroll", width:"100%"}}>
+                    </div>
+                    {/* :null} */}
+                    <button class="ui right floated button" style={{ display: 'inline' }} onClick={() => this.switchView()}>{this.state.pending}</button>
+                    {(this.context.security.is_editor) ? <Checkbox onChange={() => this.setState((prevState) => ({ assignedOnly: !prevState.assignedOnly }))} checked={this.state.assignedOnly} label="Assigned Resources Only" /> : null}
+                    <div style={{ height: '500px', overflowX: "scroll", width: "100%" }}>
                         <Table class="ui celled table">
                             <thead>
-                                {this.state.pending === 'Completed Reviews'?(this.pendingHeader()):(this.completedHeader())}
+                                {this.state.pending === 'Completed Reviews' ? (this.pendingHeader()) : (this.completedHeader())}
                             </thead>
                             <tbody>
-                                {this.state.pending === 'Completed Reviews'?(this.getData(this.state.reviews,ids,reviewer)):(this.completedReviews(ids, reviewsApproval, reviewsApproval_2,reviewer))}
+                                {this.state.pending === 'Completed Reviews' ? (this.getData(this.state.reviews, ids, reviewer)) : (this.completedReviews(ids, reviewsApproval, reviewsApproval_2, reviewer))}
                             </tbody>
                         </Table>
                     </div>
