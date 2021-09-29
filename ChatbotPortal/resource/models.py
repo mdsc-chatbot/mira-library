@@ -161,3 +161,8 @@ class Resource(models.Model):
         validators=[MaxValueValidator(120), MinValueValidator(0)], default=120, blank=True, null=True)
     min_age = models.IntegerField(
         validators=[MaxValueValidator(120), MinValueValidator(0)], default=0, blank=True, null=True)
+
+    time_zone = models.CharField(
+            max_length=10,
+            default="-6 UTC",
+        )

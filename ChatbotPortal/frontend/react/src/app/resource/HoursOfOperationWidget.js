@@ -22,7 +22,7 @@ export default class HoursOfOperationWidget extends React.Component {
         //I'm sorry for the mess, but it's 5am and my programatic solution isn't working
         return (
             <div>
-                <h4>Enter hours of operation for this resource (GMT-6)</h4>
+                <h4>Enter hours of operation for this resource (+6 GMT/UTC is default timezone)</h4>
                 <Tab
                     panes= 
                     {

@@ -24,7 +24,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Slider } from "react-semantic-ui-range";
-import { Container, Form, Header, Input, Message, Icon, Popup, Checkbox, Divider, Rating } from "semantic-ui-react";
+import { Container, Form, Header, Input, Message, Icon, Popup, Checkbox, Divider, Rating, Dropdown } from "semantic-ui-react";
 import TagDropdown from "./TagDropdown";
 import TitleDropdown from "./TitleDropdown";
 import OrganizationNameDropdown from "./OrganizationNameDropdown";
@@ -41,6 +41,7 @@ export default class ResourceSubmitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            timeZone:"-6 UTC",
             resourceTypeRelateTextnumber: false,
             resourceTypeRelateEmail: false,
             resourceTypeRelatePhonenumber: false,
@@ -70,7 +71,6 @@ export default class ResourceSubmitForm extends Component {
             errors: {},
             // category: 1,
             tags: [],
-            langTags: [],
             url_validated: true,
             currentTags: null,
             submitted: 0,
@@ -83,9 +83,49 @@ export default class ResourceSubmitForm extends Component {
                 [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
                 [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
+            ],
+            allTimeZones: [ {key:"-12 UTC",value:"-12 UTC",text:"-12 UTC"},
+            {key:"-11 UTC",value:"-11 UTC",text:"-11 UTC"}, 
+            {key:"-10 UTC",value:"-10 UTC",text:"-10 UTC"},
+            {key:"-9:30 UTC",value:"-9:30 UTC",text:"-9:30 UTC"}, 
+            {key:"-9 UTC",value:"-9 UTC",text:"-9 UTC"},
+            {key:"-8 UTC",value:"-8 UTC",text:"-8 UTC"}, 
+            {key:"-7 UTC",value:"-7 UTC",text:"-7 UTC"}, 
+            {key:"-6 UTC",value:"-6 UTC",text:"-6 UTC"},
+            {key:"-5 UTC",value:"-5 UTC",text:"-5 UTC"}, 
+            {key:"-4 UTC",value:"-4 UTC",text:"-4 UTC"}, 
+            {key:"-3 UTC",value:"-3 UTC",text:"-3 UTC"},
+            {key:"-3:30 UTC",value:"-3:30 UTC",text:"-3:30 UTC"},
+            {key:"-2 UTC",value:"-2 UTC",text:"-2 UTC"}, 
+            {key:"-1 UTC",value:"-1 UTC",text:"-1 UTC"}, 
+            {key:"0 UTC",value:"0 UTC",text:"0 UTC"}, 
+            {key:"+1 UTC",value:"+1 UTC",text:"+1 UTC"},
+            {key:"+2 UTC",value:"+2 UTC",text:"+2 UTC"}, 
+            {key:"+3 UTC",value:"+3 UTC",text:"+3 UTC"},
+            {key:"+3:30 UTC",value:"+3:30 UTC",text:"+3:30 UTC"},
+            {key:"+4 UTC",value:"+4 UTC",text:"+4 UTC"}, 
+            {key:"+4:30 UTC",value:"+4:30 UTC",text:"+4:30 UTC"},
+            {key:"+5 UTC",value:"+5 UTC",text:"+5 UTC"}, 
+            {key:"+5:30 UTC",value:"+5:30 UTC",text:"+5:30 UTC"}, 
+            {key:"+5:45 UTC",value:"+5:45 UTC",text:"+5:45 UTC"}, 
+            {key:"+6 UTC",value:"+6 UTC",text:"+6 UTC"},
+            {key:"+6:30 UTC",value:"+6:30 UTC",text:"+6:30 UTC"},
+            {key:"+7 UTC",value:"+7 UTC",text:"+7 UTC"}, 
+            {key:"+8 UTC",value:"+8 UTC",text:"+8 UTC"}, 
+            {key:"+8:45 UTC",value:"+8:45 UTC",text:"+8:45 UTC"}, 
+            {key:"+9 UTC",value:"+9 UTC",text:"+9 UTC"},
+            {key:"+9:30 UTC",value:"+9:30 UTC",text:"+9:30 UTC"},
+            {key:"+10 UTC",value:"+10 UTC",text:"+10 UTC"},
+            {key:"+10:30 UTC",value:"+10:30 UTC",text:"+10:30 UTC"},
+            {key:"+11 UTC",value:"+11 UTC",text:"+11 UTC"},
+            {key:"+12 UTC",value:"+12 UTC",text:"+12 UTC"},
+            {key:"+12:45 UTC",value:"+12:45 UTC",text:"+12:45 UTC"},
+            {key:"+13 UTC",value:"+13 UTC",text:"+13 UTC"},
+            {key:"+14 UTC",value:"+14 UTC",text:"+14 UTC"},
             ]
         };
         this.baseState = this.state;
+
     }
 
     settings = {
@@ -115,6 +155,7 @@ export default class ResourceSubmitForm extends Component {
                 }
                 this.setState({ resource_type: res.data.resource_type });
                 this.setState({ title: res.data.title });
+                this.setState({ timeZone: res.data.time_zone });
                 this.setState({ definition: res.data.definition });
                 this.setState({ organization_name: res.data.organization_name });
                 this.setState({ url: res.data.url });
@@ -124,25 +165,30 @@ export default class ResourceSubmitForm extends Component {
                 this.setState({ description: res.data.description });
                 this.setState({ organization_description: res.data.organization_description });
 
-                res.data.email &&
-                    this.setState({ resourceTypeRelateEmail: true }) &&
+                if(res.data.email!=null && res.data.email!=""){ 
+                    this.setState({ resourceTypeRelateEmail: true });
                     this.setState({ email: res.data.email });
+                }
 
-                res.data.phone_numbers &&
-                    this.setState({ resourceTypeRelatePhonenumber: true }) &&
+                if(res.data.phone_numbers!=null && res.data.phone_numbers!=""){
+                    this.setState({ resourceTypeRelatePhonenumber: true });
                     this.setState({ phone_numbers: res.data.phone_numbers });
+                }
 
-                res.data.text_numbers &&
-                    this.setState({ resourceTypeRelateTextnumber: true }) &&
+                if(res.data.text_numbers!=null && res.data.text_numbers!=""){ 
+                    this.setState({ resourceTypeRelateTextnumber: true });
                     this.setState({ text_numbers: res.data.text_numbers });
+                }
 
-                res.data.physical_address &&
-                    this.setState({ resourceTypeRelateAddress: true }) &&
+                if(res.data.physical_address!=null && res.data.physical_address!=""){
+                    this.setState({ resourceTypeRelateAddress: true });
                     this.setState({ physical_address: res.data.physical_address });
+                }
+
                 this.setState({ tagInitValue: res.data.tags });
                 this.setState({ hours_of_operation: res.data.hours_of_operation });
-                this.setState({ ageArray: [res.data.min_age, res.max_age] });
-                if (res.data.hours_of_operation != null) {
+                this.setState({ ageArray: [res.data.min_age, res.data.max_age] });
+                if (res.data.hours_of_operation != null && res.data.hours_of_operation != "MON:;TUE:;WED:;THU:;FRI:;SAT:;SUN:;") {
                     this.setState({ alwaysAvailable: false });
                     this.decodeHours(res.data.hours_of_operation);
                 }
@@ -168,6 +214,7 @@ export default class ResourceSubmitForm extends Component {
         const resourceFormData = new FormData();
 
         resourceFormData.append("title", this.state.title);
+        resourceFormData.append("time_zone", this.state.timeZone);
         resourceFormData.append("definition", this.state.definition);
         resourceFormData.append("organization_name", this.state.organization_name);
         resourceFormData.append("url", this.state.url);
@@ -200,8 +247,6 @@ export default class ResourceSubmitForm extends Component {
                 resourceFormData.append(`tags`, value);
             });
         }
-
-        console.log('inja', resourceFormData);
 
         //if we need to, deal with the hour bools
         if (!this.state.alwaysAvailable) {
@@ -317,6 +362,9 @@ export default class ResourceSubmitForm extends Component {
             if (hoursBool[6][i]) hourstring += (i + 1).toString() + ",";
         hourstring += ";";
 
+        if(hourstring == "MON:;TUE:;WED:;THU:;FRI:;SAT:;SUN:;"){
+            return null;
+        }
         return hourstring;
     }
 
@@ -462,23 +510,24 @@ export default class ResourceSubmitForm extends Component {
         if (this.state.description != "") this.addFieldTag("Description")
         if (this.state.email != "") this.addFieldTag("Email")
 
-        if (this.state.tags.length < 1 || this.state.langTags.length < 1) {
-            this.setState({ submitted: -1, errors: "Please enter at a language tag and at least one other tag." });
-            return;
-        }
-        var localTags = this.state.tags;
-        if (localTags) {
-            for (const langtags of this.state.langTags) {
-                if (
-                    localTags.find(
-                        localTags => localTags === langtags
-                    ) === undefined
-                ) {
-                    localTags.push(langtags);
-                }
-            }
-        }
-        this.setState({ tags: localTags });
+        // if (this.state.tags.length < 1 || this.state.langTags.length < 1) {
+        //     this.setState({ submitted: -1, errors: "Please enter at a language tag and at least one other tag." });
+        //     return;
+        // }
+        // var localTags = this.state.tags;
+        // if (localTags) {
+        //     for (const langtags of this.state.langTags) {
+        //         if (
+        //             localTags.find(
+        //                 localTags => localTags === langtags
+        //             ) === undefined
+        //         ) {
+        //             localTags.push(langtags);
+        //         }
+        //     }
+        // }
+        // this.setState({ tags: localTags });
+
         this.post_resource();
         event.preventDefault();
     };
@@ -511,8 +560,16 @@ export default class ResourceSubmitForm extends Component {
             'max_age': this.state.ageArray[1],
             'organization_name': this.state.organization_name,
             'definition': this.state.definition,
+            'tags': this.state.tags,
+            'time_zone': this.state.timeZone
             // 'attachment' : this.state.attachment ? this.state.attachment : '',
         };
+
+        // if (this.state.tags && this.state.tags.length) {
+        //     this.state.tags.forEach(value => {
+        //         submitCmd.append(`tags`, value);
+        //     });
+        // }
 
         const options = {
             "Content-Type": "application/json",
@@ -547,12 +604,7 @@ export default class ResourceSubmitForm extends Component {
 
         var dateTabs = null;
         if (!this.state.alwaysAvailable) {
-            dateTabs = <HoursOfOperationWidget hourBools={this.state.hourBools} />
-        }
-
-        var dateTabs = null;
-        if (!this.state.alwaysAvailable) {
-            dateTabs = <HoursOfOperationWidget hourBools={this.state.hourBools} />
+            dateTabs = [<Dropdown selection onChange={(event, data) => this.setState({timeZone:data.value})} value={this.state.timeZone} options={this.state.allTimeZones}/>, <HoursOfOperationWidget hourBools={this.state.hourBools} />]
         }
 
         return (
@@ -627,12 +679,12 @@ export default class ResourceSubmitForm extends Component {
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Resource Types </label>
+                                            <label>Resource Type(s) </label>
                                             {(() => {
                                                 if (this.state.resource_type != 'RS')
                                                     return (
                                                         <Form.Field>
-                                                            <label>I) Resource Type for Programs and Services</label>
+                                                            <label>I) Resource Type(s) for Programs and Services</label>
                                                             <Form.Group className={styles.dropdownPadding}>
                                                                 <TagDropdown
                                                                     required
@@ -651,7 +703,7 @@ export default class ResourceSubmitForm extends Component {
                                                 if (this.state.resource_type != 'SR')
                                                     return (
                                                         <Form.Field>
-                                                            <label>II) Resource Type for Education/Informational</label>
+                                                            <label>II) Resource Type(s) for Education/Informational</label>
                                                             <Form.Group className={styles.dropdownPadding}>
                                                                 <TagDropdown
                                                                     required
@@ -674,7 +726,7 @@ export default class ResourceSubmitForm extends Component {
                                             /> */}
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Resource Format <Popup content='Select the format this resource primarily falls under.' trigger={<Icon name='question circle' />} /></label>
+                                            <label>Resource Format(s) <Popup content='Select the format this resource primarily falls under.' trigger={<Icon name='question circle' />} /></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     required
@@ -918,7 +970,7 @@ export default class ResourceSubmitForm extends Component {
                                         </Form.Field> */}
                                         <Divider hidden />
                                         <Form.Field>
-                                            <label>Location <Popup content='Locations/regions for physical/location relevent resources.' trigger={<Icon name='question circle' />} /></label>
+                                            <label>Location(s) <Popup content='Locations/regions for physical/location relevent resources.' trigger={<Icon name='question circle' />} /></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     required
@@ -930,7 +982,7 @@ export default class ResourceSubmitForm extends Component {
                                             </Form.Group>
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Health Issues <Popup content='Tags for any mental health issues this resource addresses, defines, etc.' trigger={<Icon name='question circle' />} /></label>
+                                            <label>Health Issue(s) <Popup content='Tags for any mental health issues this resource addresses, defines, etc.' trigger={<Icon name='question circle' />} /></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     required
@@ -942,19 +994,19 @@ export default class ResourceSubmitForm extends Component {
                                             </Form.Group>
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Language <Popup content='Languages this resource is written/available in.' trigger={<Icon name='question circle' />} /></label>
+                                            <label>Language(s) <Popup content='Languages this resource is written/available in.' trigger={<Icon name='question circle' />} /></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     required
                                                     name="langTags"
-                                                    value={this.state.langTags}
+                                                    value={this.state.tags}
                                                     tagCat="Language"
-                                                    onChange={langTags => this.setState({ langTags })}
+                                                    onChange={tags => this.setState({ tags })}
                                                 />
                                             </Form.Group>
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Resource Audience <Popup content='If this resource was made to support members of a particular group (e.g., LGBTQ2S+) or profession (e.g., doctors, veterans) please add group type here' trigger={<Icon name='question circle' />} /></label>
+                                            <label>Resource Audience(s) <Popup content='If this resource was made to support members of a particular group (e.g., LGBTQ2S+) or profession (e.g., doctors, veterans) please add group type here' trigger={<Icon name='question circle' /> } /><Popup content='This field is OPTIONAL' trigger={<Icon name='flag' color='green' />} /></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     name="professionTags"
@@ -965,7 +1017,7 @@ export default class ResourceSubmitForm extends Component {
                                             </Form.Group>
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Other/All Tags <Popup content='For anything that might not fall under the other categories such as services provided, relevent gender groups, organizations, user groups, etc.' trigger={<Icon name='question circle' />} /></label>
+                                            <label>Other/All Tags <Popup content='For anything that might not fall under the other categories such as services provided, relevent gender groups, organizations, user groups, etc.' trigger={<Icon name='question circle' />} /> <Popup content='This field is OPTIONAL' trigger={<Icon name='flag' color='green' />} /></label>
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     initValue={this.state.tagInitValue}
@@ -987,18 +1039,18 @@ export default class ResourceSubmitForm extends Component {
                                         {dateTabs}
                                         <Divider hidden />
                                         <Form.Field>
+                                        <label>Comments <Popup content='This field is OPTIONAL' trigger={<Icon name='flag' color='green' />} /></label>
                                             <Form.TextArea
                                                 spellcheck='true'
                                                 name="comments"
                                                 onChange={this.handleChange}
                                                 value={this.state.comments}
-                                                label="Comments"
                                                 placeholder="Enter any comments (Optional)"
                                                 rows={2}
                                             />
                                         </Form.Field>
                                         <Form.Field>
-                                            <label>Upload an attachment</label>
+                                            <label>Upload an attachment <Popup content='This field is OPTIONAL' trigger={<Icon name='flag' color='green' />} /></label>
                                             <Input
                                                 type="file"
                                                 name="attachment"

@@ -211,7 +211,6 @@ export default class TagDropdown extends React.Component {
         if (this.state.selectedOptions != prevState.selectedOptions) {
             this.checkTagRelatedBooleans();
         }
-
     }
 
     componentDidMount(prevProps) {
