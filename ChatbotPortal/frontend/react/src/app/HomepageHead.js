@@ -76,7 +76,7 @@ export class HomepageHead extends Component {
                             </Link>
                             <Link to={baseRoute + "/login"}>
                                 <Button className={styles.loginButton} fluid color="yellow">
-                                    Log in to submit resources
+                                    Log in to Portal
                                 </Button>
                             </Link>
                         </Button.Group>

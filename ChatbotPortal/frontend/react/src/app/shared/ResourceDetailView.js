@@ -72,13 +72,13 @@ function reviews(reviewComments){
 
 function normal_header(resource) {
     var data = [];
-    if(resource.general_url!= null && resource.general_url!= "")data.push({name:"General URL: ", value:resource.general_url});
-    if(resource.phone_numbers!= null && resource.phone_numbers!= "")data.push({name:"Phone Number: ", value:resource.phone_numbers});
-    if(resource.text_numbers!= null && resource.text_numbers!= "")data.push({name:"Text Numbers: ", value:resource.text_numbers});
-    if(resource.email!= null && resource.email!= "")data.push({name:"Email: ",value:resource.email});
-    if(resource.physical_address!= null && resource.physical_address!= "")data.push({name:"Address: ",value:resource.physical_address});
-    data.push({name:"Resource Type: ",value:resource.resource_type});
-    if(resource.hours_of_operation!=null&&resource.hours_of_operation!="")data.push({name:"Hours of Operation: ",value:resource.hours_of_operation});
+    if(resource.general_url!= null && resource.general_url!= "")data.push({name:"General URL: ", value:resource.general_url, type:'a'});
+    if(resource.phone_numbers!= null && resource.phone_numbers!= "")data.push({name:"Phone Number: ", value:resource.phone_numbers, type:'h4'});
+    if(resource.text_numbers!= null && resource.text_numbers!= "")data.push({name:"Text Numbers: ", value:resource.text_numbers, type:'h4'});
+    if(resource.email!= null && resource.email!= "")data.push({name:"Email: ",value:resource.email, type:'h4'});
+    if(resource.physical_address!= null && resource.physical_address!= "")data.push({name:"Address: ",value:resource.physical_address, type:'h4'});
+    data.push({name:"Resource Type: ",value:resource.resource_type, type:'h4'});
+    if(resource.hours_of_operation!=null&&resource.hours_of_operation!="")data.push({name:"Hours of Operation: ",value:resource.hours_of_operation, type:'h4'});
 
     var numPresent = 0;
     var menuEntries = [];
@@ -86,10 +86,12 @@ function normal_header(resource) {
     {
         menuEntries.push(<Menu>
                             <Menu.Item>
-                                <h4>{data[i-1].name}{data[i-1].value}</h4>
+                                {(data[i-1].type == 'a') && <a href={data[i-1].value}>{data[i-1].name}{data[i-1].value}</a>}
+                                {(data[i-1].type == 'h4') && <h4>{data[i-1].name}{data[i-1].value}</h4>}
                             </Menu.Item>
                             <Menu.Item>
-                                <h4>{data[i].name}{data[i].value}</h4>
+                            {(data[i].type == 'a') && <a href={data[i].value}>{data[i].name}{data[i].value}</a>}
+                                {(data[i].type == 'h4') && <h4>{data[i].name}{data[i].value}</h4>}
                             </Menu.Item>
                         </Menu>);
     }
@@ -161,13 +163,111 @@ export function ResourceDetailView({ resource , tagsGot, viewer }) {
                 {grid_element("Date submitted:", resource.timestamp)}
                 {grid_element("First review status:", <p id="review_status"> {resource.review_status==="pending" ? "Pending" : "Reviewed"}</p>)}
                 {grid_element("Second review status:", <p id="review_status_2"> {resource.review_status_2==="pending" ? "Pending" : "Reviewed"}</p>)}
-                {grid_element("Category:", <p id="category"> {resource.category} </p>)}
+                {/* {grid_element("Category:", <p id="category"> {resource.category} </p>)} */}
                 {resource.tags && resource.tags.length > 0
                     ? grid_element(
-                          "Tags:",
+                          "Costs Tags:",
                           <div id="tags">
                               {tagsGot.map(tag => (
-                                  tag.approved === true ?(
+                                  tag.approved === true && tag.tag_category == 'Costs' ?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Health Issue Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Health Issue') ?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Language Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Language') ?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Location Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Location') ?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Profession Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Profession')?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Resource format Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Resource format') ?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Resource Type for Education/Informational Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Resource Type for Education/Informational')?(
+                                    <Label key={tag.name} size="large" stackable>
+                                        {tag.name}
+                                    </Label>
+                                ):('')
+                              ))}
+                          </div>
+                      )
+                    : null}
+                    {resource.tags && resource.tags.length > 0
+                    ? grid_element(
+                          "Resource Type for Programs and Services Tags:",
+                          <div id="tags">
+                              {tagsGot.map(tag => (
+                                  tag.approved === true && (tag.tag_category == 'Resource Type for Programs and Services') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>

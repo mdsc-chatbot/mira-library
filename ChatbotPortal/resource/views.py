@@ -83,7 +83,7 @@ def gettags(request, resource_id):
     tagSent = []
     for item in tags:
         print(item)
-        tag_set = {'id':item.id, 'name':item.name, 'approved':item.approved}
+        tag_set = {'id':item.id, 'name':item.name, 'approved':item.approved, 'tag_category':item.tag_category}
         tagSent.append(tag_set)
 
     return JsonResponse(tagSent, safe=False)
