@@ -86,11 +86,11 @@ function normal_header(resource) {
     {
         menuEntries.push(<Menu>
                             <Menu.Item>
-                                {(data[i-1].type == 'a') && <a href={data[i-1].value}>{data[i-1].name}{data[i-1].value}</a>}
+                                {(data[i-1].type == 'a') && <a target="_blank" href={data[i-1].value}>{data[i-1].name}{data[i-1].value}</a>}
                                 {(data[i-1].type == 'h4') && <h4>{data[i-1].name}{data[i-1].value}</h4>}
                             </Menu.Item>
                             <Menu.Item>
-                            {(data[i].type == 'a') && <a href={data[i].value}>{data[i].name}{data[i].value}</a>}
+                            {(data[i].type == 'a') && <a target="_blank" href={data[i].value}>{data[i].name}{data[i].value}</a>}
                                 {(data[i].type == 'h4') && <h4>{data[i].name}{data[i].value}</h4>}
                             </Menu.Item>
                         </Menu>);
