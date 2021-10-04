@@ -34,7 +34,7 @@ export default class ReviewMatrix extends React.Component {
         super(props);
 
         this.state = {
-            negativeCBoxQuestions: [9],
+            negativeCBoxQuestions: [8],
             boolQuestionIsNA: [],
             rateQuestionIsNA: [],
             questionBools: [],
@@ -42,7 +42,7 @@ export default class ReviewMatrix extends React.Component {
             bScore: 0,
             rScore: 0,
             treshholdScore: 73, //if the score goes beyond the resource is better to be accepted
-            maxScore: 90, //max possible score that a resource can get (it can be changed by makinga question Not applicable)
+            maxScore: 86, //max possible score that a resource can get (it can be changed by makinga question Not applicable)
             bHarmful: false,
             bViable: false,
             reviewData: {},
@@ -54,9 +54,9 @@ export default class ReviewMatrix extends React.Component {
             isAcademicInst: false,
         };
 
-        for (var i = 0; i < 10; i++) this.state.questionBools.push(false);
+        for (var i = 0; i < 9; i++) this.state.questionBools.push(false);
         for (var i = 0; i < 7; i++) this.state.questionScores.push(0);
-        for (var i = 0; i < 10; i++) this.state.boolQuestionIsNA.push(false);
+        for (var i = 0; i < 9; i++) this.state.boolQuestionIsNA.push(false);
         for (var i = 0; i < 7; i++) this.state.rateQuestionIsNA.push(false);
     }
 
@@ -92,58 +92,6 @@ export default class ReviewMatrix extends React.Component {
         var element = document.getElementById(("checkbox" + position));
         isChecked ? element.parentElement.classList.add("invisiblee") : element.parentElement.classList.remove("invisiblee");
         this.calculateScore();
-
-
-        // if(isChecked){
-        // const updatedCheckedState = this.state.questionBools.map((item, index) =>
-        //     index === position ? false : item
-        // );
-        // this.setState({questionBools: updatedCheckedState});
-        // var element = document.getElementById(("checkbox"+position));
-        // element.parentElement.classList.add("invisiblee");
-        // element.parentElement.classList.remove("checked");
-
-        //     const totalScore = this.state.questionBools.reduce(
-        //         (sum, currentState, currentIndex) => {
-        //             if(currentIndex === position) return sum;
-        //             if (currentState === true) {
-        //                 if (this.state.negativeCBoxQuestions.indexOf(position)!=-1) return sum
-        //                 return sum + 1;
-        //             }
-        //             return sum;
-        //         },
-        //         0
-        //     );
-        //     this.setState({bScore: totalScore});
-        // }else{
-        //     var element = document.getElementById(("checkbox"+position));
-        //     element.parentElement.classList.remove("invisiblee");
-        //     const wasChecked = element.parentElement.className.includes('checked');
-        //     wasChecked? element.parentElement.classList.add("checked"):element.parentElement.classList.add("checked");
-        //     const updatedCheckedState = this.state.questionBools.map((item, index) =>
-        //         index === position ? wasChecked : item
-        //     );
-        //     this.setState({questionBools: updatedCheckedState});
-        //     const totalScore = updatedCheckedState.reduce(
-        //         (sum, currentState) => {
-        //             if (currentState === true) {
-        //                 if (this.state.negativeCBoxQuestions.indexOf(position)!=-1){
-        //                     return sum-1
-        //                 } 
-        //                 return sum + 1;
-        //             }
-        //             return sum;
-        //         },
-        //         0
-        //     );
-        //     this.setState({bScore: totalScore});
-        // }
-
-        // if(this.state.negativeCBoxQuestions.indexOf(position)==-1){
-        //     isChecked ? this.setState({maxScore: this.state.maxScore - 2}) : this.setState({maxScore: this.state.maxScore + 2});
-        // }else{
-        //     isChecked ? this.setState({maxScore: this.state.maxScore - 2}) : this.setState({maxScore: this.state.maxScore + 2});
-        // }
     };
 
     handleRTChange = (event, position, rating, maxRating) => {
@@ -170,43 +118,8 @@ export default class ReviewMatrix extends React.Component {
         isChecked ? element.parentElement.classList.add('invisiblee') : element.parentElement.classList.remove('invisiblee');
 
         this.calculateScore();
-
-        // if(isChecked){
-        //     const updatedRateState = this.state.questionScores.map((item, index) =>
-        //         index === position ? 0 : this.state.questionScores[index]
-        //     );
-        //     this.setState({questionScores: updatedRateState});
-        //     var element = document.getElementById(("rating"+position));
-
-        //     element.classList.add('invisiblee');
-        //     const totalScore = this.state.questionScores.reduce(
-        //         (sum, currentState, currentIndex) => {
-        //             if(currentIndex === position) return sum;
-        //             return sum+currentState;
-        //         },
-        //         0
-        //     );
-        //     this.setState({rScore: totalScore});
-        // }else{
         var element = document.getElementById(("rating" + position));
         element.classList.remove('invisiblee');
-        //     const innnn = Array.from(element.childNodes).filter(element => element.getAttribute('aria-checked')=='true' );
-        //     if(innnn.length > 0){
-        //         const r = innnn[0].getAttribute('aria-posinset');
-        //         const updatedRateState = this.state.questionScores.map((item, index) =>
-        //             index === position ? parseInt(r) : item
-        //         );
-        //         this.setState({questionScores: updatedRateState});
-        //         const totalScore = updatedRateState.reduce(
-        //             (sum, currentState) => {
-        //                 return sum+currentState;
-        //             },
-        //             0
-        //         );
-        //         this.setState({rScore: totalScore});
-        //     }
-        // }
-        // isChecked ? this.setState({maxScore: this.state.maxScore - 10}) : this.setState({maxScore: this.state.maxScore + 10});
     };
 
     handleOrgCBChange = (checkBoxName) => {
@@ -290,7 +203,7 @@ export default class ReviewMatrix extends React.Component {
 
         reviewData = {
             maxScore: maxScore,
-            bScore: (bScore * 4),
+            bScore: (bScore * 2),
             rScore: (rScore * 2),
             QA_array: reviewAnswers,
             organizationType: {
@@ -337,10 +250,10 @@ export default class ReviewMatrix extends React.Component {
                         <Table.Row>
                             <Table.Cell>Could this organization or company have a conflict of interest in providing this resource?</Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox label="yes" checked={this.state.questionBools[9]} id='checkbox9' onChange={(e) => this.handleCBChange(e, 9)} /></div>
+                                <div><Checkbox label="yes" checked={this.state.questionBools[8]} id='checkbox8' onChange={(e) => this.handleCBChange(e, 8)} /></div>
                             </Table.Cell>
                             <Table.Cell warning>
-                                <div><Checkbox checked={this.state.boolQuestionIsNA[9]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 9)} /></div>
+                                <div><Checkbox checked={this.state.boolQuestionIsNA[8]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 8)} /></div>
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
@@ -372,7 +285,7 @@ export default class ReviewMatrix extends React.Component {
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[1]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 1)} /></div>
                             </Table.Cell>
                         </Table.Row>
-                        <Table.Row>
+                        {/* <Table.Row>
                             <Table.Cell>The material uses the active voice</Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[2]} id='checkbox2' onChange={(e) => this.handleCBChange(e, 2)} /></div>
@@ -380,7 +293,7 @@ export default class ReviewMatrix extends React.Component {
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[2]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 2)} /></div>
                             </Table.Cell>
-                        </Table.Row>
+                        </Table.Row> */}
                     </Table.Body>
                 </Table>
                 <Table collapsing>
@@ -396,6 +309,15 @@ export default class ReviewMatrix extends React.Component {
                         <Table.Row>
                             <Table.Cell>Does it have at least one accessibility feature (like adjust text size, text to voice, or colourblind colour scheme)?</Table.Cell>
                             <Table.Cell>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[2]} id='checkbox2' onChange={(e) => this.handleCBChange(e, 2)} /></div>
+                            </Table.Cell>
+                            <Table.Cell warning>
+                                <div><Checkbox checked={this.state.boolQuestionIsNA[2]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 2)} /></div>
+                            </Table.Cell>
+                        </Table.Row>
+                        <Table.Row>
+                            <Table.Cell>Does it work with French?</Table.Cell>
+                            <Table.Cell>
                                 <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[3]} id='checkbox3' onChange={(e) => this.handleCBChange(e, 3)} /></div>
                             </Table.Cell>
                             <Table.Cell warning>
@@ -403,7 +325,7 @@ export default class ReviewMatrix extends React.Component {
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Does it work with French?</Table.Cell>
+                            <Table.Cell>Does it work with a language other than English and French?</Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[4]} id='checkbox4' onChange={(e) => this.handleCBChange(e, 4)} /></div>
                             </Table.Cell>
@@ -412,21 +334,12 @@ export default class ReviewMatrix extends React.Component {
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
-                            <Table.Cell>Does it work with a language other than English and French?</Table.Cell>
+                            <Table.Cell>Is the resource free?</Table.Cell>
                             <Table.Cell>
                                 <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[5]} id='checkbox5' onChange={(e) => this.handleCBChange(e, 5)} /></div>
                             </Table.Cell>
                             <Table.Cell warning>
                                 <div><Checkbox checked={this.state.boolQuestionIsNA[5]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 5)} /></div>
-                            </Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Is the resource free?</Table.Cell>
-                            <Table.Cell>
-                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[6]} id='checkbox6' onChange={(e) => this.handleCBChange(e, 6)} /></div>
-                            </Table.Cell>
-                            <Table.Cell warning>
-                                <div><Checkbox checked={this.state.boolQuestionIsNA[6]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 6)} /></div>
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
@@ -524,10 +437,10 @@ export default class ReviewMatrix extends React.Component {
                         <Table.Row>
                             <Table.Cell>Is the resource patient facing?<Popup content='Is the resource relevant for an individual with the condition specified? Is it intended for patient use generally?' trigger={<Icon name='question circle' />} /></Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[7]} id='checkbox7' onChange={(e) => this.handleCBChange(e, 7)} /></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[6]} id='checkbox6' onChange={(e) => this.handleCBChange(e, 6)} /></div>
                             </Table.Cell>
                             <Table.Cell warning>
-                                <div><Checkbox checked={this.state.boolQuestionIsNA[7]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 7)} /></div>
+                                <div><Checkbox checked={this.state.boolQuestionIsNA[6]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 6)} /></div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
@@ -535,10 +448,10 @@ export default class ReviewMatrix extends React.Component {
                                     Is there an emergency phone number on the website to help direct someone in significant distress?
                                 ' trigger={<Icon name='question circle' />} /></Table.Cell>
                             <Table.Cell>
-                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[8]} id='checkbox8' onChange={(e) => this.handleCBChange(e, 8)} /></div>
+                                <div><Checkbox label="If yes, check box. If no, leave blank." checked={this.state.questionBools[7]} id='checkbox7' onChange={(e) => this.handleCBChange(e, 7)} /></div>
                             </Table.Cell>
                             <Table.Cell warning>
-                                <div><Checkbox checked={this.state.boolQuestionIsNA[8]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 8)} /></div>
+                                <div><Checkbox checked={this.state.boolQuestionIsNA[7]} label='Not Applicable (NA)' onChange={(e) => this.handleCBNAChange(e, 7)} /></div>
                             </Table.Cell>
                         </Table.Row>
                     </Table.Body>
@@ -578,13 +491,7 @@ export default class ReviewMatrix extends React.Component {
                             :
                             <h3 class="ui red header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp;This resource does not meet the minimum standards for approval. If you feel it necessary to approve this resource, please explain why in the review comments.</h3>
                 }
-
             </React.Fragment>
         );
     }
 }
-
- //ReviewMatrix.propTypes = {
- //    value: PropTypes.array,
- //    onChange: PropTypes.func
- //};
