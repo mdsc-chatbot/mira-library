@@ -22,7 +22,7 @@
  */
 import React, { Component } from "react";
 import axios, { CancelToken } from "axios";
-import { Container, Form, Icon, Rating, Checkbox, Table } from "semantic-ui-react";
+import { Container, Form, Icon, Rating, Checkbox, Table, Card, Image, Button, Segment, Dropdown } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -39,14 +39,25 @@ export default class ResourceDetail extends Component {
 
     constructor(props) {
         super(props);
+        this.time = 0;
+        this.myTimer;
 
         this.state = {
             resource: {},
             rating: 1,
             comments: "No comments",
             tags: [],
+            TagCatOptions: [],
             reviewData: {},
         };
+
+        window.addEventListener('popstate', function (e) {
+            var state = e.state;
+            if (state !== null) {
+                clearInterval(this.myTimer)
+            }
+        });
+            
     };
 
     get_resource_details = () => {
@@ -62,14 +73,14 @@ export default class ResourceDetail extends Component {
             .then(res => {
                 this.setState({
                     resource: res.data
-
                 });
             });
     };
 
     componentDidMount() {
         this.get_resource_details();
-        this.handleSearchChange();
+        this.handleSearchChange();  
+        this.fetchTags();
     };
 
     approve = data => {
@@ -125,9 +136,9 @@ export default class ResourceDetail extends Component {
 
         this.get_resource_details();
 
-        console.log(submitCmd);
 
-        if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending") {
+        if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending" ||
+            this.state.resource.review_status === "conflict" || this.state.resource.review_status_2 === "conflict") {
 
             const reviewer = this.context.security.is_logged_in
                 ? this.context.security.id
@@ -137,14 +148,22 @@ export default class ResourceDetail extends Component {
             //serializer forces us to include both review statuses in the proper state
             var rs1 = this.state.resource.review_status;
             var rs2 = this.state.resource.review_status_2;
-            if (rs1 === "pending" && this.state.resource.assigned_reviewer === reviewer) rs1 = review_status;
-            if (rs2 === "pending" && this.state.resource.assigned_reviewer_2 === reviewer) rs2 = review_status;
-            var submitCmd = { "review_status": rs1, "review_status_2": rs2, "rating": this.state.rating, "review_comments": this.state.comments };
+            if ((rs1 === "pending" || rs1 === "conflict") && this.state.resource.assigned_reviewer === reviewer) rs1 = review_status;
+            if ((rs2 === "pending" || rs2 === "conflict") && this.state.resource.assigned_reviewer_2 === reviewer) rs2 = review_status;
+            var submitCmd = {
+                "review_status": rs1,
+                "review_status_2": rs2,
+                "rating": this.state.rating,
+                "review_comments": this.state.comments
+            };
 
             const options = {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${this.context.security.token}`
             };
+
+            //stop timer
+            clearInterval(this.myTimer)
 
             // Resource
             axios
@@ -160,23 +179,7 @@ export default class ResourceDetail extends Component {
                         console.log(error);
                     }
                 );
-            for (var i = 0, len = this.state.tags.length; i < len; i++) {
-                if (this.state.tags[i].approved === true) {
-                    axios
-                        .put(
-                            "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
-                            { "approved": true },
-                            { headers: options }
-                        )
-                        .then(
-                            response => {
-                            },
-                            error => {
-                                console.log(error);
-                            }
-                        );
-                }
-            }
+
             // User
             if (review_status === "approved") {
                 axios
@@ -208,6 +211,7 @@ export default class ResourceDetail extends Component {
             review_comments: this.state.comments,
             review_rating: this.state.rating,
             question_answers: JSON.stringify(this.state.reviewData),
+            review_time_sec: this.time
         };
         return formatted_review;
     };
@@ -263,7 +267,6 @@ export default class ResourceDetail extends Component {
                     } else {
                         return item.approved = true;
                     }
-
                 } else {
                     return item;
                 }
@@ -271,107 +274,288 @@ export default class ResourceDetail extends Component {
         });
     };
 
+    updateTagCategory = (id, value) => {
+        this.setState(state => {
+            const tags = this.state.tags.map((item) => {
+                if (item.id === id) {
+                    console.log('updateeeeed.')
+                    return item.tag_category = value;
+                } else {
+                    return item;
+                }
+            });
+        });
+    };
+
+
+    updateTags = () => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        for (var i = 0, len = this.state.tags.length; i < len; i++) {
+            if (this.state.tags[i].approved === true) {
+                axios
+                    .put(
+                        "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
+                        { "approved": true , "tag_category": this.state.tags[i].tag_category},
+                        { headers: options }
+                    )
+                    .then(
+                        response => {
+                            console.log('re',response);
+                        },
+                        error => {
+                            console.log('er',error);
+                        }
+                    );
+            }
+        }
+    }
+
+    handleAssign = (value, field, tagId) => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+        for (var i = 0, len = this.state.tags.length; i < len; i++) {
+            if (this.state.tags[i].approved === true) {
+                axios
+                    .put(
+                        "/chatbotportal/resource/" + this.state.tags[i].id + "/updatetags/",
+                        { "approved": true },
+                        { headers: options }
+                    )
+                    .then(
+                        response => {
+
+                        },
+                        error => {
+                            console.log(error);
+                        }
+                    );
+            }
+        }
+    }
+
+    myTimer = () => {
+        this.time += 1;
+        console.log('timer',this.time)
+    }
+
+    fetchTags = () => {
+        const headers = {};
+        if (this.context.security.token) {
+            headers['Authorization'] = `Bearer ${this.context.security.token}`;
+        }
+
+        axios
+            .get("/api/public/tags", {
+                headers
+            })
+            .then(res => {
+                this.getTagCatOptions(res.data);
+            });
+    };
+
+
+    getTagCatOptions = (allPossibleTags) => {
+        var tagOptions = [];
+        var tagSets = [];
+        for (var i = 0; i < allPossibleTags.length; i++) {
+            const newOption = {
+                key: allPossibleTags[i].tag_category,
+                value: allPossibleTags[i].tag_category,
+                text: allPossibleTags[i].tag_category
+            }
+            if(!tagSets.includes(newOption.key)){
+                tagSets.push(newOption.key)
+                tagOptions.push(newOption)
+            }
+        }
+
+        this.setState({TagCatOptions:tagOptions})
+    }
+
     render() {
+        //start timer
+        this.myTimer = setInterval(this.myTimer, 1000);
+
         const reviewer = this.context.security.is_logged_in
             ? this.context.security.id
             : "Unknown user";
         return (
-
             <SecurityContext.Consumer>
                 {(securityContext) => (
                     <div>
                         {securityContext.security.is_logged_in ?
-
                             <ResourceResponsive
                                 resource_component={
                                     <div>
-                                        <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer} />
+                                        <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer} isEditor={this.context.security.is_editor} />
                                         <div>
-                                            {/* {this.state.resource.tags && this.state.resource.tags.length > 0? ( 
-                                        <Table class="ui celled table">
-                                            <thead>
-                                                <tr><th>tag ID</th><th>Tag Name</th><th>Approve</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                {this.state.tags.map(tag => (
-                                                    tag.approved !== true ?(
-                                                        <tr key={tag} ref={tr => this.results = tr}>
-                                                        <td>{tag.id}</td>
-                                                        <td>{tag.name}</td>
-                                                        <td><Checkbox onChange={() => this.updateTagApproval(tag.id)} toggle/></td>
-                                                        </tr>
-                                                    ):('')
-                                                ))}
-                                            </tbody>
-                                        </Table>
-                                    ) : null} */}
-                                        </div>
-                                        <ReviewMatrix
-                                            onChange={reviewData => this.setState({ reviewData })}
-                                        />
-                                        <div>
-                                            <div class="ui form">
-                                                <div
-                                                    class="required field"
-                                                    style={{ display: "block" }}
-                                                >
-                                                    <h4>Based on the answers to all of the above questions, rate the overall quality of the resource.</h4>
-                                                    <Form.Field>
-                                                        <Rating
-                                                            name="rating"
-                                                            onRate={this.handleRate}
-                                                            onChange={this.handleChange}
-                                                            value={this.state.rating}
-                                                            defaultRating={this.state.rating}
-                                                            maxRating={5}
-                                                            icon="star"
-                                                            size="massive"
-                                                        />
-                                                    </Form.Field>
-                                                </div>
-                                                <div
-                                                    class="required field"
-                                                    style={{ display: "block" }}
-                                                >
-                                                    <h4>Review Comments</h4>
-                                                    <Form.TextArea
-                                                        name="comments"
-                                                        onChange={this.handleChange}
-                                                        value={this.state.comments}
-                                                        placeholder="Enter any comments about this resource"
-                                                    />
-                                                </div>
-                                                <div style={{ display: "block" }}>
-                                                    <Link to={baseRoute + "/review/"}>
-                                                        <button
-                                                            name="approve"
-                                                            class="positive ui button"
-                                                            onClick={() => this.approve(this.state.resource)}
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                    </Link>
-                                                    <Link to={baseRoute + "/review/"}>
-                                                        <button
-                                                            name="reject"
-                                                            class="negative ui button"
-                                                            onClick={() => this.reject(this.state.resource)}
-                                                        >
-                                                            &nbsp;&nbsp;Reject&nbsp;&nbsp;
-                                                        </button>
-                                                    </Link>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            <br />
+                                            {
+                                                ((this.context.security.is_editor) && (this.state.tags) && (this.state.tags.filter(tag=>tag.approved === false).length > 0) ) ? (
+                                                    <Segment basic>
+                                                        <Card fluid>
+                                                            <Card.Content>
+                                                                <Card.Header><h2>Tags</h2></Card.Header>
+                                                            </Card.Content>
+                                                            <Card.Content extra>
+                                                                <Table class="ui definition table">
+                                                                    <thead>
+                                                                        <tr><th>tag ID</th><th>Tag Name</th><th>Tag Category</th><th>Approve</th></tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {this.state.tags.map(tag => (
+                                                                            tag.approved === false ? (
+                                                                                <tr key={tag.id} ref={tr => this.results = tr}>
+                                                                                    <td>{tag.id}</td>
+                                                                                    <td>{tag.name}</td>
+                                                                                    <td>
+                                                                                        {<Dropdown ui read search selection options={this.state.TagCatOptions} defaultValue={tag.tag_category} onChange={(event, { value }) => this.updateTagCategory(tag.id, value)} />}
+                                                                                    </td>
+                                                                                    <td><Checkbox onChange={() => this.updateTagApproval(tag.id)} toggle /></td>
+                                                                                </tr>
+                                                                            ) : (null)
+                                                                        ))}
+                                                                    </tbody>
+                                                                </Table>,
+                                                                <button
+                                                                    name="update_tags"
+                                                                    class="positive ui button"
+                                                                    onClick={() => {
+                                                                        this.updateTags()
+                                                                        event.target.parentElement.parentElement.parentElement.remove()
+                                                                    }
+                                                                    }>
+                                                                    Update Tags
+                                                                </button>
+                                                            </Card.Content>
+                                                        </Card>
+                                                    </Segment>
+                                                ) : null
 
+
+                                            }
+                                            {((this.state.resource.assigned_reviewer_2 == reviewer) || (this.state.resource.assigned_reviewer == reviewer)) ?
+                                                ([<Segment basic textAlign='center'>
+                                                    <Card fluid>
+                                                        <Card.Content>
+                                                            <Card.Header><h1>Conflict of Interests</h1></Card.Header>
+                                                            <Card.Description>
+                                                                <strong>Before you begin this review, please consider whether or not you might have a conflict of interest in reviewing this resource. Could you potentially have a conflict of interest in reviewing this resource? If so, no problem! Please indicate here and we will reassign the resource to another reviewer.</strong>
+                                                                <p>A conflict of interest occurs when an individual’s personal interests – family, friendships, financial, or social factors – could compromise his or her judgment, decisions, or actions (adapted from <a target="_blank" href="https://compliance.ucf.edu/understanding-conflict-of-interest/">here</a>).</p>
+                                                            </Card.Description>
+                                                        </Card.Content>
+                                                        <Card.Content extra>
+                                                            <div className='ui two buttons'>
+                                                                <Button
+                                                                    basic
+                                                                    color='green'
+                                                                    onClick={(event) => {
+                                                                        event.target.parentElement.parentElement.parentElement.parentElement.remove()
+                                                                    }
+                                                                    }>
+                                                                    Continue
+                                                                </Button>
+                                                                <Button
+                                                                    basic
+                                                                    color='red'
+                                                                    onClick={() => {
+                                                                        this.update_resource_user("conflict")
+                                                                        setTimeout(() => {
+                                                                            var url = window.location.origin + '/chatbotportal/app/review';
+                                                                            window.location.href = url;
+                                                                        }, 300);
+                                                                    }}>
+                                                                    I have a conflict of interest (stop review)
+                                                                </Button>
+                                                            </div>
+                                                        </Card.Content>
+                                                    </Card>
+                                                </Segment>
+                                                    ,
+                                                <ReviewMatrix
+                                                    onChange={reviewData => this.setState({ reviewData })}
+                                                />
+                                                    ,
+                                                <div>
+                                                    <div class="ui form">
+                                                        <div
+                                                            class="required field"
+                                                            style={{ display: "block" }}
+                                                        >
+                                                            <h4>Based on the answers to all of the above questions, rate the overall quality of the resource.</h4>
+                                                            <Form.Field>
+                                                                <Rating
+                                                                    name="rating"
+                                                                    onRate={this.handleRate}
+                                                                    onChange={this.handleChange}
+                                                                    value={this.state.rating}
+                                                                    defaultRating={this.state.rating}
+                                                                    maxRating={5}
+                                                                    icon="star"
+                                                                    size="massive"
+                                                                />
+                                                            </Form.Field>
+                                                        </div>
+                                                        <div
+                                                            class="required field"
+                                                            style={{ display: "block" }}
+                                                        >
+                                                            <h4>Review Comments</h4>
+                                                            <Form.TextArea
+                                                                name="comments"
+                                                                onChange={this.handleChange}
+                                                                value={this.state.comments}
+                                                                placeholder="Enter any comments about this resource"
+                                                            />
+                                                        </div>
+                                                        <div style={{ display: "block" }}>
+                                                            <Link to={baseRoute + "/review/"}>
+                                                                <button
+                                                                    name="approve"
+                                                                    class="positive ui button"
+                                                                    onClick={() => this.approve(this.state.resource)}
+                                                                >
+                                                                    Approve
+                                                                </button>
+                                                            </Link>
+                                                            <Link to={baseRoute + "/review/"}>
+                                                                <button
+                                                                    name="reject"
+                                                                    class="negative ui button"
+                                                                    onClick={() => this.reject(this.state.resource)}>
+                                                                    &nbsp;&nbsp;Reject&nbsp;&nbsp;&nbsp;
+                                                                </button>
+                                                            </Link>
+                                                        </div>
+                                                    </div>
+                                                </div>])
+                                                : <Segment basic textAlign='center'>
+                                                    <Card fluid>
+                                                        <Card.Content>
+                                                            <Card.Header><h1>Not Assigned Resource!</h1></Card.Header>
+                                                            <Card.Description>
+                                                                <strong>You are not assigned to this resource as a reviewer.</strong>
+                                                            </Card.Description>
+                                                        </Card.Content>
+                                                    </Card>
+                                                </Segment>
+
+                                            }
+                                        </div>
                                     </div>
                                 }
                             ></ResourceResponsive>
-
-
                             : null}
                     </div>)}
             </SecurityContext.Consumer>
         );
     }
 }
+

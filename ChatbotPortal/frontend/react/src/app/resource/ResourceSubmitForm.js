@@ -24,7 +24,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Slider } from "react-semantic-ui-range";
-import { Container, Form, Header, Input, Message, Icon, Popup, Checkbox, Divider, Rating, Dropdown } from "semantic-ui-react";
+import { Container, Form, Header, Input, Message, Icon, Popup, Checkbox, Divider, Dropdown, Dimmer, Segment, Image, Loader} from "semantic-ui-react";
 import TagDropdown from "./TagDropdown";
 import TitleDropdown from "./TitleDropdown";
 import OrganizationNameDropdown from "./OrganizationNameDropdown";
@@ -41,6 +41,7 @@ export default class ResourceSubmitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            dimmerLoading: false,
             timeZone:"-6 UTC",
             resourceTypeRelateTextnumber: false,
             resourceTypeRelateEmail: false,
@@ -431,14 +432,14 @@ export default class ResourceSubmitForm extends Component {
     handleChangeResURL = event => {
         var baseUrl = '';
         try {
-            const urlOne = new URL(this.state.general_url);
+            const urlOne = new URL(this.state.url);
             baseUrl = urlOne.origin;
         } catch (e) {
             baseUrl = "";
         }
 
-        if (baseUrl != '') { this.setState({ url: baseUrl }); }
-        this.setState({ general_url: event.target.value })
+        if (baseUrl != '') { this.setState({ general_url: baseUrl }); }
+        this.setState({ url: event.target.value })
     };
 
     // event.target.value holds the pathname of a file
@@ -497,9 +498,11 @@ export default class ResourceSubmitForm extends Component {
             this.setState({});
             return;
         }
+        this.setState({dimmerLoading:true});
 
         if (this.state.resourceId !== null) {
             this.update_resource_user();
+            this.setState({dimmerLoading: false});
             return;
         }
 
@@ -510,26 +513,9 @@ export default class ResourceSubmitForm extends Component {
         if (this.state.description != "") this.addFieldTag("Description")
         if (this.state.email != "") this.addFieldTag("Email")
 
-        // if (this.state.tags.length < 1 || this.state.langTags.length < 1) {
-        //     this.setState({ submitted: -1, errors: "Please enter at a language tag and at least one other tag." });
-        //     return;
-        // }
-        // var localTags = this.state.tags;
-        // if (localTags) {
-        //     for (const langtags of this.state.langTags) {
-        //         if (
-        //             localTags.find(
-        //                 localTags => localTags === langtags
-        //             ) === undefined
-        //         ) {
-        //             localTags.push(langtags);
-        //         }
-        //     }
-        // }
-        // this.setState({ tags: localTags });
-
         this.post_resource();
         event.preventDefault();
+        this.setState({dimmerLoading:false});
     };
 
 
@@ -849,11 +835,11 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Resource URL<Popup content='URL pointing to where the resource was obtained from. (Example: https://mdsc.ca/resources/56)' trigger={<Icon name='question circle' />} /><Popup content='This field is OPTIONAL' trigger={<Icon name='flag' color='green' />} /></label>
                                             <Form.Input
                                                 fluid
-                                                name="general_url"
+                                                name="url"
                                                 onChange={this.handleChangeResURL}
                                                 onBlur={this.handleChangeResURL}
                                                 width={16}
-                                                value={this.state.general_url}
+                                                value={this.state.url}
                                                 placeholder="https://mdsc.ca/resources/56"
                                             />
                                         </Form.Field>
@@ -861,10 +847,10 @@ export default class ResourceSubmitForm extends Component {
                                             <label>Resource Homepage URL <Popup content='(Example: https://mdsc.ca)' trigger={<Icon name='question circle' />} /> <Popup content='this field is OPTIONAL' trigger={<Icon name='flag' color='green' />} /></label>
                                             <Form.Input
                                                 fluid
-                                                name="url"
+                                                name="general_url"
                                                 onChange={this.handleChange}
                                                 width={16}
-                                                value={this.state.url}
+                                                value={this.state.general_url}
                                                 placeholder="https://mdsc.ca"
                                             />
                                         </Form.Field>
@@ -1010,7 +996,7 @@ export default class ResourceSubmitForm extends Component {
                                             <Form.Group className={styles.dropdownPadding}>
                                                 <TagDropdown
                                                     name="professionTags"
-                                                    tagCat="Profession"
+                                                    tagCat="Audience"
                                                     value={this.state.tags}
                                                     onChange={tags => this.setState({ tags })}
                                                 />
@@ -1082,6 +1068,12 @@ export default class ResourceSubmitForm extends Component {
                                                 else return <div />;
                                             })()}
                                         </div>
+
+                                        {/* <Dimmer as={Segment} dimmed={this.state.dimmerLoading}> */}
+                                            <Dimmer page="true" active={this.state.dimmerLoading} inverted>
+                                                <Loader>Loading</Loader>
+                                            </Dimmer>
+                                        {/* </Dimmer> */}
 
                                         <Form.Button name="submit" content="Submit" color="green" />
                                     </div>

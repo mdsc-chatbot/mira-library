@@ -23,7 +23,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from rest_framework import serializers
-from .models import Resource, Tag
+from .models import Category, Resource, Tag
 
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,6 +59,7 @@ class ResourceUpdateSerializer(serializers.Serializer):
 
 class TagUpdateSerializer(serializers.Serializer):
     approved = serializers.BooleanField(default=False)
+    tag_category = serializers.CharField(default='')
 
     def update(self, instance, validated_data):
         instance.__dict__.update(validated_data)

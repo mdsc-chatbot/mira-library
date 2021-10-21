@@ -88,6 +88,19 @@ def gettags(request, resource_id):
 
     return JsonResponse(tagSent, safe=False)
 
+def getAllPTags(request):
+    resources = Resource.objects.all()
+    tagSent = []
+
+    for resource in resources:
+        tags = resource.tags.exclude(approved__exact = 1) 
+        for item in tags:
+            tag_set = {'resourceId':resource.id}
+            if tag_set not in tagSent:
+                tagSent.append(tag_set)
+
+    return JsonResponse(tagSent, safe=False)
+
 # Downloads request attachment
 def download_attachment(request, resource_id):
     resource = Resource.objects.get(pk=int(resource_id))

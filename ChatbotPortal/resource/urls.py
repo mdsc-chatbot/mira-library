@@ -35,6 +35,7 @@ urlpatterns = [
     re_path(r'^download-attachment/(?P<resource_id>.*)$',
             views.download_attachment, name='download-attachment'),
     re_path(r'^get-tags/(?P<resource_id>.*)$', views.gettags, name='fetch-review-tags'),
+    re_path(r'^get-all-resources-with-pending-tags$', views.getAllPTags, name='fetch-all-pending-tags'),
     re_path(r'^fetch-categories', views.fetch_categories, name='fetch-categories'),
     path('<pk>/update/', views.ResourceUpdateView.as_view()),
     path('<pk>/updatepartial/', views.ResourcePartialUpdate.as_view()),

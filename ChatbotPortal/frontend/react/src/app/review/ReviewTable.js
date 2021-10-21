@@ -22,7 +22,7 @@
  */
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Dropdown, Checkbox, Popup } from "semantic-ui-react";
+import { Table, Dropdown, Checkbox, Popup, Modal, Header, Button, Icon } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
@@ -36,6 +36,7 @@ export default class ReviewTable extends Component {
         this.state = {
             resources: [],
             reviews: [],
+            resourceIdsWithPendingTag:[],
             pending: 'Completed Reviews',
             header: 'Review new resources and tags here!',
             resourceData: {},
@@ -116,17 +117,33 @@ export default class ReviewTable extends Component {
             this.setState({
                 reviews: res.data
             });
-            console.log('reviews' + res.data);
         });
+    }
+
+    get_resources_with_panding_tags = () => {
+        // Having the permission header loaded
+        const options = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.context.security.token}`
+        };
+
+        axios
+            .get("/chatbotportal/resource/get-all-resources-with-pending-tags", { headers: options })
+            .then(response => {
+                this.setState({
+                    resourceIdsWithPendingTag: response.data.map(i => (i.resourceId))
+                });
+            })
     }
 
     componentDidMount() {
         this.get_resources();
         this.get_reviews();
+        this.get_resources_with_panding_tags();
     }
 
 
-    completedReviews = (ids, reviews, reviews_2, currentReviewer) => {
+    completedReviews = (ids, reviews, reviews_2, currentReviewer, resourceIdsWithPendingTag) => {
         var allReviews = this.state.reviews;
         function numRevs(id) {
             var numReviews = allReviews.reduce(function (n, reviews) {
@@ -179,13 +196,17 @@ export default class ReviewTable extends Component {
             if (revHasFinalDecision(a.id) == 0 &&
                 ((a.review_status_2 === 'approved' && a.review_status === 'rejected')
                     || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))) {
-                console.log('-1 ', a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
                 return -1;
             }
-            console.log('+1 ', a.id, a.review_status, a.review_status_2, revHasFinalDecision(a.id));
             return 1;
         }
-
+        function compareHasTag(a) {
+            if(resourceIdsWithPendingTag.includes(a.id)){
+                return -1;
+            } 
+            return 1;
+        }
+        
         if (this.state.order === 'oldest') {
             this.state.resources = this.state.resources.sort(compareOldest)
         } else if (this.state.order === 'newest') {
@@ -194,7 +215,11 @@ export default class ReviewTable extends Component {
             this.state.resources = this.state.resources.sort(compareReviews)
         } else if (this.state.order === 'tie breakers') {
             this.state.resources = this.state.resources.sort(compareTieBreak)
+        } else if (this.state.order === 'tag') {
+            this.state.resources = this.state.resources.sort(compareHasTag)
         }
+
+        
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             (ids.includes(r.id) === true) && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer)) || (this.state.assignedOnly === false)) &&
@@ -202,17 +227,31 @@ export default class ReviewTable extends Component {
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
-                        {(this.context.security.is_editor) ?
-                            reviews.get(r.id)[1]
-                            : '-'}
+                        {(this.context.security.is_editor|| this.context.security.is_reviewer) ?
+                            (reviews.get(r.id)[1].length < 100) ?
+                                reviews.get(r.id)[1] : 
+                                <div>{reviews.get(r.id)[1].substring(0, 100)+' ...'}
+                                <Modal
+                                    trigger={<p>see more</p>,<Icon color="blue" name='arrow alternate circle right outline'/>}
+                                    header='1st Reviewer Comment'
+                                    content={reviews.get(r.id)[1]}
+                                /></div>
+                            : '---'}
                     </td>
                     <td>
-                        {(this.context.security.is_editor) ?
-                            reviews_2.get(r.id)[1]
-                            : '-'}
+                        {(this.context.security.is_editor || this.context.security.is_reviewer) ?
+                            (reviews_2.get(r.id)[1].length < 100) ?
+                                reviews_2.get(r.id)[1] : 
+                                <div>{reviews_2.get(r.id)[1].substring(0, 100)+' ...'}
+                                <Modal
+                                    trigger={<p>see more</p>,<Icon color="blue" name='arrow alternate circle right outline'/>}
+                                    header='2nd Reviewer Comment'
+                                    content={reviews_2.get(r.id)[1]}
+                                /></div>
+                            : '---'}
                     </td>
                     <td>
-                        {reviews.get(r.id)[0] === true ? (<i class="check icon green big"></i>) : (<i class="x icon red big"></i>)}
+                        {reviews.get(r.id)[0] === true ? [<div>Approved<i class="check icon green large"></i></div>] : [<div>Rejected<i class="x icon red large"></i></div>]}
                     </td>
                 </tr>
             ) : (reviews_2.has(r.id))
@@ -221,16 +260,16 @@ export default class ReviewTable extends Component {
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
                         {(this.context.security.is_editor)
-                            ? [<p>A)</p>, reviews.get(r.id)[0] === true ? (<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green large"></i>} />) : (<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red large"></i>} />)]
+                            ? [reviews.get(r.id)[0] === true ? [<dev>Approved<Popup content={reviews.get(r.id)[1]} trigger={<i class="check icon green"></i>} /></dev>] : [<dev>Rejected<Popup content={reviews.get(r.id)[1]} trigger={<i class="x icon red "></i>}/></dev>]]
                             :
-                            [<p>A)</p>, reviews.get(r.id)[0] === true ? (<i class="check icon green large"></i>) : (<i class="x icon red large"></i>)]
+                            [reviews.get(r.id)[0] === true ? [<div>Approved<i class="check icon red"></i></div>] : [<div>Rejected<i class="x icon red"></i></div>]]
                         }
                     </td>
                     <td>
                         {(this.context.security.is_editor) ?
-                            [<p>B)</p>, reviews_2.get(r.id)[0] === true ? (<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green large"></i>} />) : (<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red large"></i>} />)]
+                            [reviews_2.get(r.id)[0] === true ? [<dev>Approved<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="check icon green "></i>} /></dev>] : [<dev>Rejected<Popup content={reviews_2.get(r.id)[1]} trigger={<i class="x icon red "></i>} /></dev>]]
                             :
-                            [<p>B)</p>, reviews_2.get(r.id)[0] === true ? (<i class="check icon green large"></i>) : (<i class="x icon red large"></i>)]
+                            [reviews_2.get(r.id)[0] === true ? [<div>Approved<i class="check icon green "></i></div>] : [<div>Rejected<i class="x icon red "></i></div>]]
 
                         }
                     </td>
@@ -246,7 +285,7 @@ export default class ReviewTable extends Component {
                             <button
                                 name="reject"
                                 class="negative ui button"
-                                onClick={() => this.reject(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>Reject
+                                onClick={() => this.reject(r.url, r.id, reviews.get(r.id)[1], reviews.get(r.id)[2])}>&nbsp;&nbsp;Reject&nbsp;&nbsp;&nbsp;
                             </button>
                             : null}
                     </td>
@@ -267,7 +306,7 @@ export default class ReviewTable extends Component {
     handleOrder = (e, { value }) => { this.setState({ order: { value }.value }) }
 
 
-    getData = (reviews, ids, currentReviewer) => {
+    getData = (reviews, ids, currentReviewer, resourceIdsWithPendingTag) => {
         function numRevs(id) {
             var numReviews = reviews.reduce(function (n, reviews) {
                 return n + (reviews.resource_id == id);
@@ -323,6 +362,12 @@ export default class ReviewTable extends Component {
             }
             return 1;
         }
+        function compareHasTag(a) {
+            if(resourceIdsWithPendingTag.includes(a.id)){
+                return -1;
+            } 
+            return 1;
+        }
 
         if (this.state.order === 'oldest') {
             this.state.resources = this.state.resources.sort(compareOldest)
@@ -332,22 +377,22 @@ export default class ReviewTable extends Component {
             this.state.resources = this.state.resources.sort(compareReviews)
         } else if (this.state.order === 'tie breakers') {
             this.state.resources = this.state.resources.sort(compareTieBreak)
+        } else if (this.state.order === 'tag') {
+            this.state.resources = this.state.resources.sort(compareHasTag)
         }
-        console.log(this.state.order, this.state.resources)
-
+        
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
             (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending'))
                 || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending')))
                     || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
-                    <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                    <td><div><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link>{(this.context.security.is_editor) && (this.state.resourceIdsWithPendingTag.includes(r.id)) ? <i class="tags icon blue"></i> : null}</div></td>
                     <td>
                         <button class="right floated ui button"><Link to={baseRoute + "/review/" + r.id}>Review</Link></button>
                     </td>
                 </tr>
             ) : (<p></p>)
         ));
-        console.log(resources_get)
         return resources_get
     }
     pendingHeader = () => {
@@ -391,7 +436,8 @@ export default class ReviewTable extends Component {
             { text: 'most recent', value: 'newest' },
             { text: 'oldest', value: 'oldest' },
             { text: 'least reviewed', value: 'least reviewed' },
-            { text: 'tie breaker needed', value: 'tie breakers' }
+            { text: 'tie breaker needed', value: 'tie breakers' },
+            { text: 'new tags', value: 'tag' },
         ]
 
         const { value } = this.state.order;
@@ -424,7 +470,7 @@ export default class ReviewTable extends Component {
                                 {this.state.pending === 'Completed Reviews' ? (this.pendingHeader()) : (this.completedHeader())}
                             </thead>
                             <tbody>
-                                {this.state.pending === 'Completed Reviews' ? (this.getData(this.state.reviews, ids, reviewer)) : (this.completedReviews(ids, reviewsApproval, reviewsApproval_2, reviewer))}
+                                {this.state.pending === 'Completed Reviews' ? (this.getData(this.state.reviews, ids, reviewer, this.state.resourceIdsWithPendingTag)) : (this.completedReviews(ids, reviewsApproval, reviewsApproval_2, reviewer, this.state.resourceIdsWithPendingTag))}
                             </tbody>
                         </Table>
                     </div>

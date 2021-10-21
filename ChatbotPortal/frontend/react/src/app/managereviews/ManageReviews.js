@@ -167,6 +167,12 @@ export default class ManageReviews extends Component {
             }
             return 1;
         }
+        function compareInterestConflict(a) {
+            if (a.review_status_2 === 'conflict' || a.review_status === 'conflict') {
+                return -1;
+            }
+            return 1;
+        }
 
         if (this.state.order === 'oldest') {
             this.state.resources = this.state.resources.sort(compareOldest)
@@ -176,6 +182,8 @@ export default class ManageReviews extends Component {
             this.state.resources = this.state.resources.sort(compareReviews)
         } else if (this.state.order === 'tie breakers') {
             this.state.resources = this.state.resources.sort(compareTieBreak)
+        } else if (this.state.order === 'conflict') {
+            this.state.resources = this.state.resources.sort(compareInterestConflict)
         }
 
         //map users for assignment dropdown
@@ -202,17 +210,16 @@ export default class ManageReviews extends Component {
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
-                        <h4>{r.review_status === "approved" ? (<i class="green check icon large"></i>) : r.review_status === "pending" ? (<i class="x icon large"></i>) : (<i class="red x icon large"></i>)}
+                        <h4>{r.review_status === "approved" ? (<p><i class="green check icon"></i> approved</p>) : r.review_status === "pending" ? (<p><i class="x icon"></i> pending</p>) : r.review_status === "conflict" ? (<p><i class="red stop circle outline icon"></i>Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected</p>) }
                             {<Dropdown ui read search selection options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, { value }) => this.handleAssign("assigned_reviewer", value, r.id)} />}</h4>
                     </td>
                     <td>
-                        <h4>{r.review_status_2 === "approved" ? (<i class="green check icon large"></i>) : r.review_status === "pending" ? (<i class="x icon large"></i>) : (<i class="red x icon large"></i>)}
+                        <h4>{r.review_status_2 === "approved" ? (<p><i class="green check icon "></i> approved</p>) : r.review_status_2 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_2 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected</p>)}
                             {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_2", value, r.id)} />}</h4>
                     </td>
                 </tr>
             ) : (<p></p>)
         ));
-        //console.log(resources_get)
         return resources_get
     }
 
@@ -226,7 +233,9 @@ export default class ManageReviews extends Component {
                     lName: this.state.users[i].last_name,
                     numApproved: 0,
                     numRejected: 0,
-                    numPending: 0
+                    numPending: 0,
+                    timeForAvg: 0,
+                    countForAvg: 0,
                 }
             )
         }
@@ -260,10 +269,23 @@ export default class ManageReviews extends Component {
             }
         });
 
+        this.state.reviews.forEach(r => {
+            if(r.review_time_sec != 0){
+                var indx = usersData.findIndex(x => x.id === r.reviewer_user_email);
+                if (indx != -1) {
+                    usersData[indx].timeForAvg += r.review_time_sec;
+                    usersData[indx].countForAvg ++;
+                }
+            }
+        })
+
         const resources_get = usersData.map(usr =>
         (<tr key={usr.id} ref={tr => this.results = tr}>
             <td>
                 <Popup content={usr.fName + ' ' + usr.lName} trigger={<p>{usr.lName}</p>} />
+            </td>
+            <td>
+                <p>{(usr.timeForAvg)==0 ? '-' : (usr.timeForAvg/usr.countForAvg).toFixed(1)}</p>
             </td>
             <td class="positive">
                 <h4>{usr.numApproved}</h4>
@@ -280,11 +302,74 @@ export default class ManageReviews extends Component {
         return resources_get
     }
 
+    getUsersFooter = (reviews, ids, currentReviewer) => {
+        var totalTime = 0;
+        var totalTimeCount = 0;
+        var totalApproved = 0;
+        var totalRejected = 0;
+        var totalPending = 0;
+        
+        this.state.resources.forEach(r => {
+            if (r.assigned_reviewer != -1) {
+                if (r.review_status === 'pending') {
+                    totalPending++;
+                } else if (r.review_status === 'approved') {
+                    totalApproved++;
+                } else if (r.review_status === 'rejected') {
+                    totalRejected++;
+                } else if (r.review_status === 'conflict') {
+                    totalPending++;
+                }
+            }
+            if (r.assigned_reviewer_2 != -1) {
+                if (r.review_status_2 === 'pending') {
+                    totalPending++;
+                } else if (r.review_status_2 === 'approved') {
+                    totalApproved++;
+                } else if (r.review_status_2 === 'rejected') {
+                    totalRejected++;
+                } else if (r.review_status_2 === 'conflict') {
+                    totalPending++;
+                }
+            }
+        });
+
+        this.state.reviews.forEach(r => {
+            if(r.review_time_sec != 0){
+                totalTime += r.review_time_sec;
+                totalTimeCount ++;
+            }
+        });
+
+        const resources_get = 
+        (
+        <tr ref={tr => this.results = tr}>
+            <th>
+                <strong>Total users</strong>
+            </th>
+            <th>
+                <p>{(totalTime/totalTimeCount).toFixed(1)}</p>
+            </th>
+            <th class="positive">
+                <p>{totalApproved}</p>
+            </th>
+            <th class="negative">
+                <p>{totalRejected}</p>
+            </th>
+            <th>
+                <p>{totalPending}</p>
+            </th>
+        </tr>
+        );
+
+        return resources_get
+    }
+
     pendingHeader = () => {
-        return <tr><th style={{ width: 300 }}>Resource</th><th style={{ width: 200 }}>Reviewer One</th><th style={{ width: 200 }}>Reviewer Two</th></tr>
+        return <tr><th style={{ width: 250 }}>Resource</th><th style={{ width: 200 }}>Reviewer One</th><th style={{ width: 200 }}>Reviewer Two</th></tr>
     }
     usersHeader = () => {
-        return <tr><th style={{ width: 300 }}>User</th><th>A</th><th>R</th><th>P</th></tr>
+        return <tr><th style={{ width: 350 }}>User</th><th>Avg t(s)</th><th>A</th><th>R</th><th>P</th></tr>
     }
 
     idToUserString = (idnum) => {
@@ -315,7 +400,8 @@ export default class ManageReviews extends Component {
             { text: 'most recent', value: 'newest' },
             { text: 'oldest', value: 'oldest' },
             { text: 'least reviewed', value: 'least reviewed' },
-            { text: 'tie breaker needed', value: 'tie breakers' }
+            { text: 'tie breaker needed', value: 'tie breakers' },
+            { text: 'conflict of interests', value: 'conflict' },
         ]
 
         const { value } = this.state.order;
@@ -340,7 +426,7 @@ export default class ManageReviews extends Component {
                         : null}
                     <Grid celled>
                         <Grid.Row>
-                            <Grid.Column width={4}>
+                            <Grid.Column width={5}>
                                 <div style={{ height: '500px', overflowX: "scroll", width: "100%" }}>
                                     <Table class="ui definition table">
                                         <thead>
@@ -349,10 +435,13 @@ export default class ManageReviews extends Component {
                                         <tbody>
                                             {this.getDataUsers(this.state.reviews, ids, reviewer)}
                                         </tbody>
+                                        <tfoot>
+                                            {this.getUsersFooter()}
+                                        </tfoot>
                                     </Table>
                                 </div>
                             </Grid.Column>
-                            <Grid.Column width={12}>
+                            <Grid.Column width={11}>
                                 <div style={{ height: '500px', overflowX: "scroll", width: "100%" }}>
                                     <Table class="ui celled table">
                                         <thead>

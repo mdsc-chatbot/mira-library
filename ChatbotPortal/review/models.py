@@ -34,3 +34,4 @@ class Reviews(models.Model):
     review_rating = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
     final_decision = models.BooleanField(null=True, blank=True, default='False')
     question_answers = models.TextField(null=True, blank=True, default='')
+    review_time_sec = models.IntegerField(null=True, blank=True, default=0)
