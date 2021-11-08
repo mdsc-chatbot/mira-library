@@ -28,14 +28,17 @@ import {
     Input,
     Button,
     Dropdown,
+    Sidebar,
+    Label,
+    Icon,
     Pagination, Responsive,
 } from "semantic-ui-react";
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import {SecurityContext} from '../contexts/SecurityContext';
+import { SecurityContext } from '../contexts/SecurityContext';
 import styles from './PublicResourcePage.css';
-import {FilterList} from './FilterList';
-import {ResourceTable} from './ResourceTable';
+import { FilterList } from './FilterList';
+import { ResourceTable } from './ResourceTable';
 import ownStyles from './PublicResourcesView.css'
 
 class PublicResourcesView extends Component {
@@ -43,33 +46,34 @@ class PublicResourcesView extends Component {
     // Static list of sort options
     // This list is reflected in the back-end code as well. Check out the view for retrieving resources.
     static resourceDropdownOptions = [
-        {key : 'By Most Recent', value: 0, text: 'By Most Recent'},
-        {key : 'By Most Popular', value: 1, text: 'By Most Popular'},
-        {key : 'By Highest Rated', value: 2, text: 'By Highest Rated'},
-        {key : 'By Least Recent', value: 3, text: 'By Least Recent'},
-        {key : 'By Least Popular', value: 4, text: 'By Least Popular'},
-        {key : 'By Lowest Rated', value: 5, text: 'By Lowest Rated'},
+        { key: 'By Most Recent', value: 0, text: 'By Most Recent' },
+        { key: 'By Most Popular', value: 1, text: 'By Most Popular' },
+        { key: 'By Highest Rated', value: 2, text: 'By Highest Rated' },
+        { key: 'By Least Recent', value: 3, text: 'By Least Recent' },
+        { key: 'By Least Popular', value: 4, text: 'By Least Popular' },
+        { key: 'By Lowest Rated', value: 5, text: 'By Lowest Rated' },
     ];
 
     static propTypes = {
-        tagId : PropTypes.string,
-        mobileView : PropTypes.bool, // True if need to show a mobile view
+        tagId: PropTypes.string,
+        mobileView: PropTypes.bool, // True if need to show a mobile view
     };
 
     constructor(props) {
         super(props);
 
         this.state = {
-            resources : [],
-            tags : [],
-            selectedTags : props.tagId ? [parseInt(props.tagId)] : [],
-            categories : [],
-            selectedCategories : [],
-            loadingResources : true,
-            resourcePage : 1,
-            search : '',
-            totalResourceCount : 0,
-            sortOption : 0,
+            resources: [],
+            tags: [],
+            selectedTags: props.tagId ? [parseInt(props.tagId)] : [],
+            categories: [],
+            selectedCategories: [],
+            loadingResources: true,
+            resourcePage: 1,
+            search: '',
+            totalResourceCount: 0,
+            sortOption: 0,
+            sidebarVisible: false,
         };
     }
 
@@ -77,13 +81,13 @@ class PublicResourcesView extends Component {
     componentDidMount() {
         this.fetchResources(1);
         this.fetchTags();
-        this.fetchCategories();
+        //this.fetchCategories();
     }
 
     fetchResources = (currentPage) => {
         this.setState({
-            resourcePage : currentPage,
-            loadingResources : false
+            resourcePage: currentPage,
+            loadingResources: false
         });
 
         axios
@@ -145,13 +149,13 @@ class PublicResourcesView extends Component {
             });
     };
 
-    handleSearchChange = (e, {value}) => {
+    handleSearchChange = (e, { value }) => {
         this.setState({
-            search : value
+            search: value
         });
     };
 
-    handleTagSelected = (event, {tag_id, checked}) => {
+    handleTagSelected = (event, { tag_id, checked }) => {
         event.preventDefault();
         // Remove or add tag_id depending on whether checkbox was checked
         this.setState((prevState) => {
@@ -172,7 +176,53 @@ class PublicResourcesView extends Component {
         });
     };
 
-    handleCategorySelected = (event, {category_id, checked}) => {
+    handleTagDeselected = (event, { tag_id }) => {
+        event.preventDefault();
+        this.setState((prevState) => {
+            let selectedTags = prevState.selectedTags.slice();
+            selectedTags = selectedTags.filter(value => value !== tag_id);
+            
+            return {
+                selectedTags
+            };
+        }, () => {
+            // Fetch new resources when new tags were selected
+            this.fetchResources(1)
+        });
+    }
+
+    
+    handleTagInCardsDeselected = (event, { tag_name }) => {
+        event.preventDefault();
+        // Remove or add tag_id depending on whether checkbox was checked
+        this.setState((prevState) => {
+            let selectedTags = prevState.selectedTags.slice();
+            selectedTags = selectedTags.filter(value => value !== this.state.tags.filter(tag=> tag.name == tag_name)[0].id);
+            return {
+                selectedTags
+            };
+        }, () => {
+            // Fetch new resources when new tags were selected
+            this.fetchResources(1)
+        });
+    }
+
+    handleTagInCardsSelected = (event, { tag_name }) => {
+        event.preventDefault();
+        // Remove or add tag_id depending on whether checkbox was checked
+        this.setState((prevState) => {
+            let selectedTags = prevState.selectedTags.slice();
+            selectedTags.push(this.state.tags.filter(tag=> tag.name == tag_name)[0].id);
+            return {
+                selectedTags
+            };
+        }, () => {
+            // Fetch new resources when new tags were selected
+            this.fetchResources(1)
+        });
+    }
+
+    handleCategorySelected = (event, { category_id, checked }) => {
         event.preventDefault();
         // Remove or add category_id depending on whether checkbox was checked
         this.setState((prevState) => {
@@ -193,15 +243,15 @@ class PublicResourcesView extends Component {
         });
     };
 
-    handleSortDropdownChange = (event, {value}) => {
+    handleSortDropdownChange = (event, { value }) => {
         this.setState({
-            sortOption : value
+            sortOption: value
         }, () => {
             this.fetchResources(this.state.resourcePage);
         });
     };
 
-    handlePageChange = (event, {activePage}) => {
+    handlePageChange = (event, { activePage }) => {
         this.fetchResources(activePage)
     };
 
@@ -219,46 +269,80 @@ class PublicResourcesView extends Component {
     };
 
     render() {
-        return (
-            <Segment vertical>
-                <Container
-                    style={{ paddingBottom: 50 }}
-                    textAlign="center"
-                    vertical
-                >
-                    <Grid>
-                        <Grid.Row>
-                            <form className={styles.searchBarContainer} onSubmit={(event) => {event.preventDefault(); this.fetchResources(1);}}>
-                                <Input name="searchBar" className={styles.searchBarFlex} size="huge" placeholder='Search for resources...' value={this.state.search} onChange={this.handleSearchChange}/>
-                                <Button name="searchButton" size="huge">Search</Button>
-                            </form>
-                        </Grid.Row>
-                        <Grid.Row columns="2">
-                            <Grid.Column className={ownStyles.noPaddingTagColumn} width={this.props.mobileView ? "5" : "3"}>
-                                <FilterList
-                                    tags={this.state.tags}
-                                    categories={this.state.categories}
-                                    selectedTags={this.state.selectedTags}
-                                    handleTagSelected={this.handleTagSelected}
-                                    handleCategorySelected={this.handleCategorySelected}
-                                />
-                            </Grid.Column>
 
-                            <Grid.Column className={ownStyles.noPaddingResourceColumn} width={this.props.mobileView ? "11" : "13"}>
-                                <Segment>
-                                    <span className={this.props.mobileView ? styles.mobileTopBarContainer : styles.topBarContainer}>
-                                            {this.showResourceHeader()}
-                                        </span>
-                                    <ResourceTable
-                                        resources={this.state.resources}
-                                        loadingResources={this.state.loadingResources}
-                                    />
-                                </Segment>
-                            </Grid.Column>
-                        </Grid.Row>
-                    </Grid>
-                </Container>
-            </Segment>
+        return (
+
+            <Container
+                style={{ paddingBottom: 50 }}
+                textAlign="center"
+                vertical>
+                <Sidebar.Pushable as="segment" vertical style={{ overflow: 'hidden' }}>
+                    <Sidebar
+                        animation='overlay'
+                        direction='left'
+                        visible={this.state.sidebarVisible}
+                        icon='labeled'
+                        vertical
+                        onHide={() => this.setState({ sidebarVisible:false})}
+                        width={(this.props.mobileView) ? 'thin' : 'wide'}>
+                        <FilterList
+                            tags={this.state.tags}
+                            categories={this.state.categories}
+                            selectedTags={this.state.selectedTags}
+                            handleTagSelected={this.handleTagSelected}
+                            handleCategorySelected={this.handleCategorySelected}
+                            handleTagDeselected={this.handleTagDeselected}
+                        />
+                    </Sidebar>
+                    <Sidebar.Pusher>
+                        <Segment basic>
+                            <Grid>
+                                <Grid.Row>
+                                    {(this.props.mobileView) ?
+                                        ([
+                                            <form className={styles.searchBarContainer} onSubmit={(event) => { event.preventDefault(); this.fetchResources(1); }}>
+                                                <Input name="searchBar" className={styles.searchBarFlex} size="large" placeholder='Search ...' value={this.state.search} onChange={this.handleSearchChange} />
+                                                <Button floated='right' primary name="searchButton" size="large"><Icon name="search" /></Button>
+                                            </form>,
+                                            <Button floated='left' size="large" onClick={() => { this.setState({ sidebarVisible: !this.state.sidebarVisible }) }}><Icon name="filter" /> {this.state.selectedTags.length > 0 ? <Label color='blue' size="small">{this.state.selectedTags.length}</Label> : null}</Button>
+                                        ]
+                                        )
+                                        :
+                                        ([
+                                            <Button floated='left' size="huge" onClick={() => { this.setState({ sidebarVisible: !this.state.sidebarVisible }) }}>Filters {this.state.selectedTags.length > 0 ? <Label color='blue' size="small">{this.state.selectedTags.length}</Label> : null}</Button>,
+                                            <form className={styles.searchBarContainer} onSubmit={(event) => { event.preventDefault(); console.log('ya hasan'); this.fetchResources(1); }}>
+                                                <Input name="searchBar" className={styles.searchBarFlex} size="huge" placeholder='Search for resources...' value={this.state.search} onChange={this.handleSearchChange} />
+                                                <Button floated='right' primary name="searchButton" size="huge">Search</Button>
+                                            </form>
+                                        ])
+                                    }
+                                </Grid.Row>
+                                <Grid.Row columns="1">
+
+                                    <Grid.Column className={ownStyles.noPaddingResourceColumn} width="16">
+                                        <Segment>
+                                            <span className={this.props.mobileView ? styles.mobileTopBarContainer : styles.topBarContainer}>
+                                                {this.showResourceHeader()}
+                                            </span>
+                                            <ResourceTable
+                                                resources={this.state.resources}
+                                                loadingResources={this.state.loadingResources}
+                                                handleTagInCardsSelected={this.handleTagInCardsSelected}
+                                                handleTagInCardsDeselected={this.handleTagInCardsDeselected}
+                                                selectedTags={this.state.selectedTags}
+                                                allTags={this.state.tags}
+                                            />
+                                        </Segment>
+                                    </Grid.Column>
+
+                                </Grid.Row>
+                            </Grid>
+                        </Segment>
+                    </Sidebar.Pusher>
+                </Sidebar.Pushable>
+            </Container>
+
+
         );
     }
 }

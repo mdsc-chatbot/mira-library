@@ -42,7 +42,7 @@ export default class ResourceDetail extends Component {
     componentDidMount() {
         const resourceID = this.props.match.params.resourceID;
         axios
-            .get(`/chatbotportal/resource/retrieve/${resourceID}`, {
+            .get(`/chatbotportal/resource/retrieve/${resourceID}/`, {
                 headers: { Authorization: `Bearer ${this.context.security.token}` }
             })
             .then(res => {

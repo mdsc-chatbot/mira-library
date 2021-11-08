@@ -24,3 +24,17 @@
 .nonCenteredText {
     text-align : start;
 }
+
+.centeredText {
+    text-align : center;
+}
+
+
+.tagsLineHeight {
+    margin: 0em 0.5em 0.35em 0em !important;
+    cursor: pointer;
+}
+
+.filterHeader {
+    min-height: 7em;
+}

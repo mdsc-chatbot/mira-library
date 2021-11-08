@@ -60,15 +60,15 @@ class ResourceManager(models.Manager):
         #     pass
 
         # Get website description
-        try:
-            url = obj_data['url']
-            soup = self.get_soup(url)
-            meta_tag = soup.find('meta', attrs={'name': 'description'})
-            content = meta_tag['content']
-            if title:
-                obj_data['website_summary_metadata'] = content
-        except Exception:
-            pass
+        # try:
+        #     url = obj_data['url']
+        #     soup = self.get_soup(url)
+        #     meta_tag = soup.find('meta', attrs={'name': 'description'})
+        #     content = meta_tag['content']
+        #     if title:
+        #         obj_data['website_summary_metadata'] = content
+        # except Exception:
+        #     pass
 
         return super().create(**obj_data)
 
@@ -150,8 +150,8 @@ class Resource(models.Model):
 
     organization_description = models.TextField(blank=True, null=True)
 
-    physical_address_regex = RegexValidator(regex=r'^((.)+\,)*((.{1,100}))$', message="Address format is not correct.")
-    physical_address = models.TextField(validators=[physical_address_regex], blank=True, null=True)
+    #physical_address_regex = RegexValidator(regex=r'^((.)+\,)*((.{1,100}))$', message="Address format is not correct.")
+    physical_address = models.TextField(blank=True, null=True)
 
     hours_of_operation = models.TextField(blank=True, null=True)
 

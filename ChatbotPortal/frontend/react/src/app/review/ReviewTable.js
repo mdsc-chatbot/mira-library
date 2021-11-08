@@ -100,7 +100,7 @@ export default class ReviewTable extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("/chatbotportal/resource", { headers: options }).then(res => {
+        axios.get("/chatbotportal/resource/", { headers: options }).then(res => {
             this.setState({
                 resources: res.data
             });
@@ -113,7 +113,7 @@ export default class ReviewTable extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.get("/api/review", { headers: options }).then(res => {
+        axios.get("/api/review/", { headers: options }).then(res => {
             this.setState({
                 reviews: res.data
             });

@@ -54,6 +54,7 @@ export default class DetailedPublicResource extends React.Component {
                 headers
             })
             .then(res => {
+                res.data.comments = ""
                 this.setState({
                     resource: res.data
                 });

@@ -129,9 +129,8 @@ function normal_header(resource, editable) {
             {resource.references!=null && resource.references!="" && <p style={{display: "flex", flexWrap: "wrap"}}><strong>References:</strong> {resource.references}</p>}
             {resource.description!=null && resource.description!="" && <p style={{display: "flex", flexWrap: "wrap"}}><strong>Description:</strong> {resource.description}</p>}
             {resource.organization_description!=null && resource.organization_description!="" && <p style={{display: "flex", flexWrap: "wrap"}}><strong>Organization Description:</strong> {resource.organization_description}</p>}  
-            <Link to={baseRoute+"/resource_submit?id="+resource.id}>
-                <button color="blue" fluid size="large">Edit Resource</button>
-            </Link>         
+            {editable ? <Link to={baseRoute+"/resource_submit?id="+resource.id}><button color="blue" fluid size="large">Edit Resource</button></Link> : null}
+            
         </Container>
     );
 }
@@ -151,13 +150,13 @@ function mobile_header(resource) {
     );
 }
 
-export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
+export function ResourceDetailView({ resource , tagsGot = [], viewer}) {
     // Common props for grid row, columns that are re-usable.
     // If we need this in more than one place, consider re-making this into several components.
     
     return (
         <Container>
-            <Responsive minWidth={768}>{normal_header(resource)}</Responsive>
+            <Responsive minWidth={768}>{normal_header(resource, viewer != '')}</Responsive>
             <Responsive {...Responsive.onlyMobile}>{mobile_header(resource)}</Responsive>
 
             <Divider className={styles.dividerPadding} />
@@ -171,8 +170,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Costs:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && tag.tag_category == 'Costs' ?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                   tag.tag_category == 'Costs' ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -185,8 +184,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Health Issue:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Health Issue') ?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                  (tag.tag_category == 'Health Issue') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -199,8 +198,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Language:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Language') ?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                (tag.tag_category == 'Language') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -217,8 +216,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Location:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Location') ?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                (tag.tag_category == 'Location') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -231,8 +230,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Resource Audience:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Audience')?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                (tag.tag_category == 'Audience')?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -245,8 +244,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Resource format:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Resource format') ?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                  (tag.tag_category == 'Resource format') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -259,8 +258,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Resource Type for Education/Informational:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Resource Type for Education/Informational')?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                  (tag.tag_category == 'Resource Type for Education/Informational')?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -277,8 +276,8 @@ export function ResourceDetailView({ resource , tagsGot, viewer , isEditor}) {
                     ? grid_element(
                           "Resource Type for Programs and Services:",
                           <div id="tags">
-                              {tagsGot.map(tag => (
-                                  tag.approved === true && (tag.tag_category == 'Resource Type for Programs and Services') ?(
+                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                                  (tag.tag_category == 'Resource Type for Programs and Services') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>

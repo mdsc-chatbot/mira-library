@@ -146,7 +146,7 @@ export default class ResourceSubmitForm extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .get(`/chatbotportal/resource/retrieve/${resourceID}`, { headers: options })
+            .get(`/chatbotportal/resource/retrieve/${resourceID}/`, { headers: options })
             .then(res => {
                 console.log('I got resources', res.data)
                 if (res.data.definition) {

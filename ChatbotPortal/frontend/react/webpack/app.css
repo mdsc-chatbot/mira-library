@@ -147,7 +147,7 @@ h3.ui.header.HomepageHead__header3____1sNLg {
  */
 
 .PublicResourceCard__overflowText____3BHtv {
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -157,6 +157,16 @@ h3.ui.header.HomepageHead__header3____1sNLg {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+}
+
+.PublicResourceCard__tagsLineHeight____1ujih {
+    margin: 0em 0.5em 0.35em 0em !important;
+    cursor: pointer;
+}
+
+
+.PublicResourceCard__tagsLineHeightNoPointer____3XmVS {
+    margin: 0em 0.5em 0.35em 0em !important;
 }
 /*
  :File: ProfilePage.css
@@ -494,6 +504,20 @@ h3.ui.header.HomepageHead__header3____1sNLg {
 
 .FilterList__nonCenteredText____2h9O5 {
     text-align : start;
+}
+
+.FilterList__centeredText____15ZIY {
+    text-align : center;
+}
+
+
+.FilterList__tagsLineHeight____1xHq6 {
+    margin: 0em 0.5em 0.35em 0em !important;
+    cursor: pointer;
+}
+
+.FilterList__filterHeader____1a1bf {
+    min-height: 7em;
 }
 /*
  :File: PublicResourcesView.css

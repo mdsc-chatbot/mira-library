@@ -22,7 +22,7 @@
  */
 
 .overflowText {
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -32,4 +32,14 @@
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+}
+
+.tagsLineHeight {
+    margin: 0em 0.5em 0.35em 0em !important;
+    cursor: pointer;
+}
+
+
+.tagsLineHeightNoPointer {
+    margin: 0em 0.5em 0.35em 0em !important;
 }

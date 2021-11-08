@@ -23,29 +23,51 @@
 
 import React from 'react'
 import PropTypes from 'prop-types';
-import {Segment, Checkbox, Loader, List} from 'semantic-ui-react';
+import { Segment, Checkbox, Loader, List, Accordion, Label, Icon } from 'semantic-ui-react';
 import styles from './FilterList.css';
 
 // Stores tags and categories
-export function FilterList({tags, categories, selectedTags, handleTagSelected, handleCategorySelected}) {
+export function FilterList({ tags, categories, selectedTags, handleTagSelected, handleCategorySelected, handleTagDeselected }) {
 
     //Getting distinct tag sub-categories
     const distinct = (value, index, self) => {
-        return self.indexOf(value)==index;
+        return self.indexOf(value) == index;
     }
     var allTagCategories = []
-    for(var i=0;i<tags.length;i++){
+    for (var i = 0; i < tags.length; i++) {
         allTagCategories.push(tags[i].tag_category)
     }
     var distinctTagCategories = allTagCategories.filter(distinct)
-    distinctTagCategories.sort(function(a,b){
+    distinctTagCategories.sort(function (a, b) {
         return a.localeCompare(b);
     })
+
+    function showAc (tags, distinctTagCategories, selectedTags, handleTagSelected){
+        var panels = [];
+        distinctTagCategories.forEach(category => {
+            var cn = tags.filter(tag => tag.tag_category == category).map(tag => (
+                <List.Item><Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} checked={selectedTags.includes(tag.id)}/></List.Item>
+            ));
+            var counter = tags.filter(tag => tag.tag_category == category).filter(tag => (selectedTags.includes(tag.id))).length;
+            if(counter>0)
+                counter = '('+counter+')'
+            else
+                counter = ''
+            panels.push({
+                title: { content: category + counter, icon: "dropdown" },
+                content: { content: cn }
+            });
+        });
+        console.log(selectedTags)
+        return (<Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />);
+    }
+
     if (tags.length > 0) {
         return (
             <Segment>
                 <List className={styles.nonCenteredText}>
-                    <List.Item>
+                <List.Header  className={styles.centeredText}> <h3>Filters</h3></List.Header>
+                    {/* <List.Item>
                         <List.Header>Categories</List.Header>
                         <List.Content>
                             
@@ -55,31 +77,17 @@ export function FilterList({tags, categories, selectedTags, handleTagSelected, h
                                 </List.Item>
                             ))}
                         </List.Content>
+                    </List.Item> */}
+                    <List.Item className={styles.filterHeader}>
+                        {   
+                            selectedTags.map(selectedTag => (<Label color='grey' className={styles.tagsLineHeight} tag_id={selectedTag} onClick={handleTagDeselected} tiny horizontal>{tags.filter(tag=> tag.id ==selectedTag)[0].name} &nbsp; <Icon name="x" color="yellow" ></Icon></Label>))
+                            
+                        }
                     </List.Item>
                     <List.Item>
-                        <List.Header>Tags</List.Header>
-                        <List>
-
-                            {distinctTagCategories.map(tag_category => (
-                            <List>
-                                <List.Header>{tag_category}</List.Header>
-
-                                <List.Content>
-                                {
-                                    tags.filter(tagCat => tagCat.tag_category == tag_category).map(tag => (
-                                        <List.Item key={tag.id}>
-                                            <Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} defaultChecked={selectedTags.includes(tag.id)}/>
-                                        </List.Item>
-                                    ))
-                                }
-                                </List.Content>
-                       
-                        </List>
-                         ))}
-                           
-                        
-                        </List>
-                        
+                        {
+                            showAc(tags, distinctTagCategories, selectedTags, handleTagSelected)
+                        }
                     </List.Item>
                 </List>
             </Segment>
@@ -88,16 +96,17 @@ export function FilterList({tags, categories, selectedTags, handleTagSelected, h
         return (
             <React.Fragment>
                 <Loader active inline />
-                Loading Tags
+                Loading Filters ...
             </React.Fragment>
         );
     }
 }
 
 FilterList.propTypes = {
-    tags : PropTypes.array,
-    categories : PropTypes.array,
-    selectedTags : PropTypes.array,
-    handleTagSelected : PropTypes.func.isRequired,
-    handleCategorySelected : PropTypes.func.isRequired,
+    tags: PropTypes.array,
+    categories: PropTypes.array,
+    selectedTags: PropTypes.array,
+    handleTagSelected: PropTypes.func.isRequired,
+    handleCategorySelected: PropTypes.func.isRequired,
+    handleTagDeselected: PropTypes.func.isRequired,
 };

@@ -69,7 +69,7 @@ export default class ResourceDetail extends Component {
             'Authorization': `Bearer ${this.context.security.token}`
         };
         axios
-            .get(`/chatbotportal/resource/retrieve/${resourceID}`, { headers: options })
+            .get(`/chatbotportal/resource/retrieve/${resourceID}/`, { headers: options })
             .then(res => {
                 this.setState({
                     resource: res.data
@@ -394,7 +394,7 @@ export default class ResourceDetail extends Component {
                             <ResourceResponsive
                                 resource_component={
                                     <div>
-                                        <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer} isEditor={this.context.security.is_editor} />
+                                        <ResourceDetailView resource={this.state.resource} tagsGot={this.state.tags} viewer={reviewer} />
                                         <div>
                                             <br />
                                             {

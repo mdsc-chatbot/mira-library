@@ -25,7 +25,7 @@ import {Card, Rating, Loader} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import {PublicResourceCard} from "./PublicResourceCard";
 
-export function ResourceTable({resources, loadingResources}) {
+export function ResourceTable({resources, loadingResources, handleTagInCardsSelected, selectedTags, allTags, handleTagInCardsDeselected}) {
     /**
      * Three possible cases, each with different shown UI:
      * CASE 1: Resources is not loaded
@@ -44,15 +44,34 @@ export function ResourceTable({resources, loadingResources}) {
     } else if (resources.length === 0) {
         // CASE 2
         return (
-            <p>No resources found. Try a different query?</p>
+            [<h3>No resources found. Try a different query?</h3>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>
+            ,<br/>]
         );
     } else {
         // CASE 3
         return (
             <React.Fragment>
-                <Card.Group itemsPerRow="2" stackable>
+                <Card.Group itemsPerRow="1" stackable>
                     {resources.map(resource => (
-                        <PublicResourceCard resource={resource} locationPrefix="/detail" />
+                        <PublicResourceCard resource={resource} handleTagInCardsSelected={handleTagInCardsSelected} selectedTags={selectedTags} allTags={allTags} 
+                        handleTagInCardsDeselected={handleTagInCardsDeselected}
+                        locationPrefix="/detail" />
                     ))}
                 </Card.Group>
             </React.Fragment>

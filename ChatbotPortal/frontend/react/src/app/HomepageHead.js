@@ -58,7 +58,7 @@ export class HomepageHead extends Component {
                         <Button.Group className={styles.buttonAlign} fluid widths='2' size='large'>
                             <Link to={baseRoute + "/public_resource"}>
                                 <Button fluid className={styles.publicResource} color="yellow">
-                                    View all our public resources
+                                &nbsp;&nbsp;View resources&nbsp;&nbsp;
                                 </Button>
                             </Link>
                             <Link to={baseRoute + "/resource_submit"}>
@@ -71,7 +71,7 @@ export class HomepageHead extends Component {
                         <Button.Group className={styles.buttonAlign} fluid widths='2' size='large'>
                             <Link to={baseRoute + "/public_resource"}>
                                 <Button className={styles.publicResource} fluid color="yellow">
-                                    View all our public resources
+                                &nbsp;&nbsp;View resources&nbsp;&nbsp;
                                 </Button>
                             </Link>
                             <Link to={baseRoute + "/login"}>
@@ -126,7 +126,7 @@ export class HomepageHead extends Component {
                     <Button.Group className={styles.buttonAlign} fluid widths='2' size='medium'>
                         <Link to={baseRoute + "/public_resource"}>
                             <Button fluid className={styles.publicResource} color='yellow'>
-                                View all our public resources
+                            &nbsp;&nbsp;View resources&nbsp;&nbsp;
                             </Button>
                         </Link>
                         <Link to={baseRoute + "/resource_submit"}>
@@ -139,7 +139,7 @@ export class HomepageHead extends Component {
                     <Button.Group className={styles.buttonAlign} fluid widths='2' size='small'>
                         <Link to={baseRoute + "/public_resource"}>
                             <Button className={styles.publicResource} color='yellow'>
-                                View all our public resources
+                            &nbsp;&nbsp;View resources&nbsp;&nbsp;
                             </Button>
                         </Link>
                         <Link to={baseRoute + "/login"}>

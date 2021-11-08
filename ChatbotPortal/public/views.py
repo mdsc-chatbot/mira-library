@@ -52,9 +52,9 @@ def ResourceViewQuerySet(query_params):
     if (search_param != None and search_param != ""):
         matching_titles = Resource.objects.filter(title__icontains=search_param)
         matching_url = Resource.objects.filter(url__icontains=search_param)
-        matching_summary = Resource.objects.filter(website_summary_metadata__icontains=search_param)
+        matching_description = Resource.objects.filter(description__icontains=search_param)
         matching_definition = Resource.objects.filter(definition__icontains=search_param)
-        queryset = queryset.filter(id__in=[resource.id for resource in matching_titles.union(matching_url, matching_summary, matching_definition)])
+        queryset = queryset.filter(id__in=[resource.id for resource in matching_titles.union(matching_url, matching_description, matching_definition)])
 
     # Filter resources by categories
     category_param = query_params.get('categories')
