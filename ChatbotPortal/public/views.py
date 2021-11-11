@@ -38,6 +38,7 @@ class HomepageResultSetPagination(PageNumberPagination):
     page_size = 4
 
 
+
 def ResourceViewQuerySet(query_params):
     # Taken from PR #164
     queryset = Resource.objects.filter(review_status="approved")
@@ -98,6 +99,20 @@ def ResourceViewQuerySet(query_params):
     return queryset
 
 
+def ResourceByIntentEntityViewQuerySet(query_params):
+    # Taken from PR #164
+    resQueryset = Resource.objects.filter(review_status="approved").filter(review_status_2="approved")
+
+    tags_param = query_params.getlist('tags')
+    tags = Tag.objects.filter(name__in=tags_param).values('id').all()
+    tagsList = list(map(lambda x: x['id'], tags))
+    
+    resQueryset = resQueryset.filter(tags__id__in=tagsList)
+    resQueryset = resQueryset.order_by('public_view_count')
+
+    return resQueryset
+
+
 class HomepageResourceView(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
@@ -105,6 +120,15 @@ class HomepageResourceView(generics.ListAPIView):
 
     def get_queryset(self):
         return ResourceViewQuerySet(self.request.query_params)
+
+
+class ResourceByIntentEntityView(generics.ListAPIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    pagination_class = StandardResultSetPagination
+
+    def get_queryset(self):
+        return ResourceByIntentEntityViewQuerySet(self.request.query_params)
 
 
 class ResourceView(generics.ListAPIView):

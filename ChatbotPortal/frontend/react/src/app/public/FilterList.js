@@ -81,7 +81,6 @@ export function FilterList({ tags, categories, selectedTags, handleTagSelected, 
                     <List.Item className={styles.filterHeader}>
                         {   
                             selectedTags.map(selectedTag => (<Label color='grey' className={styles.tagsLineHeight} tag_id={selectedTag} onClick={handleTagDeselected} tiny horizontal>{tags.filter(tag=> tag.id ==selectedTag)[0].name} &nbsp; <Icon name="x" color="yellow" ></Icon></Label>))
-                            
                         }
                     </List.Item>
                     <List.Item>
