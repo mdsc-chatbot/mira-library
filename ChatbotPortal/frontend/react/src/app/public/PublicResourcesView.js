@@ -107,6 +107,18 @@ class PublicResourcesView extends Component {
                 }
             )
             .then(res => {
+                if(res.data.results){
+                    function compareByScore(a,b) {
+                        if(a.score < b.score){
+                            return 1;
+                        }else if (a.score > b.score){
+                            return -1;
+                        } 
+                            return 0;
+                    }    
+                    res.data.results = res.data.results.sort(compareByScore)    
+                }
+                
                 this.setState({
                     resources: res.data.results || [],
                     totalResourceCount: res.data.count || 0,

@@ -35,6 +35,7 @@ export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSe
                         {resource.title}
                     </Link> */}
                     <a target="_blank" href={resource.url}>{resource.title}</a>
+                    <s className="ui seminvisiblee">{resource.score}</s>
                 </Card.Header>
                 <Card.Meta className={styles.overflowText}>
                     {resource.description}

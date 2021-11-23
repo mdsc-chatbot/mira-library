@@ -379,6 +379,10 @@ export default class ResourceSubmitForm extends Component {
             })
             .then(() => {
                 this.set_submitted_state(1, "POST SUCESS");
+                axios
+                    .get("/api/public/index-resources", {
+                        headers: { Authorization: `Bearer ${this.context.security.token}` }
+                    })
             })
             .catch(error => {
                 console.error(error.response);
@@ -570,6 +574,10 @@ export default class ResourceSubmitForm extends Component {
                 { headers: options }
             ).then(
                 response => {
+                    axios
+                    .get("/api/public/index-resources", {
+                        headers: { Authorization: `Bearer ${this.context.security.token}` }
+                    })
                     setTimeout(() => {
                         // this.setState(this.baseState);
                         setTimeout(() => {

@@ -102,7 +102,7 @@ class Resource(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     score = models.DecimalField(
-        max_digits=10, decimal_places=1, blank=True, null=True)
+        max_digits=10, decimal_places=5, blank=True, null=True)
 
     review_status = models.CharField(
         max_length=50, default="pending", blank=True, null=True)
@@ -142,7 +142,7 @@ class Resource(models.Model):
 
     email = models.EmailField(max_length=100, blank=True, null=True)
 
-    references = models.TextField(blank=True, null=True)
+    index = models.TextField(blank=True, null=True)
 
     description = models.TextField(blank=True, null=True)
 

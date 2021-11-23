@@ -67,3 +67,8 @@
 :global(.invisiblee){
   visibility: hidden !important;
 }
+
+
+:global(.seminvisiblee){
+  opacity: 20% !important;
+}
