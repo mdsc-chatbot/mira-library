@@ -144,6 +144,10 @@ class Resource(models.Model):
 
     index = models.TextField(blank=True, null=True)
 
+    website_meta_data = models.TextField(blank=True, null=True)
+
+    website_meta_data_updated_at = models.DateTimeField(blank=True, null=True)
+
     description = models.TextField(blank=True, null=True)
 
     general_url = models.TextField(blank=True, null=True)

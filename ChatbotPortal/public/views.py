@@ -23,7 +23,9 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+from datetime import datetime
 from django.db.models.query import QuerySet
+import requests
 from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
 from collections import Counter
@@ -36,6 +38,8 @@ from django.db.models import Q
 from resource.models import Resource, Tag, Category
 from resource.serializers import RetrieveResourceSerializer
 from .serializers import ResourceSerializer, TagSerializer, CategorySerializer, RetrievePublicResourceSerializer
+import urllib.request
+from bs4 import BeautifulSoup
 
 
 class StandardResultSetPagination(PageNumberPagination):
@@ -109,6 +113,8 @@ def ResourceViewQuerySet(query_params):
         resource_scores = {}
         for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all())], queryset)):
             resource_scores[resource[0]] = 0
+            if resource[1] is None or resource[1]=='':
+                continue
             index = json.loads(resource[1])
             original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
             for tag in tag_list:
@@ -117,7 +123,7 @@ def ResourceViewQuerySet(query_params):
                 if tag in original_tag_ids:
                     resource_scores[resource[0]] += 0.65
 
-        topitems = heapq.nlargest(70, resource_scores.items(), key=itemgetter(1))
+        topitems = heapq.nlargest(25, resource_scores.items(), key=itemgetter(1))
         # topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
         topitemsasdict = dict(topitems)
         if len(topitems) > 1:
@@ -285,17 +291,17 @@ def ResourceByIntentEntityViewQuerySet(query_params):
     ,'paid_and_free': 'Unknown'
     ,'paid_and_free': 'Both free and paid'
     ,'book_and_pamphlet': 'Brochure'
-    ,'Causes': 'cause'
-    ,'Group_Class': 'Classes/course (in person)'
+    ,'causes': 'cause'
+    ,'group_class': 'Classes/course (in person)'
     ,'definition': 'Definition'
-    ,'Virtual': 'Mobile App'
+    ,'virtual': 'Mobile App'
     ,'online_courses_and_webinar': 'Webinar/Online course (go at your own pace)'
     ,'online_courses_and_webinar': 'Webinar/Online course (scheduled)'
-    ,'Screening': 'Screening tool'
-    ,'Information': 'Statistic'
-    ,'Symptom_List': 'Symptoms'
-    ,'Treatment_Info': 'Treatments'
-    ,'Information': 'Informational Website'
+    ,'screening': 'Screening tool'
+    ,'information': 'Statistic'
+    ,'symptom_List': 'Symptoms'
+    ,'treatment_Info': 'Treatments'
+    ,'information': 'Informational Website'
     ,'coping_skills': 'Informational Website'
     ,'self_help': 'Informational Website'
     ,'self_help': 'Worksheet'
@@ -304,26 +310,26 @@ def ResourceByIntentEntityViewQuerySet(query_params):
     ,'self_help': 'Self-Help Books'
     ,'addiction_substance_use_programs': 'Addiction and recovery'
     ,'prevalence': 'Prevalence'
-    ,'Virtual': 'Online Group Support'
-    ,'Peer_Support': 'Community Support'
-    ,'Suicidal_Other': 'Crisis Support/Distress Counselling'
-    ,'Suicidal_Self': 'Crisis Support/Distress Counselling'
-    ,'Peer_Support': 'Peer Support'
+    ,'virtual': 'Online Group Support'
+    ,'peer_support': 'Community Support'
+    ,'suicidal_other': 'Crisis Support/Distress Counselling'
+    ,'suicidal_self': 'Crisis Support/Distress Counselling'
+    ,'peer_support': 'Peer Support'
     ,'help_from_another_person': 'Online chat'
-    ,'Specialist': 'Medical services'
+    ,'specialist': 'Medical services'
     ,'housing': 'Housing - Emergency'
-    ,'Group_Class': 'Group therapy'
-    ,'Doctor': 'Family Doctor'
-    ,'Peer_Support': 'In-person Group Support Meeting'
-    ,'Need_In_Person': 'In-person Group Support Meeting'
+    ,'group_class': 'Group therapy'
+    ,'doctor': 'Family Doctor'
+    ,'peer_support': 'In-person Group Support Meeting'
+    ,'need_in_person': 'In-person Group Support Meeting'
     ,'help_from_another_person': 'Phone line/call centre'
     ,'psychiatrist': 'Psychiatrist'
     ,'psychologist': 'Psychologist'
     ,'addiction_substance_use_programs': 'Rehabilitation'
-    ,'Specialist': 'Therapist/Counsellor/Psychotherapist'
+    ,'specialist': 'Therapist/Counsellor/Psychotherapist'
     ,'counsellor_psychotherapist': 'Therapist/Counsellor/Psychotherapist'
     ,'healer': 'Traditional Indigenous Healer'
-    ,'Domestic_Abuse_Support': 'Violence intervention'}
+    ,'domestic_abuse_support': 'Violence intervention'}
 
     tags_params = query_params.getlist('tags')
     all_possible_tags = Tag.objects.filter(approved=1).all()
@@ -374,6 +380,8 @@ def ResourceByIntentEntityViewQuerySet(query_params):
     resource_scores = {}
     for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all())], resQueryset)):
         resource_scores[resource[0]] = 0
+        if resource[1] is None or resource[1]=='':
+            continue
         index = json.loads(resource[1])
         original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
         for tag in tags_id_list:
@@ -384,7 +392,7 @@ def ResourceByIntentEntityViewQuerySet(query_params):
             if tag in original_tag_ids:
                 print('tag in tags list', tag, resource[0])
                 resource_scores[resource[0]] += 0.65
-    topitems = heapq.nlargest(70, resource_scores.items(), key=itemgetter(1))
+    topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
     # topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
     topitemsasdict = dict(topitems)
 
@@ -421,6 +429,50 @@ def ResourceByIntentEntityViewQuerySet(query_params):
 
     return resQueryset
 
+def VerifyApprovedResources(query_params):
+    resources = Resource.objects.filter(review_status="approved").filter(review_status_2="approved").values('id', 'title', 'description', 'organization_description', 'website_meta_data_updated_at', 'url', 'organization_name', 'definition')
+
+    resource_ids_with_problems = []
+    now = datetime.now()
+    formatted = now.strftime('%Y-%m-%d')
+    for resource in resources:
+        # Get website description
+        if(not resource['website_meta_data_updated_at'] or str(resource['website_meta_data_updated_at'])<formatted):
+            try:
+                url = resource['url']
+                if url == '':
+                    continue
+                if 'http' not in url:
+                    url = 'http://'+url
+                hdr = {'User-Agent': 'Mozilla/5.0'}
+                html = requests.get(url, headers=hdr)
+                soup = BeautifulSoup(html.text, 'html.parser')
+                content = soup.find('meta')
+                title = str(soup.find('title'))
+                if title:
+                    resource_id = resource['id']
+                    instance = Resource.objects.filter(pk=resource_id).get()
+                    new_meta_data = (str(title)+str(content))
+                    if instance.website_meta_data == 'NoneNone' and ('.pdf' not in url) and instance.website_meta_data != new_meta_data:
+                        resource_ids_with_problems.append(resource_id)
+                    instance.website_meta_data = new_meta_data
+                    instance.website_meta_data_updated_at = formatted
+                    instance.save()
+            except Exception as e:
+                resource_ids_with_problems.append(resource['id'])
+
+    result = Resource.objects.filter(review_status="approved").filter(review_status_2="approved").filter(id__in=resource_ids_with_problems)
+
+    return result
+
+
+class VerifyApprovedResourcesView(generics.ListAPIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    pagination_class = HomepageResultSetPagination
+
+    def get_queryset(self):
+        return VerifyApprovedResources(self.request.query_params)
 
 class HomepageResourceView(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
