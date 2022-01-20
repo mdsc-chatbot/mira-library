@@ -445,7 +445,7 @@ def VerifyApprovedResources(query_params):
                 if 'http' not in url:
                     url = 'http://'+url
                 hdr = {'User-Agent': 'Mozilla/5.0'}
-                html = requests.get(url, headers=hdr)
+                html = requests.get(url, headers=hdr, verify=False)
                 soup = BeautifulSoup(html.text, 'html.parser')
                 content = soup.find('meta')
                 title = str(soup.find('title'))
