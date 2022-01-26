@@ -22,7 +22,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from django.urls import path
-from .views import ResourceView, ResourceByIntentEntityView, TagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView
+from .views import ResourceView, ResourceByIntentEntityView, TagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView
 
 urlpatterns = [
     # path('current_user/', current_user, name='current_user'),
@@ -33,6 +33,7 @@ urlpatterns = [
     path('homepage-resources', HomepageResourceView.as_view(), name='homepage_resources'),
     path('resources', ResourceView.as_view(), name='resources'),
     path('resources-by-intent-entity', ResourceByIntentEntityView.as_view(), name='resource_by_intent_entity'),
+    path('resource-count-and-filter', ResourceCountAndFilterView.as_view(), name='count_resource'),
     path('index-resources', IndexResourceEntityView.as_view(), name='index_resource'),
     path('verify-resources', VerifyApprovedResourcesView.as_view(), name='verify_resource'),
     path('tags', TagView.as_view(), name='tags'),
