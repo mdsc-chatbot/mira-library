@@ -36,7 +36,7 @@ export class HomepageHead extends Component {
             <React.Fragment>
                 <Header
                     as="h1"
-                    content="Welcome to the MIRA Resource Portal"
+                    content="Welcome to the MIRA Resource Library"
                     style={{
                         fontSize: "2em",
                         fontWeight: "bold",
@@ -46,7 +46,7 @@ export class HomepageHead extends Component {
                 />
                 <Header
                     as="h3"
-                    content="An information repository for mental health resources."
+                    content="The MIRA Resource Library provides a collection of informational resources on mental health issues, services, and programs from across Canada."
                     style={{
                         fontWeight: "normal",
                         marginBottom: "1em"
@@ -74,11 +74,11 @@ export class HomepageHead extends Component {
                                 &nbsp;&nbsp;View resources&nbsp;&nbsp;
                                 </Button>
                             </Link>
-                            <Link to={baseRoute + "/login"}>
+                            {/* <Link to={baseRoute + "/login"}>
                                 <Button className={styles.loginButton} fluid color="yellow">
                                     Log in to Portal
                                 </Button>
-                            </Link>
+                            </Link> */}
                         </Button.Group>
                     )
                     }
@@ -105,7 +105,7 @@ export class HomepageHead extends Component {
                     <Grid.Column>
                         <Header
                             as="h1"
-                            content="Welcome to the MIRA Resource Portal"
+                            content="Welcome to the MIRA Resource Library"
                             style={{
                                 fontWeight: "bold",
                                 color: "#3075c9",
@@ -115,7 +115,7 @@ export class HomepageHead extends Component {
                     <Grid.Column>
                         <Header
                             as="h3"
-                            content="An information repository for mental health resources."
+                            content="The MIRA Resource Library provides a collection of informational resources on mental health issues, services, and programs from across Canada."
                             className={styles.header3}
                         />
                     </Grid.Column>
@@ -142,11 +142,11 @@ export class HomepageHead extends Component {
                             &nbsp;&nbsp;View resources&nbsp;&nbsp;
                             </Button>
                         </Link>
-                        <Link to={baseRoute + "/login"}>
+                        {/* <Link to={baseRoute + "/login"}>
                             <Button className={styles.loginButton} color='yellow'>
                                 Log in to submit resources
                             </Button>
-                        </Link>
+                        </Link> */}
                     </Button.Group>
                 )
                 }

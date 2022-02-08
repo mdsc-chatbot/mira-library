@@ -115,6 +115,8 @@ class Resource(models.Model):
     website_summary_metadata = models.TextField(default="", blank=True, null=True)
 
     public_view_count = models.IntegerField(default=0)
+    # chatbot_api_rcmnd_count = models.IntegerField(default=0)
+    # portal_search_rcmnd_count = models.IntegerField(default=0)
 
     objects = ResourceManager()
 
@@ -170,3 +172,4 @@ class Resource(models.Model):
             max_length=10,
             default="-6 UTC",
         )
+    

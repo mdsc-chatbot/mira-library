@@ -140,10 +140,10 @@ export class FAQ extends Component {
                     <Divider />
                     <div style={{ paddingBottom: 20 }}>
                         <Header as="h3" color="blue">
-                            What is the MIRA Chatbot Portal and how do I use this site?
+                            What is the MIRA Resource Library and how do I use this site?
                         </Header>
                         <p>
-                            The MIRA Chatbot Portal is a website dedicated to providing and gathering
+                            The MIRA Resource Library is a website dedicated to providing and gathering
                             information regarding mental health. This information is gathered and reviewed by a 
                             variety of sources such as health professionals, experts, and educators.
                             <br />
