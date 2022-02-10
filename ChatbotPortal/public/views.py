@@ -43,6 +43,13 @@ from bs4 import BeautifulSoup
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import collections
+import nltk
+nltk.data.path.append("/usr/share/nltk_data")
+from nltk.corpus import wordnet
+from nltk import word_tokenize
+from nltk import pos_tag
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
 
 
 class StandardResultSetPagination(PageNumberPagination):
@@ -52,6 +59,18 @@ class HomepageResultSetPagination(PageNumberPagination):
     page_size = 4
 
 
+def find_keywords_of_sentence(sentence):
+    tokens = word_tokenize(sentence)
+    filtered_sentence = [w for w in tokens if not w in stopwords.words()]
+    for s in filtered_sentence:
+        if s[-2:]=='ed':
+            filtered_sentence.append(s[:-2])
+    keywords = []
+    for word in pos_tag(filtered_sentence):
+        if(word[1] not in ('PRP', 'VBP', 'TO', 'DT', 'AT')):
+            keywords.append(word)   
+    print('keywords', keywords)
+    return keywords
 
 def ResourceViewQuerySet(query_params):
     # Taken from PR #164
@@ -132,8 +151,6 @@ def ResourceViewQuerySet(query_params):
         if len(topitems) > 1:
             queryset = queryset.filter(id__in=topitemsasdict.keys())
             
-            print('---------------------before--------------------------------')
-            print(len(queryset))
             #this set
             thisSet = []
             #make result distinct
@@ -141,8 +158,6 @@ def ResourceViewQuerySet(query_params):
                 if query.id not in thisSet:
                     thisSet.append(query.id)
             newQuerySet = Resource.objects.filter(id__in=thisSet)
-            print('------------------------after-----------------------------')
-            print(len(newQuerySet))
 
             for qs in newQuerySet:
                 if qs.id not in topitemsasdict.keys():
@@ -152,7 +167,122 @@ def ResourceViewQuerySet(query_params):
 
             newQuerySet.order_by('score')
             return newQuerySet
+    else:
+        tag_categories = {
+            'health':['Addict', 'stress', 'depressed', 'anxious'], 
+            'family':['son', 'wife', 'husband', 'daughter'], 
+            'canada':['Alberta', 'Scotia', 'Edmonton']
+            }
+        
+        search_params = query_params.get('search')
+        imp_words = find_keywords_of_sentence(search_params)
 
+        categories = set()
+        imp_word_mapping = {}
+        for imp_wrd in imp_words:
+            imp_word = imp_wrd[0]
+            imp_word_pos = imp_wrd[1]
+            if imp_word_pos in ('JJ', 'VBD'): imp_word_pos = 's'
+            else: imp_word_pos = wordnet.NOUN
+
+
+            category_ranking = {}
+            for category in tag_categories:
+
+                category_ranking[category] = 0
+                con1 = list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(imp_word, pos=imp_word_pos)))
+                con2 = list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(category, pos=imp_word_pos)))
+                if con1 and con2:
+                        category_ranking[category] += float(wordnet.path_similarity(list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(category, pos=imp_word_pos)))[0], list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(imp_word, pos=imp_word_pos)))[0], simulate_root=True))
+
+                for category_item in tag_categories[category]:
+                    if ( list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(imp_word, pos=imp_word_pos))) and list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(category_item, pos=imp_word_pos)))):
+                        category_ranking[category] += float(wordnet.path_similarity(list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(category_item, pos=imp_word_pos)))[0], list(filter(lambda x: x.pos() == imp_word_pos ,wordnet.synsets(imp_word, pos=imp_word_pos)))[0], simulate_root=True))
+            
+            best_category = sorted(category_ranking.items(), key=lambda i: i[1], reverse=True)
+            best_category = best_category[0]
+            if float(best_category[1])>0:
+                cat = best_category[0]
+                if cat =='health':
+                    cat = 'Health Issue'
+                elif cat =='canada':  
+                    cat = 'Location'
+                elif cat =='family':
+                    cat = 'Audience'
+                imp_word_mapping[imp_word] = {'category':cat, 'pos':imp_word_pos}
+                categories.add(cat)
+        
+
+
+        print('categories', categories)
+        approved_tags = Tag.objects.filter(approved=1).filter(tag_category__in=categories).values('name','id','tag_category').all()
+        approved_tag_names = list(map(lambda x: x['name'], approved_tags))
+
+        actual_tags = []
+        probable_tags = {}
+
+        for imp_word in imp_word_mapping:
+            similar_tags = difflib.get_close_matches(imp_word, approved_tag_names, n=2, cutoff=0.61)
+            if similar_tags:
+                for t in similar_tags: actual_tags.append(t)
+            for app_tag in approved_tags:
+                if imp_word_mapping[imp_word]['category'] == app_tag['tag_category']:
+                    if app_tag['name'] not in probable_tags:
+                        probable_tags[app_tag['name']] = 0
+                    if list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(app_tag['name'], pos='n'))) and list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(imp_word, pos='n'))):
+                        probable_tags[app_tag['name']] += float(wordnet.path_similarity(list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(imp_word, pos='n')))[0], list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(app_tag['name'], pos='n')))[0], simulate_root=True))
+
+
+        # actual_tags
+        probable_tags = list(map(lambda x: x[0], filter(lambda x: x[1]>0, probable_tags.items())))
+
+        ids = list(map(lambda x: x.id ,queryset))
+        queryset_ = Resource.objects.filter(Q(tags__name__in=actual_tags) | Q(tags__name__in=probable_tags) | Q(id__in=ids))
+        print('actual_tags',actual_tags)
+        print('probable_tags',probable_tags)
+
+
+        tag_list = set()
+        for probable_tag in probable_tags: tag_list.add(probable_tag)
+        for actual_tag in actual_tags: tag_list.add(actual_tag)
+
+        tagg = Tag.objects.filter(name__in=tag_list)
+        tag_list = list(map(lambda x: str(x.id) ,tagg))
+
+        # scoring and ordering by scores
+        resource_scores = {}
+        for resource in list(map(lambda x: [x.id,x.index, list(x.tags.all()), x.title], queryset_)):
+            resource_scores[resource[0]] = 0
+            if resource[1] is None or resource[1]=='':
+                continue
+            index = json.loads(resource[1])
+            original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
+            for tag in tag_list:
+                if tag in index:
+                    resource_scores[resource[0]] += index[tag]
+                if tag in original_tag_ids:
+                    resource_scores[resource[0]] += 0.65
+
+        topitems = heapq.nlargest(20, resource_scores.items(), key=itemgetter(1))
+        
+        topitemsasdict = dict(topitems)
+        if len(topitems) > 1:
+            queryset_ = queryset_.filter(id__in=topitemsasdict.keys())
+            
+            thisSet = []
+            #make result distinct
+            for query in queryset_:
+                if query.id not in thisSet:
+                    thisSet.append(query.id)
+            newQuerySet_ = Resource.objects.filter(id__in=thisSet)
+
+            for qs in newQuerySet_:
+                if qs.id not in topitemsasdict.keys():
+                    qs.score = 0
+                else:
+                    qs.score = topitemsasdict[qs.id]
+
+            newQuerySet_.order_by('score')
 
     # Sort query
     # 0, 3 : Recency (desc, asc)
@@ -177,7 +307,7 @@ def ResourceViewQuerySet(query_params):
     #     else:
     #         queryset = queryset.order_by('rating')
 
-    return queryset
+    return newQuerySet_
 
 
 def calculateCountsForResources(query_params):
@@ -296,7 +426,6 @@ def calculateCountsForResources(query_params):
                     should_be_added.add(related_word[1])
             else:
                 similar_tags = difflib.get_close_matches(tag_param, all_possible_tags, n=2, cutoff=0.61)
-                print(tag_param,'  simil: ',similar_tags)
                 if len(similar_tags) > 0:
                     should_be_romoved.add(tag_param)
                     should_be_added.add(similar_tags[0])
@@ -357,7 +486,6 @@ def calculateCountsForResources(query_params):
 
 
     def entrophy_for_tag(found_resources, tag):
-        print('entrophy_for_tag', tag)
         tag_set_if_present = set()
         tag_set_if_absent = set()
         for found_resource in found_resources:
@@ -592,7 +720,6 @@ def ResourceByIntentEntityViewQuerySet(query_params):
                     should_be_added.add(related_word[1])
             else:
                 similar_tags = difflib.get_close_matches(tag_param, all_possible_tags, n=2, cutoff=0.61)
-                print(tag_param,'  simil: ',similar_tags)
                 if len(similar_tags) > 0:
                     should_be_romoved.add(tag_param)
                     should_be_added.add(similar_tags[0])
@@ -644,29 +771,22 @@ def ResourceByIntentEntityViewQuerySet(query_params):
             if tag in original_tag_ids:
                 resource_scores[resource[0]] += 0.65
         
-        # tags_params = tag names
         for tag in tags_params:
             if tag[:-1] in resource[3]:
                 resource_scores[resource[0]] += len(tag)*10/len(resource[3])
 
     topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
-    # topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
     topitemsasdict = dict(topitems)
 
     if len(topitems) > 1:
         resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
         
-        print('---------------------before--------------------------------')
-        print(len(resQueryset))
-        #this set
         thisSet = []
         #make result distinct
         for query in resQueryset:
             if query.id not in thisSet:
                 thisSet.append(query.id)
         newQuerySet = Resource.objects.filter(id__in=thisSet)
-        print('------------------------after-----------------------------')
-        print(len(newQuerySet))
         for qs in newQuerySet:
             if qs.id not in topitemsasdict.keys():
                 qs.score = 0
