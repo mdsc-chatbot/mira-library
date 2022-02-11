@@ -49,6 +49,7 @@ class RetrieveResourceSerializer(serializers.ModelSerializer):
 class ResourceUpdateSerializer(serializers.Serializer):
     review_status = serializers.CharField(max_length=50, default="pending")
     review_status_2 = serializers.CharField(max_length=50, default="pending")
+    review_status_3 = serializers.CharField(max_length=50, default="pending")
     rating = serializers.IntegerField(default=1)
     review_comments = serializers.CharField()
 

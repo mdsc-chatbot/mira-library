@@ -222,7 +222,7 @@ export default class ReviewTable extends Component {
         
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (ids.includes(r.id) === true) && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer)) || (this.state.assignedOnly === false)) &&
+            (ids.includes(r.id) === true) && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer || r.assigned_reviewer_3 == currentReviewer)) || (this.state.assignedOnly === false)) &&
                 ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0]))))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
@@ -255,7 +255,7 @@ export default class ReviewTable extends Component {
                     </td>
                 </tr>
             ) : (reviews_2.has(r.id))
-                && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer)) || (this.state.assignedOnly === false)) ? (
+                && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer || r.assigned_reviewer_3 == currentReviewer)) || (this.state.assignedOnly === false)) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -382,8 +382,8 @@ export default class ReviewTable extends Component {
         }
         
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending'))
-                || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending')))
+            (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending' || r.review_status_3 === 'pending'))
+                || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending') || (r.assigned_reviewer_3 === currentReviewer && r.review_status_3 === 'pending')))
                     || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><div><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link>{(this.context.security.is_editor) && (this.state.resourceIdsWithPendingTag.includes(r.id)) ? <i class="tags icon blue"></i> : null}</div></td>

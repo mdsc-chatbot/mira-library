@@ -104,6 +104,7 @@ export default class ResourceDetail extends Component {
 
         var rs1 = this.state.resource.review_status;
         var rs2 = this.state.resource.review_status_2;
+        var rs3 = this.state.resource.review_status_3;
         if ((rs1 === "pending" && this.state.resource.assigned_reviewer === reviewer) &&
             (rs2 === "pending" && this.state.resource.assigned_reviewer_2 === reviewer)) {
             axios
@@ -138,7 +139,8 @@ export default class ResourceDetail extends Component {
 
 
         if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending" ||
-            this.state.resource.review_status === "conflict" || this.state.resource.review_status_2 === "conflict") {
+            this.state.resource.review_status === "conflict" || this.state.resource.review_status_2 === "conflict" ||
+            this.state.resource.review_status_3 === "pending" || this.state.resource.review_status_3 === "conflict") {
 
             const reviewer = this.context.security.is_logged_in
                 ? this.context.security.id
@@ -148,11 +150,14 @@ export default class ResourceDetail extends Component {
             //serializer forces us to include both review statuses in the proper state
             var rs1 = this.state.resource.review_status;
             var rs2 = this.state.resource.review_status_2;
+            var rs3 = this.state.resource.review_status_3;
             if ((rs1 === "pending" || rs1 === "conflict") && this.state.resource.assigned_reviewer === reviewer) rs1 = review_status;
             if ((rs2 === "pending" || rs2 === "conflict") && this.state.resource.assigned_reviewer_2 === reviewer) rs2 = review_status;
+            if ((rs3 === "pending" || rs3 === "conflict") && this.state.resource.assigned_reviewer_3 === reviewer) rs3 = review_status;
             var submitCmd = {
                 "review_status": rs1,
                 "review_status_2": rs2,
+                "review_status_3": rs3,
                 "rating": this.state.rating,
                 "review_comments": this.state.comments
             };
@@ -342,7 +347,7 @@ export default class ResourceDetail extends Component {
 
     myTimer = () => {
         this.time += 1;
-        console.log('timer',this.time)
+        //console.log('timer',this.time)
     }
 
     fetchTags = () => {
@@ -441,7 +446,7 @@ export default class ResourceDetail extends Component {
 
 
                                             }
-                                            {((this.state.resource.assigned_reviewer_2 == reviewer) || (this.state.resource.assigned_reviewer == reviewer)) ?
+                                            {((this.state.resource.assigned_reviewer_2 == reviewer) || (this.state.resource.assigned_reviewer == reviewer) || (this.state.resource.assigned_reviewer_3 == reviewer)) ?
                                                 ([<Segment basic textAlign='center'>
                                                     <Card fluid>
                                                         <Card.Content>
