@@ -74,8 +74,8 @@ def find_keywords_of_sentence(sentence):
 
 def ResourceViewQuerySet(query_params):
     # Taken from PR #164
-    queryset = Resource.objects.filter(review_status="approved")
-    queryset = queryset.filter(review_status_2="approved")
+    queryset = Resource.objects.filter(Q(review_status="approved") | Q(review_status_3="approved"))
+    queryset = queryset.filter(Q(review_status_2="approved") | Q(review_status_3="approved"))
 
     # Search parameters is matched between four fields currently:
     #   - title
@@ -311,7 +311,7 @@ def ResourceViewQuerySet(query_params):
 
 
 def calculateCountsForResources(query_params):
-    resQueryset = Resource.objects.filter(review_status="approved").filter(review_status_2="approved")
+    resQueryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved"))
     
     word_mapping = {'family_member': 'Caregiver/Parent'
     ,'family_member': 'Children'
@@ -528,7 +528,7 @@ def calculateCountsForResources(query_params):
 
 
 def calculateTagWeightsForResources(query_params):
-    resources = Resource.objects.filter(review_status="approved").filter(review_status_2="approved").values('id', 'title', 'description', 'organization_description', 'organization_name', 'definition')
+    resources = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved")).values('id', 'title', 'description', 'organization_description', 'organization_name', 'definition')
     tags = Tag.objects.filter(approved="1").values('id','name')
     resource_text = []
     all_tags = []
@@ -605,7 +605,7 @@ def calculateTagWeightsForResources(query_params):
 
 # rasa will call it
 def ResourceByIntentEntityViewQuerySet(query_params):
-    resQueryset = Resource.objects.filter(review_status="approved").filter(review_status_2="approved")
+    resQueryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved"))
     
     word_mapping = {'family_member': 'Caregiver/Parent'
     ,'family_member': 'Children'
@@ -807,7 +807,7 @@ def ResourceByIntentEntityViewQuerySet(query_params):
     return resQueryset
 
 def VerifyApprovedResources(query_params):
-    resources = Resource.objects.filter(review_status="approved").filter(review_status_2="approved").values('id', 'title', 'description', 'organization_description', 'website_meta_data_updated_at', 'url', 'organization_name', 'definition')
+    resources = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved")).values('id', 'title', 'description', 'organization_description', 'website_meta_data_updated_at', 'url', 'organization_name', 'definition')
 
     resource_ids_with_problems = []
     now = datetime.now()
@@ -838,7 +838,7 @@ def VerifyApprovedResources(query_params):
             except Exception as e:
                 resource_ids_with_problems.append(resource['id'])
 
-    result = Resource.objects.filter(review_status="approved").filter(review_status_2="approved").filter(id__in=resource_ids_with_problems)
+    result = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved")).filter(id__in=resource_ids_with_problems)
 
     return result
 
