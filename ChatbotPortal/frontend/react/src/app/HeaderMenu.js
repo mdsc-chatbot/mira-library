@@ -86,13 +86,13 @@ https://ibb.co/9wx9pbr */}
             onClick={this.handleItemClick}
           />
 
-          <Menu.Item
+          {this.context.security.is_logged_in && <Menu.Item
             name='FAQ'
             as={Link}
             to={baseRoute + '/faq'}
             active={activeItem === 'FAQ'}
             onClick={this.handleItemClick}
-          />
+          />}
 
           {/* {this.context.security.is_logged_in && (
             <Menu.Item

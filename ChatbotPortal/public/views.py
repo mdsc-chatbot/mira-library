@@ -177,6 +177,9 @@ def ResourceViewQuerySet(query_params):
         search_params = query_params.get('search')
         imp_words = find_keywords_of_sentence(search_params)
 
+        if not imp_words:
+            return queryset
+
         categories = set()
         imp_word_mapping = {}
         for imp_wrd in imp_words:
@@ -213,7 +216,6 @@ def ResourceViewQuerySet(query_params):
                 categories.add(cat)
         
 
-
         print('categories', categories)
         approved_tags = Tag.objects.filter(approved=1).filter(tag_category__in=categories).values('name','id','tag_category').all()
         approved_tag_names = list(map(lambda x: x['name'], approved_tags))
@@ -238,8 +240,6 @@ def ResourceViewQuerySet(query_params):
 
         ids = list(map(lambda x: x.id ,queryset))
         queryset_ = Resource.objects.filter(Q(tags__name__in=actual_tags) | Q(tags__name__in=probable_tags) | Q(id__in=ids))
-        print('actual_tags',actual_tags)
-        print('probable_tags',probable_tags)
 
 
         tag_list = set()
@@ -277,10 +277,13 @@ def ResourceViewQuerySet(query_params):
             newQuerySet_ = Resource.objects.filter(id__in=thisSet)
 
             for qs in newQuerySet_:
+                qs.portal_search_rcmnd_count += 1
+                qs.save()
                 if qs.id not in topitemsasdict.keys():
                     qs.score = 0
                 else:
                     qs.score = topitemsasdict[qs.id]
+
 
             newQuerySet_.order_by('score')
 
@@ -405,6 +408,20 @@ def calculateCountsForResources(query_params):
     ,'health professional':'Family Doctor'
     ,'alberta':'Alberta Wide'
     ,'Alberta':'Alberta Wide'
+    ,'Schizophrenia':'Schizophrenia and psychosis'
+    ,'COVID-19':'COVID-19 (context specific - ensure any other concerns are also noted)'
+    ,'COVID':'COVID-19 (context specific - ensure any other concerns are also noted)'
+    ,'eating':'Eating Disorders'
+    ,'distress':'General Distress'
+    ,'hiv':'Human Immunodeficiency Virus (HIV)'
+    ,'addiction':'Addictions (including Drugs, Alcohol, and Gambling)'
+    ,'addiction':'Behavioural Addiction'
+    ,'addiction':'Substance use'
+    ,'resilience':'Resiliency'
+    ,'Resiliency':'resilience'
+    ,'psychologist':'Therapist/Counsellor/Psychotherapist'
+    ,'psychiatrist':'Therapist/Counsellor/Psychotherapist'
+    ,'need_coping_skill':'Self-Help Books'
     }
 
     tags_params = query_params.getlist('tags')
@@ -525,6 +542,40 @@ def calculateCountsForResources(query_params):
     btn_2 = btn_2['name']
     
     return {'resource_counts':len(newQuerySet), 'btns':[btn_1,btn_2]}
+
+
+def calculateStatsResources(query_params):
+    allRes = Resource.objects.all()
+    resQueryset = Resource.objects.filter(review_status="approved").filter(review_status_2="approved")
+    
+    allTags = Tag.objects.all()
+    allTags = list(map(lambda x: {"name":x.name, "tag_category":x.tag_category, 'number_of_res':0,} ,allTags))
+
+    allTags_ = {}
+    for allTag in allTags:
+        allTags_[allTag['name']]=allTag
+    
+    allTagsAndRes = list(map(lambda t:t.tags.all() ,allRes))
+    for allTagandRes in allTagsAndRes:
+        for tag in allTagandRes:
+            allTags_[tag.name]['number_of_res']+=1
+    
+    
+    allTags_ = sorted(allTags_.items(), key= lambda x: x[1]['number_of_res'], reverse=True)
+
+    stats = {
+        'resources':{
+            'approved count':len(resQueryset),
+            'rejected count':len(allRes)-len(resQueryset),
+        },
+        'Tags':{
+            'approved count':len(allRes),
+            'approved tags':allTags_
+        }
+    }
+
+    
+    return {'data':stats}
 
 
 def calculateTagWeightsForResources(query_params):
@@ -699,6 +750,20 @@ def ResourceByIntentEntityViewQuerySet(query_params):
     ,'health professional':'Family Doctor'
     ,'Alberta':'Alberta Wide'
     ,'alberta':'Alberta Wide'
+    ,'Schizophrenia':'Schizophrenia and psychosis'
+    ,'COVID-19':'COVID-19 (context specific - ensure any other concerns are also noted)'
+    ,'COVID':'COVID-19 (context specific - ensure any other concerns are also noted)'
+    ,'eating':'Eating Disorders'
+    ,'distress':'General Distress'
+    ,'hiv':'Human Immunodeficiency Virus (HIV)'
+    ,'addiction':'Addictions (including Drugs, Alcohol, and Gambling)'
+    ,'addiction':'Behavioural Addiction'
+    ,'addiction':'Substance use'
+    ,'resilience':'Resiliency'
+    ,'Resiliency':'resilience'
+    ,'psychologist':'Therapist/Counsellor/Psychotherapist'
+    ,'psychiatrist':'Therapist/Counsellor/Psychotherapist'
+    ,'need_coping_skill':'Self-Help Books'
     }
 
     tags_params = query_params.getlist('tags')
@@ -763,17 +828,21 @@ def ResourceByIntentEntityViewQuerySet(query_params):
             continue
         index = json.loads(resource[1])
         original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
+        original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
         # tags_id_list = tag ids
         for tag in tags_id_list:
             tag = str(tag)
             if tag in index:
                 resource_scores[resource[0]] += index[tag]
             if tag in original_tag_ids:
-                resource_scores[resource[0]] += 0.65
+                resource_scores[resource[0]] += 1.5
+                i = original_tag_ids.index(tag)
+                if original_tag_categories[i] == 'Mental Health':
+                    resource_scores[resource[0]] += 1.5
         
         for tag in tags_params:
             if tag[:-1] in resource[3]:
-                resource_scores[resource[0]] += len(tag)*10/len(resource[3])
+                resource_scores[resource[0]] += float(len(tag)/6)
 
     topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
     topitemsasdict = dict(topitems)
@@ -788,6 +857,9 @@ def ResourceByIntentEntityViewQuerySet(query_params):
                 thisSet.append(query.id)
         newQuerySet = Resource.objects.filter(id__in=thisSet)
         for qs in newQuerySet:
+            qs.chatbot_api_rcmnd_count += 1
+            qs.save()
+            
             if qs.id not in topitemsasdict.keys():
                 qs.score = 0
             else:
@@ -868,6 +940,14 @@ class ResourceByIntentEntityView(generics.ListAPIView):
     def get_queryset(self):
         return ResourceByIntentEntityViewQuerySet(self.request.query_params)
 
+class ResourceStatsView(APIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    # pagination_class = StandardResultSetPagination
+
+    def get(self, request, format=None):
+        res = calculateStatsResources(self.request.query_params)
+        return Response({'res':res})
 
 class IndexResourceEntityView(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer

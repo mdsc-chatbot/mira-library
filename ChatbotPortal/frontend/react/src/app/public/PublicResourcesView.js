@@ -46,12 +46,13 @@ class PublicResourcesView extends Component {
     // Static list of sort options
     // This list is reflected in the back-end code as well. Check out the view for retrieving resources.
     static resourceDropdownOptions = [
-        { key: 'By Most Recent', value: 0, text: 'By Most Recent' },
-        { key: 'By Most Popular', value: 1, text: 'By Most Popular' },
-        { key: 'By Highest Rated', value: 2, text: 'By Highest Rated' },
-        { key: 'By Least Recent', value: 3, text: 'By Least Recent' },
-        { key: 'By Least Popular', value: 4, text: 'By Least Popular' },
-        { key: 'By Lowest Rated', value: 5, text: 'By Lowest Rated' },
+        // { key: 'By Most Recent', value: 0, text: 'By Most Recent' },
+        // { key: 'By Most Popular', value: 1, text: 'By Most Popular' },
+        // { key: 'By Highest Rated', value: 2, text: 'By Highest Rated' },
+        // { key: 'By Least Recent', value: 3, text: 'By Least Recent' },
+        // { key: 'By Least Popular', value: 4, text: 'By Least Popular' },
+        // { key: 'By Lowest Rated', value: 5, text: 'By Lowest Rated' },
+        { key: 'By Most Related', value: 6, text: 'By Most Related' },
     ];
 
     static propTypes = {
@@ -270,7 +271,7 @@ class PublicResourcesView extends Component {
     showResourceHeader = () => {
         return (
             <React.Fragment>
-                <Dropdown selection placeholder={"Sort by"} value={this.state.sortOption} onChange={this.handleSortDropdownChange} options={PublicResourcesView.resourceDropdownOptions} />
+                {/* <Dropdown selection placeholder={"Sort by"} value={this.state.sortOption} onChange={this.handleSortDropdownChange} options={PublicResourcesView.resourceDropdownOptions} /> */}
                 <Pagination
                     activePage={this.state.resourcePage}
                     totalPages={Math.ceil(this.state.totalResourceCount / 100)}

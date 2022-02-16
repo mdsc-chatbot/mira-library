@@ -79,6 +79,13 @@ class Tag(models.Model):
     tag_category = models.CharField(max_length = 100)
     approved = models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['approved']),
+            models.Index(fields=['tag_category']),
+        ]
+
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
@@ -121,8 +128,8 @@ class Resource(models.Model):
     website_summary_metadata = models.TextField(default="", blank=True, null=True)
 
     public_view_count = models.IntegerField(default=0)
-    # chatbot_api_rcmnd_count = models.IntegerField(default=0)
-    # portal_search_rcmnd_count = models.IntegerField(default=0)
+    chatbot_api_rcmnd_count = models.IntegerField(default=0)
+    portal_search_rcmnd_count = models.IntegerField(default=0)
 
     objects = ResourceManager()
 
@@ -178,4 +185,11 @@ class Resource(models.Model):
             max_length=10,
             default="-6 UTC",
         )
+
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['review_status']),
+            models.Index(fields=['review_status_2']),
+        ]
     
