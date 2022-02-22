@@ -468,7 +468,7 @@ def calculateCountsForResources(query_params):
         # {"id":1,"tags":[1,3,5,7,9]}
     ]
     for query in newQuerySet:
-        res = {'id':query.id, "tags":list(map(lambda x: x.id ,query.tags.all()))}
+        res = {'id':query.id, "tags":list(map(lambda x: (x.id, x.tag_category) ,query.tags.all()))}
         found_resources.append(res)
     
     
@@ -476,7 +476,9 @@ def calculateCountsForResources(query_params):
         unique_tags = []
         for found_resource in found_resources:
             for found_resource_tag in found_resource['tags']:
-                unique_tags.append(found_resource_tag)
+                if(found_resource_tag[1]=="Health Issue"):
+                    unique_tags.append(found_resource_tag[0])
+                    
         unique_tags_counts = collections.Counter(unique_tags)
         return unique_tags_counts
 
@@ -485,10 +487,10 @@ def calculateCountsForResources(query_params):
         tag_set_if_present = set()
         tag_set_if_absent = set()
         for found_resource in found_resources:
-            if tag in found_resource['tags']:
-                for t in found_resource['tags']: tag_set_if_present.add(t)
+            if tag in found_resource['tags'][0]:
+                for t in found_resource['tags'][0]: tag_set_if_present.add(t)
             else:
-                for t in found_resource['tags']: tag_set_if_absent.add(t)
+                for t in found_resource['tags'][0]: tag_set_if_absent.add(t)
         return (len(tag_set_if_present)+len(tag_set_if_absent))
 
 
@@ -496,7 +498,8 @@ def calculateCountsForResources(query_params):
 
     #pop input tags from counted tags 
     for tag in input_tags:
-        res.pop(tag)
+        if tag in res:
+            res.pop(tag)
 
     #select a tag to be a btn
     selected_tags = []
@@ -525,10 +528,22 @@ def calculateCountsForResources(query_params):
 
 def calculateStatsResources(query_params):
     allRes = Resource.objects.all()
-    resQueryset = Resource.objects.filter(review_status="approved").filter(review_status_2="approved")
+    resQueryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved"))
     
     allTags = Tag.objects.all()
     allTags = list(map(lambda x: {"name":x.name, "tag_category":x.tag_category, 'number_of_res':0,} ,allTags))
+
+    resQueryset_ = []
+    for resource in resQueryset:
+        resQueryset_.append({
+            'title':resource.title,
+            'chatbot_api_rcmnd_count': resource.chatbot_api_rcmnd_count,
+            'portal_search_rcmnd_count': resource.portal_search_rcmnd_count,
+            'public_view_count': resource.public_view_count,
+        })
+
+    resQueryset_ = sorted(resQueryset_, key= lambda x: x['chatbot_api_rcmnd_count'], reverse=True)
+
 
     allTags_ = {}
     for allTag in allTags:
@@ -545,7 +560,8 @@ def calculateStatsResources(query_params):
     stats = {
         'resources':{
             'approved count':len(resQueryset),
-            'rejected count':len(allRes)-len(resQueryset),
+            'rejected + pending count':len(allRes)-len(resQueryset),
+            'approved': resQueryset_
         },
         'Tags':{
             'approved count':len(allRes),
@@ -565,7 +581,7 @@ def calculateTagWeightsForResources(query_params):
     for resource in resources:
         resource_text.append({
             'id':resource['id'],
-            'value':resource['title']+" "+resource['description']+" "+resource['organization_description']+" "+resource['organization_name']+" "+resource['definition'] 
+            'value':str(resource['title'])+" "+str(resource['description'])+" "+str(resource['organization_description'])+" "+str(resource['organization_name'])+" "+str(resource['definition'])
         })
     for tag in tags:
         all_tags.append({
