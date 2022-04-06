@@ -571,11 +571,10 @@ def calculateCountsForResources(query_params):
                 for t in found_resource['tags'][0]: tag_set_if_absent.add(t)
         return (len(tag_set_if_present)+len(tag_set_if_absent))
 
-    res = count_tags(found_resources, False)
-    # print('tags_params====>>', tags_params)
-    # print('ressss====>>', res)
-    if len(res) < 2:
-        res = count_tags(found_resources, True)
+    res = count_tags(found_resources, True)
+    
+    # if len(res) < 2:
+    #     res = count_tags(found_resources, True)
     
 
 
@@ -612,9 +611,10 @@ def calculateCountsForResources(query_params):
     # for tag_ in tags_params:
     #     if tag_ in kg:
     #         all_possible_subcat = kg[tag_]
+    #         print('all_possible_subcat', all_possible_subcat, '\n\n\n')
     #         # print('all_possible_subcat', all_possible_subcat, '\n\n\n')
     #         t = Tag.objects.filter(name__in=all_possible_subcat).values('id').all()
-    #         # print('tttttttttttttttttttt', t, '\n\n\n')
+    #         print('tttttttttttttttttttt', t, '\n\n\n')
     #         it = list(map(lambda x: x['id'], t))
     #         sorted_selected_tags = sorted(it, key=lambda x: _res[x])
 
