@@ -571,10 +571,10 @@ def calculateCountsForResources(query_params):
                 for t in found_resource['tags'][0]: tag_set_if_absent.add(t)
         return (len(tag_set_if_present)+len(tag_set_if_absent))
 
-    res = count_tags(found_resources, True)
+    res = count_tags(found_resources, False)
     
-    # if len(res) < 2:
-    #     res = count_tags(found_resources, True)
+    if len(res) < 2:
+        res = count_tags(found_resources, True)
     
 
 
@@ -731,138 +731,68 @@ def calculateTagWeightsForResources(query_params):
     return []
 
 # def calculateTagWeightsForResources(query_params):
-    # resources = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved")).values('id', 'title', 'description', 'organization_description', 'organization_name', 'definition')
-    # tags = Tag.objects.filter(approved="1").values('id','name')
-    # # .filter(tag_category="Health Issue")
+#     resources = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved")).values('id', 'title', 'description', 'organization_description', 'organization_name', 'definition')
+#     tags = Tag.objects.filter(approved="1").values('id','name')
+#     # .filter(tag_category="Health Issue")
     
-    # resource_text = []
-    # resource_index = []
-    # all_tags = {}
+#     resource_text = []
+#     resource_index = []
+#     all_tags = {}
 
-    # def pre_processing(newValue):
-    #     newValue = newValue.lower().replace('(',' ').replace(')',' ').replace('\'',' ').replace('\"',' ').replace('`',' ').replace('.','').replace(',','').replace('?','').replace('!','')
-    #     return newValue
+#     def pre_processing(newValue):
+#         newValue = newValue.lower().replace('(',' ').replace(')',' ').replace('\'',' ').replace('\"',' ').replace('`',' ').replace('.','').replace(',','').replace('?','').replace('!','')
+#         return newValue
 
-    # for resource in resources:
-    #     txt = pre_processing(str(resource['id'])+"___"+str(resource['title'])+" "+str(resource['description'])+" "+str(resource['definition'])+" "+str(resource['organization_name'])+" "+str(resource['organization_description'])+" ")
+#     for resource in resources:
+#         txt = pre_processing(str(resource['id'])+"___"+str(resource['title'])+" "+str(resource['description'])+" "+str(resource['definition'])+" "+str(resource['organization_name'])+" "+str(resource['organization_description'])+" ")
         
-    #     resource_text.append(txt.lower())
-    #     resource_index.append(resource['id'])
+#         resource_text.append(txt.lower())
+#         resource_index.append(resource['id'])
     
-    # for tag in tags:
-    #     all_tags[tag['name'].lower()] = tag['id']
+#     for tag in tags:
+#         all_tags[tag['name'].lower()] = tag['id']
 
-    # tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range = (1,4))
-    # tfidf_vector = tfidf_vectorizer.fit_transform(resource_text)
-    # tfidf_df = pd.DataFrame(tfidf_vector.toarray(), index=resource_text, columns=tfidf_vectorizer.get_feature_names())
-    # tfidf_df = tfidf_df.stack().reset_index()
-    # tfidf_df = tfidf_df.rename(columns={0:'tfidf', 'level_0': 'document','level_1': 'term', 'level_2': 'term'})
-    # index_names_ = tfidf_df[tfidf_df['tfidf'] < 0.0001].index
-    # tfidf_df.drop(index_names_, inplace = True)
+#     tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range = (1,4))
+#     tfidf_vector = tfidf_vectorizer.fit_transform(resource_text)
+#     tfidf_df = pd.DataFrame(tfidf_vector.toarray(), index=resource_text, columns=tfidf_vectorizer.get_feature_names())
+#     tfidf_df = tfidf_df.stack().reset_index()
+#     tfidf_df = tfidf_df.rename(columns={0:'tfidf', 'level_0': 'document','level_1': 'term', 'level_2': 'term'})
+#     index_names_ = tfidf_df[tfidf_df['tfidf'] < 0.0001].index
+#     tfidf_df.drop(index_names_, inplace = True)
 
-    # tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False]).groupby(['document']).head(60)
-    # top_tfidf = tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False])
+#     tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False]).groupby(['document']).head(60)
+#     top_tfidf = tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False])
 
-    # response = {}
-    # for document in resource_text:
-    #     doc_id = document[:document.index("___")]
-    #     res = top_tfidf[top_tfidf['document'].str.startswith((doc_id+"___"))]
-    #     # print(res,"\n")
-    #     for tag in all_tags:
-    #         for index, row in res.iterrows():
-    #             if((row['tfidf'] > 0) and (( len(tag)>7 and (" "+tag[:-3]) in row['term'] ) or ((" "+tag+" ") in row['term']))):
-    #                 t = tag
-    #                 print(doc_id, '|' , row['term'], '|' ,tag)
+#     response = {}
+#     for document in resource_text:
+#         doc_id = document[:document.index("___")]
+#         res = top_tfidf[top_tfidf['document'].str.startswith((doc_id+"___"))]
+#         # print(res,"\n")
+#         for tag in all_tags:
+#             for index, row in res.iterrows():
+#                 if((row['tfidf'] > 0) and (( len(tag)>7 and (" "+tag[:-3]) in row['term'] ) or ((" "+tag+" ") in row['term']))):
+#                     t = tag
+#                     print(doc_id, '|' , row['term'], '|' ,tag)
 
-    #                 if doc_id not in response:
-    #                     response[doc_id] = {}
+#                     if doc_id not in response:
+#                         response[doc_id] = {}
 
-    #                 if all_tags[t] not in response[doc_id]:
-    #                     response[doc_id][all_tags[t]] = 0
+#                     if all_tags[t] not in response[doc_id]:
+#                         response[doc_id][all_tags[t]] = 0
 
-    #                 response[doc_id][all_tags[t]] += row['tfidf']
+#                     response[doc_id][all_tags[t]] += row['tfidf']
     
 
-    # for resource_id in response:
-    #     print('resource_id=',resource_id, "resource_id[]=",response[resource_id])
-    #     instance = Resource.objects.filter(pk=resource_id).get()
-    #     instance.index = json.dumps(response[resource_id])
-    #     instance.save()
+#     for resource_id in response:
+#         print('resource_id=',resource_id, "resource_id[]=",response[resource_id])
+#         instance = Resource.objects.filter(pk=resource_id).get()
+#         instance.index = json.dumps(response[resource_id])
+#         instance.save()
 
-    # print("--------------------------------------------done--------------------------------------------")
-    # # print(response)
-    # return tags
+#     print("--------------------------------------------done--------------------------------------------")
+#     # print(response)
+#     return tags
 
-
-
-    # from here
-    # tags = Tag.objects.filter(Q(approved="1") and ~Q(tag_category="Location") and ~Q(tag_category="Language")).values('id','name')
-
-    # for tag in tags:
-    #     all_tags.append({
-    #         'id':tag['id'],
-    #         'value':tag['name']
-    #     })
-
-    # # # # 2 text cleaning & 3 preprocessing
-    # # # def pre_processing(word):
-    # # #     newValue = word['value']
-    # # #     newValue = newValue.lower().replace('(',' ').replace(')',' ').replace('\'',' ').replace('\"',' ').replace('`',' ').replace('.','').replace(',','').replace('?','').replace('!','')
-    # # #     word['value'] = newValue
-    # # #     return word
-
-    # # # all_tags = [pre_processing(tag) for tag in all_tags]
-    # # # resource_text = [pre_processing(resource) for resource in resource_text]
-
-
-    # # # # 4 feature extraction & 5 modeling
-    # def tf_idf(doc_array, words_arr):
-    #     doc_token_counts = {}
-    #     response = {}
-    #     token_counter = {}
-    #     for doc in doc_array:
-    #         doc_id = doc['id']
-    #         doc_value = doc['value']
-    #         tokens = doc_value.split()
-    #         t_counts = Counter(tokens)
-    #         doc_token_counts[doc_id] = t_counts
-    #         for word in words_arr:
-    #             word_value = word['value']
-    #             if t_counts[word_value]>0:
-    #                 if word_value not in token_counter:
-    #                     token_counter[word_value]=0
-    #                 token_counter[word_value] +=1        
-
-    #     for doc in doc_array:
-    #         doc_id = doc['id']
-    #         doc_value = doc['value']
-    #         response[doc_id] = {}
-    #         for word in words_arr:
-    #             word_value = word['value']
-    #             word_id = word['id']
-    #             if word_value not in token_counter or token_counter[word_value]==0:
-    #                 response[doc_id][word_id] = 0
-    #             else:    
-    #                 response[doc_id][word_id] = (doc_token_counts[doc_id][word_value])/math.log2(len(doc_array)/token_counter[word_value])
-            
-    #     for doc in doc_array:
-    #         doc_id = doc['id']
-    #         items = response[doc_id]
-    #         topitems = heapq.nlargest(70, items.items(), key=itemgetter(1))
-    #         topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
-    #         response[doc_id] = topitemsasdict
-        
-    #     return response
-
-    # res = tf_idf(resource_text, all_tags)
-
-    # # for resource in resource_text:
-    # #     resource_id = resource['id']
-    # #     instance = Resource.objects.filter(pk=resource_id).get()
-    # #     instance.index = json.dumps(res[resource_id])
-    # #     instance.save()
-
-    # # return tags
 
 # rasa will call it
 def ResourceByIntentEntityViewQuerySet(query_params):
@@ -1324,9 +1254,9 @@ def ResourceByIntentEntityViewQuerySet(query_params):
                 elif original_tag_categories[i] == 'Health Issue':
                     resource_scores[resource[0]] += 0.1
                 elif original_tag_categories[i] == 'Resource Type for Programs and Services':
-                    resource_scores[resource[0]] += 0.1
+                    resource_scores[resource[0]] += 0.2
                 elif original_tag_categories[i] == 'Resource Type for Education/Informational':
-                    resource_scores[resource[0]] += 0.1
+                    resource_scores[resource[0]] += 0.2
 
         for original_tag_id in original_tag_ids:
             if original_tag_id in query_relaxation_tags_id:
@@ -1349,9 +1279,9 @@ def ResourceByIntentEntityViewQuerySet(query_params):
             
             
             if (tag == 'information') and (resource[4] == 'RS' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 0.45
+                resource_scores[resource[0]] += 2.85
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 0.45
+                resource_scores[resource[0]] += 2.85
 
             if (tag == 'definition') and (resource[5]):
                 resource_scores[resource[0]] += 0.45
