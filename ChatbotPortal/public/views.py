@@ -139,13 +139,7 @@ def travel_mh_kg(word, current_node='START'):
 #     return travel_mh_kg(word, row_1['labels'])
 
         
-            
-
-
-
-
-
-
+     
 def ResourceViewQuerySet(query_params):
     # Taken from PR #164
     queryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved"))
@@ -218,7 +212,7 @@ def ResourceViewQuerySet(query_params):
                 if tag in original_tag_ids:
                     resource_scores[resource[0]] += 0.65
 
-        topitems = heapq.nlargest(25, resource_scores.items(), key=itemgetter(1))
+        topitems = heapq.nlargest(30, resource_scores.items(), key=itemgetter(1))
         # topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
         topitemsasdict = dict(topitems)
         if len(topitems) > 1:
@@ -240,120 +234,7 @@ def ResourceViewQuerySet(query_params):
 
             newQuerySet.order_by('score')
             return newQuerySet
-    else:
-        tag_categories = {
-            'health':['Addict', 'stress', 'depressed', 'anxious'], 
-            'family':['son', 'wife', 'husband', 'daughter'], 
-            'canada':['Alberta', 'Scotia', 'Edmonton']
-            }
-        
-        
-        
-        search_params = query_params.get('search')
-        imp_words = find_keywords_of_sentence(search_params)
-
-        if not imp_words:
-            return queryset
-
-        categories = set()
-        imp_word_mapping = {}
-        for imp_word in imp_words:
-            # classifier = pipeline("zero-shot-classification", model='cross-encoder/nli-roberta-base')
-            # # sent = "Apple just announced the newest iPhone X"
-            # # todo retrieve location
-            # candidate_labels = ["health", "family"]
-            # res = classifier(imp_word, candidate_labels)
-
-            # print(res)
-
-            # health_score = res['scores'][res['labels'].index("health")]
-            # family_score = res['scores'][res['labels'].index("family")]
-
-            # most_related_health_issue = ""
-            # if health_score > family_score and health_score > 0.60:
-            most_related_health_issue = travel_mh_kg(imp_word)
-
-            # else:
-            #     continue
-
-            imp_word_mapping[imp_word] = {'category':'Health Issue'}
-            categories.add('Health Issue')
-
-            print('most_related_health_issue', most_related_health_issue)
-        
-        print('categories', categories)
-        approved_tags = Tag.objects.filter(approved=1).filter(tag_category__in=categories).values('name','id','tag_category').all()
-        approved_tag_names = list(map(lambda x: x['name'], approved_tags))
-
-        actual_tags = []
-        probable_tags = {}
-
-        for imp_word in imp_word_mapping:
-            similar_tags = difflib.get_close_matches(imp_word, approved_tag_names, n=2, cutoff=0.61)
-            if similar_tags:
-                for t in similar_tags: actual_tags.append(t)
-            for app_tag in approved_tags:
-                if imp_word_mapping[imp_word]['category'] == app_tag['tag_category']:
-                    if app_tag['name'] not in probable_tags:
-                        probable_tags[app_tag['name']] = 0
-                    if list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(app_tag['name'], pos='n'))) and list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(imp_word, pos='n'))):
-                        probable_tags[app_tag['name']] += float(wordnet.path_similarity(list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(imp_word, pos='n')))[0], list(filter(lambda x: x.pos() =='n' ,wordnet.synsets(app_tag['name'], pos='n')))[0], simulate_root=True))
-
-
-        # actual_tags
-        probable_tags = list(map(lambda x: x[0], filter(lambda x: x[1]>0, probable_tags.items())))
-
-        ids = list(map(lambda x: x.id ,queryset))
-        queryset_ = Resource.objects.filter(Q(tags__name__in=actual_tags) | Q(tags__name__in=probable_tags) | Q(id__in=ids))
-
-
-        tag_list = set()
-        for probable_tag in probable_tags: tag_list.add(probable_tag)
-        for actual_tag in actual_tags: tag_list.add(actual_tag)
-
-        tagg = Tag.objects.filter(name__in=tag_list)
-        tag_list = list(map(lambda x: str(x.id) ,tagg))
-
-        # scoring and ordering by scores
-        resource_scores = {}
-        for resource in list(map(lambda x: [x.id,x.index, list(x.tags.all()), x.title], queryset_)):
-            resource_scores[resource[0]] = 0
-            if resource[1] is None or resource[1]=='':
-                continue
-            index = json.loads(resource[1])
-            original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
-            for tag in tag_list:
-                if tag in index:
-                    resource_scores[resource[0]] += index[tag]
-                if tag in original_tag_ids:
-                    resource_scores[resource[0]] += 0.65
-
-        topitems = heapq.nlargest(20, resource_scores.items(), key=itemgetter(1))
-        
-        topitemsasdict = dict(topitems)
-        if len(topitems) > 1:
-            queryset_ = queryset_.filter(id__in=topitemsasdict.keys())
-            
-            thisSet = []
-            #make result distinct
-            for query in queryset_:
-                if query.id not in thisSet:
-                    thisSet.append(query.id)
-            newQuerySet_ = Resource.objects.filter(id__in=thisSet)
-
-            for qs in newQuerySet_:
-                qs.portal_search_rcmnd_count += 1
-                qs.save()
-                if qs.id not in topitemsasdict.keys():
-                    qs.score = 0
-                else:
-                    qs.score = topitemsasdict[qs.id]
-
-
-            newQuerySet_.order_by('score')
-            return newQuerySet_
-
-
+    
     return queryset
 
 
@@ -469,9 +350,15 @@ def calculateCountsForResources(query_params):
     ,'crisis_distress_support':'Crisis Support/Distress Counselling'
     }
 
+    
+    n_tags_params = query_params.getlist('ntags')
+    n_tags_params = Tag.objects.filter(name__in=n_tags_params).all()
+    n_tags_params = list(map(lambda x: x.id, n_tags_params))
+    
+
     tags_params = query_params.getlist('tags')
     tags_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,tags_params))
-    # tags_params = list(map(lambda x: (x[:x.index("(")], x[x.index("(")+1:-1]) ,tags_params))
+    
 
     tags_params = list(map(lambda x: x[:x.index("(")] ,tags_params))
 
@@ -514,11 +401,7 @@ def calculateCountsForResources(query_params):
             query_relaxation_tags.append(canada_city_proviences[index])
             canada_cities.pop(index)
             canada_city_proviences.pop(index)
-        
-    #adding obvious location tags
-    # query_relaxation_tags.append('World-wide')
-    # query_relaxation_tags.append('All Canada')
-    # queryset = queryset.exclude(tags__name__in=canada_cities)
+    
 
     resQueryset = resQueryset.filter(Q(tags__name__in=tags_params) | Q(tags__name__in=query_relaxation_tags))
     
@@ -542,7 +425,6 @@ def calculateCountsForResources(query_params):
         res = {'id':query.id, "tags":list(map(lambda x: (x.id, x.tag_category) ,query.tags.all()))}
         found_resources.append(res)
     
-    
     def count_tags(found_resources, consider_mh):
         unique_tags = []
         for found_resource in found_resources:
@@ -560,7 +442,6 @@ def calculateCountsForResources(query_params):
         unique_tags_counts = collections.Counter(unique_tags)
         return unique_tags_counts
 
-
     def entrophy_for_tag(found_resources, tag):
         tag_set_if_present = set()
         tag_set_if_absent = set()
@@ -577,91 +458,17 @@ def calculateCountsForResources(query_params):
         res = count_tags(found_resources, True)
     
 
-
-    kg = {
-        'START':['Legal', 'Chronic Pain', 'Cancer', 'Human Immunodeficiency Virus (HIV)', 'Acquired Immune Deficiency Syndrome (AIDS)', 'COVID-19', 'Treatments', 'Traditional Indigenous Health'],
-
-        'Legal':['Abuse', 'Corrections', 'Reconciliation', 'Human Trafficking', 'Harrassment'],
-        'Abuse':['Domestic Violence', 'Sexual Violence', "Men's abuse"],
-        'Treatments':['Medication Treatment', 'Psychotherapies', 'Interventional Psychiatric Treatments'],
-        'Medication Treatment': ['Anticonvulsants', 'Anti-psychotics', 'Anti-depressants', 'Benzodiapines (Tranquilizers)', 'Psychedelics/Hallucinogens'],
-        'Psychotherapies':['Family Therapy', 'Dialectical Behavioural Therapy', 'Cognitive Behavioural Therapy', 'Group Therapy', 'Aversion Therapy', 'Exposure Therapy', 'Cognitive Behavioural Play Therapy', 'Interpersonal Therapy', 'Art and Pet Therapy', 'Applied behavioural analysis', 'Mentalization-Based Therapy', 'Psychodynamic Psychotherapy', 'Psychoeducation'],
-        'Interventional Psychiatric Treatments':['Electroconvulsive Therapy', 'Repetitive Transcranial Magnetic Stimulation', 'Magnetic Seizure Therapy', 'Smoking Cessation', 'Harm-Reduction'],
-        'Psychedelics/Hallucinogens': ['MDMA/Ecstasy', 'Ketamine', 'LSD', 'Psilocybin'],
-        'Stigma':['Prejudice', 'Discrimination', 'Self-stigma'],
-        'Social Support Services':['Workplace', 'Housing', 'Financial and Employment'],
-        'Life Transitions and Support/Skills': ['Interpersonal Relationships', 'Parenting', 'Adjustment disorders', 'Separation and Divorce'],
-        'General distress':['Grief and Bereavement', 'Burnout', 'Fatigue', 'Stress', 'Substance use', 'Sleep problems', 'Trauma', 'Self-harm including self-cutting', 'Suicidal ideation'],
-        'General well-being':['Self-care', 'Mindfulness', 'Resiliency'],
-        'Self-regulation': ['Emotional regulation', 'Anger management'],
-        'Physical Health and Nutrition': ['Overweight and Obesity', 'Sexual Health'],
-        'Maternal Mental Health': ['Post-partum', 'Birth-related PTSD'],
-        'Post-partum':['Post-partum depression', 'Post-partum anxiety', 'Post-partum OCD', 'Baby blues'],
-        'Infant and Early Childhood Mental Health (ICEMH)':['Attachment Problems'],
-        'General Supports for Children':['Bullying', 'Gender identity issues', 'Behaviour and Conduct Problems'],
-    }
-
-    _res = {}
-    for item in res.items():
-        _res[item[0]] = item[1]
-        # print(item[0], item[1])
-
-    
-    
-    # for tag_ in tags_params:
-    #     if tag_ in kg:
-    #         all_possible_subcat = kg[tag_]
-    #         print('all_possible_subcat', all_possible_subcat, '\n\n\n')
-    #         # print('all_possible_subcat', all_possible_subcat, '\n\n\n')
-    #         t = Tag.objects.filter(name__in=all_possible_subcat).values('id').all()
-    #         print('tttttttttttttttttttt', t, '\n\n\n')
-    #         it = list(map(lambda x: x['id'], t))
-    #         sorted_selected_tags = sorted(it, key=lambda x: _res[x])
-
-    #         btn_1 = Tag.objects.filter(id=sorted_selected_tags[0:2][0]).values('name').get()
-    #         btn_1 = btn_1['name']
-            
-    #         btn_2 = ""
-    #         if len(sorted_selected_tags) >1:
-    #             btn_2 = Tag.objects.filter(id=sorted_selected_tags[0:2][1]).values('name').get()
-    #             btn_2 = btn_2['name']
-            
-    #         return {'resource_counts':len(newQuerySet), 'btns':[btn_1,btn_2]}
-
-        
-    #     return {'data':stats}
-
-
-    # using Resource Type for Education/Informational
-
-
-    # using Resource Type for Programs/Services
-
-
-
-    
-
     #pop input tags from counted tags 
     for tag in input_tags:
         if tag in res:
             res.pop(tag)
 
-    #select a tag to be a btn
-    # selected_tags = []
-    # for key in res:
-    #     if res[key]>=(len(found_resources)/2)-1 and res[key]<=(len(found_resources)/2)+1 :
-    #         selected_tags.append(key)
+    for tag in n_tags_params:        
+        if tag in res:
+            res.pop(tag)
+
 
     selected_tags = list(map(lambda x: x[0], res.most_common(2)))
-
-    #select a tag to be a btn 
-    # if(len(selected_tags)<2):
-    #     i=0
-    #     for key in res.most_common():
-    #         if i<=(len(res)/2)+1 and i>=(len(res)/2)-1:
-    #             selected_tags.append(key[0])
-    #         i+=1
-
 
     # sorted_selected_tags = sorted(selected_tags, key=lambda x: entrophy_for_tag(found_resources,x))
     sorted_selected_tags = selected_tags
@@ -909,6 +716,8 @@ def ResourceByIntentEntityViewQuerySet(query_params):
     ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse')
     ]
 
+    n_tags_params = query_params.getlist('ntags')
+    n_tags_params = list(map(lambda x: x.lower() ,n_tags_params))
     
     tags_params = query_params.getlist('tags')
     tags_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,tags_params))
@@ -917,6 +726,8 @@ def ResourceByIntentEntityViewQuerySet(query_params):
 
 
     all_possible_tags = Tag.objects.filter(approved=1).all()
+    
+    all_possible_tags = list(filter(lambda x: x.name.lower() not in n_tags_params , all_possible_tags))
     all_possible_tags = list(map(lambda x: x.name, all_possible_tags))
 
     #######################calculate tag embeddings
@@ -1294,7 +1105,7 @@ def ResourceByIntentEntityViewQuerySet(query_params):
         
         res_counter+=1
 
-    topitems = heapq.nlargest(25, resource_scores.items(), key=itemgetter(1))
+    topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
 
     topitemsasdict = dict(topitems)
 
