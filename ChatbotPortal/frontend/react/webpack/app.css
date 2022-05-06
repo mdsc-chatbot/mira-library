@@ -27718,7 +27718,7 @@ ol.ui.horizontal.list li:before,
   flex-direction: column;
   position: relative;
   margin: 1rem 0em;
-  border: 0px solid rgba(34, 36, 38, 0.15);
+  border: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
   border-radius: 0.28571429rem;
 }
@@ -28045,8 +28045,7 @@ ol.ui.horizontal.list li:before,
 }
 /* Attached */
 .ui.inverted.attached.segment {
-  border-color: #062F65 !important;
-  background-color: #062F65 !important;
+  border-color: #555555;
 }
 /*-------------------
      Emphasis
@@ -35802,7 +35801,7 @@ Floated Menu / Item
   border-color: rgba(255, 255, 255, 0.1);
 }
 .ui.secondary.inverted.pointing.menu {
-  border-width: 0px;
+  border-width: 2px;
   border-color: rgba(34, 36, 38, 0.15);
 }
 .ui.secondary.inverted.pointing.menu .item {
@@ -36096,7 +36095,7 @@ Floated Menu / Item
 ---------------*/
 .ui.inverted.menu {
   border: 0px solid transparent;
-  background: #062F65;
+  background: #1B1C1D;
   box-shadow: none;
 }
 /* Menu Item */
