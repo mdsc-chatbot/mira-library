@@ -24,6 +24,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from datetime import datetime
+from queue import Empty
 from django.db.models.query import QuerySet
 import requests
 from rest_framework import generics, permissions
@@ -482,6 +483,23 @@ def calculateCountsForResources(query_params):
     btn_2 = btn_2['name']
     
     return {'resource_counts':len(newQuerySet), 'btns':[btn_1,btn_2]}
+
+
+def addViewToResource(query_params):
+    resQueryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | Q(review_status_3="approved"))
+    
+    tags_params = query_params.getlist('resource_title')
+    tags_params = set(tags_params)
+
+    resQueryset = resQueryset.filter(Q(title__in=tags_params))
+    for qs in resQueryset:
+        qs.chatbot_frontend_click_count += 1
+        qs.save()
+    
+    if len(resQueryset)==0:
+        return {'statuse':'not done'}
+    
+    return {'statuse':'done'}
 
 
 def calculateStatsResources(query_params):
@@ -1846,6 +1864,15 @@ class VerifyApprovedResourcesView(generics.ListAPIView):
 
     def get_queryset(self):
         return VerifyApprovedResources(self.request.query_params)
+
+class AddViewOfResourceView(APIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    pagination_class = HomepageResultSetPagination
+
+    def get(self, request, format=None):
+        res = addViewToResource(self.request.query_params)
+        return Response({'res':res})
 
 class HomepageResourceView(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer

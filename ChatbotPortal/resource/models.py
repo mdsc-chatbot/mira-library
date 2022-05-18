@@ -129,6 +129,7 @@ class Resource(models.Model):
 
     public_view_count = models.IntegerField(default=0)
     chatbot_api_rcmnd_count = models.IntegerField(default=0)
+    chatbot_frontend_click_count = models.IntegerField(default=0)
     portal_search_rcmnd_count = models.IntegerField(default=0)
 
     objects = ResourceManager()
