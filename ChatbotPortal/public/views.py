@@ -490,11 +490,19 @@ def addViewToResource(query_params):
     
     tags_params = query_params.getlist('resource_title')
     tags_params = set(tags_params)
+    click_type = query_params.getlist('click_type')
 
-    resQueryset = resQueryset.filter(Q(title__in=tags_params))
-    for qs in resQueryset:
-        qs.chatbot_frontend_click_count += 1
-        qs.save()
+    if click_type == "click_on_more":
+        resQueryset = resQueryset.filter(Q(title__in=tags_params))
+        for qs in resQueryset:
+            qs.chatbot_frontend_click_more_count += 1
+            qs.save()
+    else:
+        resQueryset = resQueryset.filter(Q(title__in=tags_params))
+        for qs in resQueryset:
+            qs.chatbot_frontend_click_count += 1
+            qs.save()
+
     
     if len(resQueryset)==0:
         return {'statuse':'not done'}
