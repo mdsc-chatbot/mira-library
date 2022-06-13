@@ -28,7 +28,7 @@ from rest_framework import permissions, generics, viewsets, mixins, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from .serializers import ResourceSerializer, RetrieveResourceSerializer, ResourceUpdateSerializer, TagSerializer, TagUpdateSerializer
-from .models import Resource, Tag, Category
+from .models import Resource, Tag, Category, ResourceFlags
 import json
 import mimetypes
 
@@ -112,6 +112,22 @@ def download_attachment(request, resource_id):
         resource.attachment.name.rsplit('/', 1)[-1])
 
     return response
+
+def flag_resource(request):
+    data = json.loads(request.body)
+    resource_id = data['resource_id']
+    flag_id = data['flag_id']
+
+    #get flag by id
+    flag = ResourceFlags.objects.get(pk=int(flag_id))
+
+    # add the flag to the resource
+    resource = Resource.objects.get(pk=int(resource_id))
+    resource.flags.add(flag)
+    resource.save()
+
+    # Return empty response
+    return HttpResponse()
 
 
 class ResourceViewSet(viewsets.ModelViewSet):

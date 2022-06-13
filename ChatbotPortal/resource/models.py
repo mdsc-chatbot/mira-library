@@ -86,11 +86,13 @@ class Tag(models.Model):
             models.Index(fields=['tag_category']),
         ]
 
+class ResourceFlags(models.Model):
+    id = models.AutoField(primary_key=True)
+    description = models.CharField(max_length=100)
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=400)
-      
 
 class Resource(models.Model):
 
@@ -188,6 +190,8 @@ class Resource(models.Model):
             default="-6 UTC",
         )
 
+    flags = models.ManyToManyField(ResourceFlags, blank=True)
+    visible = models.BooleanField(default=True)
 
     class Meta:
         indexes = [

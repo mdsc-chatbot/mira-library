@@ -22,13 +22,14 @@ __maintainer__ = "BOLDDUC LABORATORY"
 
 from django.contrib import admin
 
-from .models import Resource, Tag, Category
+from .models import Resource, ResourceFlags, Tag, Category
 
 def resource_list_display():
     # Admin cannot handle many to many relationships
     # Tag is in a many to many relationship
-    list_display = [field.name for field in Resource._meta.get_fields() if field.name != 'tags' and field.name != 'category']
+    list_display = [field.name for field in Resource._meta.get_fields() if field.name != 'tags' and field.name != 'category' and field.name != 'flags']
     list_display.append('get_tags')
+    list_display.append('get_flags')
     list_display.append('get_category')
     return list_display
 
@@ -41,6 +42,9 @@ class ResourceAdmin(admin.ModelAdmin):
     def get_tags(self, obj):
         return "\n".join([str(t.id) for t in obj.tags.all()])
 
+    def get_flags(self, obj):
+        return "\n".join([str(t.description) for t in obj.flags.all()])
+
     def get_category(self, obj):
         return str(obj.category.id)
 
@@ -52,10 +56,15 @@ class TagAdmin(admin.ModelAdmin):
     model = Tag
     list_display = ['id', 'name', 'approved']
 
+class FlagAdmin(admin.ModelAdmin):
+    model = Category
+    list_display = ['id', 'description']
+
 class CategoryAdmin(admin.ModelAdmin):
     model = Category
     list_display = ['id', 'name']
 
 
 admin.site.register(Tag, TagAdmin)
+admin.site.register(ResourceFlags, FlagAdmin)
 admin.site.register(Category, CategoryAdmin)

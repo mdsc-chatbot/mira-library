@@ -37,6 +37,7 @@ urlpatterns = [
     re_path(r'^get-tags/(?P<resource_id>.*)$', views.gettags, name='fetch-review-tags'),
     re_path(r'^get-all-resources-with-pending-tags$', views.getAllPTags, name='fetch-all-pending-tags'),
     re_path(r'^fetch-categories', views.fetch_categories, name='fetch-categories'),
+    re_path(r'^flag-resource/$', views.flag_resource, name='flag-resource'),
     path('<pk>/update/', views.ResourceUpdateView.as_view()),
     path('<pk>/updatepartial/', views.ResourcePartialUpdate.as_view()),
     path('<pk>/updatetags/', views.TagUpdateView.as_view()),
