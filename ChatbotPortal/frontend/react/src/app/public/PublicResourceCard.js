@@ -25,6 +25,7 @@ import PropTypes from 'prop-types'
 import {Card, Rating, Icon, Label} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import styles from './PublicResourceCard.css'
+import FlagPopup from '../resource/FlagPopup';
 
 export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSelected, selectedTags=[], allTags, handleTagInCardsDeselected}) {
     return (
@@ -67,6 +68,7 @@ export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSe
                         (<Label color='grey' className={styles.tagsLineHeight} tag_name={tag} onClick={handleTagInCardsDeselected} tiny horizontal>{tag}&nbsp;<Icon name="x" color="yellow"></Icon></Label>) :
                         (<Label className={styles.tagsLineHeight} onClick={handleTagInCardsSelected} tag_name={tag} tiny horizontal>{tag}</Label>))
                     }
+                    <div style={{float: "right"}}><FlagPopup resource_id={resource.id}></FlagPopup></div>
                 </Card.Description>
             </Card.Content>
             {/* <Card.Content extra>

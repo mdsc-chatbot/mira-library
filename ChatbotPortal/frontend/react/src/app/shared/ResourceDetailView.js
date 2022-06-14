@@ -117,11 +117,11 @@ function normal_header(resource, editable) {
                             <span>
                                 <Icon name="globe" />
                                 <Header.Content id="title_header">{resource.title}</Header.Content>
-                                <FlagPopup resource_id={resource.id}/>
                             </span>
                             <a href={resource.url} target="_blank" id="url">
                                 <h4 className={linkStyles.link}>{resource.url}</h4>
                             </a>
+                            <FlagPopup resource_id={resource.id}/>
                         </div>
                     </Header>
                 </Menu.Item>

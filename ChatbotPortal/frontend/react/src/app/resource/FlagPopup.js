@@ -60,7 +60,7 @@ export default class FlagPopup extends React.Component {
 
 	render() {
 		return (
-			<Popup trigger={<Icon name='exclamation circle' color='red' />} on='click' open={this.state.isOpen} onOpen={()=>this.setState({ isOpen: true })} onClose={()=>this.setState({ isOpen: false })} flowing>
+			<Popup trigger={<p style={{fontSize: "14px", color:"red"}}>report resource</p>} on='click' open={this.state.isOpen} onOpen={()=>this.setState({ isOpen: true })} onClose={()=>this.setState({ isOpen: false })} flowing>
 				<Form>
 					<h4>Report an Issue with this resource</h4>
 					<Form.Field>
