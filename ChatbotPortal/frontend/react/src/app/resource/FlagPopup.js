@@ -86,7 +86,7 @@ export default class FlagPopup extends React.Component {
 					<Form.Field>
 						<Checkbox
 						radio
-						label='This resource should not have been approved'
+						label='This resource is problematic - please review again'
 						name='checkboxRadioGroup'
 						value={3}
 						checked={this.state.flag_id === 3}
