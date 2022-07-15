@@ -105,7 +105,7 @@ class Resource(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     attachment = models.FileField(
         blank=True, upload_to='resource_attachment/', validators=[validate_file_size])
-    organization_name = models.TextField(default="",blank=True, null=True)
+    organization_name = models.TextField(blank=True, null=True)
     created_by_user = models.CharField(max_length=100, default="Unknown user",blank=True, null=True)
     created_by_user_pk = models.IntegerField(default=-1, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True, blank=True, null=True)

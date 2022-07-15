@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='reviews',
             name='question_answers',
-            field=models.TextField(blank=True, default='', null=True),
+            field=models.TextField(blank=True, null=True),
         ),
     ]

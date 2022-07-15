@@ -38,10 +38,12 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.10.2",
+    "@tarekraafat/autocomplete.js": "^10.2.7",
     "axios": "^0.19.2",
     "faker": "^4.1.0",
     "js-file-download": "^0.4.12",
     "moment": "^2.27.0",
+    "react-autocomplete": "^1.8.1",
     "react-datepicker": "^2.16.0",
     "react-dates": "^21.8.0",
     "react-infinite-loader": "^1.0.4",
