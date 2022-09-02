@@ -55,7 +55,13 @@ class LoginForm extends React.Component {
         });
     };
 
+    get_email (a, b){
+        return a + b
+    }
+
     render() {
+        const name = " mreeson"; 
+        const domain = "@" + "ualberta.ca"
         return (
             <Grid
                 onSubmit={e => this.props.handle_login(e, this.state)}
@@ -104,12 +110,13 @@ class LoginForm extends React.Component {
                         </Segment>
                     </Form>
                     <Message>
-                        New to us?{" "}
-                        <a
+                        Want to join us in supporting Mira?<br/>
+                        Visit our <a id="contact_us_page" href="https://mymira.ca/contact.html">"contact us" page</a> or reach out to the <br/> project manager at {this.get_email(name, domain)}
+                        {/*<a
                             id="signup_link"
                             href="#" onClick={() => this.props.handleRegisterClicked('signup')}>
                             Sign Up
-                        </a>
+                        </a>*/}
                     </Message>
                     <Message>
                         Forgot your password?{" "}
