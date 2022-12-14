@@ -31,6 +31,7 @@ from .serializers import ResourceSerializer, RetrieveResourceSerializer, Resourc
 from .models import Resource, Tag, Category, ResourceFlags
 import json
 import mimetypes
+from datetime import datetime
 
 
 def create_tags(request):
@@ -177,4 +178,15 @@ class ResourcePartialUpdate(generics.GenericAPIView, mixins.UpdateModelMixin):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     def put(self, request, *args, **kwargs):
+        if 'assigned_reviewer' in request.data:
+            request.data['reviewer_assigned_at'] = datetime.now()
+        if 'assigned_reviewer_2' in request.data:
+            request.data['reviewer_2_assigned_at'] = datetime.now()
+
+        if 'review_status' in request.data:
+            request.data['reviewer_updated_at'] = datetime.now()
+
+        if 'review_status_2' in request.data:
+            request.data['reviewer_2_updated_at'] = datetime.now()
+        
         return self.partial_update(request, *args, **kwargs)
