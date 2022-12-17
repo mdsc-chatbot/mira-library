@@ -31,6 +31,7 @@ from .serializers import ResourceSerializer, RetrieveResourceSerializer, Resourc
 from .models import Resource, Tag, Category, ResourceFlags
 import json
 import mimetypes
+from datetime import datetime
 
 
 def create_tags(request):
