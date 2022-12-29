@@ -139,6 +139,7 @@ class Resource(models.Model):
     reviewer_2_2_assigned_at = models.DateTimeField(auto_now_add=False, blank=True, null=True)
     reviewer_2_2_updated_at = models.DateTimeField(auto_now_add=False, blank=True, null=True)
 
+
     review_status_3 = models.CharField(
         max_length=50, default="pending", blank=True, null=True)
     assigned_reviewer_3 = models.IntegerField(default=-1)
