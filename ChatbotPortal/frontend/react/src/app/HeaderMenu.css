@@ -6,4 +6,22 @@
     width : 100%;
 }
 
+:global(.ui.inverted.top.attached.segment){
+    background: #062F65;
+    border-width: 0px;
+}
 
+:global(.ui.inverted.bottom.attached.segment){
+    background:#062F65;
+}
+
+:global(.ui.inverted.top.attached.segment .ui.segments),
+:global(.ui.large.fluid.inverted.pointing.secondary.menu){
+    background: #062F65;
+    border-width: 0px;
+}
+
+:global(.ui.small.fluid.inverted.pointing.two.item.menu){
+    background: #062F65;
+    border-width: 0px;
+}

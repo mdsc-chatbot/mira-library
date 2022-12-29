@@ -208,7 +208,8 @@ export default class ManageReviews extends Component {
             }
         )
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            r.review_status !== "approved" || r.review_status_2 !== "approved" ? (
+            // r.review_status !== "approved" || r.review_status_2 !== "approved" 
+            (!this.resourceIsApproved(r)) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -219,8 +220,15 @@ export default class ManageReviews extends Component {
                         <h4>{r.review_status_2 === "approved" ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2}/></p>) : r.review_status_2 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_2 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2}/></p>)}
                             {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_2", value, r.id)} />}</h4>
                     </td>
-                    {(r.review_status === "approved" && (r.review_status_2 === "conflict" || r.review_status_2 == "rejected") 
-                    || (r.review_status_2 === "approved" && (r.review_status === "conflict" || r.review_status == "rejected"))) ?
+                    <td>
+                        <h4>{r.review_status_1_1 === "approved" ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_1_1}/></p>) : r.review_status_1_1 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_1_1 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_1_1}/></p>)}
+                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_1_1} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_1_1", value, r.id)} />}</h4>
+                    </td>
+                    <td>
+                        <h4>{r.review_status_2_2 === "approved" ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2_2}/></p>) : r.review_status_2_2 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_2_2 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2_2}/></p>)}
+                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2_2} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_2_2", value, r.id)} />}</h4>
+                    </td>
+                    {(this.resourceNeedTieBreaker(r)) ?
                     (<td>
                         <h4>{(r.review_status_3 === "approved") ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_3}/></p>) : r.review_status_3 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_3 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_3}/></p>)}
                             {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_3} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_3", value, r.id)} />}</h4>
@@ -374,7 +382,7 @@ export default class ManageReviews extends Component {
     }
 
     pendingHeader = () => {
-        return <tr><th style={{ width: 250 }}>Resource</th><th style={{ width: 200 }}>Reviewer One</th><th style={{ width: 200 }}>Reviewer Two</th><th style={{ width: 200 }}>Tiebreaker</th></tr>
+        return <tr><th style={{ width: 250 }}>Resource</th><th style={{ width: 160 }}>Reviewer 1</th><th style={{ width: 160 }}>Reviewer 2</th><th style={{ width: 160 }}>Reviewer 3</th><th style={{ width: 160 }}>Reviewer 4</th><th style={{ width: 160 }}>Tiebreaker</th></tr>
     }
     usersHeader = () => {
         return <tr><th style={{ width: 350 }}>User</th><th>Avg t(s)</th><th>A</th><th>R</th><th>P</th></tr>
@@ -385,6 +393,64 @@ export default class ManageReviews extends Component {
         for (var i = 0; i < this.state.users.length; i++) {
             if (this.state.users[i].id == idnum) return this.state.users[i].first_name + " " + this.state.users[i].last_name
         }
+    }
+
+    resourceIsApproved = (resource) => {
+        var numOfApprovals = 0
+        if(resource.review_status_1_1 == 'approved')
+            numOfApprovals +=1
+        if(resource.review_status_2 == 'approved')
+            numOfApprovals +=1
+        if(resource.review_status_2_2 == 'approved')
+            numOfApprovals +=1
+        if(resource.review_status == 'approved')
+            numOfApprovals +=1
+
+        if (numOfApprovals>=2)
+            return true
+        return false
+    }
+
+    resourceNeedTieBreaker = (resource) => {
+        if(resource.assigned_reviewer_3 != -1)
+            return true
+
+        var numOfApprovals = 0
+        var numOfConflicts = 0
+        var numOfRejects = 0
+
+        if(resource.review_status_1_1 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_1_1 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_1_1 == 'reject')
+            numOfRejects +=1
+        
+        if(resource.review_status_2 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_2 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_2 == 'reject')
+            numOfRejects +=1
+
+        if(resource.review_status_2_2 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_2_2 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_2_2 == 'reject')
+            numOfRejects +=1
+
+        if(resource.review_status == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status == 'reject')
+            numOfRejects +=1
+
+        if(numOfApprovals == numOfRejects && numOfApprovals>0)
+            return true
+        
+        return false
     }
 
     render() {
