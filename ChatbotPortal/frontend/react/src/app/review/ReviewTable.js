@@ -222,7 +222,7 @@ export default class ReviewTable extends Component {
         
 
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (ids.includes(r.id) === true) && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer || r.assigned_reviewer_3 == currentReviewer)) || (this.state.assignedOnly === false)) &&
+            (ids.includes(r.id) === true) && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer || r.assigned_reviewer_3 == currentReviewer || r.assigned_reviewer_1_1 == currentReviewer || r.assigned_reviewer_2_2 == currentReviewer)) || (this.state.assignedOnly === false)) &&
                 ((reviews.has(r.id) && reviews_2.has(r.id)) && ((reviews.get(r.id)[0] === reviews_2.get(r.id)[0]) || (reviews.get(r.id)[3] && ((reviews.get(r.id)[0] !== reviews_2.get(r.id)[0]))))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
@@ -255,7 +255,7 @@ export default class ReviewTable extends Component {
                     </td>
                 </tr>
             ) : (reviews_2.has(r.id))
-                && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer || r.assigned_reviewer_3 == currentReviewer)) || (this.state.assignedOnly === false)) ? (
+                && ((this.state.assignedOnly === true && (r.assigned_reviewer == currentReviewer || r.assigned_reviewer_2 == currentReviewer || r.assigned_reviewer_3 == currentReviewer || r.assigned_reviewer_1_1 == currentReviewer || r.assigned_reviewer_2_2 == currentReviewer)) || (this.state.assignedOnly === false)) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
                     <td>
@@ -355,9 +355,30 @@ export default class ReviewTable extends Component {
             return 0;
         }
         function compareTieBreak(a) {
-            if (revHasFinalDecision(a.id) === 0 &&
-                ((a.review_status_2 === 'approved' && a.review_status === 'rejected')
-                    || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))) {
+            var numOfRejects = 0
+            var numOfApproves = 0
+            if(a.review_status_2 == 'approved')
+                numOfApproves += 1
+            else if(a.review_status_2 == 'rejected')
+                numOfRejects +=1
+            
+            if(a.review_status == 'approved')
+                numOfApproves += 1
+            else if(a.review_status == 'rejected')
+                numOfRejects +=1
+
+            if(a.review_status_2_2 == 'approved')
+                numOfApproves += 1
+            else if(a.review_status_2_2 == 'rejected')
+                numOfRejects +=1
+
+            if(a.review_status_1_1 == 'approved')
+                numOfApproves += 1
+            else if(a.review_status_1_1 == 'rejected')
+                numOfRejects +=1
+
+
+            if (numOfApproves==numOfRejects && numOfApproves>0) {
                 return -1;
             }
             return 1;
@@ -367,6 +388,36 @@ export default class ReviewTable extends Component {
                 return -1;
             } 
             return 1;
+        }
+
+        function resourceIsPending(a){
+            var numOfRejects = 0
+            var numOfApproves = 0
+            if(a.review_status_2 == 'approved')
+                numOfApproves += 1
+            else if(a.review_status_2 == 'rejected')
+                numOfRejects +=1
+            
+            if(a.review_status == 'approved')
+                numOfApproves += 1
+            else if(a.review_status == 'rejected')
+                numOfRejects +=1
+
+            if(a.review_status_2_2 == 'approved')
+                numOfApproves += 1
+            else if(a.review_status_2_2 == 'rejected')
+                numOfRejects +=1
+
+            if(a.review_status_1_1 == 'approved')
+                numOfApproves += 1
+            else if(a.review_status_1_1 == 'rejected')
+                numOfRejects +=1
+
+
+            if (numOfApproves+numOfRejects >= 2) {
+                return false;
+            }
+            return true;
         }
 
         if (this.state.order === 'oldest') {
@@ -382,9 +433,8 @@ export default class ReviewTable extends Component {
         }
         
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            (!this.state.assignedOnly && (r.review_status === 'pending' || r.review_status_2 === 'pending' || r.review_status_3 === 'pending'))
-                || ((this.state.assignedOnly && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending') || (r.assigned_reviewer_3 === currentReviewer && r.review_status_3 === 'pending')))
-                    || (!this.state.assignedOnly && (r.assigned_reviewer === -1 || r.assigned_reviewer_2 === -1))) ? (
+            (!this.state.assignedOnly && (resourceIsPending(r)))
+                || ((this.state.assignedOnly && (resourceIsPending(r)) && ((r.assigned_reviewer === currentReviewer && r.review_status === 'pending') || (r.assigned_reviewer_2 === currentReviewer && r.review_status_2 === 'pending') || (r.assigned_reviewer_3 === currentReviewer && r.review_status_3 === 'pending') || (r.assigned_reviewer_1_1 === currentReviewer && r.review_status_1_1 === 'pending') || (r.assigned_reviewer_2_2 === currentReviewer && r.review_status_2_2 === 'pending')))) ? (
                 <tr key={r.id} ref={tr => this.results = tr}>
                     <td><div><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link>{(this.context.security.is_editor) && (this.state.resourceIdsWithPendingTag.includes(r.id)) ? <i class="tags icon blue"></i> : null}</div></td>
                     <td>

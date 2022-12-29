@@ -187,4 +187,13 @@ class ResourcePartialUpdate(generics.GenericAPIView, mixins.UpdateModelMixin):
         if 'review_status_2' in request.data:
             request.data['reviewer_2_updated_at'] = datetime.now()
 
+        if 'review_status_1_1' in request.data:
+            request.data['reviewer_1_1_updated_at'] = datetime.now()
+        if 'review_status_2_2' in request.data:
+            request.data['reviewer_2_2_updated_at'] = datetime.now()
+        if 'assigned_reviewer_1_1' in request.data:
+            request.data['reviewer_1_1_assigned_at'] = datetime.now()
+        if 'assigned_reviewer_2_2' in request.data:
+            request.data['reviewer_2_2_assigned_at'] = datetime.now()
+
         return self.partial_update(request, *args, **kwargs)
