@@ -97,7 +97,7 @@ export default class ResourceDetail extends Component {
             .catch(error => console.error(error));
 
 
-        //submit second review record in this try, if reviewer_1 == assigned_reviewer_2
+        //submit second review record in this try, if assigned_reviewer_1 == assigned_reviewer_2
         const reviewer = this.context.security.is_logged_in
             ? this.context.security.id
             : "Unknown user";

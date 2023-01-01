@@ -45,6 +45,48 @@ export default class ManageReviews extends Component {
         };
     }
 
+    resourceNeedTieBreaker = (resource) => {
+        if(resource.assigned_reviewer_3 != -1)
+            return false
+
+        var numOfApprovals = 0
+        var numOfConflicts = 0
+        var numOfRejects = 0
+
+        if(resource.review_status_1_1 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_1_1 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_1_1 == 'rejected')
+            numOfRejects +=1
+        
+        if(resource.review_status_2 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_2 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_2 == 'rejected')
+            numOfRejects +=1
+
+        if(resource.review_status_2_2 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_2_2 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_2_2 == 'rejected')
+            numOfRejects +=1
+
+        if(resource.review_status == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status == 'rejected')
+            numOfRejects +=1
+
+        if((numOfApprovals == numOfRejects) && (numOfApprovals>0))
+            return true
+        
+        return false
+    }
+
     get_resources = () => {
         // Having the permission header loaded
         const options = {
@@ -162,15 +204,51 @@ export default class ManageReviews extends Component {
             }
             return 0;
         }
-        function compareTieBreak(a) {
-            if ((a.review_status_2 === 'approved' && a.review_status === 'rejected')
-                || (a.review_status === 'approved' && a.review_status_2 === 'rejected')) {
-                return -1;
-            }
-            return 1;
+        function compareTieBreak(resource) {
+            if(resource.assigned_reviewer_3 != -1)
+                return 1
+
+            var numOfApprovals = 0
+            var numOfConflicts = 0
+            var numOfRejects = 0
+
+            if(resource.review_status_1_1 == 'approved')
+                numOfApprovals +=1
+            else if(resource.review_status_1_1 == 'conflict')
+                numOfConflicts +=1
+            else if(resource.review_status_1_1 == 'rejected')
+                numOfRejects +=1
+            
+            if(resource.review_status_2 == 'approved')
+                numOfApprovals +=1
+            else if(resource.review_status_2 == 'conflict')
+                numOfConflicts +=1
+            else if(resource.review_status_2 == 'rejected')
+                numOfRejects +=1
+
+            if(resource.review_status_2_2 == 'approved')
+                numOfApprovals +=1
+            else if(resource.review_status_2_2 == 'conflict')
+                numOfConflicts +=1
+            else if(resource.review_status_2_2 == 'rejected')
+                numOfRejects +=1
+
+            if(resource.review_status == 'approved')
+                numOfApprovals +=1
+            else if(resource.review_status == 'conflict')
+                numOfConflicts +=1
+            else if(resource.review_status == 'rejected')
+                numOfRejects +=1
+
+            if((numOfApprovals == numOfRejects) && (numOfApprovals>0))
+                return -1
+
+                
+            return 1
         }
         function compareInterestConflict(a) {
-            if (a.review_status_2 === 'conflict' || a.review_status === 'conflict') {
+            if (a.review_status_2 === 'conflict' || a.review_status === 'conflict' ||
+             a.review_status_1_1 === 'conflict' || a.review_status_2_2 === 'conflict') {
                 return -1;
             }
             return 1;
@@ -283,6 +361,32 @@ export default class ManageReviews extends Component {
                     }
                 }
             }
+
+            if (r.assigned_reviewer_2_2 != -1) {
+                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer_2_2);
+                if (indx != -1) {
+                    if (r.review_status_2_2 === 'pending') {
+                        usersData[indx].numPending++;
+                    } else if (r.review_status_2_2 === 'approved') {
+                        usersData[indx].numApproved++;
+                    } else if (r.review_status_2_2 === 'rejected') {
+                        usersData[indx].numRejected++;
+                    }
+                }
+            }
+
+            if (r.assigned_reviewer_1_1 != -1) {
+                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer_1_1);
+                if (indx != -1) {
+                    if (r.review_status_1_1 === 'pending') {
+                        usersData[indx].numPending++;
+                    } else if (r.review_status_1_1 === 'approved') {
+                        usersData[indx].numApproved++;
+                    } else if (r.review_status_1_1 === 'rejected') {
+                        usersData[indx].numRejected++;
+                    }
+                }
+            }
         });
 
         this.state.reviews.forEach(r => {
@@ -345,6 +449,28 @@ export default class ManageReviews extends Component {
                 } else if (r.review_status_2 === 'rejected') {
                     totalRejected++;
                 } else if (r.review_status_2 === 'conflict') {
+                    totalPending++;
+                }
+            }
+            if (r.assigned_reviewer_1_1 != -1) {
+                if (r.review_status_1_1 === 'pending') {
+                    totalPending++;
+                } else if (r.review_status_1_1 === 'approved') {
+                    totalApproved++;
+                } else if (r.review_status_1_1 === 'rejected') {
+                    totalRejected++;
+                } else if (r.review_status_1_1 === 'conflict') {
+                    totalPending++;
+                }
+            }
+            if (r.assigned_reviewer_2_2 != -1) {
+                if (r.review_status_2_2 === 'pending') {
+                    totalPending++;
+                } else if (r.review_status_2_2 === 'approved') {
+                    totalApproved++;
+                } else if (r.review_status_2_2 === 'rejected') {
+                    totalRejected++;
+                } else if (r.review_status_2_2 === 'conflict') {
                     totalPending++;
                 }
             }
@@ -411,47 +537,7 @@ export default class ManageReviews extends Component {
         return false
     }
 
-    resourceNeedTieBreaker = (resource) => {
-        if(resource.assigned_reviewer_3 != -1)
-            return true
-
-        var numOfApprovals = 0
-        var numOfConflicts = 0
-        var numOfRejects = 0
-
-        if(resource.review_status_1_1 == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status_1_1 == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status_1_1 == 'reject')
-            numOfRejects +=1
-        
-        if(resource.review_status_2 == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status_2 == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status_2 == 'reject')
-            numOfRejects +=1
-
-        if(resource.review_status_2_2 == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status_2_2 == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status_2_2 == 'reject')
-            numOfRejects +=1
-
-        if(resource.review_status == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status == 'reject')
-            numOfRejects +=1
-
-        if(numOfApprovals == numOfRejects && numOfApprovals>0)
-            return true
-        
-        return false
-    }
+    
 
     render() {
         // Get current logged in user, take this function out of format_data and consolidate it later

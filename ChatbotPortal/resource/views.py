@@ -32,6 +32,7 @@ from .models import Resource, Tag, Category, ResourceFlags
 import json
 import mimetypes
 from datetime import datetime
+from django.db.models import Q
 
 
 def create_tags(request):
@@ -163,8 +164,15 @@ class TagUpdateView(generics.RetrieveUpdateAPIView):
 class ResourceSearchView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ResourceSerializer
-    queryset = Resource.objects.filter(review_status="approved")
-    queryset = queryset.filter(review_status_2="approved")
+    queryset = Resource.objects.filter(
+        (Q(review_status="approved") & Q(review_status_2="approved")) |
+        (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) |
+        (Q(review_status="approved") & Q(review_status_2_2="approved")) | 
+        (Q(review_status="approved") & Q(review_status_1_1="approved")) | 
+        (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | 
+        (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | 
+        Q(review_status_3="approved")
+    )
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
     

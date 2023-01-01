@@ -32,7 +32,32 @@ export class ResourceStatistic extends Component {
 
         this.props.resources.forEach((resource) => {
             total_resources += 1;
-            if (resource.review_status !== "pending" && resource.review_status_2 !== "pending"){
+            
+            var numOfApproved = 0
+            var numOfRejected = 0
+
+            if (resource.review_status === "approved" )
+                numOfApproved +=1
+            else if (resource.review_status === "rejected" )
+                numOfRejected +=1
+            
+            if (resource.review_status_1_1 === "approved" )
+                numOfApproved +=1
+            else if (resource.review_status_1_1 === "rejected" )
+                numOfRejected +=1
+            
+            if (resource.review_status_2_2 === "approved" )
+                numOfApproved +=1
+            else if (resource.review_status_2_2 === "rejected" )
+                numOfRejected +=1
+
+            if (resource.review_status_2 === "approved" )
+                numOfApproved +=1
+            else if (resource.review_status_2 === "rejected" )
+                numOfRejected +=1
+            
+
+            if ( (numOfApproved+numOfRejected) >= 2 ){
                 reviewed_resources += 1;
             }else{
                 pending_resources += 1;

@@ -94,6 +94,48 @@ export default class ReviewTable extends Component {
         this.componentDidMount();
     };
 
+    resourceNeedTieBreaker = (resource) => {
+        if(resource.assigned_reviewer_3 != -1)
+            return true
+
+        var numOfApprovals = 0
+        var numOfConflicts = 0
+        var numOfRejects = 0
+
+        if(resource.review_status_1_1 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_1_1 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_1_1 == 'rejected')
+            numOfRejects +=1
+        
+        if(resource.review_status_2 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_2 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_2 == 'rejected')
+            numOfRejects +=1
+
+        if(resource.review_status_2_2 == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status_2_2 == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status_2_2 == 'rejected')
+            numOfRejects +=1
+
+        if(resource.review_status == 'approved')
+            numOfApprovals +=1
+        else if(resource.review_status == 'conflict')
+            numOfConflicts +=1
+        else if(resource.review_status == 'rejected')
+            numOfRejects +=1
+
+        if(numOfApprovals == numOfRejects && numOfApprovals>0)
+            return true
+        
+        return false
+    }
+
     get_resources = () => {
         // Having the permission header loaded
         const options = {
@@ -192,11 +234,46 @@ export default class ReviewTable extends Component {
             }
             return 0;
         }
-        function compareTieBreak(a) {
-            if (revHasFinalDecision(a.id) == 0 &&
-                ((a.review_status_2 === 'approved' && a.review_status === 'rejected')
-                    || (a.review_status === 'approved' && a.review_status_2 === 'rejected'))) {
-                return -1;
+        function compareTieBreak(resource) {
+            if (revHasFinalDecision(resource.id) == 0) {
+                if(resource.assigned_reviewer_3 != -1)
+                    return 1
+
+                var numOfApprovals = 0
+                var numOfConflicts = 0
+                var numOfRejects = 0
+
+                if(resource.review_status_1_1 == 'approved')
+                    numOfApprovals +=1
+                else if(resource.review_status_1_1 == 'conflict')
+                    numOfConflicts +=1
+                else if(resource.review_status_1_1 == 'rejected')
+                    numOfRejects +=1
+                
+                if(resource.review_status_2 == 'approved')
+                    numOfApprovals +=1
+                else if(resource.review_status_2 == 'conflict')
+                    numOfConflicts +=1
+                else if(resource.review_status_2 == 'rejected')
+                    numOfRejects +=1
+
+                if(resource.review_status_2_2 == 'approved')
+                    numOfApprovals +=1
+                else if(resource.review_status_2_2 == 'conflict')
+                    numOfConflicts +=1
+                else if(resource.review_status_2_2 == 'rejected')
+                    numOfRejects +=1
+
+                if(resource.review_status == 'approved')
+                    numOfApprovals +=1
+                else if(resource.review_status == 'conflict')
+                    numOfConflicts +=1
+                else if(resource.review_status == 'rejected')
+                    numOfRejects +=1
+
+                if(numOfApprovals == numOfRejects && numOfApprovals>0)
+                    return -1
+            
             }
             return 1;
         }
@@ -355,6 +432,9 @@ export default class ReviewTable extends Component {
             return 0;
         }
         function compareTieBreak(a) {
+            if(resource.assigned_reviewer_3 != -1)
+                return 1
+
             var numOfRejects = 0
             var numOfApproves = 0
             if(a.review_status_2 == 'approved')
