@@ -550,7 +550,7 @@ def calculateStatsResources(query_params):
         'resources':{
             'approved count':len(resQueryset),
             'rejected + pending count':len(allRes)-len(resQueryset),
-            'top ten most searched': resQueryset_[:10]
+            'top 1000 most searched': resQueryset_[:1000]
         },
         'Tags':{
             'approved count':len(allRes),
