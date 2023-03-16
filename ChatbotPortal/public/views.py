@@ -428,7 +428,7 @@ def calculateCountsForResources(query_params):
         resource_type.append("SR")
     if "information" in tags_params:
         resource_type.append("RS")
-        
+
     resQueryset = resQueryset.filter((Q(resource_type__in=resource_type)) & (Q(tags__name__in=tags_params) | Q(tags__name__in=query_relaxation_tags)))
     
 
@@ -2661,14 +2661,6 @@ class EmotionTest(APIView):
         res = EmotionTestFunc(self.request.query_params)
         return Response({'res':res})
 
-
-class ResourceByIntentEntityView(generics.ListAPIView):
-    serializer_class = RetrievePublicResourceSerializer
-    permission_classes = {permissions.AllowAny}
-    pagination_class = StandardResultSetPagination
-
-    def get_queryset(self):
-        return ResourceByIntentEntityViewQuerySet(self.request.query_params)
 
 class ResourceByIntentEntityView_new(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
