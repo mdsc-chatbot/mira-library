@@ -425,11 +425,10 @@ def calculateCountsForResources(query_params):
 
     resource_type = ["BT"]
     if "program_services" in tags_params:
-    	resource_type.append("SR")
+        resource_type.append("SR")
     if "information" in tags_params:
-    	resource_type.append("RS")
-
-
+        resource_type.append("RS")
+        
     resQueryset = resQueryset.filter((Q(resource_type__in=resource_type)) & (Q(tags__name__in=tags_params) | Q(tags__name__in=query_relaxation_tags)))
     
 
