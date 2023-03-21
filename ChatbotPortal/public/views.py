@@ -774,7 +774,14 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     tags_params = query_params.getlist('tags')
     tags_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,tags_params))
 
-    tags_params = list(map(lambda x: (x[:x.index("(")], x[x.index("(")+1:-1]) ,tags_params))
+    tags_params_temp = []    
+    for tag in tags_params: 
+        if "(" in tag:
+            x = tag 
+            tags_params_temp.append((x[:x.index("(")], x[x.index("(")+1:-1])) 
+        else: 
+            tags_params_temp.append((tag,-1)) 
+    tags_params = tags_params_temp
 
 
     all_possible_tags = Tag.objects.filter(approved=1).all()
