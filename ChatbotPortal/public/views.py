@@ -1352,8 +1352,6 @@ def EmotionTestFunc(query_params):
             "I am sorry you had to deal with it.",
             "I can see how that would be difficult.",
             "I'm sorry you are going through this.",
-            "This must be hard to talk about. Thanks for openning up to me.",
-            "This must be hard to talk about. That really means a lot.",
             "I wish you didn't have to go through that.",
             "That sounds very challenging.",
             "That must hurt your feelings."
@@ -1372,20 +1370,20 @@ def EmotionTestFunc(query_params):
     emotion_response_neg_sentence = emotion_response_bags["response_to_neg_feelings"][random.randint(0,len(emotion_response_bags["response_to_neg_feelings"])-1)]
     if (detected_emotion):
         if (detected_emotion['label']=="joy"):
-            if(num_run_eliza==1):
+            if(num_run_eliza<2):
                 emotion_des = clarification_sentence\
                         + "You must feel happy. "\
                         + emotion_response_pos_sentence
             else:
                 emotion_des = emotion_response_pos_sentence
             if (detected_emotion['score']<0.5):
-                if(num_run_eliza==1):
+                if(num_run_eliza<2):
                     emotion_des = clarification_sentence\
                     + "I guess you feel happy. "
                 else:
                     emotion_des = "I am here for you. "
         elif (detected_emotion['label']=="sadness"):
-            if(num_run_eliza==1):
+            if(num_run_eliza<2):
                 emotion_des = clarification_sentence\
                     + "You must feel sad. "\
                     + emotion_response_neg_sentence
@@ -1397,7 +1395,7 @@ def EmotionTestFunc(query_params):
                 if (detected_emotion['score']<0.5):
                     emotion_des = "Your words are valued with me. "
         elif (detected_emotion['label']=="fear"):
-            if(num_run_eliza==1):
+            if(num_run_eliza<2):
                 emotion_des = clarification_sentence\
                 + "It must be frightening. "\
                 + emotion_response_neg_sentence
