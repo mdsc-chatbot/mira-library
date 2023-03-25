@@ -1317,7 +1317,7 @@ def VerifyApprovedResources(query_params):
 
 def EmotionTestFunc(query_params):
     input = query_params.get("text")
-    num_run_eliza = query_params.get("num_run_eliza")
+    num_run_eliza = int(query_params.get("num_run_eliza"))
     
     
     API_TOKEN = "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"
