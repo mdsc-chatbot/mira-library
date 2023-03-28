@@ -1333,7 +1333,7 @@ def EmotionTestFunc(query_params):
     })
 
     detected_emotion = None
-    if(emotions_dic):
+    if(len(emotions_dic)>0):
         print(emotions_dic[0])
         detected_emotion = emotions_dic[0][0]
 
