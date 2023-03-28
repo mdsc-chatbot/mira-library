@@ -1354,7 +1354,7 @@ def EmotionTestFunc(query_params):
             "I'm sorry you are going through this.",
             "I wish you didn't have to go through that.",
             "That sounds very challenging.",
-            "That must hurt your feelings."
+            "That sounds difficult."
         ],
         "response_to_pos_feelings": [ # response 
             "Thank you for sharing, I support your position here.",
