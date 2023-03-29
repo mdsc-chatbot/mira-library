@@ -1337,9 +1337,12 @@ def EmotionTestFunc(query_params):
     })
 
     detected_emotion = None
-    if(len(emotions_dic)>0):
-        print(emotions_dic[0])
-        detected_emotion = emotions_dic[0][0]
+    try:
+        if(len(emotions_dic) > 0):
+            detected_emotion = emotions_dic[0][0]
+    except:
+        detected_emotion = None
+
 
     emotion_response_bags = {
         "clarification": [ # clarification + emotional or topic fact with doubt if needed
