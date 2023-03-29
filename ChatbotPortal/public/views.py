@@ -1341,25 +1341,20 @@ def EmotionTestFunc(query_params):
         "clarification": [ # clarification + emotional or topic fact with doubt if needed
             "Let me see if I've gotten this right...",
             "I want to make sure I understand...",
-            "I want to make sure I have a full understanding of what you're telling me...",
             "Okay, I think I understand your feeling...",
             "I am doing my best to understand how you are feeling..."
         ],
         "response_to_neg_feelings": [ # response 
             "I imagine that must be hard.",
-            "I can understand that must make you feel bad.",
+            "I can understand that must be hard.",
             "I would feel bad too in same situation.",
-            "I am sorry you had to deal with it.",
             "I can see how that would be difficult.",
-            "I'm sorry you are going through this.",
-            "I wish you didn't have to go through that.",
             "That sounds very challenging.",
             "That sounds difficult."
         ],
         "response_to_pos_feelings": [ # response 
-            "Thank you for sharing, I support your position here.",
+            "I support your position here.",
             "There are far better things ahead than any we leave behind.",
-            "Be kind and gentle with yourself. You are doing the best you can.",
             "I'm glad you told me.",
         ]
     }
@@ -1997,7 +1992,8 @@ def EmotionTestFunc(query_params):
                 'reasmb_empathy':
                 [
                     "Could you tell me more?",
-                    "Thank you for sharing with me. Can you elaborate on that?",
+                    "Can you elaborate on that?",
+                    "Let`s discuss further. Tell me more about that.",
                 ],
                 'reasmb_dynamic_neutral':
                 [
