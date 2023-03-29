@@ -353,7 +353,8 @@ def calculateCountsForResources(query_params):
     ,'need_coping_skill':'Self-Help Books'
     ,'need_symptom_list': 'Symptoms'
     ,'psychedelics': 'psilocybin'
-    ,'crisis_distress_support':'Crisis Support/Distress Counselling'
+    ,'crisis_distress_support':'Crisis Support/Distress Counselling',
+    'military': 'Military Veterans'
     }
 
     #tags that we should exclude their resources
@@ -765,7 +766,10 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('crisis_distress_support','Crisis Support/Distress Counselling')
     ,('book_and_pamplet','Book')
     ,('book_and_pamplet','Booklet'),
-    ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse')
+    ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
+    ('military', 'Military Veterans'),
+    ('military', 'Family Member of Veteran'),
+    ('first responder', 'First responder')
     ]
 
     n_tags_params = query_params.getlist('ntags')
