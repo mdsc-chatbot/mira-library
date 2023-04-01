@@ -1628,7 +1628,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #hello
                 'key': 'hello',
-                'decomp': '*@hello *',
+                'decomp': '@hello *',
                 'reasmb_neutral': 
                 [
                     "Hello! I'm here to listen. Tell me what's on your mind.",
@@ -1636,6 +1636,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_empathy':
                 [
                     "Hello! I'm here to listen. Tell me what's on your mind.",
+                    "Hello! How can I help you?",
                 ],
                 'reasmb_dynamic_neutral':
                 [
@@ -2000,6 +2001,7 @@ def EmotionTestFunc(query_params):
                 [
                     "Could you tell me more?",
                     "Can you elaborate on that?",
+                    "Let`s discuss further. Tell me more about that.",
                     "Let`s discuss further. Tell me more about that.",
                 ],
                 'reasmb_dynamic_neutral':
@@ -2428,7 +2430,7 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "I'm sorry to hear that, why do you think (2) causes that?"
+                    "Why do you think (2) causes that?"
                 ],
             }
         ]
@@ -2616,7 +2618,7 @@ def EmotionTestFunc(query_params):
             replace(" no one ", " noone ").\
             replace(" can not ", " cannot ")
 
-        reasmb_rule = 'reasmb_neutral'
+        reasmb_rule = 'reasmb_dynamic_neutral'
         if select_empathy: reasmb_rule = 'reasmb_empathy' 
 
         key_score_decomp_ar = rank_sent_for_tags(user_sentence, list(map(lambda c: [c['key'], c['decomp'], c[reasmb_rule]] ,sample_generator_rules['dec_rules'])), reasmb_rule)
