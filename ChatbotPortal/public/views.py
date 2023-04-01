@@ -1628,7 +1628,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #hello
                 'key': 'hello',
-                'decomp': '@hello *',
+                'decomp': 'hello',
                 'reasmb_neutral': 
                 [
                     "Hello! I'm here to listen. Tell me what's on your mind.",
@@ -1705,9 +1705,9 @@ def EmotionTestFunc(query_params):
                     "Would you prefer if I weren't (1)?",
                     "Why do you think I am (1)?",
                 ],
-            },{ # we are cool.
-                'key': 'are',
-                'decomp': '* are *',
+            },{ # they are cool.
+                'key': 'they are',
+                'decomp': '* they are *',
                 'reasmb_neutral': 
                 [
                     "Did you think they might not be like it ?",
@@ -1725,6 +1725,26 @@ def EmotionTestFunc(query_params):
                     "Why Did you think they might not be (2)?",
                     "Why you like it if they were not (2)?",
                     "What if they were not (2)?"
+                ],
+            },{ # I am happy you are cool.
+                'key': 'you are',
+                'decomp': '* you are *',
+                'reasmb_neutral': 
+                [
+                    "Did you think they might not be like it ?",
+                    "What if they were not like it ?",
+                    "Possibly they are. What do you think?"
+                ],
+                'reasmb_empathy':
+                [
+                    "Hmm, that is interesting to hear...How does that make you feel?",
+                    "Thank you for opening up to me...How does this affect your feelings?",
+                    "Thank you for trusting me with those thoughts...What does this make you think of?"
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "Why you like it if I was not (2)?",
+                    "What makes you think I am (2)?"
                 ],
             },{ #I think your questions are hard
                 'key': 'your',
@@ -1828,10 +1848,34 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "What would it mean to you if you got what (1)?",
-                    "Why do you what (1)?",
+                    "What would it mean to you if you got (1)?",
                     "Suppose you got what (1) soon. tell me more?",
-                    "What if you never got what (1)?",
+                    "What if you never got (1)?",
+                    "What would getting (1) mean to you?",
+                ],
+            },{ # all I want is to take a flight and escape.
+                'key': 'want',
+                'decomp': 'i @desire is *',
+                'reasmb_neutral': 
+                [
+                    "What would it mean to you if you got what you desire ?",
+                    "Why do you want it ?",
+                    "Suppose you got it soon. tell me more ?",
+                    "What if you never got what you want ?",
+                    "What would getting it mean to you ?",
+                ],
+                'reasmb_empathy':
+                [
+                    "That makes a lot of sense to me...What would desiring this mean to you?",
+                    "I feel you are very interested in this...What would desiring this mean to you?",
+                    "I can tell this is important to you...Could you tell me why desiring this is important to you?",
+                    "If this happened, how would desiring it make you feel?",
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "What would it mean to you if you got (1)?",
+                    "Suppose you got (1) soon. tell me more?",
+                    "What if you never got (1)?",
                     "What would getting (1) mean to you?",
                 ],
             },{ # i am very sad 
@@ -1908,8 +1952,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_neutral': 
                 [
                     "How long have you been like that ?",
-                    "Do you believe it is normal to be like this ?",
-                    "Do you enjoy being like this ?"
+                    "Do you believe it is normal to be like this ?"
                 ],
                 'reasmb_empathy':
                 [
@@ -1922,7 +1965,7 @@ def EmotionTestFunc(query_params):
                     "Is it because you said (1) that you came to me?",
                     "How long have you been (1)?",
                     "Do you believe it is normal to be (1)?",
-                    "Do you enjoy being (1)?"
+                    "I want to know more. What emotions does being (1) bring up for you?"
                 ],
             },{ # i can not go out without my mother
                 'key': 'i can not',
@@ -2068,7 +2111,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral': 
                 [
                     "Why are you saying no?",
-                    "Why not?",
+                    "I want to understand. Why do you think so?"
                     "Why no?"
                 ],
             },{ # i dislike my work
@@ -2494,7 +2537,7 @@ def EmotionTestFunc(query_params):
             ranking = {'key':tag[0], 'score':0.001, 'decomp':tag[1], reasmb_rule:tag[2]}
             if tag[0] in import_words:
                 if tag[0] not in ("i", "am"): 
-                    ranking['score'] += 1
+                    ranking['score'] += 1500
                 else:
                     ranking['score'] += 0.2
 
@@ -2518,8 +2561,8 @@ def EmotionTestFunc(query_params):
             reg = reg.replace('*', r'(.*)?').replace(' ', r'\s')
             ranking['decomp'] = reg
             found = regex.findall(reg, sentence)
-            if reg == "(.*)?i\\s(desire|want|need)\\s(.*)?":
-                print(reg, sentence)
+            # if reg == "(.*)?i\\s(desire|want|need)\\s(.*)?":
+            #     print(reg, sentence)
             if found:
                 ranking['score'] += 10
                 number_of_stars = len(list(filter(lambda i: i=='*' ,tag[1])))
@@ -2581,7 +2624,7 @@ def EmotionTestFunc(query_params):
                     .replace(' me ', ' You ')\
                     .replace('<end_mark>', '')
                 
-                generated_response = generated_response.replace("("+str(index)+")", res)
+                generated_response = generated_response.replace("("+str(index)+")", " "+res+" ")
             else:
                 if int(index['new']) != int(index['old']) and int(index['old'])-1 > 0 and int(index['new'])-1>0:
                     res = list(result.groups())[int(index['old'])-1] + " " + result.groups()[int(index['new'])-1]
@@ -2606,9 +2649,9 @@ def EmotionTestFunc(query_params):
                 .replace(' me ', ' You ')\
                 .replace('<end_mark>', '')
 
-                generated_response = generated_response.replace("("+str(index['old'])+")", res)
+                generated_response = generated_response.replace("("+str(index['old'])+")", " "+res+" ")
             
-        generated_response = generated_response.replace("  ", " ").replace(". .", ".").replace(". ?", "?").replace("? .", ".").replace("..", ".").replace(".?", "?").replace("?.", ".").replace("' ", "")
+        generated_response = generated_response.replace("  ", " ").replace(". .", ".").replace(". ?", "?").replace("? .", ".").replace("..", ".").replace(".?", "?").replace("?.", ".").replace("' ", "").replace("'?", "?")
         print("decomp= ", decomp)
         return generated_response
         
@@ -2627,12 +2670,12 @@ def EmotionTestFunc(query_params):
         gen = remove_repetetive_words_together(gen)
         print('key=',best_key_decomp_reasmb['key'])
         print("rule-based generated response: ", gen)
-        return {"response":emotion_des+gen, "key":best_key_decomp_reasmb['key']}
+        return {"response":emotion_des+" "+gen, "key":best_key_decomp_reasmb['key']}
 
 
     generate_neutral = False
-    if detected_emotion not in ('joy', 'neutral'):
-        generate_neutral = True
+    # if detected_emotion not in ('joy', 'neutral'):
+    #     generate_neutral = True
 	
     res = generate_final_response(input, generate_neutral, emotion_des)
     return {"input":input , "output":res, "emotion":detected_emotion}
