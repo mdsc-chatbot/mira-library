@@ -582,73 +582,73 @@ def calculateStatsResources(query_params):
     
     return {'data':stats}
 
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-# def calculateTagWeightsForResources(query_params):
-#     return []
+# import pandas as pd
+# from sklearn.feature_extraction.text import TfidfVectorizer
 
 def calculateTagWeightsForResources(query_params):
-    resources = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved")).values('id', 'title', 'description', 'organization_description', 'organization_name', 'definition')
-    tags = Tag.objects.filter(approved="1").values('id','name').filter(tag_category="Health Issue")
+    return []
+
+# def calculateTagWeightsForResources(query_params):
+#     resources = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved")).values('id', 'title', 'description', 'organization_description', 'organization_name', 'definition')
+#     tags = Tag.objects.filter(approved="1").values('id','name').filter(tag_category="Health Issue")
     
-    resource_text = []
-    resource_index = []
-    all_tags = {}
+#     resource_text = []
+#     resource_index = []
+#     all_tags = {}
 
-    def pre_processing(newValue):
-        newValue = newValue.lower().replace('(',' ').replace(')',' ').replace('\'',' ').replace('\"',' ').replace('`',' ').replace('.','').replace(',','').replace('?','').replace('!','')
-        return newValue
+#     def pre_processing(newValue):
+#         newValue = newValue.lower().replace('(',' ').replace(')',' ').replace('\'',' ').replace('\"',' ').replace('`',' ').replace('.','').replace(',','').replace('?','').replace('!','')
+#         return newValue
 
-    for resource in resources:
-        txt = pre_processing(str(resource['id'])+"___"+str(resource['title'])+" "+str(resource['description'])+" "+str(resource['definition'])+" "+str(resource['organization_name'])+" "+str(resource['organization_description'])+" ")
+#     for resource in resources:
+#         txt = pre_processing(str(resource['id'])+"___"+str(resource['title'])+" "+str(resource['description'])+" "+str(resource['definition'])+" "+str(resource['organization_name'])+" "+str(resource['organization_description'])+" ")
         
-        resource_text.append(txt.lower())
-        resource_index.append(resource['id'])
+#         resource_text.append(txt.lower())
+#         resource_index.append(resource['id'])
     
-    for tag in tags:
-        all_tags[tag['name'].lower()] = tag['id']
+#     for tag in tags:
+#         all_tags[tag['name'].lower()] = tag['id']
 
-    tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range = (1,4))
-    tfidf_vector = tfidf_vectorizer.fit_transform(resource_text)
-    tfidf_df = pd.DataFrame(tfidf_vector.toarray(), index=resource_text, columns=tfidf_vectorizer.get_feature_names())
-    tfidf_df = tfidf_df.stack().reset_index()
-    tfidf_df = tfidf_df.rename(columns={0:'tfidf', 'level_0': 'document','level_1': 'term', 'level_2': 'term'})
-    index_names_ = tfidf_df[tfidf_df['tfidf'] < 0.0001].index
-    tfidf_df.drop(index_names_, inplace = True)
+#     tfidf_vectorizer = TfidfVectorizer(stop_words='english', ngram_range = (1,4))
+#     tfidf_vector = tfidf_vectorizer.fit_transform(resource_text)
+#     tfidf_df = pd.DataFrame(tfidf_vector.toarray(), index=resource_text, columns=tfidf_vectorizer.get_feature_names())
+#     tfidf_df = tfidf_df.stack().reset_index()
+#     tfidf_df = tfidf_df.rename(columns={0:'tfidf', 'level_0': 'document','level_1': 'term', 'level_2': 'term'})
+#     index_names_ = tfidf_df[tfidf_df['tfidf'] < 0.0001].index
+#     tfidf_df.drop(index_names_, inplace = True)
 
-    tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False]).groupby(['document']).head(60)
-    top_tfidf = tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False])
+#     tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False]).groupby(['document']).head(60)
+#     top_tfidf = tfidf_df.sort_values(by=['document','tfidf'], ascending=[True,False])
 
-    response = {}
-    for document in resource_text:
-        doc_id = document[:document.index("___")]
-        res = top_tfidf[top_tfidf['document'].str.startswith((doc_id+"___"))]
-        # print(res,"\n")
-        for tag in all_tags:
-            for index, row in res.iterrows():
-                if((row['tfidf'] > 0) and (( len(tag)>7 and (" "+tag[:-3]) in row['term'] ) or ((" "+tag+" ") in row['term']))):
-                    t = tag
-                    print(doc_id, '|' , row['term'], '|' ,tag)
+#     response = {}
+#     for document in resource_text:
+#         doc_id = document[:document.index("___")]
+#         res = top_tfidf[top_tfidf['document'].str.startswith((doc_id+"___"))]
+#         # print(res,"\n")
+#         for tag in all_tags:
+#             for index, row in res.iterrows():
+#                 if((row['tfidf'] > 0) and (( len(tag)>7 and (" "+tag[:-3]) in row['term'] ) or ((" "+tag+" ") in row['term']))):
+#                     t = tag
+#                     print(doc_id, '|' , row['term'], '|' ,tag)
 
-                    if doc_id not in response:
-                        response[doc_id] = {}
+#                     if doc_id not in response:
+#                         response[doc_id] = {}
 
-                    if all_tags[t] not in response[doc_id]:
-                        response[doc_id][all_tags[t]] = 0
+#                     if all_tags[t] not in response[doc_id]:
+#                         response[doc_id][all_tags[t]] = 0
 
-                    response[doc_id][all_tags[t]] += row['tfidf']
+#                     response[doc_id][all_tags[t]] += row['tfidf']
     
 
-    for resource_id in response:
-        print('resource_id=',resource_id, "resource_id[]=",response[resource_id])
-        instance = Resource.objects.filter(pk=resource_id).get()
-        instance.index = json.dumps(response[resource_id])
-        instance.save()
+#     for resource_id in response:
+#         print('resource_id=',resource_id, "resource_id[]=",response[resource_id])
+#         instance = Resource.objects.filter(pk=resource_id).get()
+#         instance.index = json.dumps(response[resource_id])
+#         instance.save()
 
-    print("--------------------------------------------done--------------------------------------------")
-    # print(response)
-    return tags
+#     print("--------------------------------------------done--------------------------------------------")
+#     # print(response)
+#     return tags
 
 
 # rasa will call it NEW
@@ -1628,7 +1628,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #hello
                 'key': 'hello',
-                'decomp': 'hello',
+                'decomp': '@hello',
                 'reasmb_neutral': 
                 [
                     "Hello! I'm here to listen. Tell me what's on your mind.",
@@ -1944,7 +1944,7 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "Why don't you doubt you (1)?",
+                    "Why don't you doubt (1)?",
                 ],
             },{ # i am a good person.
                 'key': 'i am',
@@ -2622,7 +2622,7 @@ def EmotionTestFunc(query_params):
                     .replace(' cannot ', ' can not ')\
                     .replace(' cannot<end_mark>', ' can not')\
                     .replace(' me ', ' You ')\
-                    .replace('<end_mark>', '')
+                    .replace('<end_mark>', ' ')
                 
                 generated_response = generated_response.replace("("+str(index)+")", " "+res+" ")
             else:
@@ -2647,7 +2647,7 @@ def EmotionTestFunc(query_params):
                 .replace(' cannot ', ' can not ')\
                 .replace(' cannot<end_mark>', ' can not')\
                 .replace(' me ', ' You ')\
-                .replace('<end_mark>', '')
+                .replace('<end_mark>', ' ')
 
                 generated_response = generated_response.replace("("+str(index['old'])+")", " "+res+" ")
             
@@ -2661,7 +2661,7 @@ def EmotionTestFunc(query_params):
             replace(" no one ", " noone ").\
             replace(" can not ", " cannot ")
 
-        reasmb_rule = 'reasmb_dynamic_neutral'
+        reasmb_rule = random.choice(['reasmb_dynamic_neutral', 'reasmb_neutral'])
         if select_empathy: reasmb_rule = 'reasmb_empathy' 
 
         key_score_decomp_ar = rank_sent_for_tags(user_sentence, list(map(lambda c: [c['key'], c['decomp'], c[reasmb_rule]] ,sample_generator_rules['dec_rules'])), reasmb_rule)
