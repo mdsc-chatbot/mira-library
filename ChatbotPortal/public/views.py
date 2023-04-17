@@ -1412,7 +1412,7 @@ def EmotionTestFunc(query_params):
     
     sample_generator_rules = {
         'synonyms':[
-            ["belief", "feel", "think", "believe", "wish"],
+            ["belief", "feel", "think", "believe", "wish", "feeling"],
             ["family", "mother", "mom", "father", "dad", "sister", "brother", "wife", "children", "child"],
             ["desire", "want", "need"],
             ["sad", "unhappy", "depressed", "sick"],
@@ -1424,7 +1424,9 @@ def EmotionTestFunc(query_params):
             ["hello", "hi"],
             ["makes", "gives", "made", "gave", "make", "give"],
             ["anxiety", "anxious"],
-            ["because", "after"]
+            ["because", "after"],
+            ["job", "work"],
+            ["i", "i have", "i've"]
         ],
         'dec_rules':[
             {#example: oh so sorry about X
@@ -1928,7 +1930,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i wish I was not a looser.
                 'key': 'i wish',
-                'decomp': 'i @belief *', 
+                'decomp': '@i * @belief *', 
                 'reasmb_neutral': 
                 [
                     "Do you really think so ?",
@@ -1944,7 +1946,10 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "Why don't you doubt (1)?",
+                    "Why do you feel (2)?",
+                    "Let's talk more about about (2)?",
+                    "You think (2). Why is that?",
+                    "You think (2). Are there other ways to see it?",
                 ],
             },{ # i am a good person.
                 'key': 'i am',
@@ -1984,7 +1989,9 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral': 
                 [
                     "What makes you think you can't (1)?",
-                    "Why you really want to be able to (1)?",
+                    "what is preventing you to (1)?",
+                    "Do you know the reason preventing you to (1)?",
+                    "Tell me why you can not?"
                 ],
             },{ # i don't think i have good relationships
                 'key': 'i do not',
@@ -2034,7 +2041,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i think i am not prepared for it
                 'key': 'i',
-                'decomp': "*",
+                'decomp': '*',
                 'reasmb_neutral': 
                 [
                     "Let`s discuss further. Tell me more about that?",
@@ -2051,8 +2058,33 @@ def EmotionTestFunc(query_params):
                 [
                     "Could you tell me more?",
                     "Thank you for sharing with me. Can you elaborate on that?",
+                    "I'm sorry, I'm not sure what you mean by (1)",
+                    "Let`s discuss further. Tell me more",
+                    "Can you elaborate on that ?"
                 ]
-            },{ # you are very funny
+            },{ # i think i am not prepared for it
+                'key': 'and',
+                'decomp': '* and *',
+                'reasmb_neutral': 
+                [
+                    "Let`s discuss further. Tell me more about that?",
+                    "Can you elaborate on that ?",
+                ],
+                'reasmb_empathy':
+                [
+                    "Could you tell me more?",
+                    "Can you elaborate on that?",
+                    "Let`s discuss further. Tell me more about that.",
+                    "Let`s discuss further. Tell me more about that.",
+                ],
+                'reasmb_dynamic_neutral':
+                [
+                    "Do you wana talk more about (2)",
+                    "I wana talk more why (2)",
+                    "I want to know why (2)",
+                ]
+            },
+            { # you are very funny
                 'key': 'you are',
                 'decomp': "you are *",
                 'reasmb_neutral': 
@@ -2088,8 +2120,7 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "great. Let`s discuss further. Tell me more about that?",
-                    "I see. Let`s discuss further. Tell me more about that?"
+                    "I see. Let`s discuss further. Can you please provide more information that I can help you with?"
                 ]
             },{ # no  
                 'key': 'no',
@@ -2111,7 +2142,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral': 
                 [
                     "Why are you saying no?",
-                    "I want to understand. Why do you think so?"
+                    "I want to understand. Why no?",
                     "Why no?"
                 ],
             },{ # i dislike my work
@@ -2475,6 +2506,54 @@ def EmotionTestFunc(query_params):
                 [
                     "Why do you think (2) causes that?"
                 ],
+            },{# they told me my job/work is not good
+                'key': 'My job',
+                'decomp': "* my @job *",
+                'reasmb_neutral': 
+                [
+                    "How your work impacts your feeling?",
+                    "What do you do when you feel this way?",
+                    "Can you tell me more about your work?",
+                    "Have you felt this way about your work before?"
+                ],
+                'reasmb_empathy':
+                [
+                    "How your work impacts your feeling?",
+                    "What do you do when you feel this way?",
+                    "Can you tell me more about your work?",
+                    "Have you felt this way about your work before?"
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "How your work impacts your feeling?",
+                    "What do you do when you feel this way?",
+                    "Can you tell me more about your work?",
+                    "Have you felt this way about your work before?"
+                ],
+            },{# they told me I am big
+                'key': 'told me',
+                'decomp': "* told me *",
+                'reasmb_neutral': 
+                [
+                    "How important is what others tell you?",
+                    "How what others tell you changes your mood?",
+                    "How what others tell you makes you feel?",
+                    "Do they have any reason for that?"
+                ],
+                'reasmb_empathy':
+                [
+                    "How important is what others tell you?",
+                    "How what others tell you changes your mood?",
+                    "How what others tell you makes you feel?",
+                    "Do they have any reason for that?"
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "How important is (2) to you?",
+                    "How (2), affects your mood?",
+                    "What is your response when '(2)' is being said.",
+                    "Do they have any reason for saying (2)?"
+                ],
             }
         ]
     }
@@ -2484,7 +2563,10 @@ def EmotionTestFunc(query_params):
 
         # Two lists of sentences
         sentences1 = decomposition_rules
-        sentences2 = [user_input]        
+        sentences2 = [user_input]      
+
+        # bring synonyms to decompose rules and remove *   
+        sentences1 = list(map(lambda x: replace_decomp_with_syns(x.replace("*", "")) , sentences1))
 
         #Compute embedding for both lists
         embeddings1 = model.encode(sentences1, convert_to_tensor=True)
@@ -2501,7 +2583,7 @@ def EmotionTestFunc(query_params):
                 max_val = cosine_scores[i][0]
                 key = i
                 # print("{} \t\t {} \t\t Score: {:.4f}".format(sentences1[i], sentences2[0], cosine_scores[i][0]))
-        print("most similar", sentences1[key])
+        print("most similar", sentences1[key], 'cosine scores', cosine_scores, "sentences", sentences1)
         return list(sentences1[key])
 
   
@@ -2518,32 +2600,61 @@ def EmotionTestFunc(query_params):
             reg = reg[0][1:]
             return replace_decomp_with_syns(decomp.replace('@'+reg, '('+'|'.join(find_syns(reg))+')'))
         return decomp
+
+    def rule_can_parse(decomp_rule, sentence): #tag[1]=decomp_sentence
+        #checking if decomp rule can parse sentence
+        reg = replace_decomp_with_syns(decomp_rule)
+        reg = reg.replace('*', r'(.*)?').replace(' ', r'\s')
+        found = regex.findall(reg, sentence)
+        return found
+
         
     def rank_sent_for_tags(sentence, tags, reasmb_rule):
         result = {}
         sentence = sentence.lower()
+        keys_to_debug = ('i', 'hello')
 
-        import_words = []
-        # tokens = word_tokenize(sentence)
-        # for word in nltk.pos_tag(tokens):
-        #     if(word[1] in ('NN', 'NNS', 'NNP', 'JJ', 'ADV', 'VB', 'VBG', 'VBP', 'PRP') or word[0] in ('no', 'yes', 'if', 'dreamed')):
-        #         import_words.append(word[0])
         import_words = sentence.split()
-        
+
+        # filter rules that can not decompose
+        tags = list(filter(lambda x:rule_can_parse(x[1], sentence), tags))
+        print("rules that can decompose:", tags)
+
         rule_keys = list(map(lambda x:x[1],tags))
         most_simillar_keys_from_CosSimilarity = calculate_cosine_simillarity_with_rule_keys(sentence, rule_keys)
 
         for tag in tags:
             ranking = {'key':tag[0], 'score':0.001, 'decomp':tag[1], reasmb_rule:tag[2]}
+
+            reg = replace_decomp_with_syns(tag[1])
+            reg = reg.replace('*', r'(.*)?').replace(' ', r'\s')
+            ranking['decomp'] = reg
+
+            number_of_stars = len(list(filter(lambda i: i=='*' ,tag[1])))
+            if number_of_stars == 0:
+                ranking['score'] += 8
+            else:   
+                ranking['score'] += number_of_stars*8
+
+                
+            # step 1: check if key name is among the important words of the user input
             if tag[0] in import_words:
                 if tag[0] not in ("i", "am"): 
-                    ranking['score'] += 1500
+                    ranking['score'] += 10
                 else:
                     ranking['score'] += 0.2
 
-            print("check it", tag[1], " ".join(most_simillar_keys_from_CosSimilarity))
-            if tag[1] == " ".join(most_simillar_keys_from_CosSimilarity):
-                ranking['score']+=15
+            if tag[0] in keys_to_debug:
+                print(ranking,'step 1 done')
+
+            # to do check this issue join.
+            # print("check it", tag[1], "".join(most_simillar_keys_from_CosSimilarity))
+            #step 2: considering our semantic similarity check
+            if tag[1] == "".join(most_simillar_keys_from_CosSimilarity):
+                ranking['score']+=20
+
+            if tag[0] in keys_to_debug:
+                print(ranking,'step 2 done')
 
             for imp_word in import_words:
                 #adding effect of decomp rules to scores
@@ -2555,20 +2666,10 @@ def EmotionTestFunc(query_params):
                         else:
                             ranking['score'] += 0.3
 
+            if tag[0] in keys_to_debug:
+                print(ranking,'step 3 done')
             
-            #checking if decomp works
-            reg = replace_decomp_with_syns(tag[1])
-            reg = reg.replace('*', r'(.*)?').replace(' ', r'\s')
-            ranking['decomp'] = reg
-            found = regex.findall(reg, sentence)
-            # if reg == "(.*)?i\\s(desire|want|need)\\s(.*)?":
-            #     print(reg, sentence)
-            if found:
-                ranking['score'] += 10
-                number_of_stars = len(list(filter(lambda i: i=='*' ,tag[1])))
-                ranking['score'] += number_of_stars*8
-                print("this rulecan decompose= ",reg)
-
+            
             if ranking['key'] in result and float(ranking['score'])>float(result[ranking['key']]['score']):
                 result[ranking['key']] = ranking
             elif ranking['key'] not in result:
@@ -2594,27 +2695,30 @@ def EmotionTestFunc(query_params):
         for reasmbl_chunks in reasmbl_res:
             index = reasmbl_chunks[1:2]
             ar_indexes.append(index)
-        
+
         if '|' in decomp:
             for gp in result.groups():
                 if find_syns(gp):
+                    ar_indexes = list(map(lambda i: ({'old':i, 'new':int(i)+1} if int(i) >= result.groups().index(gp)+1 else {'old':i, 'new':i} ) if type(i) is not dict else ({'old':i['old'], 'new':int(i['new'])+1} if int(i['new']) >= result.groups().index(gp)+1 else {'old':i['old'], 'new':i['new']} ) ,ar_indexes))
                     print('****gp****', gp)
                     print('****ar_indexes****', ar_indexes)
-                    ar_indexes = list(map(lambda i: ({'old':i, 'new':int(i)+1} if int(i) >= result.groups().index(gp)+1 else {'old':i, 'new':i} ) if type(i) is not dict else i ,ar_indexes))
         
         generated_response = reasmbl
         for index in ar_indexes:
             res = ""
             if type(index) is not dict:
                 res = result.groups()[int(index)-1]
-                res = res+"<end_mark>"
+                res = "<start_mark>"+res+"<end_mark>"
                 res = res.replace(' yourself<end_mark>', ' Myself')\
                     .replace(' myself<end_mark>', ' Yourself')\
                     .replace(' you ', ' I ')\
+                    .replace("<start_mark>you ", 'I ')\
                     .replace(' i ', ' You ')\
+                    .replace("<start_mark>i ", 'You ')\
                     .replace(" i'm ", ' You are ')\
+                    .replace("<start_mark>i'm ", 'You are ')\
                     .replace(' my ', ' Your ')\
-                    .replace('my ', 'Your ')\
+                    .replace('<start_mark>my ', 'Your ')\
                     .replace(' am ', ' are ')\
                     .replace(' me<end_mark>', ' You')\
                     .replace(' noone<end_mark>', ' no one')\
@@ -2622,7 +2726,8 @@ def EmotionTestFunc(query_params):
                     .replace(' cannot ', ' can not ')\
                     .replace(' cannot<end_mark>', ' can not')\
                     .replace(' me ', ' You ')\
-                    .replace('<end_mark>', ' ')
+                    .replace('<end_mark>', ' ')\
+                    .replace('<start_mark>', ' ')
                 
                 generated_response = generated_response.replace("("+str(index)+")", " "+res+" ")
             else:
@@ -2632,14 +2737,17 @@ def EmotionTestFunc(query_params):
                     res = result.groups()[int(index['new'])-1]
 
 
-                res = res+"<end_mark>"
+                res = "<start_mark>"+res+"<end_mark>"
                 res = res.replace(' yourself<end_mark>', ' Myself')\
                 .replace(' myself<end_mark>', ' Yourself')\
                 .replace(' you ', ' I ')\
+                .replace('<start_mark>you ', 'I ')\
                 .replace(' i ', ' You ')\
+                .replace('<start_mark>i ', ' You ')\
                 .replace(" i'm ", ' You are ')\
+                .replace("<start_mark>i'm ", 'You are ')\
                 .replace(' my ', ' Your ')\
-                .replace('my ', 'Your ')\
+                .replace('<start_mark>my ', 'Your ')\
                 .replace(' am ', ' are ')\
                 .replace(' me<end_mark>', ' You')\
                 .replace(' noone<end_mark>', ' no one')\
@@ -2647,7 +2755,8 @@ def EmotionTestFunc(query_params):
                 .replace(' cannot ', ' can not ')\
                 .replace(' cannot<end_mark>', ' can not')\
                 .replace(' me ', ' You ')\
-                .replace('<end_mark>', ' ')
+                .replace('<end_mark>', ' ')\
+                .replace('<start_mark>', ' ')
 
                 generated_response = generated_response.replace("("+str(index['old'])+")", " "+res+" ")
             
@@ -2662,6 +2771,7 @@ def EmotionTestFunc(query_params):
             replace(" can not ", " cannot ")
 
         reasmb_rule = random.choice(['reasmb_dynamic_neutral', 'reasmb_neutral'])
+        # reasmb_rule = "reasmb_dynamic_neutral"
         if select_empathy: reasmb_rule = 'reasmb_empathy' 
 
         key_score_decomp_ar = rank_sent_for_tags(user_sentence, list(map(lambda c: [c['key'], c['decomp'], c[reasmb_rule]] ,sample_generator_rules['dec_rules'])), reasmb_rule)
