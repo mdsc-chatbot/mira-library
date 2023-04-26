@@ -422,8 +422,6 @@ def calculateCountsForResources(query_params):
                 canada_cities.pop(index)
                 canada_city_proviences.pop(index)
 
-    
-
     resource_type = ["BT"]
     if "program_services" in tags_params:
         resource_type.append("SR")
@@ -653,7 +651,8 @@ def calculateTagWeightsForResources(query_params):
 
 # rasa will call it NEW
 def ResourceByIntentEntityViewQuerySet_new(query_params):
-    resQueryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
+    resQueryset = Resource.objects.filter(
+        (Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
     
     word_mapping = [('family_member', 'Caregiver/Parent')
     ,('family_member', 'Children')
@@ -988,17 +987,17 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
     input_location_type_mh = []
     if 'city' in class_tag_mapping:
-        input_location_type_mh.append(10)
+        input_location_type_mh.append(100)
     else:
         input_location_type_mh.append(0.01)
     
     if 'resource_type' in class_tag_mapping:
-        input_location_type_mh.append(10)
+        input_location_type_mh.append(100)
     else:
         input_location_type_mh.append(0.01)
     
     if 'mh_concern' in class_tag_mapping:
-        input_location_type_mh.append(10)
+        input_location_type_mh.append(100)
     else:
         input_location_type_mh.append(0.01)
 
@@ -1043,9 +1042,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
     print('tags_params_mapped', tags_params_mapped)
     # print('query_relaxation_tags', query_relaxation_tags)
-
     
-        
     # print('query_relaxation_tags',query_relaxation_tags)
     # print('tags_params', tags_params)
 
@@ -1053,62 +1050,6 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     resQueryset = resQueryset.filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
 
-
-    # calculating tf-idf for tags
-    tags = Tag.objects.filter(Q(approved="1") and ~Q(tag_category="Location") and ~Q(tag_category="Language")).values('id','name')
-    all_tags = []
-
-    for tag in tags:
-        all_tags.append({
-            'id':tag['id'],
-            'value':tag['name']
-        })
-
-    def tf_idf(doc_array, words_arr):
-        doc_token_counts = {}
-        response = {}
-        token_counter = {}
-        for doc in doc_array:
-            doc_id = doc['id']
-            tokens = doc['value']
-            t_counts = Counter(tokens)
-            doc_token_counts[doc_id] = t_counts
-            for word in words_arr:
-                word_value = word['value']
-                if t_counts[word_value]>0:
-                    if word_value not in token_counter:
-                        token_counter[word_value]=0
-                    token_counter[word_value] +=1        
-
-        for doc in doc_array:
-            doc_id = doc['id']
-            doc_value = doc['value']
-            response[doc_id] = {}
-            for word in words_arr:
-                word_value = word['value']
-                word_id = word['id']
-                if word_value not in token_counter or token_counter[word_value]==0:
-                    response[doc_id][word_id] = 0
-                else:    
-                    response[doc_id][word_id] = (doc_token_counts[doc_id][word_value])/math.log2(len(doc_array)/token_counter[word_value])
-            
-        for doc in doc_array:
-            doc_id = doc['id']
-            items = response[doc_id]
-            topitems = heapq.nlargest(70, items.items(), key=itemgetter(1))
-            topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
-            response[doc_id] = topitemsasdict
-        
-        return response
-
-    # resource_text = []
-    # for resource in list(map(lambda x: [x.id,list(x.tags.all())], resQueryset)):
-    #     tag_names = list(map(lambda x: x.name  ,resource[1]))
-    #     resource_text.append({'id':resource[0], 'value':tag_names})
-
-    
-    # tfidf_res = tf_idf(resource_text, all_tags)
-    
 
     query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id').all()
     query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
@@ -1154,7 +1095,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 if original_tag_categories[i] == 'Location':
                     resource_scores[resource[0]][0] += 10
                 elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][2] += 10
+                    resource_scores[resource[0]][2] += 20
                 elif original_tag_categories[i] in ('Resource Type for Programs and Services', 'Resource Type for Education/Informational'):
                     resource_scores[resource[0]][1] += 10
 
@@ -1166,13 +1107,13 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 if original_tag_categories[i] == 'Location':
                     resource_scores[resource[0]][0] += 6
                 elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][2] += 6
+                    resource_scores[resource[0]][2] += 12
                 elif original_tag_categories[i] in ('Resource Type for Programs and Services', 'Resource Type for Education/Informational'):
                     resource_scores[resource[0]][1] += 6
 
-
+        #added like a rule 
         if "Informational Website" in tags_params_mapped:
-            resource_scores[resource[0]][0] = 10
+            resource_scores[resource[0]][1] = 10
 
         resource_scores[resource[0]] = cos(torch.FloatTensor(input_location_type_mh), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
 
