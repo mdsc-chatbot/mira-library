@@ -1348,21 +1348,32 @@ def EmotionTestFunc(query_params):
         "clarification": [ # clarification + emotional or topic fact with doubt if needed
             "Let me see if I've gotten this right...",
             "I want to make sure I understand...",
-            "Okay, I think I understand your feeling...",
-            "I am doing my best to understand how you are feeling..."
+            "Okay, I think I understand what you're feeling...",
+            "I am doing my best to understand how you are feeling but I am still unsure...",
+            "I'm still shaky on the details can you explain more....",
+            "Right now I am only able to understand a few details can you give me more..."
         ],
         "response_to_neg_feelings": [ # response 
-            "I imagine that must be hard.",
-            "I can understand that must be hard.",
-            "I would feel bad too in same situation.",
+            "That must be hard.",
+            "I can detect that must be hard.",
+            "I think anyone would feel bad too in the same situation.",
             "I can see how that would be difficult.",
             "That sounds very challenging.",
-            "That sounds difficult."
+            "That sounds difficult.",
+            "I am sorry that is happening.",
+            "That can't be easy to sit with.",
+            "I'm sorry that is happening.",
+            "That's a troubling though.",
+            "I value your thoughts.",
+            "Your words are safe with me.",
         ],
         "response_to_pos_feelings": [ # response 
             "I support your position here.",
-            "There are far better things ahead than any we leave behind.",
+            "That seems like a good thing.",
             "I'm glad you told me.",
+            "That seems good.",
+            "Feeling that way could be good.",
+            "Seems like that could make things easier.",
         ]
     }
 
@@ -1372,42 +1383,30 @@ def EmotionTestFunc(query_params):
     emotion_response_neg_sentence = emotion_response_bags["response_to_neg_feelings"][random.randint(0,len(emotion_response_bags["response_to_neg_feelings"])-1)]
     if (detected_emotion):
         if (detected_emotion['label']=="joy"):
-            if(num_run_eliza<2):
-                emotion_des = clarification_sentence\
-                        + "You must feel happy. "\
-                        + emotion_response_pos_sentence
-            else:
-                emotion_des = emotion_response_pos_sentence
+            emotion_des = emotion_response_pos_sentence
             if (detected_emotion['score']<0.5):
                 if(num_run_eliza<2):
                     emotion_des = clarification_sentence\
-                    + "I guess you feel happy. "
+                    + "I can detect you feel happy. "
                 else:
                     emotion_des = "I am here for you. "
         elif (detected_emotion['label']=="sadness"):
-            if(num_run_eliza<2):
-                emotion_des = clarification_sentence\
-                    + "You must feel sad. "\
-                    + emotion_response_neg_sentence
-                if (detected_emotion['score']<0.5):
+            emotion_des = emotion_response_neg_sentence
+            if (detected_emotion['score']<0.5):
+                if(num_run_eliza<2):
                     emotion_des = clarification_sentence\
-                    + "I guess you feel sad. "
-            else:
-                emotion_des = emotion_response_neg_sentence
-                if (detected_emotion['score']<0.5):
+                    + "I can detect you are sad."
+                else:
                     emotion_des = "Your words are valued with me. "
         elif (detected_emotion['label']=="fear"):
-            if(num_run_eliza<2):
-                emotion_des = clarification_sentence\
-                + "It must be frightening. "\
-                + emotion_response_neg_sentence
-                if (detected_emotion['score']<0.5):
-                    emotion_des = clarification_sentence\
-                    + "I guess it was frightening. "
-            else:
-                emotion_des = emotion_response_neg_sentence
-                if (detected_emotion['score']<0.5):
-                    emotion_des = "I am here for you. "
+            emotion_des = emotion_response_neg_sentence
+            if (detected_emotion['score']<0.5):
+                emotion_des = "I am here for you."
+
+        elif (detected_emotion['label']=="anger"):
+            emotion_des = emotion_response_neg_sentence
+            if (detected_emotion['score']<0.5):
+                emotion_des = "I can help you feel better."
     
     
     sample_generator_rules = {
@@ -1440,12 +1439,13 @@ def EmotionTestFunc(query_params):
                 'reasmb_empathy': 
                 [
                     "I'm here for you, tell me more about your feelings other than sorry.",
-                    "That sounds very challenging, Why do you think you feel sorry ?"
+                    "That sounds very challenging, Why do you think you feel sorry?"
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "There is no need to apologize, let's move on.",
-                    "Apologies are not necessary. Tell me more about your feelings.",
+                    "There is no need to apologize, you're okay.",
+                    "Apologies are not necessary. Tell me more about your feelings",
+                    "What feelings do you have about this?",
                 ],
             },
             {#example: I am sorry about X
@@ -1466,6 +1466,8 @@ def EmotionTestFunc(query_params):
                 [
                     "There is no need to apologize, let's move on.",
                     "Apologies are not necessary.",
+                    "what do you think caused being sorry (2) ?",
+                    "what do you think made you feel sorry (2) ?"
                 ],
             }
             ,{#example: I also remember X
@@ -1518,10 +1520,12 @@ def EmotionTestFunc(query_params):
                     "Do you often think of (2)?",
                     "Does thinking of (2) bring anything else to mind?",
                     "What else do you recollect?",
+                    "What else do you remember?",
+                    "what feelings come into mind when you remember it?"
                     "What in the present situation reminds you of (2)?"
                 ],
             },{ #example: do you remember X
-                'key': 'remember',
+                'key': 'do you remember',
                 'decomp': '*do you remember *',
                 'reasmb_neutral': 
                 [
@@ -1537,7 +1541,7 @@ def EmotionTestFunc(query_params):
                 [
                     "This conversation is anonymous. Why do you think I should recall (2) now?",
                     "This conversation is anonymous. What is special about (2)?",
-                    "This conversation is anonymous. You mentioned (2)?"
+                    "This conversation is anonymous. You mentioned (2) before?"
                 ],
             },{ #example: what if i didn't run.
                 'key': 'if',
@@ -1559,7 +1563,7 @@ def EmotionTestFunc(query_params):
                 [
                     "Do you think it's likely that (2)?",
                     "Do you wish that (2)?",
-                    "What do you know about (2)?",
+                    "Tell me more about what you are feeling if this happens.",
                     "I hear you saying, if (2)?"
                 ],
             },{ #i dreamed of my love every night.
@@ -1627,6 +1631,8 @@ def EmotionTestFunc(query_params):
                 [
                     "You don't seem certain. Why?",
                     "Whu you seem uncertain?",
+                    "Why do you say 'perhaps' ?",
+                    "You seem unsure. Why do you say that ?"
                 ],
             },{ #hello
                 'key': 'hello',
@@ -1643,6 +1649,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral':
                 [
                     "Hello! I'm here to listen. Tell me what's on your mind.",
+                    "Hello! How can I help you?",
                 ],
             },{ # computer
                 'key': 'computer',
@@ -1667,7 +1674,7 @@ def EmotionTestFunc(query_params):
                     "What do you think machines are part of your problem?"
                 ],
             },{ # am I a bad person?
-                'key': 'am',
+                'key': 'am i',
                 'decomp': 'am i *',
                 'reasmb_neutral': 
                 [
@@ -1686,7 +1693,8 @@ def EmotionTestFunc(query_params):
                     "Why do you believe you are (1)?",
                     "Would you want to be (1)?",
                     "Do you wish I would tell you you are (1)?",
-                    "What would it mean if you were (1)?"
+                    "What would it mean if you were (1)?",
+                    "What makes you ask this question about yourself ?",
                 ],
             },{ # are you married?
                 'key': 'are you', 
@@ -1706,6 +1714,7 @@ def EmotionTestFunc(query_params):
                     "Why are you interested in whether I am (1) or not?",
                     "Would you prefer if I weren't (1)?",
                     "Why do you think I am (1)?",
+                    "Do you sometimes think I am like that ?",
                 ],
             },{ # they are cool.
                 'key': 'they are',
@@ -1746,7 +1755,8 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral': 
                 [
                     "Why you like it if I was not (2)?",
-                    "What makes you think I am (2)?"
+                    "What makes you think I am (2)?",
+                    "What does this make you think of?"
                 ],
             },{ #I think your questions are hard
                 'key': 'your',
@@ -1766,7 +1776,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral': 
                 [
                     "Why are you concerned about my (2)?",
-                    "What about your own (2)?",
+                    "Why are you worried about someone else ?",
                     "Why are you worried about someone else's (2)?"
                 ],
             },{ # was I a good person?
@@ -1810,9 +1820,10 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral': 
                 [
                     "Why do you tell me you were (1) now?",
+                    "Why you were (1)?",
                 ],
             },{ # were you in this situation before?
-                'key': 'were',
+                'key': 'were you',
                 'decomp': 'were you *',
                 'reasmb_neutral': 
                 [
@@ -1831,7 +1842,7 @@ def EmotionTestFunc(query_params):
                     "What if I had been (1)?"
                 ],
             },{ # I want to take a flight and escape.
-                'key': 'want',
+                'key': 'I want',
                 'decomp': 'i @desire *',
                 'reasmb_neutral': 
                 [
@@ -1905,6 +1916,7 @@ def EmotionTestFunc(query_params):
                     "Do you think that coming here will help you not to be (2)?",
                     "I'm sure it's not pleasant to be (2).",
                     "Can you explain what made you (2)?",
+                    "Can you tell me more about what is making you feel sad?"
                 ],
             },{ # i am very happy
                 'key': 'i am happy',
@@ -1927,6 +1939,7 @@ def EmotionTestFunc(query_params):
                     "Why your treatment made you (2)?",
                     "What makes you (2) just now?",
                     "Can you explain why you are suddenly (2)?",
+                    "What makes you feel this way?",
                 ],
             },{ # i wish I was not a looser.
                 'key': 'i wish',
@@ -2040,7 +2053,7 @@ def EmotionTestFunc(query_params):
                     "Of what does feeling (1) remind you?"
                 ],
             },{ # i think i am not prepared for it
-                'key': 'i',
+                'key': 'every thing',
                 'decomp': '*',
                 'reasmb_neutral': 
                 [
@@ -2052,15 +2065,16 @@ def EmotionTestFunc(query_params):
                     "Could you tell me more?",
                     "Can you elaborate on that?",
                     "Let`s discuss further. Tell me more about that.",
-                    "Let`s discuss further. Tell me more about that.",
                 ],
                 'reasmb_dynamic_neutral':
                 [
                     "Could you tell me more?",
-                    "Thank you for sharing with me. Can you elaborate on that?",
+                    "Thanks for sharing with me. Can you elaborate on that?",
                     "I'm sorry, I'm not sure what you mean by (1)",
-                    "Let`s discuss further. Tell me more",
-                    "Can you elaborate on that ?"
+                    "Let's discuss further. Tell me more.",
+                    "Can you elaborate on that ?",
+                    "Let's discuss further. Tell me more about that.",
+                    "what does that suggest to you?"
                 ]
             },{ # i think i am not prepared for it
                 'key': 'and',
@@ -2282,7 +2296,7 @@ def EmotionTestFunc(query_params):
                     "What other reasons might there be?"
                 ],
             },{ # why don't you check again and let me know?
-                'key': 'why do not',
+                'key': 'why do not you',
                 'decomp': "why don't you *",
                 'reasmb_neutral': 
                 [
@@ -2301,7 +2315,7 @@ def EmotionTestFunc(query_params):
                     "Why you want me to (1)?"
                 ],
             },{ # why can't i be happy?
-                'key': 'why can not',
+                'key': 'why can not i',
                 'decomp': "*why can't i *",
                 'reasmb_neutral': 
                 [
@@ -2447,7 +2461,7 @@ def EmotionTestFunc(query_params):
                     "Could there really be some connection?"
                 ],
             },{ # this makes me anxious
-                'key': 'Anxious',
+                'key': 'makes me Anxious',
                 'decomp': "* @makes me @anxiety",
                 'reasmb_neutral': 
                 [
@@ -2467,7 +2481,7 @@ def EmotionTestFunc(query_params):
                     "I'm sorry to hear that, why do you think (1) causes that?"
                 ],
             },{
-                'key': 'Anxious 2',
+                'key': 'Anxious because',
                 'decomp': "* @anxiety * @because *",
                 'reasmb_neutral': 
                 [
@@ -2487,7 +2501,7 @@ def EmotionTestFunc(query_params):
                     "I'm sorry to hear that, why do you think (3) causes that?"
                 ],
             },{
-                'key': 'Anxious 3',
+                'key': 'Anxiety because',
                 'decomp': "* @anxiety @because *",
                 'reasmb_neutral': 
                 [
@@ -2612,7 +2626,7 @@ def EmotionTestFunc(query_params):
     def rank_sent_for_tags(sentence, tags, reasmb_rule):
         result = {}
         sentence = sentence.lower()
-        keys_to_debug = ('i', 'hello')
+        keys_to_debug = ('every thing', 'hello')
 
         import_words = sentence.split()
 
@@ -2639,7 +2653,7 @@ def EmotionTestFunc(query_params):
                 
             # step 1: check if key name is among the important words of the user input
             if tag[0] in import_words:
-                if tag[0] not in ("i", "am"): 
+                if tag[0] not in ("every thing"): 
                     ranking['score'] += 10
                 else:
                     ranking['score'] += 0.2
@@ -2661,7 +2675,7 @@ def EmotionTestFunc(query_params):
                 decomp_with_syn = replace_decomp_with_syns(tag[1])
                 for decomp_word in decomp_with_syn.replace("|", " ").replace("(", " ").replace(")", " ").split(" "):
                     if decomp_word == imp_word:
-                        if decomp_word not in ("i", "am") : 
+                        if decomp_word not in ("every thing") : 
                             ranking['score'] += 1
                         else:
                             ranking['score'] += 0.3
