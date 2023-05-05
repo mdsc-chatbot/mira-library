@@ -60,6 +60,8 @@ import torch.nn.functional as F
 from sentence_transformers import SentenceTransformer, util #new pip install -U sentence-transformers
 import regex 
 import random
+#add to server
+import numpy as np
 
 
 class StandardResultSetPagination(PageNumberPagination):
@@ -911,26 +913,59 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
         "Traditional Aboriginal Health",
         "Other Treatment Types (Non-Medicinal/Pharmaceutical)"
     ]
-    len_tag_embedding = len(sentences)
-    for t in tags_params:
-        if t[1] == 'mh_concern':
-            sentences.append(t[0])
-
+    
     # Load model from HuggingFace Hub
     tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
     model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
-    # Tokenize sentences
-    encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
-    # Compute token embeddings
-    with torch.no_grad():
-        model_output = model(**encoded_input)
-    # Perform pooling
-    sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
-    # Normalize embeddings
-    sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+
+    # if file not found
+    sentence_embeddings = None
+    try:
+        sentence_embeddings = np.load('mh_concern_sentence_embeddings_v1.npy')
+        # Embedding found
+        print("Embedding found")
+    except Exception:
+        # Embedding not found
+        print('Embedding not found')
+
+        # Tokenize sentences
+        encoded_input = tokenizer(sentences, padding=True, truncation=True, return_tensors='pt')
+        # Compute token embeddings
+        with torch.no_grad():
+            model_output = model(**encoded_input)
+        # Perform pooling
+        sentence_embeddings = mean_pooling(model_output, encoded_input['attention_mask'])
+        # Normalize embeddings
+        sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+        np.save('mh_concern_sentence_embeddings_v1.npy', sentence_embeddings)
+
+
+    input_sentences = []
+    len_tag_embedding = len(sentence_embeddings)
+    for t in tags_params:
+        if t[1] == 'mh_concern':
+            input_sentences.append(t[0])
+
+    if len(input_sentences)>0:
+        # Load model from HuggingFace Hub
+        tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+        model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+        # Tokenize sentences
+        encoded_input = tokenizer(input_sentences, padding=True, truncation=True, return_tensors='pt')
+        # Compute token embeddings
+        with torch.no_grad():
+            model_output = model(**encoded_input)
+        # Perform pooling
+        sentence_embeddings_2 = mean_pooling(model_output, encoded_input['attention_mask'])
+        # Normalize embeddings
+        sentence_embeddings_2 = F.normalize(sentence_embeddings, p=2, dim=1)
+        for se in sentence_embeddings_2:
+            sentence_embeddings.append(se)
+        for ins in input_sentences:
+            sentences.append(ins) 
+
 
     cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
-
 
     should_be_romoved = set()
     should_be_added = set()
@@ -968,12 +1003,10 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                     max_sim = 0.75
                     for i in range(len_tag_embedding):
                         cos_sim = cos(f, sentence_embeddings[i]).numpy()
-                        # print('cos_sim', tag_param, sentences[i], cos_sim)
                         if max_sim < cos_sim:
                             max_sim = cos_sim
                             sim = sentences[i]
                     if not sim=='':
-                        # print(sim, '$$$$$$$$$$ added using embedding $$$$$$$$$$$ \n')
                         should_be_added.add(sim)
 
 
