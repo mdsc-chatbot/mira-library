@@ -720,7 +720,6 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('specialist', 'Medical services')
     ,('housing', 'Housing - Emergency')
     ,('group_class', 'Group therapy')
-    ,('doctor', 'Family Doctor')
     ,('peer_support', 'In-person Group Support Meeting')
     ,('need_in_person', 'In-person Group Support Meeting')
     ,('help_from_another_person', 'Phone line/call centre')
@@ -734,6 +733,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('youth', 'Children')
     ,('doctor', 'Resident doctor')
     ,('doctor', 'Practising or retired physician')
+    ,('doctor', 'Doctor')
     ,('fire fighter', 'First responder')
     ,('fire fighter', 'Social worker')
     ,('community support', 'Group therapy')
@@ -792,7 +792,8 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     all_possible_tags = Tag.objects.filter(approved=1).all()
     
     all_possible_tags = list(filter(lambda x: x.name.lower() not in n_tags_params , all_possible_tags))
-    all_possible_tags = list(map(lambda x: x.name, all_possible_tags))
+    all_possible_tags = list(map(lambda x: (x.name, x.tag_category), all_possible_tags))
+    all_possible_tag_names = list(map(lambda x: x[0], all_possible_tags))
 
     #######################calculate tag embeddings
     #Mean Pooling - Take attention mask into account for correct averaging
@@ -975,35 +976,27 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     class_tag_mapping = {}
 
 
+    word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
+
     for tag_param in tags_params:
-        print(tag_param)
-        if not str(tag_param[1]).isnumeric():
-            if not (tag_param[1] in class_tag_mapping):
-                class_tag_mapping[tag_param[1]] = []
-            class_tag_mapping[tag_param[1]].append(tag_param[0])
-        else:
-            #sometimes chatbot sends types as an intent not entity
-            if tag_param[0] in ('information', 'program_services', 'coping_skills'):
-                class_tag_mapping["resource_type"].append(tag_param[0])
-
         tag_param = tag_param[0]
+        print("tag_param", tag_param)
 
-        word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
-        # word_mapping_values = list(map(lambda x: x[1] ,word_mapping))
-
-        if tag_param in all_possible_tags:
+        if tag_param in all_possible_tag_names:
+            print("found in approved tags")
             continue
         else:
             if tag_param in word_mapping_keys:
+                print("found in word mapping")
                 should_be_romoved.add(tag_param)
                 for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
-                    # print(tag_param, 'look up table ', related_word[1])
                     should_be_added.add(related_word[1])
             else:
-                similar_tags = difflib.get_close_matches(tag_param, all_possible_tags, n=2, cutoff=0.7)
+                similar_tags = difflib.get_close_matches(tag_param, all_possible_tag_names, n=2, cutoff=0.7)
                 if len(similar_tags) > 0:
                     should_be_romoved.add(tag_param)
                     should_be_added.add(similar_tags[0])
+                    print("found using distance")
                 elif tag_param in sentences:
                     f = sentence_embeddings[sentences.index(tag_param)]
                     sim = ''
@@ -1016,6 +1009,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                     if not sim=='':
                         should_be_romoved.add(tag_param)
                         should_be_added.add(sim)
+                        print("found using transformer")
 
 
 
@@ -1024,23 +1018,68 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     should_be_romoved.add('for_me')
     should_be_romoved.add('consent_agree')
     should_be_romoved.add('show_resource')
-    
 
-    input_location_type_mh = []
-    if 'city' in class_tag_mapping:
-        input_location_type_mh.append(100)
-    else:
-        input_location_type_mh.append(0.01)
+
+    for tag_ in should_be_added:
+        try:
+            tag_category = [tag[1] for tag in all_possible_tags if tag[0] == tag_][0]
+            if not (tag_category in class_tag_mapping):
+                class_tag_mapping[tag_category] = []
+            class_tag_mapping[tag_category].append(tag_)
+        except:
+            print("category not found")
     
-    if 'resource_type' in class_tag_mapping:
-        input_location_type_mh.append(100)
-    else:
-        input_location_type_mh.append(0.01)
     
-    if 'mh_concern' in class_tag_mapping:
-        input_location_type_mh.append(100)
+    # Location
+    # Resource format
+    # Resource Type for Education/Informational
+    # Resource Type for Programs and Services
+    # Health Issue
+    # Costs
+    # Audience
+    # Language
+
+    input_lo_format_infot_servt_mh_cost_au_lang = []
+    if 'Location' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
     else:
-        input_location_type_mh.append(0.01)
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Resource format' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource format']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Education/Informational' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Education/Informational']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Programs and Services' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Programs and Services']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Health Issue' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Health Issue']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Costs' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Costs']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Audience' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Audience']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Language' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Language']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+                                                           
 
 
     #provience2city mapping 
@@ -1053,23 +1092,23 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     # print('class_tag_mapping',class_tag_mapping)
     canada_cities = list(map(lambda x: x.lower() ,canada_cities))
 
-    if 'city' in class_tag_mapping:
-        for loc_tag in class_tag_mapping['city']:
+    if 'Location' in class_tag_mapping:
+        for loc_tag in class_tag_mapping['Location']:
             if loc_tag in canada_cities: 
                 index = canada_cities.index(loc_tag)
                 query_relaxation_tags.append(canada_city_proviences[index])
-                tags_params.append((canada_city_proviences[index], 'city'))
+                tags_params.append((canada_city_proviences[index], 'Location'))
             else:
                 similar_tags = difflib.get_close_matches(loc_tag, canada_cities, n=2, cutoff=0.9)
                 if len(similar_tags) > 0:
                     index = canada_cities.index(similar_tags[0])
                     query_relaxation_tags.append(canada_city_proviences[index])
-                    tags_params.append((canada_city_proviences[index], 'city'))
+                    tags_params.append((canada_city_proviences[index], 'Location'))
                 else:
                     similar_tags = difflib.get_close_matches(loc_tag, canada_city_proviences, n=2, cutoff=0.60)
                     if len(similar_tags) > 0:
                         query_relaxation_tags.append(similar_tags[0])
-                        tags_params.append((similar_tags[0], 'city'))
+                        tags_params.append((similar_tags[0], 'Location'))
 
         
     #adding obvious location tags
@@ -1083,11 +1122,6 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
 
     print('tags_params_mapped', tags_params_mapped)
-    # print('query_relaxation_tags', query_relaxation_tags)
-    
-    # print('query_relaxation_tags',query_relaxation_tags)
-    # print('tags_params', tags_params)
-
     
     resQueryset = resQueryset.filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
@@ -1104,12 +1138,12 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     
     
     
-    # input_location_type_mh
+    # input_lo_format_infot_servt_mh_cost_au_lang
     # scoring and ordering by scores
     resource_scores = {}
     res_counter = 0
     for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], resQueryset)):
-        resource_scores[resource[0]] = [0,0,0]
+        resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
         if resource[1] is None or resource[1]=='':
             resource_scores[resource[0]] = 0
             continue
@@ -1118,17 +1152,27 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
         original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
         original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
         
-        for tag in tags_id_list:
-            t_cat = tags_cat_list[tags_id_list.index(tag)]
+        for i, tag in enumerate(tags_id_list):
+            t_cat = tags_cat_list[i]
 
             tag = str(tag)
             if tag in index:
-                if t_cat=="Health Issue":
-                    resource_scores[resource[0]][2] += index[tag]
-                elif t_cat=="Location":
+                if t_cat=="Location":
                     resource_scores[resource[0]][0] += index[tag]
-                elif t_cat in ("Resource Type for Education/Informational", "Resource Type for Programs and Services"):
+                elif t_cat=="Resource format":
                     resource_scores[resource[0]][1] += index[tag]
+                elif t_cat=="Resource Type for Education/Informational":
+                    resource_scores[resource[0]][2] += index[tag]
+                elif t_cat=="Resource Type for Programs and Services":
+                    resource_scores[resource[0]][3] += index[tag]
+                elif t_cat=="Health Issue":
+                    resource_scores[resource[0]][4] += index[tag]
+                elif t_cat=="Costs":
+                    resource_scores[resource[0]][5] += index[tag]
+                elif t_cat=="Audience":
+                    resource_scores[resource[0]][6] += index[tag]
+                elif t_cat=="Language":
+                    resource_scores[resource[0]][7] += index[tag]
 
                 
             if tag in original_tag_ids:
@@ -1136,27 +1180,31 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
                 if original_tag_categories[i] == 'Location':
                     resource_scores[resource[0]][0] += 10
-                elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][2] += 20
-                elif original_tag_categories[i] in ('Resource Type for Programs and Services', 'Resource Type for Education/Informational'):
+                elif original_tag_categories[i] == 'Resource format':
                     resource_scores[resource[0]][1] += 10
+                elif original_tag_categories[i] == 'Resource Type for Education/Informational':
+                    resource_scores[resource[0]][2] += 10
+                elif original_tag_categories[i] == 'Resource Type for Programs and Services':
+                    resource_scores[resource[0]][3] += 10
+                elif original_tag_categories[i] == 'Health Issue':
+                    resource_scores[resource[0]][4] += 10
+                elif original_tag_categories[i] == 'Costs':
+                    resource_scores[resource[0]][5] += 10
+                elif original_tag_categories[i] == 'Audience':
+                    resource_scores[resource[0]][6] += 10
+                elif original_tag_categories[i] == 'Language':
+                    resource_scores[resource[0]][7] += 10
+                
+                
 
-        for original_tag_id in original_tag_ids:
+        for i,original_tag_id in enumerate(original_tag_ids):
             if original_tag_id in query_relaxation_tags_id:
                 #for query relaxation
-                i = original_tag_ids.index(original_tag_id)
-
                 if original_tag_categories[i] == 'Location':
-                    resource_scores[resource[0]][0] += 6
-                elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][2] += 12
-                elif original_tag_categories[i] in ('Resource Type for Programs and Services', 'Resource Type for Education/Informational'):
-                    resource_scores[resource[0]][1] += 6
+                    resource_scores[resource[0]][0] += 2
+                
 
-        # if "Informational Website" in tags_params_mapped:
-        #     resource_scores[resource[0]][1] = 10
-
-        resource_scores[resource[0]] = cos(torch.FloatTensor(input_location_type_mh), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
+        resource_scores[resource[0]] = cos(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
 
         # print(resource_scores[resource[0]])
 
@@ -1166,31 +1214,31 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 continue
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.55
+                resource_scores[resource[0]] += 0.2
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.55
+                resource_scores[resource[0]] += 0.2
             
             
             if (tag == 'Informational Website') and (resource[4] == 'RS' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 2
+                resource_scores[resource[0]] += 0.2
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 2
+                resource_scores[resource[0]] += 0.2
 
             if (tag == 'Definition') and (resource[5]):
-                resource_scores[resource[0]] += 0.45
+                resource_scores[resource[0]] += 0.2
 
             if (tag == 'Domestic Violence') and ("sheltersafe" in resource[3].lower()):
-                resource_scores[resource[0]] += 15.5
+                resource_scores[resource[0]] += 0.2
 
             if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
-                resource_scores[resource[0]] += 0.95
+                resource_scores[resource[0]] += 0.2
 
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
             if (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
-                resource_scores[resource[0]] += 0.55
+                resource_scores[resource[0]] += 0.2
         
         res_counter+=1
 
@@ -1250,17 +1298,12 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 res_embedding_index = resource_titles.index(qs.title)
                 bert_model_score = cos(sentence_embeddings[0], sentence_embeddings[res_embedding_index]).numpy()
                 qs.score = topitemsasdict[qs.id] + bert_model_score
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                
+                qs.index = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet)]
 
         return newQuerySet
 
-
-
-    #  tags = Tag.objects.filter(name__in=tags_params).values('id').all()
-    #  tagsList = list(map(lambda x: x.id, tags))
-    # print(tagsList)
-    
-    # resQueryset = resQueryset.filter(tags__id__in=tagsList)
-    # resQueryset = resQueryset.order_by('public_view_count')
 
     return resQueryset
 
