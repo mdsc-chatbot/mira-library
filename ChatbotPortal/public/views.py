@@ -1039,6 +1039,8 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     # Audience
     # Language
 
+    #VIP tags are tags that all should be present in a resource to be a candidate 
+    vip_tags = []
     input_lo_format_infot_servt_mh_cost_au_lang = []
     if 'Location' in class_tag_mapping:
         input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
@@ -1062,6 +1064,8 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     
     if 'Health Issue' in class_tag_mapping:
         input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Health Issue']))
+        for item in class_tag_mapping['Health Issue']:
+            vip_tags.append(item)
     else:
         input_lo_format_infot_servt_mh_cost_au_lang.append(1)
     
@@ -1122,8 +1126,9 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
 
     print('tags_params_mapped', tags_params_mapped)
-    
-    resQueryset = resQueryset.filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+    print('all tags', vip_tags)
+
+    resQueryset = resQueryset.filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
 
 
 
@@ -1201,7 +1206,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
             if original_tag_id in query_relaxation_tags_id:
                 #for query relaxation
                 if original_tag_categories[i] == 'Location':
-                    resource_scores[resource[0]][0] += 2
+                    resource_scores[resource[0]][0] += 1
                 
 
         resource_scores[resource[0]] = cos(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
@@ -1214,19 +1219,19 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 continue
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 5
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 5
             
             
             if (tag == 'Informational Website') and (resource[4] == 'RS' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 5
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 5
 
             if (tag == 'Definition') and (resource[5]):
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 1
 
             if (tag == 'Domestic Violence') and ("sheltersafe" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.2
