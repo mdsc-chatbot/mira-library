@@ -31,6 +31,32 @@ from .serializers import ResourceSerializer, RetrieveResourceSerializer, Resourc
 from .models import Resource, Tag, Category, ResourceFlags
 import json
 import mimetypes
+import requests
+
+def public_add_resource(request):
+    form_data = request.POST#json.loads(request.body.decode('utf-8'))
+    params = {
+                'secret': '6LeXmV4gAAAAAGxDH5dwuPA3D9HcoFgPKNusS5pc',
+                'response': form_data['captcha']
+            }
+    x = requests.post('https://www.google.com/recaptcha/api/siteverify', params = params).json()
+    if x['success']:
+        #can't SimpleNamespace our way out of this one, Batman
+        resource = Resource()
+        for field in form_data.keys():
+            if(field[:2]) == "__":
+                continue
+            if(field == 'tags'):
+                continue
+            elif hasattr(resource, field):
+                setattr(resource, field, form_data[field])
+        resource.save()
+        #finish with tags
+        #print([int(x) for x in request.POST.getlist('tags')])
+        resource.tags.add(*[int(x) for x in request.POST.getlist('tags')])
+        return JsonResponse({'name': 'OK'}, status=200)
+    else:
+        return JsonResponse({'name': 'Unauthorized Submission'}, status=401)
 
 
 def create_tags(request):
@@ -128,6 +154,15 @@ def flag_resource(request):
 
     # Return empty response
     return HttpResponse()
+
+def get_flags_by_id(request):
+    data = json.loads(request.body)
+    flag_ids = data['flag_ids']
+    flags = ResourceFlags.objects.filter(id__in=flag_ids)
+    response = []
+    for flag in flags:
+        response.append({'id':flag.id,'description':flag.description})
+    return JsonResponse(response, safe=False)
 
 
 class ResourceViewSet(viewsets.ModelViewSet):

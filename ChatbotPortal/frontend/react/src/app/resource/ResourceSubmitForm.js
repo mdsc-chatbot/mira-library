@@ -41,6 +41,8 @@ export default class ResourceSubmitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            public_ident: "",
+            token: "",
             dimmerLoading: false,
             timeZone:"-6 UTC",
             resourceTypeRelateTextnumber: false,
@@ -245,18 +247,25 @@ export default class ResourceSubmitForm extends Component {
     componentDidMount() {
         //check if resource id is in url to know if we come to form for editing the resource or not
         const resourceId = this.props.location.search ? this.props.location.search.substring(4) : '';
-        if (resourceId != '') this.get_resource_details(resourceId);
+        if (resourceId != '' && this.context.security.is_logged_in) this.get_resource_details(resourceId);
     }
 
     create_resource = () => {
         // Get current logged in user
         let created_by_user = null;
         let created_by_user_pk = null;
+        
+        const resourceFormData = new FormData();
         if (this.context.security.is_logged_in) {
             created_by_user = this.context.security.first_name;
             created_by_user_pk = this.context.security.id;
         }
-        const resourceFormData = new FormData();
+        else
+        {
+            created_by_user = "Public|" + this.state.public_ident;
+            created_by_user_pk = -2;
+            resourceFormData.append("captcha", this.state.token);
+        }
 
         resourceFormData.append("title", this.state.title);
         resourceFormData.append("time_zone", this.state.timeZone);
@@ -416,32 +425,49 @@ export default class ResourceSubmitForm extends Component {
     post_resource = () => {
         const resourceFormData = this.create_resource();
         // let submitted = 1;
-
-        axios
-            .post("/chatbotportal/resource/", resourceFormData, {
-                headers: { Authorization: `Bearer ${this.context.security.token}` }
-            })
-            .then(() => {
-                this.set_submitted_state(1, "POST SUCESS");
-                axios
-                    .get("/api/public/index-resources", {
-                        headers: { Authorization: `Bearer ${this.context.security.token}` }
-                    })
-            })
-            .catch(error => {
-                console.error(error.response);
-                var errors = Object.keys(error.response.data).map(function (key) {
-                    return " " + error.response.data[key];
+        if(this.context.security.is_logged_in)
+        {
+            axios
+                .post("/chatbotportal/resource/", resourceFormData, {
+                    headers: { Authorization: `Bearer ${this.context.security.token}` }
+                })
+                .then(() => {
+                    this.set_submitted_state(1, "POST SUCCESS");
+                    axios
+                        .get("/api/public/index-resources", {
+                            headers: { Authorization: `Bearer ${this.context.security.token}` }
+                        })
+                })
+                .catch(error => {
+                    console.error(error.response);
+                    var errors = Object.keys(error.response.data).map(function (key) {
+                        return " " + error.response.data[key];
+                    });
+                    this.set_submitted_state(-1, errors);
                 });
-                this.set_submitted_state(-1, errors);
-            });
-
+        }
+        else
+        {
+            axios
+                .post("/chatbotportal/resource/publicsubmit/", resourceFormData)
+                .then(() => {
+                    this.set_submitted_state(1, "POST SUCCESS");
+                })
+                .catch(error => {
+                    console.error(error.response);
+                    var errors = Object.keys(error.response.data).map(function (key) {
+                        return " " + error.response.data[key];
+                    });
+                    this.set_submitted_state(-1, errors);
+                });
+        }
     };
 
     set_submitted_state = (submitted_value, submitted_error) => {
         console.log(this.state, submitted_value)
         if (submitted_value === 1) {
-            this.update_user_submissions();
+            if (this.context.security.is_logged_in)
+                this.update_user_submissions();
             this.setState({ submitted: submitted_value }, () => {
                 setTimeout(() => {
                     this.setState(this.baseState);
@@ -561,9 +587,16 @@ export default class ResourceSubmitForm extends Component {
         if (this.state.description != "") this.addFieldTag("Description")
         if (this.state.email != "") this.addFieldTag("Email")
 
-        this.post_resource();
-        event.preventDefault();
-        this.setState({dimmerLoading:false});
+        if(this.context.security.is_logged_in)
+        {
+            this.post_resource();
+            event.preventDefault();
+            this.setState({dimmerLoading:false});
+        }
+        else
+        {
+            this.getRecaptcha()
+        }
     };
 
 
@@ -638,6 +671,35 @@ export default class ResourceSubmitForm extends Component {
 
     toggle = () => this.setState((prevState) => ({ alwaysAvailable: !prevState.alwaysAvailable }))
 
+    //recaptcha stuff
+    postRecaptcha = (token) => {
+        this.setState({token: token});
+        this.post_resource();
+        this.setState({dimmerLoading: false});
+    }
+
+    getRecaptcha = () => {
+        var promise = new Promise((resolve, reject) => {
+          var script = document.createElement('script')
+          script.type = 'text/javascript';
+          script.async = true;
+          script.src = "https://www.google.com/recaptcha/api.js?render=6LeXmV4gAAAAAFPQDF59JJJxGhvw31zkgrkyL9Dm";
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        })
+
+        promise
+            .then(function() {
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('6LeXmV4gAAAAAFPQDF59JJJxGhvw31zkgrkyL9Dm', {action: 'submit'}).then((token) => this.postRecaptcha(token));
+                }.bind(this));
+            }.bind(this))
+            .catch(() =>{
+                console.log("error with recaptcha")
+            });
+      }
+
     render() {
         var dateTabs = null;
         if (!this.state.alwaysAvailable) {
@@ -661,8 +723,29 @@ export default class ResourceSubmitForm extends Component {
                                 }/>*/}
                             </Header>
                             <Form onSubmit={this.handleSubmit} success error>
-                                {securityContext.security.is_logged_in ? (
+                                {//securityContext.security.is_logged_in ? (
                                     <div>
+                                        {(() => 
+                                            {
+                                                if (!securityContext.security.is_logged_in)
+                                                {
+                                                    return (
+                                                        <Form.Field>
+                                                            <label>You're currently submitting this resource anonymously. If you'd like to expediate the approval process, you can add your name, your email address, or some other piece of identifying information</label>
+                                                            <Form.Input
+                                                                fluid
+                                                                name="public_ident"
+                                                                onChange={this.handleChange}
+                                                                onBlur={this.handleChange}
+                                                                width={16}
+                                                                value={this.state.public_ident}
+                                                                placeholder="Name/Email/Affiliation"
+                                                            />
+                                                        </Form.Field>);
+                                                }
+                                            })()
+                                        }
+
                                         <Form.Field>
                                             <label>Resource Title <Popup content='(Format: [name of organization][type of resource] - Example: Crisis Services Canada PhoneLine)' trigger={<Icon name='question circle' />} /></label>
                                             <TitleDropdown
@@ -1128,7 +1211,8 @@ export default class ResourceSubmitForm extends Component {
 
                                         <Form.Button name="submit" content="Submit" color="green" />
                                     </div>
-                                ) : null}
+                                //) : null
+                            }
                             </Form>
                         </Container>
                     )}

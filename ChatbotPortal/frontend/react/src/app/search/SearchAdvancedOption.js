@@ -44,6 +44,17 @@ export class SearchAdvancedOption extends Component {
                 }
             },
             {
+                key: "needapproval_filter",
+                title: "Status",
+                content: {
+                    content: (
+                        <div id='search_by_filter'>
+                            <SearchFilter set_status_search_params={this.props.set_status_search_params}/>
+                        </div>
+                    )
+                }
+            },
+            {
                 key: "status_filter",
                 title: "Status",
                 content: {

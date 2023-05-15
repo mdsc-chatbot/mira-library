@@ -26,6 +26,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 from datetime import datetime
 from queue import Empty
 from django.db.models.query import QuerySet
+from django.http import JsonResponse
 import requests
 from rest_framework import generics, permissions
 from rest_framework.pagination import PageNumberPagination
@@ -36,7 +37,7 @@ import json
 import difflib
 from operator import itemgetter
 from django.db.models import Q
-from resource.models import Resource, Tag, Category
+from resource.models import Resource, Tag, Category, TagRelationship
 from resource.serializers import RetrieveResourceSerializer
 from .serializers import ResourceSerializer, TagSerializer, CategorySerializer, RetrievePublicResourceSerializer
 import urllib.request
@@ -1864,6 +1865,23 @@ def VerifyApprovedResources(query_params):
 
     return result
 
+def get_relations_by_tag(request):
+    data = json.loads(request.body)
+    tag_id = data['tag_id']
+    relationships = TagRelationship.objects.filter(tag_id=tag_id)
+    response = []
+    for relation in relationships:
+        response.append({'id':relation.id,'parent':relation.parent})
+    return JsonResponse(response, safe=False)
+
+def add_tag_relation(request):
+    data = json.loads(request.body)
+    tag_id = data['tag_id']
+    parent_id = data["parent_id"]
+    relation = TagRelationship(parent_id = parent_id, tag_id = tag_id)
+    relation.save()
+    return JsonResponse({})
+
 
 class VerifyApprovedResourcesView(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
@@ -1954,6 +1972,13 @@ class TagView(generics.ListAPIView):
         # TODO: Only approved tags?? Waiting for client confirmation
         # TODO: Tag sorting? (Sort desc by most used)
         return Tag.objects.filter(approved=True).order_by('name')
+
+class AllTagView(generics.ListAPIView):
+    serializer_class = TagSerializer
+    permission_classes = {permissions.AllowAny}
+
+    def get_queryset(self):
+        return Tag.objects.order_by('-approved')
 
 
 class CategoryView(generics.ListAPIView):

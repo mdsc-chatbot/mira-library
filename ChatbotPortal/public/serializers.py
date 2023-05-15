@@ -23,7 +23,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 
 from rest_framework import serializers
 
-from resource.models import Resource, Tag, Category
+from resource.models import Resource, Tag, Category, TagRelationship
 
 class ResourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,6 +33,11 @@ class ResourceSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
+        fields = '__all__'
+
+class TagRelationshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TagRelationship
         fields = '__all__'
 
 class CategorySerializer(serializers.ModelSerializer):

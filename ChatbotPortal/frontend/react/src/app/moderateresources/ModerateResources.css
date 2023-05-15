@@ -1,6 +1,6 @@
 /*
- :File: App.css
- :Summary: Styles App and overrides regular Semantic CSS
+ :File: SearchPage.css
+ :Summary: Styles the search page interface and overrides regular Semantic CSS
  :Author: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
  :Copyright: Copyright (c) 2019 BOLDDUC LABORATORY
  :Credits: Apu Islam, Henry Lo, Jacy Mark, Ritvik Khanna, Yeva Nguyen
@@ -21,54 +21,40 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-.App {
-  margin-left: 20px;
+.advancedSearchView {
+    height: 100vh;
+    background: white;
 }
 
-.input {
-  display: block;
-  margin: 5px 0 5px;
+.checkboxStyle {
+    float: right;
 }
 
-:global(.ui.fluid.container).noPaddingContainer {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+.headerStyle {
+    font-size: 2em;
 }
 
-:global(.ui.segments).headerMenu{
-    margin: 0 !important;
-    border: 0 solid transparent;
-    box-shadow: 0 1px 2px 0;
+.searchTableView {
+    height: 100vh;
 }
 
-:global(.ui.segments).segmentWeb{
-    margin: 0;
-    border: 0 solid transparent;
-    box-shadow: 0 1px 2px 0;
-}
-:global(.ui.dropdown .menu).headerMobile{
-  background: #062F65 !important;
+.sidebarStyle {
+    box-shadow: none !important;
+    background: white !important;
 }
 
-@media (max-width: 767px) {
-    .segmentResponsive {
-        /* Enough to fit iphone6 100% is good enough for us */
-        min-height: 478px;
-    }
+table {
+    background-color:#EBEBEB;
+    table-layout:fixed;
+}
+th {
+    text-align:center;
+    min-width:90px;
+}
+td {
+    text-align:center;
 }
 
-@media (min-width: 768px) {
-    .segmentResponsive {
-        /* I aimed for around 1280 x 800 screen monitor, that's probably the lowest we'll support */
-        min-height: 583px
-    }
-}
-
-:global(.invisiblee){
-  visibility: hidden !important;
-}
-
-
-:global(.seminvisiblee){
-  opacity: 20% !important;
+.active {
+    background-color: yellow;
 }

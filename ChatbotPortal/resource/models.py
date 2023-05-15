@@ -79,12 +79,18 @@ class Tag(models.Model):
     tag_category = models.CharField(max_length = 100)
     approved = models.BooleanField(default=False)
 
+
     class Meta:
         indexes = [
             models.Index(fields=['name']),
             models.Index(fields=['approved']),
             models.Index(fields=['tag_category']),
         ]
+
+class TagRelationship(models.Model):
+    id = models.AutoField(primary_key=True)
+    tag_id = models.ForeignKey(Tag, blank=False, on_delete=models.CASCADE)
+    parent = models.IntegerField()
 
 class ResourceFlags(models.Model):
     id = models.AutoField(primary_key=True)

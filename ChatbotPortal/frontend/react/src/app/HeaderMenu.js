@@ -137,6 +137,17 @@ https://ibb.co/9wx9pbr */}
           )}
 
           {this.context.security.is_logged_in &&
+            this.context.security.is_editor && (
+              <Menu.Item
+                name='Moderate resources'
+                as={Link}
+                to={baseRoute + '/moderateresources'}
+                active={activeItem === 'Moderate resources'}
+                onClick={this.handleItemClick}
+              />
+          )}
+
+          {this.context.security.is_logged_in &&
             this.context.security.is_staff && (
               <Menu.Item
                 name='Manage users'
@@ -253,6 +264,17 @@ https://ibb.co/9wx9pbr */}
                       as={Link}
                       to={baseRoute + '/managereviews'}
                       active={activeItem === 'Manage reviews'}
+                      onClick={this.handleItemClick}
+                    />
+                )}
+
+                {this.context.security.is_logged_in &&
+                  this.context.security.is_editor && (
+                    <Menu.Item
+                      name='Moderate resources'
+                      as={Link}
+                      to={baseRoute + '/moderateresources'}
+                      active={activeItem === 'Moderate resources'}
                       onClick={this.handleItemClick}
                     />
                 )}
