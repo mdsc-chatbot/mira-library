@@ -32,6 +32,8 @@ from .models import Resource, Tag, Category, ResourceFlags
 import json
 import mimetypes
 import requests
+from datetime import datetime
+from django.db.models import Q
 
 def public_add_resource(request):
     form_data = request.POST#json.loads(request.body.decode('utf-8'))
@@ -197,8 +199,15 @@ class TagUpdateView(generics.RetrieveUpdateAPIView):
 class ResourceSearchView(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = ResourceSerializer
-    queryset = Resource.objects.filter(review_status="approved")
-    queryset = queryset.filter(review_status_2="approved")
+    queryset = Resource.objects.filter(
+        (Q(review_status="approved") & Q(review_status_2="approved")) |
+        (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) |
+        (Q(review_status="approved") & Q(review_status_2_2="approved")) | 
+        (Q(review_status="approved") & Q(review_status_1_1="approved")) | 
+        (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | 
+        (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | 
+        Q(review_status_3="approved")
+    )
     filter_backends = (filters.SearchFilter,)
     search_fields = ['title', 'url']
     
@@ -212,4 +221,22 @@ class ResourcePartialUpdate(generics.GenericAPIView, mixins.UpdateModelMixin):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
     def put(self, request, *args, **kwargs):
+        if 'assigned_reviewer' in request.data:
+            request.data['reviewer_assigned_at'] = datetime.now()
+        if 'assigned_reviewer_2' in request.data:
+            request.data['reviewer_2_assigned_at'] = datetime.now()
+        if 'review_status' in request.data:
+            request.data['reviewer_updated_at'] = datetime.now()
+        if 'review_status_2' in request.data:
+            request.data['reviewer_2_updated_at'] = datetime.now()
+
+        if 'review_status_1_1' in request.data:
+            request.data['reviewer_1_1_updated_at'] = datetime.now()
+        if 'review_status_2_2' in request.data:
+            request.data['reviewer_2_2_updated_at'] = datetime.now()
+        if 'assigned_reviewer_1_1' in request.data:
+            request.data['reviewer_1_1_assigned_at'] = datetime.now()
+        if 'assigned_reviewer_2_2' in request.data:
+            request.data['reviewer_2_2_assigned_at'] = datetime.now()
+
         return self.partial_update(request, *args, **kwargs)

@@ -97,7 +97,7 @@ export default class ResourceDetail extends Component {
             .catch(error => console.error(error));
 
 
-        //submit second review record in this try, if reviewer_1 == assigned_reviewer_2
+        //submit second review record in this try, if assigned_reviewer_1 == assigned_reviewer_2
         const reviewer = this.context.security.is_logged_in
             ? this.context.security.id
             : "Unknown user";
@@ -140,7 +140,9 @@ export default class ResourceDetail extends Component {
 
         if (this.state.resource.review_status === "pending" || this.state.resource.review_status_2 === "pending" ||
             this.state.resource.review_status === "conflict" || this.state.resource.review_status_2 === "conflict" ||
-            this.state.resource.review_status_3 === "pending" || this.state.resource.review_status_3 === "conflict") {
+            this.state.resource.review_status_3 === "pending" || this.state.resource.review_status_3 === "conflict" ||
+            this.state.resource.review_status_2_2 === "pending" || this.state.resource.review_status_2_2 === "conflict" ||
+            this.state.resource.review_status_1_1 === "pending" || this.state.resource.review_status_1_1 === "conflict") {
 
             const reviewer = this.context.security.is_logged_in
                 ? this.context.security.id
@@ -151,16 +153,23 @@ export default class ResourceDetail extends Component {
             var rs1 = this.state.resource.review_status;
             var rs2 = this.state.resource.review_status_2;
             var rs3 = this.state.resource.review_status_3;
-            if ((rs1 === "pending" || rs1 === "conflict") && this.state.resource.assigned_reviewer === reviewer) rs1 = review_status;
-            if ((rs2 === "pending" || rs2 === "conflict") && this.state.resource.assigned_reviewer_2 === reviewer) rs2 = review_status;
-            if ((rs3 === "pending" || rs3 === "conflict") && this.state.resource.assigned_reviewer_3 === reviewer) rs3 = review_status;
+            var rs4 = this.state.resource.review_status_1_1;
+            var rs5 = this.state.resource.review_status_2_2;
+
             var submitCmd = {
-                "review_status": rs1,
-                "review_status_2": rs2,
-                "review_status_3": rs3,
+                // "review_status": rs1,
+                // "review_status_2": rs2,
+                // "review_status_3": rs3,
                 "rating": this.state.rating,
                 "review_comments": this.state.comments
             };
+
+            if ((rs1 === "pending" || rs1 === "conflict") && this.state.resource.assigned_reviewer === reviewer) submitCmd['review_status'] = review_status
+            if ((rs2 === "pending" || rs2 === "conflict") && this.state.resource.assigned_reviewer_2 === reviewer) submitCmd['review_status_2'] = review_status
+            if ((rs3 === "pending" || rs3 === "conflict") && this.state.resource.assigned_reviewer_3 === reviewer) submitCmd['review_status_3'] = review_status
+            if ((rs4 === "pending" || rs4 === "conflict") && this.state.resource.assigned_reviewer_1_1 === reviewer) submitCmd['review_status_1_1'] = review_status
+            if ((rs5 === "pending" || rs5 === "conflict") && this.state.resource.assigned_reviewer_2_2 === reviewer) submitCmd['review_status_2_2'] = review_status
+            
 
             const options = {
                 "Content-Type": "application/json",
@@ -173,7 +182,7 @@ export default class ResourceDetail extends Component {
             // Resource
             axios
                 .put(
-                    "/chatbotportal/resource/" + this.props.match.params.resourceID + "/update/",
+                    "/chatbotportal/resource/" + this.props.match.params.resourceID + "/updatepartial/",
                     submitCmd,
                     { headers: options }
                 )
@@ -446,11 +455,11 @@ export default class ResourceDetail extends Component {
 
 
                                             }
-                                            {((this.state.resource.assigned_reviewer_2 == reviewer) || (this.state.resource.assigned_reviewer == reviewer) || (this.state.resource.assigned_reviewer_3 == reviewer)) ?
+                                            {((this.state.resource.assigned_reviewer_2 == reviewer) || (this.state.resource.assigned_reviewer == reviewer) || (this.state.resource.assigned_reviewer_3 == reviewer) || (this.state.resource.assigned_reviewer_2_2 == reviewer) || (this.state.resource.assigned_reviewer_1_1 == reviewer)) ?
                                                 ([<Segment basic textAlign='center'>
                                                     <Card fluid>
                                                         <Card.Content>
-                                                            <Card.Header><h1>Conflict of Interests</h1></Card.Header>
+                                                            <Card.Header><h1>Conflict of Interests OR any other reason to skip this resource!</h1></Card.Header>
                                                             <Card.Description>
                                                                 <strong>Before you begin this review, please consider whether or not you might have a conflict of interest in reviewing this resource. Could you potentially have a conflict of interest in reviewing this resource? If so, no problem! Please indicate here and we will reassign the resource to another reviewer.</strong>
                                                                 <p>A conflict of interest occurs when an individual’s personal interests – family, friendships, financial, or social factors – could compromise his or her judgment, decisions, or actions (adapted from <a target="_blank" href="https://compliance.ucf.edu/understanding-conflict-of-interest/">here</a>).</p>
@@ -477,7 +486,7 @@ export default class ResourceDetail extends Component {
                                                                             window.location.href = url;
                                                                         }, 300);
                                                                     }}>
-                                                                    I have a conflict of interest (stop review)
+                                                                    I do not review this resource (stop review)
                                                                 </Button>
                                                             </div>
                                                         </Card.Content>

@@ -166,14 +166,14 @@ export function ResourceDetailView({ resource , tagsGot = [], viewer}) {
             <Grid>
                 {resource.created_by_user ? grid_element("Submitted by:", resource.created_by_user) : null}
                 {grid_element("Date submitted:", resource.timestamp)}
-                {grid_element("First review status:", resource.assigned_reviewer == viewer ? <p id="review_status"><strong>{resource.review_status}</strong> (you)</p> : <p id="review_status">{resource.review_status}</p>)}
-                {grid_element("Second review status:", resource.assigned_reviewer_2 == viewer ? <p id="review_status_2"><strong>{resource.review_status_2}</strong> (you)</p> : <p id="review_status_2">{resource.review_status_2}</p>)}
+                {grid_element("your review status:", resource.assigned_reviewer == viewer ? <p id="review_status"><strong>{resource.review_status}</strong> (you)</p> : resource.assigned_reviewer_2 == viewer ? <p id="review_status_2"><strong>{resource.review_status_2}</strong> (you)</p> : resource.assigned_reviewer_2_2 == viewer ? <p id="review_status_2_2"><strong>{resource.review_status_2_2}</strong> (you)</p> : resource.assigned_reviewer_1_1 == viewer ? <p id="review_status_1_1"><strong>{resource.review_status_1_1}</strong> (you)</p> : <p></p>)}
+                
                 {resource.tags && resource.tags.length > 0
                     ? grid_element(
                           "Costs:",
                           <div id="tags">
-                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
-                                   tag.tag_category == 'Costs' ?(
+                              {tagsGot.filter(tag => tag.approved === true).map(tag => (
+                                   tag.tag_category == 'Costs' ? (
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>
@@ -260,7 +260,7 @@ export function ResourceDetailView({ resource , tagsGot = [], viewer}) {
                     ? grid_element(
                           "Resource Type for Education/Informational:",
                           <div id="tags">
-                              {tagsGot.filter(tag=> tag.approved === true).map(tag => (
+                              {tagsGot.filter(tag => tag.approved === true).map(tag => (
                                   (tag.tag_category == 'Resource Type for Education/Informational')?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
