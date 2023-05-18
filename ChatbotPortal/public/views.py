@@ -532,13 +532,16 @@ def addViewToResource(query_params):
     
     return {'statuse':'done'}
 
-
 def calculateStatsResources(query_params):
     allRes = Resource.objects.all()
     
+    resRej = Resource.objects.filter((Q(review_status="rejected") & Q(review_status_2="rejected")) | (Q(review_status_2_2="rejected") & Q(review_status_1_1="rejected")) | (Q(review_status="rejected") & Q(review_status_2_2="rejected")) | (Q(review_status="rejected") & Q(review_status_1_1="rejected")) | (Q(review_status_2="rejected") & Q(review_status_2_2="rejected")) | (Q(review_status_2="rejected") & Q(review_status_1_1="rejected")) | Q(review_status_3="rejected"))
+
+    rejected_count = len(resRej)
+
     resQueryset = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
     
-    allTags = Tag.objects.all()
+    allTags = Tag.objects.filter(approved=1)
     allTags = list(map(lambda x: {"name":x.name, "tag_category":x.tag_category, 'number_of_res':0,} ,allTags))
 
     resQueryset_ = []
@@ -560,29 +563,40 @@ def calculateStatsResources(query_params):
     allTagsAndRes = list(map(lambda t:(t.title, t.tags.all()) ,allRes))
     for allTagandRes in allTagsAndRes:
         for tag in allTagandRes[1]:
+            if tag.name not in allTags_.keys():
+                continue
             allTags_[tag.name]['number_of_res']+=1
             if 'resource_list' not in allTags_[tag.name]:
+                allTags_[tag.name]['number_of_app_res'] = 0
                 allTags_[tag.name]['resource_list'] = []
             allTags_[tag.name]['resource_list'].append(allTagandRes[0])
     
-    
+
+    allApprovedResourceNames = list(map(lambda x: x.title ,resQueryset))
+    for tag_name , tag_resourcelist in allTags_.items():
+        if 'resource_list' not in tag_resourcelist.keys():
+            continue
+        for resource_name in tag_resourcelist['resource_list']:
+            if resource_name in allApprovedResourceNames:
+                allTags_[tag_name]['number_of_app_res']+=1
+        tag_resourcelist['resource_list'] = []
     allTags_ = sorted(allTags_.items(), key= lambda x: x[1]['number_of_res'], reverse=True)
 
     stats = {
         'resources':{
             'approved count':len(resQueryset),
-            'rejected + pending count':len(allRes)-len(resQueryset),
-            'top 1000 most searched': resQueryset_[:1000]
-        },
+            'rejected count':rejected_count,
+            'pending count':len(allRes)-len(resQueryset)-rejected_count,
+            # 'top 1000 most searched': resQueryset_[:1000]
+        }, 
         'Tags':{
-            'approved count':len(allRes),
-            'approved tags':allTags_
+            'all res count':len(allRes),
+            'approved tags': allTags_
         }
     }
 
     
     return {'data':stats}
-
 # import pandas as pd
 # from sklearn.feature_extraction.text import TfidfVectorizer
 
