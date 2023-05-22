@@ -1443,6 +1443,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
     if 'Location' in class_tag_mapping:
         for loc_tag in class_tag_mapping['Location']:
+            loc_tag = loc_tag.lower()
             if loc_tag in canada_cities: 
                 index = canada_cities.index(loc_tag)
                 query_relaxation_tags.append(canada_city_proviences[index])
@@ -1491,45 +1492,49 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     # input_lo_format_infot_servt_mh_cost_au_lang
     # scoring and ordering by scores
     resource_scores = {}
+    resource_score_reasons = {}
     res_counter = 0
     for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], resQueryset)):
         resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
-        if resource[1] is None or resource[1]=='':
-            resource_scores[resource[0]] = 0
-            continue
+        resource_score_reasons[resource[0]] = ""
 
-        index = json.loads(resource[1])
+        index = None
         original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
         original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
+        if resource[1] is not None and resource[1]!='':
+            index = json.loads(resource[1])
         
         for i, tag in enumerate(tags_id_list):
             t_cat = tags_cat_list[i]
 
             tag = str(tag)
-            if tag in index:
-                if t_cat=="Location":
-                    resource_scores[resource[0]][0] += index[tag]
-                elif t_cat=="Resource format":
-                    resource_scores[resource[0]][1] += index[tag]
-                elif t_cat=="Resource Type for Education/Informational":
-                    resource_scores[resource[0]][2] += index[tag]
-                elif t_cat=="Resource Type for Programs and Services":
-                    resource_scores[resource[0]][3] += index[tag]
-                elif t_cat=="Health Issue":
-                    resource_scores[resource[0]][4] += index[tag]
-                elif t_cat=="Costs":
-                    resource_scores[resource[0]][5] += index[tag]
-                elif t_cat=="Audience":
-                    resource_scores[resource[0]][6] += index[tag]
-                elif t_cat=="Language":
-                    resource_scores[resource[0]][7] += index[tag]
+            if resource[1] is not None and resource[1]!='':
+                if tag in index:
+                    if t_cat=="Location":
+                        resource_scores[resource[0]][0] += index[tag]
+                    elif t_cat=="Resource format":
+                        resource_scores[resource[0]][1] += index[tag]
+                    elif t_cat=="Resource Type for Education/Informational":
+                        resource_scores[resource[0]][2] += index[tag]
+                    elif t_cat=="Resource Type for Programs and Services":
+                        resource_scores[resource[0]][3] += index[tag]
+                    elif t_cat=="Health Issue":
+                        resource_scores[resource[0]][4] += index[tag]
+                    elif t_cat=="Costs":
+                        resource_scores[resource[0]][5] += index[tag]
+                    elif t_cat=="Audience":
+                        resource_scores[resource[0]][6] += index[tag]
+                    elif t_cat=="Language":
+                        resource_scores[resource[0]][7] += index[tag]
 
-                
             if tag in original_tag_ids:
                 i = original_tag_ids.index(tag)
 
                 if original_tag_categories[i] == 'Location':
-                    resource_scores[resource[0]][0] += 10
+                    if tag in query_relaxation_tags_id:
+                        resource_scores[resource[0]][0] += 1
+                    else:
+                        resource_scores[resource[0]][0] += 10
                 elif original_tag_categories[i] == 'Resource format':
                     resource_scores[resource[0]][1] += 10
                 elif original_tag_categories[i] == 'Resource Type for Education/Informational':
@@ -1546,12 +1551,6 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                     resource_scores[resource[0]][7] += 10
                 
                 
-
-        for i,original_tag_id in enumerate(original_tag_ids):
-            if original_tag_id in query_relaxation_tags_id:
-                #for query relaxation
-                if original_tag_categories[i] == 'Location':
-                    resource_scores[resource[0]][0] += 1
                 
 
         resource_scores[resource[0]] = cos(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
@@ -1564,36 +1563,35 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 continue
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.1
+                resource_scores[resource[0]] += 0.05
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.1
+                resource_scores[resource[0]] += 0.05
             
             
             if (tag == 'Informational Website') and (resource[4] == 'RS' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 5
+                resource_scores[resource[0]] += 1
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 5
+                resource_scores[resource[0]] += 1
 
             if (tag == 'Definition') and (resource[5]):
                 resource_scores[resource[0]] += 1
 
             if (tag == 'Domestic Violence') and ("sheltersafe" in resource[3].lower()):
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 0.05
 
             if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 0.05
 
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
             if (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
-                resource_scores[resource[0]] += 0.2
+                resource_scores[resource[0]] += 0.05
         
         res_counter+=1
 
-
-    topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    topitems = heapq.nlargest(100, resource_scores.items(), key=itemgetter(1))
 
     topitemsasdict = dict(topitems)
 
