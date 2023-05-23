@@ -22,7 +22,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from django.urls import path
-from .views import ResourceView, ResourceByIntentEntityView, TagView, AllTagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView, ResourceStatsView, ResourceByIntentEntityView_new, AddViewOfResourceView, EmotionTest, get_tag_group_stats#, add_tag_relation, get_relations_by_tag
+from .views import ResourceView, ResourceByIntentEntityView, TagView, AllTagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView, ResourceStatsView, ResourceByIntentEntityView_new, AddViewOfResourceView, ResourceByIntentEntityView_new_new, EmotionTest#, add_tag_relation, get_relations_by_tag
 
 urlpatterns = [
     # path('current_user/', current_user, name='current_user'),
@@ -33,6 +33,7 @@ urlpatterns = [
     path('homepage-resources', HomepageResourceView.as_view(), name='homepage_resources'),
     path('resources', ResourceView.as_view(), name='resources'),
     path('resources-by-intent-entity-new', ResourceByIntentEntityView_new.as_view(), name='resource_by_intent_entity'),
+    path('resources-by-intent-entity-new-new', ResourceByIntentEntityView_new_new.as_view(), name='resource_by_intent_entity'),
     path('resources-stats', ResourceStatsView.as_view(), name='resources-stats'),
     path('resource-count-and-filter', ResourceCountAndFilterView.as_view(), name='count_resource'),
     path('index-resources', IndexResourceEntityView.as_view(), name='index_resource'),
@@ -40,10 +41,9 @@ urlpatterns = [
     path('add-view-of-resource', AddViewOfResourceView.as_view(), name='add_view_resource'),
     path('emotion-test', EmotionTest.as_view(), name='Emotion_Test'),
     path('tags', TagView.as_view(), name='tags'),
-    path('alltags', AllTagView.as_view(), name='alltags'),
+    #path('alltags', AllTagView.as_view(), name='alltags'),
     #path('get-relations-by-tag', get_relations_by_tag, name='get-relations-by-tag'),
     #path('add-tag-relation', add_tag_relation, name='add-tag-relation'),
-    path('resource-stats', get_tag_group_stats, name='resource-stats'),
     path('categories', CategoryView.as_view(), name='categories'),
     path('retrieve/<int:pk>', DetailedResourceView.as_view(), name='detailed_resource'),
     path('retrieve-admin/<int:pk>', DetailedResourceAdminView.as_view(), name='detailed_resource')
