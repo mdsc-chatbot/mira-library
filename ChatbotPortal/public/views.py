@@ -2954,19 +2954,56 @@ class DetailedResourceAdminView(generics.RetrieveAPIView):
     serializer_class = RetrieveResourceSerializer
     permissions_classes = {permissions.IsAdminUser}
 
-def get_relations_by_tag(request):
-    data = json.loads(request.body)
-    tag_id = data['tag_id']
-    relationships = TagRelationship.objects.filter(tag_id=tag_id)
+# def get_relations_by_tag(request):
+#     data = json.loads(request.body)
+#     tag_id = data['tag_id']
+#     relationships = TagRelationship.objects.filter(tag_id=tag_id)
+#     response = []
+#     for relation in relationships:
+#         response.append({'id':relation.id,'parent':relation.parent})
+#     return JsonResponse(response, safe=False)
+
+# def add_tag_relation(request):
+#     data = json.loads(request.body)
+#     tag_id = data['tag_id']
+#     parent_id = data["parent_id"]
+#     relation = TagRelationship(parent_id = parent_id, tag_id = tag_id)
+#     relation.save()
+#     return JsonResponse({})
+
+def get_tag_group_stats(request):
+    tag_groups = {
+        'Indigenous':['Indigenous', 'Indigenous Women', 'Inuit', 'MÃ©tis'],
+        'Youth':['Youth', 'Children', 'Black Youth', 'Mental health supports for Youth', 'Mental health supports for Children', 'Caregiver/Parent'],
+        'Veterans':['Family Member of Veteran', 'Military Veterans'],
+        'Healthcare Workers':['Doctor', 'First responder', 'Medical student', 'Nurse', 'Paramedic', 'Practising or retired physician', 'Resident Doctor'],
+        'French':['French']
+    }
     response = []
-    for relation in relationships:
-        response.append({'id':relation.id,'parent':relation.parent})
+    #compute all resource totals
+    total_all = Resource.objects.count()
+    total_approved = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved")).count()
+    total_pending = Resource.objects.filter((Q(review_status="pending") & Q(review_status_2="pending") & Q(review_status_1_1="pending")) | (Q(review_status_2="pending") & Q(review_status_1_1="pending") & Q(review_status_2_2="pending"))).count()
+    total_rejected = total_all - total_approved - total_pending
+    response.append(["Total", "All tags", total_approved, total_pending, total_rejected])
+
+    for group in tag_groups.keys():
+        #get relevent tags for the names
+        tags = Tag.objects.filter(name__in=tag_groups[group])
+
+        #get total
+        all_matching = Resource.objects.filter(tags__in=tags)
+        all_count = all_matching.count()
+
+        approved_count = all_matching.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved")).count()
+
+        pending_count = all_matching.filter((Q(review_status="pending") & Q(review_status_2="pending") & Q(review_status_1_1="pending")) | (Q(review_status_2="pending") & Q(review_status_1_1="pending") & Q(review_status_2_2="pending"))).count()
+
+        rejected_count = all_count - pending_count - approved_count
+
+        response.append([group, ", ".join(tag_groups[group]), approved_count, pending_count, rejected_count])
+
     return JsonResponse(response, safe=False)
 
-def add_tag_relation(request):
-    data = json.loads(request.body)
-    tag_id = data['tag_id']
-    parent_id = data["parent_id"]
-    relation = TagRelationship(parent_id = parent_id, tag_id = tag_id)
-    relation.save()
-    return JsonResponse({})
+
+    
