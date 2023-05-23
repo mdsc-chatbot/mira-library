@@ -32,8 +32,8 @@ urlpatterns = [
     # URLs that would be redirected from '/chatbotportal/authentication/'
     path('homepage-resources', HomepageResourceView.as_view(), name='homepage_resources'),
     path('resources', ResourceView.as_view(), name='resources'),
-    path('resources-by-intent-entity-new', ResourceByIntentEntityView_new.as_view(), name='resource_by_intent_entity'),
-    path('resources-by-intent-entity-new-new', ResourceByIntentEntityView_new_new.as_view(), name='resource_by_intent_entity'),
+    path('resources-by-intent-entity-old', ResourceByIntentEntityView_new.as_view(), name='resource_by_intent_entity'),
+    path('resources-by-intent-entity-new', ResourceByIntentEntityView_new_new.as_view(), name='resource_by_intent_entity'),
     path('resources-stats', ResourceStatsView.as_view(), name='resources-stats'),
     path('resource-count-and-filter', ResourceCountAndFilterView.as_view(), name='count_resource'),
     path('index-resources', IndexResourceEntityView.as_view(), name='index_resource'),

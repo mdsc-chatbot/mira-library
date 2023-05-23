@@ -3210,7 +3210,7 @@ class ResourceByIntentEntityView_new(generics.ListAPIView):
 class ResourceByIntentEntityView_new_new(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
-    #pagination_class = StandardResultSetPagination
+    pagination_class = StandardResultSetPagination
 
     def get_queryset(self):
         return ResourceByIntentEntityViewQuerySet_new_new(self.request.query_params)
