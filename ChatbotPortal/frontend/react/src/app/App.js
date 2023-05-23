@@ -47,6 +47,7 @@ import EmailValidationRequestPage from "./authentication/EmailValidationRequestP
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import {MenuContextProvider} from './contexts/MenuContext';
 import styles from "./App.css";
+import ResourceStatistics from "./public/ResourceStats";
 
 /**
  * This class renders the re-direction of the links, and menu, according
@@ -105,6 +106,10 @@ export default function App() {
                             <Route
                                 exact path={baseRoute + "/resource_submit"}
                                 component={ResourceSubmitForm}
+                            />
+                            <Route
+                                exact path={baseRoute + "/stats"}
+                                component={ResourceStatistics}
                             />
 
                             <Route
