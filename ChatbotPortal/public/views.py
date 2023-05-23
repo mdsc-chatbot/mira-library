@@ -1300,7 +1300,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
     ('military', 'Military Veterans'),
     ('military', 'Family Member of Veteran'),
-    ('first responder', 'First responder')
+    ('first responder', 'First responder'),
+    ('2slgbtq ', '2SLGBTQ+')
     ]
 
     n_tags_params = query_params.getlist('ntags')
@@ -1478,11 +1479,12 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
 
 
-    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id').all()
+    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category').all()
     query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+    query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
 
     #retrieve tag ids from tag names
-    tags = Tag.objects.filter(name__in=tags_params_mapped).values('id','tag_category').all()
+    tags = Tag.objects.filter(approved=1).filter(name__in=tags_params_mapped).values('id','tag_category').all()
     tags_id_list = list(map(lambda x: x['id'], tags))
     tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
@@ -1528,27 +1530,44 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                         resource_scores[resource[0]][7] += index[tag]
 
             if tag in original_tag_ids:
-                i = original_tag_ids.index(tag)
+                ii = original_tag_ids.index(tag)
+                sc = 10
+                if original_tag_categories[ii] == 'Location':
+                    resource_scores[resource[0]][0] += sc 
+                elif original_tag_categories[ii] == 'Resource format':
+                    resource_scores[resource[0]][1] += sc 
+                elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
+                    resource_scores[resource[0]][2] += sc 
+                elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
+                    resource_scores[resource[0]][3] += sc 
+                elif original_tag_categories[ii] == 'Health Issue':
+                    resource_scores[resource[0]][4] += sc 
+                elif original_tag_categories[ii] == 'Costs':
+                    resource_scores[resource[0]][5] += sc 
+                elif original_tag_categories[ii] == 'Audience':
+                    resource_scores[resource[0]][6] += sc 
+                elif original_tag_categories[ii] == 'Language':
+                    resource_scores[resource[0]][7] += sc 
+            elif tag in query_relaxation_tags_id:
+                ii = query_relaxation_tags_id.index(tag)
+                sc = 1
+                if query_relaxation_tags_categories[ii] == 'Location':
+                    resource_scores[resource[0]][0] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Resource format':
+                    resource_scores[resource[0]][1] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
+                    resource_scores[resource[0]][2] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
+                    resource_scores[resource[0]][3] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Health Issue':
+                    resource_scores[resource[0]][4] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Costs':
+                    resource_scores[resource[0]][5] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Audience':
+                    resource_scores[resource[0]][6] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Language':
+                    resource_scores[resource[0]][7] += sc 
 
-                if original_tag_categories[i] == 'Location':
-                    if tag in query_relaxation_tags_id:
-                        resource_scores[resource[0]][0] += 1
-                    else:
-                        resource_scores[resource[0]][0] += 10
-                elif original_tag_categories[i] == 'Resource format':
-                    resource_scores[resource[0]][1] += 10
-                elif original_tag_categories[i] == 'Resource Type for Education/Informational':
-                    resource_scores[resource[0]][2] += 10
-                elif original_tag_categories[i] == 'Resource Type for Programs and Services':
-                    resource_scores[resource[0]][3] += 10
-                elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][4] += 10
-                elif original_tag_categories[i] == 'Costs':
-                    resource_scores[resource[0]][5] += 10
-                elif original_tag_categories[i] == 'Audience':
-                    resource_scores[resource[0]][6] += 10
-                elif original_tag_categories[i] == 'Language':
-                    resource_scores[resource[0]][7] += 10
                 
                 
                 
@@ -1591,7 +1610,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         
         res_counter+=1
 
-    topitems = heapq.nlargest(100, resource_scores.items(), key=itemgetter(1))
+    # topitems = heapq.nlargest(100, resource_scores.items(), key=itemgetter(1))
+    topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
 
     topitemsasdict = dict(topitems)
 
@@ -3190,7 +3210,7 @@ class ResourceByIntentEntityView_new(generics.ListAPIView):
 class ResourceByIntentEntityView_new_new(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
-    pagination_class = StandardResultSetPagination
+    #pagination_class = StandardResultSetPagination
 
     def get_queryset(self):
         return ResourceByIntentEntityViewQuerySet_new_new(self.request.query_params)
