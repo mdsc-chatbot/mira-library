@@ -1259,8 +1259,6 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ,('specialist', 'Therapist/Counsellor/Psychotherapist')
     ,('counsellor_psychotherapist', 'Therapist/Counsellor/Psychotherapist')
     ,('healer', 'Traditional Indigenous Healer')
-    ,('children', 'Youth')
-    ,('youth', 'Children')
     ,('doctor', 'Resident doctor')
     ,('doctor', 'Practising or retired physician')
     ,('doctor', 'Doctor')
@@ -1301,7 +1299,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ('military', 'Military Veterans'),
     ('military', 'Family Member of Veteran'),
     ('first responder', 'First responder'),
-    ('2slgbtq ', '2SLGBTQ+')
+    ('2slgbtq ', '2SLGBTQ+'),
+    ('crisis_distress_support', 'General Distress')
     ]
 
     n_tags_params = query_params.getlist('ntags')
@@ -1325,6 +1324,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     all_possible_tags = list(filter(lambda x: x.name.lower() not in n_tags_params , all_possible_tags))
     all_possible_tags = list(map(lambda x: (x.name, x.tag_category), all_possible_tags))
     all_possible_tag_names = list(map(lambda x: x[0], all_possible_tags))
+    all_possible_tag_names_lower_cased = list(map(lambda x: x[0].lower(), all_possible_tags))
 
     cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
     
@@ -1341,7 +1341,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         tag_param = tag_param[0]
         print("tag_param", tag_param)
 
-        if tag_param in all_possible_tag_names:
+        if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
             print("found in approved tags")
             continue
         else:
@@ -1473,9 +1473,9 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
 
     if vip_tags:
-        resQueryset = resQueryset.filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
     else:
-        resQueryset = resQueryset.filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
 
 
@@ -1610,8 +1610,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         
         res_counter+=1
 
-    # topitems = heapq.nlargest(100, resource_scores.items(), key=itemgetter(1))
-    topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
 
     topitemsasdict = dict(topitems)
 
