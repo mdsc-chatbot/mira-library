@@ -734,7 +734,6 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('specialist', 'Medical services')
     ,('housing', 'Housing - Emergency')
     ,('group_class', 'Group therapy')
-    ,('doctor', 'Family Doctor')
     ,('peer_support', 'In-person Group Support Meeting')
     ,('need_in_person', 'In-person Group Support Meeting')
     ,('help_from_another_person', 'Phone line/call centre')
@@ -744,10 +743,9 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('specialist', 'Therapist/Counsellor/Psychotherapist')
     ,('counsellor_psychotherapist', 'Therapist/Counsellor/Psychotherapist')
     ,('healer', 'Traditional Indigenous Healer')
-    ,('children', 'Youth')
-    ,('youth', 'Children')
     ,('doctor', 'Resident doctor')
     ,('doctor', 'Practising or retired physician')
+    ,('doctor', 'Doctor')
     ,('fire fighter', 'First responder')
     ,('fire fighter', 'Social worker')
     ,('community support', 'Group therapy')
@@ -763,7 +761,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('generalized anxiety disorder', 'Stress')
     ,('health professional','Psychologist')
     ,('health professional','Family Doctor')
-    ,('alberta','Alberta Wide')
+    ,('alberta','Alberta')
     ,('schizophrenia','Schizophrenia and psychosis')
     ,('covid-19','COVID-19 (context specific - ensure any other concerns are also noted)')
     ,('covid','COVID-19 (context specific - ensure any other concerns are also noted)')
@@ -784,7 +782,9 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
     ('military', 'Military Veterans'),
     ('military', 'Family Member of Veteran'),
-    ('first responder', 'First responder')
+    ('first responder', 'First responder'),
+    ('2slgbtq ', '2SLGBTQ+'),
+    ('crisis_distress_support', 'General Distress')
     ]
 
     n_tags_params = query_params.getlist('ntags')
@@ -806,134 +806,12 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     all_possible_tags = Tag.objects.filter(approved=1).all()
     
     all_possible_tags = list(filter(lambda x: x.name.lower() not in n_tags_params , all_possible_tags))
-    all_possible_tags = list(map(lambda x: x.name, all_possible_tags))
-
-    #######################calculate tag embeddings
-    #Mean Pooling - Take attention mask into account for correct averaging
-    def mean_pooling(model_output, attention_mask):
-        token_embeddings = model_output[0] #First element of model_output contains all token embeddings
-        input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
-        return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
-
-    # Sentences we want embeddings for
-    sentences = [
-        "Abuse",
-        "Acquired Immune Deficiency Syndrome (AIDS)",
-        "Addictions (including Drugs, Alcohol and Gambling)",
-        "Adjustment disorders",
-        "Anger",
-        "Anorexia",
-        "Antisocial Personality Disorder (ASPD)",
-        "Anxiety",
-        "Asperger Syndrome",
-        "Attachment Problems",
-        "Attention Deficit Disorders (ADD/ADHD)",
-        "Auditory Processing Disorder (APD)",
-        "Autism and Autism Spectrum Disorders",
-        "Behaviour and Conduct Problems",
-        "Bipolar Disorders",
-        "Body dysmorphic disorder (BDD)",
-        "Borderline Personality Disorder (BPD)",
-        "Bulimia",
-        "Bullying",
-        "Burnout",
-        "Cancer",
-        "Chronic Pain",
-        "Conduct Disorder",
-        "Corrections",
-        "COVID-19 (context specific - ensure any other concerns are also noted)",
-        "Delirium",
-        "Dementia including Alzheimer's",
-        "Depression",
-        "Developmental Coordination Disorder (DCD)",
-        "Developmental, Intellectual Delay and Disabilities",
-        "Domestic Violence",
-        "Down syndrome",
-        "Eating Disorders",
-        "Elimination Disorders",
-        "Fatigue",
-        "Fetal Alcohol and Fetal Alcohol Spectrum Disorders (FASD)",
-        "Financial and Employment",
-        "Firesetting",
-        "Gender Identity Issues",
-        "General Distress",
-        "General Supports for Children",
-        "General well-being (All/Any)",
-        "Generalized Anxiety Disorder",
-        "Grief and Bereavement",
-        "Harassment",
-        "Harm-Reduction",
-        "Hoarding",
-        "Housing",
-        "Human Trafficking",
-        "Infant and Early Childhood Mental Health (IECMH)",
-        "Insomnia",
-        "Learning Disorders",
-        "Legal",
-        "Maternal Mental Health",
-        "Medication Treatment",
-        "Men's abuse",
-        "Mental Health in General",
-        "Mood Disorders",
-        "Obsessive Compulsive Disorder (OCD)",
-        "Operational Stress Injury (OSI)",
-        "Oppositional behaviours including oppositional defiant disorder (ODD)",
-        "Other, please specify",
-        "Overweight and Obesity",
-        "Pandemic (e.g. COVID/Coronavirus), Disasters and Related Emergencies",
-        "Panic",
-        "Parenting",
-        "Personality disorders",
-        "Phobia",
-        "Physical Disabilities",
-        "Physical Health and Nutrition",
-        "Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse",
-        "Psychopathy",
-        "Reconciliation",
-        "Resiliency",
-        "Schizophrenia and Psychosis",
-        "School Refusal (and School Phobia)",
-        "Self-care",
-        "Self-harm including Self-cutting",
-        "Self-Regulation",
-        "Sensory Processing Disorders and Self-Regulation Problems",
-        "Separation and Divorce",
-        "Sexual Health",
-        "Sexual Violence",
-        "Sleep",
-        "Smoking Cessation",
-        "Social Skills and Life Skills",
-        "Somatoform Disorders",
-        "Speech and Language",
-        "Stigma",
-        "Stress",
-        "Substance use",
-        "Suicidal Ideation",
-        "Technology Issues, including Internet, Cellphone, Social Media Addiction",
-        "Tourette Syndrome and Tic Disorders",
-        "Trauma",
-        "Workplace",
-        "Agoraphobia",
-        "Selective Mutism",
-        "Post-Partum",
-        "Seasonal Affective Disorder",
-        "Interpersonal Relationships",
-        "Behavioural Addiction",
-        "Gambling",
-        "Social Anxiety Disorder",
-        "resilience",
-        "Human Immunodeficiency Virus (HIV)",
-        "Foster Care",
-        "Traditional Aboriginal Health",
-        "Other Treatment Types (Non-Medicinal/Pharmaceutical)"
-    ]
-    len_tag_embedding = len(sentences)
-    for t in tags_params:
-        if t[1] == 'mh_concern':
-            sentences.append(t[0])
+    all_possible_tags = list(map(lambda x: (x.name, x.tag_category), all_possible_tags))
+    all_possible_tag_names = list(map(lambda x: x[0], all_possible_tags))
+    all_possible_tag_names_lower_cased = list(map(lambda x: x[0].lower(), all_possible_tags))
 
     cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
-
+    
 
     should_be_romoved = set()
     should_be_added = set()
@@ -941,30 +819,27 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     class_tag_mapping = {}
 
 
+    word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
+
     for tag_param in tags_params:
-        if not str(tag_param[1]).isnumeric():
-            if not (tag_param[1] in class_tag_mapping):
-                class_tag_mapping[tag_param[1]] = []
-            class_tag_mapping[tag_param[1]].append(tag_param[0])
-
         tag_param = tag_param[0]
+        print("tag_param", tag_param)
 
-        word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
-        # word_mapping_values = list(map(lambda x: x[1] ,word_mapping))
-
-        if tag_param in all_possible_tags:
+        if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
+            print("found in approved tags")
             continue
         else:
             if tag_param in word_mapping_keys:
+                print("found in word mapping")
                 should_be_romoved.add(tag_param)
                 for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
-                    # print(tag_param, 'look up table ', related_word[1])
                     should_be_added.add(related_word[1])
             else:
-                similar_tags = difflib.get_close_matches(tag_param, all_possible_tags, n=2, cutoff=0.7)
+                similar_tags = difflib.get_close_matches(tag_param, all_possible_tag_names, n=2, cutoff=0.7)
                 if len(similar_tags) > 0:
                     should_be_romoved.add(tag_param)
                     should_be_added.add(similar_tags[0])
+                    print("found using distance")
 
 
 
@@ -973,51 +848,102 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     should_be_romoved.add('for_me')
     should_be_romoved.add('consent_agree')
     should_be_romoved.add('show_resource')
-    
 
-    input_location_type_mh = []
-    if 'city' in class_tag_mapping:
-        input_location_type_mh.append(100)
-    else:
-        input_location_type_mh.append(0.01)
+
+    for tag_ in should_be_added:
+        try:
+            tag_category = [tag[1] for tag in all_possible_tags if tag[0] == tag_][0]
+            if not (tag_category in class_tag_mapping):
+                class_tag_mapping[tag_category] = []
+            class_tag_mapping[tag_category].append(tag_)
+        except:
+            print("category not found")
     
-    if 'resource_type' in class_tag_mapping:
-        input_location_type_mh.append(100)
-    else:
-        input_location_type_mh.append(0.01)
     
-    if 'mh_concern' in class_tag_mapping:
-        input_location_type_mh.append(100)
+    # Location
+    # Resource format
+    # Resource Type for Education/Informational
+    # Resource Type for Programs and Services
+    # Health Issue
+    # Costs
+    # Audience
+    # Language
+
+    #VIP tags are tags that all should be present in a resource to be a candidate 
+    vip_tags = []
+    input_lo_format_infot_servt_mh_cost_au_lang = []
+    if 'Location' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
     else:
-        input_location_type_mh.append(0.01)
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Resource format' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource format']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Education/Informational' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Education/Informational']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Programs and Services' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Programs and Services']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Health Issue' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Health Issue']))
+        for item in class_tag_mapping['Health Issue']:
+            vip_tags.append(item)
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Costs' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Costs']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Audience' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Audience']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Language' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Language']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+                                                           
+
 
     #provience2city mapping 
     canada_cities = ['Toronto', 'Montreal', 'Vancouver', 'Calgary', 'Edmonton', 'Ottawa', 'Mississauga', 'Winnipeg', 'Quebec City', 'Hamilton', 'Brampton', 'Surrey', 'Kitchener', 'Laval', 'Halifax', 'London', 'Victoria', 'Markham', 'St. Catharines', 'Niagara Falls', 'Vaughan', 'Gatineau', 'Windsor', 'Saskatoon', 'Longueuil', 'Burnaby', 'Regina', 'Richmond', 'Richmond Hill', 'Oakville', 'Burlington', 'Barrie', 'Oshawa', 'Sherbrooke', 'Saguenay', 'Lévis', 'Kelowna', 'Abbotsford', 'Coquitlam', 'Trois-Rivières', 'Guelph', 'Cambridge', 'Whitby', 'Ajax', 'Langley', 'Saanich', 'Terrebonne', 'Milton', "St. John's", 'Moncton', 'Thunder Bay', 'Dieppe', 'Waterloo', 'Delta', 'Chatham', 'Red Deer', 'Kamloops', 'Brantford', 'Cape Breton', 'Lethbridge', 'Saint-Jean-sur-Richelieu', 'Clarington', 'Pickering', 'Nanaimo', 'Sudbury', 'North Vancouver', 'Brossard', 'Repentigny', 'Newmarket', 'Chilliwack', 'White Rock', 'Maple Ridge', 'Peterborough', 'Kawartha Lakes', 'Prince George', 'Sault Ste. Marie', 'Sarnia', 'Wood Buffalo', 'New Westminster', 'Châteauguay', 'Saint-Jérôme', 'Drummondville', 'Saint John', 'Caledon', 'St. Albert', 'Granby', 'Medicine Hat', 'Grande Prairie', 'St. Thomas', 'Airdrie', 'Halton Hills', 'Saint-Hyacinthe', 'Lac-Brome', 'Port Coquitlam', 'Fredericton', 'Blainville', 'Aurora', 'Welland', 'North Bay', 'Beloeil', 'Belleville', 'Mirabel', 'Shawinigan', 'Dollard-des-Ormeaux', 'Brandon', 'Rimouski', 'Cornwall', 'Stouffville', 'Georgina', 'Victoriaville', 'Vernon', 'Duncan', 'Saint-Eustache', 'Quinte West', 'Charlottetown', 'Mascouche', 'West Vancouver', 'Salaberry-de-Valleyfield', 'Rouyn-Noranda', 'Timmins', 'Sorel-Tracy', 'New Tecumseth', 'Woodstock', 'Boucherville', 'Mission', 'Vaudreuil-Dorion', 'Brant', 'Lakeshore', 'Innisfil', 'Prince Albert', 'Langford Station', 'Bradford West Gwillimbury', 'Campbell River', 'Spruce Grove', 'Moose Jaw', 'Penticton', 'Port Moody', 'Leamington', 'East Kelowna', 'Côte-Saint-Luc', 'Val-dOr', 'Owen Sound', 'Stratford', 'Lloydminster', 'Pointe-Claire', 'Orillia', 'Alma', 'Orangeville', 'Fort Erie', 'LaSalle', 'Sainte-Julie', 'Leduc', 'North Cowichan', 'Chambly', 'Okotoks', 'Sept-Îles', 'Centre Wellington', 'Saint-Constant', 'Grimsby', 'Boisbriand', 'Conception Bay South', 'Saint-Bruno-de-Montarville', 'Sainte-Thérèse', 'Cochrane', 'Thetford Mines', 'Courtenay', 'Magog', 'Whitehorse', 'Woolwich', 'Clarence-Rockland', 'Fort Saskatchewan', 'East Gwillimbury', 'Lincoln', 'La Prairie', 'Tecumseh', 'Mount Pearl Park', 'Amherstburg', 'Saint-Lambert', 'Brockville', 'Collingwood', 'Scugog', 'Kingsville', 'Baie-Comeau', 'Paradise', 'Uxbridge', 'Essa', 'Candiac', 'Oro-Medonte', 'Varennes', 'Strathroy-Caradoc', 'Wasaga Beach', 'New Glasgow', 'Wilmot', 'Essex', 'Fort St. John', 'Kirkland', 'LAssomption', 'Westmount', 'Saint-Lazare', 'Chestermere', 'Huntsville', 'Corner Brook', 'Riverview', 'Lloydminster', 'Joliette', 'Yellowknife', 'Squamish', 'Mont-Royal', 'Rivière-du-Loup', 'Cobourg', 'Cranbrook', 'Beaconsfield', 'Springwater', 'Dorval', 'Thorold', 'Camrose', 'South Frontenac', 'Pitt Meadows', 'Port Colborne', 'Quispamsis', 'Mont-Saint-Hilaire', 'Bathurst', 'Saint-Augustin-de-Desmaures', 'Oak Bay', 'Sainte-Marthe-sur-le-Lac', 'Salmon Arm', 'Port Alberni', 'Esquimalt', 'Deux-Montagnes', 'Miramichi', 'Niagara-on-the-Lake', 'Saint-Lin--Laurentides', 'Beaumont', 'Middlesex Centre', 'Inverness', 'Stony Plain', 'Petawawa', 'Pelham', 'Selwyn', 'Loyalist', 'Midland', 'Colwood', 'Central Saanich', 'Sainte-Catherine', 'Port Hope', 'LAncienne-Lorette', 'Saint-Basile-le-Grand', 'Swift Current', 'Edmundston', 'Russell', 'North Grenville', 'Yorkton', 'Tracadie', 'Bracebridge', 'Greater Napanee', 'Tillsonburg', 'Steinbach', 'Hanover', 'Terrace', 'Springfield', 'Gaspé', 'Kenora', 'Cold Lake', 'Summerside', 'Comox', 'Sylvan Lake', 'Pincourt', 'West Lincoln', 'Matane', 'Brooks', 'Sainte-Anne-des-Plaines', 'West Nipissing / Nipissing Ouest', 'Rosemère', 'Mistassini', 'Grand Falls', 'Clearview', 'St. Clair', 'Canmore', 'North Battleford', 'Pembroke', 'Mont-Laurier', 'Strathmore', 'Saugeen Shores', 'Thompson', 'Lavaltrie', 'High River', 'Severn', 'Sainte-Sophie', 'Saint-Charles-Borromée', 'Portage La Prairie', 'Thames Centre', 'Mississippi Mills', 'Powell River', 'South Glengarry', 'North Perth', 'Mercier', 'South Stormont', 'Saint-Colomban', 'Lacombe', 'Sooke', 'Dawson Creek', 'Lake Country', 'Trent Hills', 'Sainte-Marie', 'Guelph/Eramosa', 'Truro', 'Amos', 'The Nation / La Nation', 'Ingersoll', 'Winkler', 'Wetaskiwin', 'Central Elgin', 'Lachute', 'West Grey', 'Parksville', 'Cowansville', 'Bécancour', 'Gravenhurst', 'Perth East', 'Prince Rupert', 'Prévost', 'Sainte-Adèle', 'Kentville', 'Beauharnois', 'Les Îles-de-la-Madeleine', 'Wellington North', 'St. Andrews', 'Carleton Place', 'Whistler', 'Brighton', 'Tiny', 'Gander', 'Sidney', 'Rothesay', 'Brock', 'Summerland', 'Val-des-Monts', 'Taché', 'Montmagny', 'Erin', 'Kincardine', 'North Dundas', 'Wellesley', 'Estevan', 'North Saanich', 'Warman', 'La Tuque', 'Norwich', 'Meaford', 'Adjala-Tosorontio', 'Hamilton Township', 'St. Clements', 'Saint-Amable', 'Weyburn', 'South Dundas', 'LÎle-Perrot', "Notre-Dame-de-l'Île-Perrot", 'Williams Lake', 'Elliot Lake', 'Cantley', 'Nelson', 'Lambton Shores', 'Mapleton', 'Georgian Bluffs', 'Rawdon', 'Campbellton', 'View Royal', 'Coldstream', 'Chester', 'Queens', 'Selkirk', 'Saint-Félicien', 'Hawkesbury', 'Roberval', 'Sainte-Agathe-des-Monts', 'North Dumfries', 'Rideau Lakes', 'Sechelt', 'North Glengarry', 'South Huron', 'Marieville', 'Tay', 'Temiskaming Shores', 'Hinton', 'Saint-Sauveur', 'Quesnel', 'Elizabethtown-Kitley', 'Morinville', 'Grey Highlands', 'Stratford', 'Alfred and Plantagenet', 'Mont-Tremblant', 'Martensville', 'Saint-Raymond', 'Amherst', 'Ramara', 'Bois-des-Filion', 'Leeds and the Thousand Islands', 'Carignan', 'Brockton', 'Laurentian Valley', 'East St. Paul', 'Lorraine', 'Sainte-Julienne', 'Blackfalds', 'Malahide', 'Oromocto', 'Olds', 'Huron East', 'Stanley', 'Penetanguishene', 'Qualicum Beach', 'Notre-Dame-des-Prairies', 'West Perth', 'Cavan Monaghan', 'Arnprior', 'Smiths Falls', 'Pont-Rouge', 'Champlain', 'Coaticook', 'Minto', 'Morden', 'Mono', 'Corman Park No. 344', 'Ladysmith', 'Bridgewater', 'Dauphin', 'Otterburn Park', 'Taber', 'South Bruce Peninsula', 'Edson', 'Farnham', 'Kapuskasing', 'La Malbaie', 'Renfrew', 'Coaldale', "Portugal Cove-St. Philip's", 'Zorra', 'Kitimat', 'Shelburne', 'Happy Valley', 'Saint-Hippolyte', 'Castlegar', 'Church Point', 'Drumheller', 'Kirkland Lake', 'Argyle', 'Torbay', 'La Pêche', 'Banff', 'Innisfail', 'Nicolet', 'Rockwood', 'Drummond/North Elmsley', 'Dryden', 'Iqaluit', 'Fort Frances', 'La Sarre', 'Trail', 'Chandler', 'Stone Mills', 'Hanover', 'South-West Oxford', 'Acton Vale', 'Bromont', 'Beckwith', 'Goderich', 'Plympton-Wyoming', 'Central Huron', 'Rigaud', 'Louiseville', 'Chibougamau', 'Aylmer', 'Delson', 'Kimberley', 'Blandford-Blenheim', 'Bayham', 'Augusta', 'Puslinch', 'Beauport', 'Saint-Rémi', 'St. Marys', 'Drayton Valley', 'Ponoka', 'Labrador City', 'Donnacona', 'Southgate', 'McNab/Braeside', 'Macdonald', 'Hampstead', 'Baie-Saint-Paul', 'Merritt', 'Bluewater', 'East Zorra-Tavistock', 'Brownsburg', 'Stoneham-et-Tewkesbury', 'Asbestos', 'Huron-Kinloss', 'Coteau-du-Lac', 'The Blue Mountains', 'Whitewater Region', 'Edwardsburgh/Cardinal', 'Sainte-Anne-des-Monts', 'Old Chelsea', 'North Stormont', 'Alnwick/Haldimand', 'Peace River', 'Arran-Elderslie', 'Saint-Zotique', 'Val-Shefford', 'Douro-Dummer', 'Plessisville', 'Ritchot', 'Otonabee-South Monaghan', 'Shediac', 'Slave Lake', 'Port-Cartier', 'Saint-Lambert-de-Lauzon', 'Barrington', 'Rocky Mountain House', 'Chatsworth', 'Stephenville', 'Muskoka Falls', 'Devon', 'Yarmouth', 'Boischatel', 'Parry Sound', 'Pointe-Calumet', 'Beaubassin East / Beaubassin-est', 'Wainfleet', 'Cramahe', 'Beauceville', 'North Middlesex', 'Amqui', 'Sainte-Catherine-de-la-Jacques-Cartier', 'Clarenville', 'Mont-Joli', 'Dysart et al', 'Wainwright', 'Contrecoeur', 'Beresford', 'Saint-Joseph-du-Lac', 'Hope', 'Gimli', 'Douglas', 'Saint-Apollinaire', 'Hindon Hill', 'Les Cèdres', 'La Broquerie', 'Kent', 'Tweed', 'Saint-Félix-de-Valois', 'Bay Roberts', 'Melfort', 'Bonnyville', 'Stettler', 'Saint-Calixte', 'Lac-Mégantic', 'Perth', 'Oliver Paipoonge', 'Humboldt', 'Charlemagne', 'Pontiac', 'St. Paul', 'Petrolia', 'Southwest Middlesex', 'Front of Yonge', 'Vegreville', 'Sainte-Brigitte-de-Laval', 'Princeville', 'Verchères', 'The Pas', 'Saint-Césaire', 'La Ronge', 'Tay Valley', 'South Bruce', 'McMasterville', 'Redcliff', 'Crowsnest Pass', 'Saint-Philippe', 'Richelieu', 'Notre-Dame-du-Mont-Carmel', "L'Ange-Gardien", 'Sainte-Martine', 'Saint-Pie', 'Peachland', 'Ashfield-Colborne-Wawanosh', 'Trent Lakes', 'Northern Rockies', 'Cookshire', 'West St. Paul', 'Windsor', 'LEpiphanie', 'Creston', 'Smithers', 'Cornwall', 'Meadow Lake', 'Lanark Highlands', 'Sackville', 'Grand Falls', 'Cochrane', 'Marystown', 'Sioux Lookout', 'Didsbury', 'Saint-Honoré', 'Fernie', 'Deer Lake', 'Woodstock', 'Val-David', 'Flin Flon', 'Hudson', 'Gananoque', 'Brokenhead', 'Saint-Paul', 'Burton', 'Spallumcheen', 'Westlock', 'Témiscouata-sur-le-Lac', 'Shannon', 'Osoyoos', 'Montréal-Ouest', 'Hearst', 'Saint-Henri', 'Ste. Anne', 'Antigonish', 'Espanola', 'West Elgin', 'Flin Flon (Part)', 'Grand Bay-Westfield', 'Sainte-Anne-de-Bellevue', 'North Huron', 'Oliver', "Saint-Roch-de-l'Achigan", 'Stirling-Rawdon', 'Chisasibi', 'Carbonear', 'Saint Marys', 'Chertsey', 'Armstrong', 'Stonewall', 'Shippagan', 'Lanoraie', 'Memramcook', 'Centre Hastings', 'Warwick', 'East Ferris', 'Hanwell', 'Saint-Joseph-de-Beauce', 'Metchosin', 'Lucan Biddulph', 'Rivière-Rouge', 'Greenstone', 'Saint-Mathias-sur-Richelieu', 'Neepawa', 'Gibsons', 'Kindersley', 'Jasper', 'Barrhead', 'Les Coteaux', 'Melville', 'Saint-Germain-de-Grantham', 'Iroquois Falls', 'Havelock-Belmont-Methuen', 'Cornwallis', 'Saint-Boniface', 'Edenwold No. 158', 'Coverdale', 'Vanderhoof', 'Southwold', 'Goulds', 'Saint Stephen', 'Waterloo', 'Nipawin', 'Neuville', 'Saint-Cyrille-de-Wendover', 'Central Frontenac', 'Mont-Orford', 'Saint-Jean-de-Matha', 'Seguin', 'Tyendinaga', 'Hampton', 'Sussex', 'Grand Forks', 'La Pocatière', 'Caraquet', 'Saint-Étienne-des-Grès', 'Altona', 'Stellarton', 'Wolfville', 'New Maryland', 'Port Hardy', 'Saint-Donat', 'Château-Richer', 'Madawaska Valley', 'Deep River', 'Asphodel-Norwood', 'Red Lake', 'Métabetchouan-Lac-à-la-Croix', 'Berthierville', 'Vermilion', 'Niverville', 'Hastings Highlands', 'Carstairs', 'Danville', 'Channel-Port aux Basques', 'Battleford', 'Lac-Etchemin', 'Saint-Antonin', 'Saint-Jacques', 'Swan River', 'Sutton', 'Northern Bruce Peninsula', 'LIslet-sur-Mer', 'Carleton-sur-Mer', 'Oka', 'Prescott', 'Amaranth', 'Marmora and Lake', 'Maniwaki', 'Morin-Heights', 'Dundas', 'Napierville', 'Crabtree', 'Bancroft', 'Saint-Tite', 'Howick', 'Dutton/Dunwich', 'Callander', 'Simonds', 'Baie-dUrfé', 'New Richmond', 'Perth South', 'Roxton Pond', 'Sparwood', 'Claresholm', 'Breslau', 'Montague', 'Cumberland', 'Beaupré', 'Saint-André-Avellin', 'Saint-Ambroise-de-Kildare', 'East Angus', 'Rossland', 'Mackenzie', 'Golden', 'Raymond', "Saint-Adolphe-d'Howard", 'Warwick', 'Bowen Island', 'Bonnechere Valley', 'Windsor', 'Pincher Creek', 'Alnwick', 'Westville', 'Fruitvale', 'Pasadena', 'Saint-Prosper', 'Ormstown', 'Cardston', 'Westbank', 'De Salaberry', 'Headingley', 'Grande Cache', 'Atholville', 'Saint-Agapit', 'Prince Albert No. 461', 'Casselman', 'Saint-Ambroise', 'Hay River', 'Mistissini', 'Studholm', 'Lumby', 'Saint-Faustin--Lac-Carré', 'Morris-Turnberry', 'Placentia', 'Saint-Pascal', 'Mulmur', 'Blind River', 'Dunham', 'Havre-Saint-Pierre', 'Saint-Anselme', 'Trois-Pistoles', 'Grande-Rivière', 'Powassan', 'Malartic', 'Bonavista', 'Killarney - Turtle Mountain', 'Woodlands', 'Lewisporte', 'Saint-Denis-de-Brompton', 'Invermere', 'Salisbury', 'Bifrost-Riverton', 'Buckland No. 491', 'Cartier', 'Sainte-Anne-des-Lacs', 'Highlands East', 'Alexander', 'Sainte-Claire', 'Percé', 'Saint-Jean-Port-Joli', 'East Hawkesbury', 'Bright', 'Penhold', "Saint-André-d'Argenteuil", 'Saint-Côme--Linière', 'Saint-Sulpice', 'Marathon', 'Forestville', 'Inuvik', 'Richmond', 'Lake Cowichan', 'Sables-Spanish Rivers', 'Hillsburg-Roblin-Shell River', 'Port Hawkesbury', 'Three Hills', 'Lorette', 'Paspebiac', 'Saint-Thomas', 'Saint-Jean-Baptiste', 'Portneuf', 'Pictou', 'Tisdale', 'Lake of Bays', 'High Level', 'Gibbons', 'Bishops Falls', 'WestLake-Gladstone', 'Normandin', 'Saint-Alphonse-Rodriguez', 'Beauséjour', 'Dalhousie', 'Saint-Alphonse-de-Granby', 'Lac du Bonnet', 'Clermont', 'Virden', 'Compton', 'White City', 'Ellison', 'Mont-Saint-Grégoire', 'Wellington', 'Merrickville', 'Saint-Liboire', 'Dégelis', 'Morris', 'Saint-Alexis-des-Monts', 'Cap-Saint-Ignace', 'Saint-Anaclet-de-Lessard', 'Carman', 'Athens', 'Melancthon', 'Cap Santé', 'Harbour Grace', 'Houston', 'Adelaide-Metcalfe', 'Crossfield', 'Springdale', 'Fort Macleod', 'Athabasca', 'Enderby', 'Saint-Ferréol-les-Neiges', 'Laurentian Hills', 'Grand Valley', 'Senneterre', 'Sainte-Marie-Madeleine', 'Admaston/Bromley', 'Saint-Gabriel-de-Valcartier', 'North Algona Wilberforce', 'Kingston', 'Wawa', "Saint-Christophe-d'Arthabaska", 'Sainte-Mélanie', 'Ascot Corner', 'Horton', 'Saint-Michel', 'Botwood', "Saint-Paul-d'Abbotsford", 'Saint-Marc-des-Carrières', 'Stanstead', 'Sainte-Anne-de-Beaupré', 'Sainte-Luce', 'Saint-Gabriel', 'Rankin Inlet', 'Vanscoy No. 345', 'Cedar', 'Princeton', 'La Loche', 'Kingsclear', 'Ferme-Neuve', 'Thurso', 'Adstock', 'Shuniah', 'Enniskillen', 'Yamachiche', 'Saint-Maurice', 'Bonaventure', 'Val-Morin', 'Pohénégamook', 'Wakefield', 'Stoke', 'Sainte-Marguerite-du-Lac-Masson', 'Saint-Prime', 'Kuujjuaq', 'Atikokan', 'Grenville-sur-la-Rouge', 'North Cypress-Langford', 'Sainte-Anne-de-Sorel', 'Macamic', 'Sundre', 'Rougemont', 'Piedmont', 'Grimshaw', 'Lac-des-Écorces', 'Northeastern Manitoulin and the Islands', 'Pelican Narrows', 'McDougall', 'Black Diamond', 'Saint-Pamphile', 'Bedford', 'Weedon-Centre', 'Lacolle', 'Saint-Gabriel-de-Brandon', 'Errington', 'Coalhurst', 'French River / Rivière des Français', 'Arviat', 'Saint-David-de-Falardeau', 'Markstay', 'Spaniards Bay', 'Cocagne', 'Saint-Bruno', 'Chetwynd', 'Laurier-Station', 'Saint-Anicet', 'Saint-Mathieu-de-Beloeil', 'Cap-Chat', 'Sexsmith', 'Notre-Dame-de-Lourdes', 'Ville-Marie', 'Saint-Isidore', 'Shippegan', 'East Garafraxa', 'Pemberton', 'Unity', 'Rimbey', 'High Prairie', 'Turner Valley', 'Hanna', 'Fort Smith', 'Maria', 'Saint-Chrysostome', 'Greater Madawaska', 'Berwick', 'Saint-Damase', 'Lincoln', 'Disraeli', 'Sainte-Victoire-de-Sorel', 'Meadow Lake No. 588', 'Elkford', 'Georgian Bay', 'Saint-Alexandre', 'Hérbertville', 'Moosomin', 'North Kawartha', 'Sainte-Thècle', 'Trenton', 'Fermont', 'Esterhazy', 'Wickham', 'La Présentation', 'Beaverlodge', 'Sainte-Catherine-de-Hatley', 'Saint-Basile', 'Saint-Raphaël', 'Holyrood', 'Gracefield', 'Saint-Martin', 'Causapscal', 'Brigham', 'Perry', 'Port-Daniel--Gascons', 'Rosetown', 'Minnedosa', 'Labelle', 'Huntingdon', 'Hébertville', 'Black River-Matheson', 'Saint-Michel-des-Saints', 'Dufferin', 'Saint-Victor', 'Sicamous', 'Cap Pele', 'Kelsey', 'Killaloe, Hagarty and Richards', 'Alvinston', 'Dundurn No. 314', 'Saint-Éphrem-de-Beauce', 'Assiniboia', 'Témiscaming', 'Magrath', 'Sainte-Geneviève-de-Berthier', 'Buctouche', 'Grand Manan', 'Sainte-Madeleine', 'Boissevain', 'Scott', 'Sainte-Croix', 'Algonquin Highlands', 'Valcourt', 'Saint George', 'Paquetville', 'Saint-Dominique', 'Clearwater', 'Addington Highlands', 'Lillooet', 'Burin', 'Grand Bank', 'Léry', 'Minto', 'Rosthern No. 403', 'Chase', 'Mansfield-et-Pontefract', 'Saint-Denis', 'Outlook', 'Mitchell', 'Saint-Gédéon-de-Beauce', "Saint-Léonard-d'Aston", 'Lunenburg', 'Northesk', 'Albanel', 'St. Anthony', 'Pessamit', 'Maskinongé', 'Saint-Charles-de-Bellechasse', 'Fogo Island', 'East Broughton', 'Lantz', 'Calmar', 'Highlands', 'Saint-Polycarpe', 'Logy Bay-Middle Cove-Outer Cove', 'Deschambault', 'Canora', 'Upper Miramichi', 'Anmore', 'Hardwicke', 'Saint-Côme', 'Waskaganish', 'Twillingate', 'Saint-Quentin', 'Lebel-sur-Quévillon', 'Pilot Butte', 'Nanton', 'Pierreville', 'New-Wes-Valley', 'Pennfield Ridge', 'West Interlake', 'Biggar', 'Britannia No. 502', 'Kent', 'Wabana', 'Saint-Gilles', 'Wendake', 'Saint-Bernard', 'Sainte-Cécile-de-Milton', 'Saint-Roch-de-Richelieu', 'Saint-Nazaire', 'Saint-Elzéar', 'Hinchinbrooke', 'Saint-François-Xavier-de-Brompton', 'Papineauville', 'Prairie View', 'Cowichan Bay', 'Saint-Ignace-de-Loyola', 'Central Manitoulin', 'Maple Creek', 'Glovertown', 'Tofield', 'Madoc', 'Upton', 'Sainte-Anne-de-Sabrevois', 'Logan Lake', 'Sainte-Anne-de-la-Pérade', 'Saint-Damien-de-Buckland', 'Baker Lake', 'Saltair', 'Pouch Cove', 'Saint-Ferdinand', 'Port McNeill', 'Digby', 'Manouane', 'Saint-Gervais', 'Neebing', 'Redwater', 'Saint-Alexandre-de-Kamouraska', 'Saint-Marc-sur-Richelieu', 'Mandeville', 'Caplan', 'Point Edward', 'Allardville', 'Waterville', 'Saint-Damien', 'Lac-Nominingue', 'Obedjiwan', 'Rama', 'McCreary', 'Deloraine-Winchester', 'Oakland-Wawanesa', 'Brenda-Waskada', 'Russell-Binscarth', 'Ellice-Archie', 'Souris-Glenwood', 'Riverdale', 'Pembina', 'Wallace-Woodworth', 'Lorne', 'Ethelbert', 'Yellowhead', 'Swan Valley West', 'Grey', 'Gilbert Plains', 'Norfolk-Treherne', 'Hamiota', 'Emerson-Franklin', 'Sifton', 'Rossburn', 'Grand View', 'Grassland', 'Louise', 'Ste. Rose', 'Cartwright-Roblin', 'Mossey River', 'Lakeshore', 'Riding Mountain West', 'Clanwilliam-Erickson', 'Glenboro-South Cypress', 'North Norfolk', 'Reinland', 'Minitonas-Bowsman', 'Kippens', 'Blucher', 'Hatley', 'Saint-Gédéon', 'Kingsey Falls', 'Provost', 'Saint-Charles', 'Mattawa', 'Tumbler Ridge', 'Terrasse-Vaudreuil', "L'Ascension-de-Notre-Seigneur", 'Bow Island', 'Barraute', 'One Hundred Mile House', 'Kedgwick', 'Gambo', 'Saint-Liguori', 'Bonfield', 'Pointe-Lebel', 'Saint Mary', 'Saint-Patrice-de-Sherrington', 'Fox Creek', 'Dawn-Euphemia', 'Chapleau', 'Saint-Esprit', 'Westfield Beach', 'Montague', 'Mashteuiatsh', 'Saint-François-du-Lac', 'Eel River Crossing', 'Saint-Fulgence', 'Millet', 'Vallée-Jonction', 'Saint-Georges-de-Cacouna', 'Lumsden No. 189', 'Manitouwadge', 'Wellington', 'Swift Current No. 137', 'Tofino', 'Fort QuAppelle', 'Vulcan', 'Indian Head', 'Petit Rocher', 'Wabush', 'Saint-Fabien', 'Watrous', 'North Frontenac', 'Lac-Supérieur', 'Les Escoumins', 'Richibucto', 'Rivière-Beaudette', 'Saint-Barthélemy', "Nisga'a", 'Austin', 'Saint-Mathieu', "Saint-Paul-de-l'Île-aux-Noix", 'Orkney No. 244', 'Behchokò', 'Saint-Joseph-de-Coleraine', 'Saint-Cyprien-de-Napierville', 'Sayabec', 'Valleyview', 'Déléage', 'Potton', 'Sainte-Béatrix', 'Sainte-Justine', 'Eastman', 'Saint-Valérien-de-Milton', 'Saint-Cuthbert', 'Saint-Blaise-sur-Richelieu', 'Middleton', 'Maugerville', 'Dalmeny', 'Kamsack', 'Lumsden', 'Trinity Bay North', 'Saint-Michel-de-Bellechasse', 'Sainte-Angèle-de-Monnoir', 'Picture Butte', 'Sacré-Coeur-Saguenay', 'Saint-Louis', 'Victoria', 'Saint-Robert', 'Armstrong', "Saint-Pierre-de-l'Île-d'Orléans", 'La Guadeloupe', 'Saint Andrews', 'Burns Lake', 'Povungnituk', 'Manners Sutton', 'Gore', 'Deseronto', 'Lamont', 'Chambord', 'Dudswell', 'Wynyard', 'Cambridge Bay', 'Saint-Narcisse', 'Frontenac Islands', 'Waswanipi', 'Inukjuak', 'Piney', 'Komoka', 'Saint-Zacharie', 'Hemmingford', 'Shelburne', 'Saint-Clet', 'Carberry', 'Brighton', 'Saint-Antoine', 'Warfield', 'Northampton', 'Saint-Ours', 'Stephenville Crossing', 'Sainte-Anne-de-la-Pocatière', 'Ucluelet', 'Saint-Placide', 'Barrière', 'Fisher', 'Nipissing', 'Sainte-Clotilde', 'Shaunavon', 'Wicklow', 'Southesk', 'Nouvelle', 'Rosthern', 'Yamaska', 'Neguac', 'Flat Rock', 'Igloolik', 'Grunthal', 'Naramata', 'Saint-Élie-de-Caxton', 'Blumenort', 'Balmoral', 'Price', 'Rosedale', 'Saint-Jacques-le-Mineur', 'Huron Shores', 'Champlain', 'Whitehead', 'Saint-Antoine-sur-Richelieu', 'Saint-Pacôme', 'Saint-Stanislas-de-Kostka', 'Frontenac', 'Stuartburn', 'Yamaska-Est', "Sainte-Émélie-de-l'Énergie", 'Saint-Charles-sur-Richelieu', 'Saint-Joseph-de-Sorel', 'Nipigon', 'Rivière-Blanche', 'Sainte-Hélène-de-Bagot', 'Franklin Centre', 'Harbour Breton', 'Massey Drive', 'Mille-Isles', 'Wilton No. 472', 'Lyster', 'Oakview', 'Balgonie', 'Harrison Park', 'Kensington', 'Witless Bay', 'Pond Inlet', 'Royston', 'Sainte-Clotilde-de-Horton', 'Burford', 'Fossambault-sur-le-Lac', 'Saint-Benoît-Labre', 'Coombs', 'Terrace Bay', 'Chapais', 'Saint-Honoré-de-Shenley', 'Cleveland', 'Macdonald, Meredith and Aberdeen Additional', 'Messines', 'Saint-Jean-de-Dieu', 'Nakusp', 'Florenceville', 'Saint-Antoine-de-Tilly', 'Lakeview', 'Humbermouth', 'Fort St. James', 'Saint-François-de-la-Rivière-du-Sud', 'Saint-Jacques', 'Uashat', 'Perth', 'Eeyou Istchee Baie-James', 'Shellbrook No. 493', 'Shawville', 'Saint-Lucien', 'Lambton', "Saint-Laurent-de-l'Île-d'Orléans", 'Saint-Flavien', 'Grenville', 'Chute-aux-Outardes', 'Sainte-Marcelline-de-Kildare', 'Saint-Félix-de-Kingsey', 'Upper Island Cove', 'Glenelg', 'Sainte-Élisabeth', 'Ashcroft', 'Clarkes Beach', 'Saint-Bernard-de-Lacolle', 'Belledune', 'Saint-Guillaume', 'Venise-en-Québec', 'Maliotenam', 'Ripon', 'Hilliers', 'Saint-Joseph', 'Saint-Paulin', 'Bon Accord', 'Saint David', 'Saint-Albert', 'Matagami', 'Springfield', 'Amherst', 'Notre-Dame-du-Laus', 'St. George', 'Wembley', 'Victoria', 'Springbrook', 'Saint-Tite-des-Caps', 'Hudson Bay', 'Pinawa', 'Brudenell, Lyndoch and Raglan', 'Carlyle', 'Keremeos', 'Val-Joli', 'Gold River', 'Saint-Casimir', 'Bay Bulls', 'Langham', 'Frenchman Butte', 'Gordon', 'Kugluktuk', 'Saint-Malachie', 'Southampton', 'Salluit', 'Pangnirtung', 'Saint-Louis-de-Gonzague', 'Moosonee', 'Englehart', 'Saint-Urbain', 'Tring-Jonction', 'Nauwigewauk', 'Pointe-à-la-Croix', 'Denmark', 'Saint-Joachim', 'Torch River No. 488', "Saint-Théodore-d'Acton", 'Grindrod', 'L Îsle-Verte', 'Harrison Hot Springs', 'Palmarolle', 'Henryville', 'Sussex Corner', 'Saint-Odilon-de-Cranbourne', 'Pipestone', 'Laurierville', 'La Doré', 'Lac-au-Saumon', 'Wotton', 'Prairie Lakes', 'Elk Point', 'Shellbrook', 'Wemindji', 'Cape Dorset', 'Strong', 'Lappe', 'Rivière-Héva', 'Fort-Coulonge', 'Irishtown-Summerside', 'Godmanchester', 'Macklin', 'Armour', 'Saint-Simon', 'St. François Xavier', 'Tingwick', 'Saint-Aubert', 'Saint-Mathieu-du-Parc', 'Wabasca', 'Ragueneau', 'Notre-Dame-du-Bon-Conseil', 'Wasagamack', 'Saint-Ubalde', 'Creighton', 'Fortune', 'Faraday', 'Berthier-sur-Mer', 'Frampton', 'Magnetawan', 'New Carlisle', 'Laird No. 404', 'Petitcodiac', 'Popkum', 'Norton', 'Canwood No. 494', 'Wentworth-Nord', 'Bas Caraquet', 'Sainte-Ursule', 'Dawson', 'Nantes', 'Lac-aux-Sables', 'Stewiacke', 'Taylor', 'Rosser', 'Estevan No. 5', 'Falmouth', 'Vaudreuil-sur-le-Lac', 'Grahamdale', 'Cardwell', 'Two Hills', 'Spiritwood No. 496', 'Legal', 'Amulet', 'Hérouxville', 'Pointe-des-Cascades', 'Weldford', 'Reynolds', 'St. Laurent', 'Lions Bay', "L'Isle-aux-Allumettes", 'Emo', "Sainte-Brigide-d'Iberville", 'Les Éboulements', 'Dunsmuir', 'Pointe-aux-Outardes', 'Smooth Rock Falls', 'Oxbow', 'Telkwa', 'Gjoa Haven', 'Sainte-Barbe', 'Mayerthorpe', 'Saint-Louis-du-Ha! Ha!', 'Powerview-Pine Falls', 'Baie Verte', 'Saint-Édouard', 'Charlo', 'Hillsborough', 'Bruederheim', 'Burgeo', 'Wadena', 'Richmond', 'Swan Hills', 'Wilkie', 'Saint-Léonard', 'Rivière-Bleue', 'Noyan', 'Ile-à-la-Crosse', 'Landmark', 'Saint-Hugues', 'Chisholm', 'Sainte-Anne-du-Sault', 'La Conception', 'Saint-Valère', 'Sorrento', 'Lamèque', 'Thessalon', "L'Isle-aux-Coudres", 'Nobleford', 'Larouche', "South Qu'Appelle No. 157", 'Elton', 'Lorrainville', 'Conestogo', 'Upham', 'St.-Charles', 'Sainte-Lucie-des-Laurentides', 'Saint-Alexis', 'Gillam', 'Roxton Falls', 'Montcalm', 'Clarendon', 'Mervin No. 499', 'Saint-Ludger', 'Coldwell', 'Saint-Arsène', 'Racine', 'Saint-Majorique-de-Grantham', 'Saint-Zénon', 'Saint-Armand', 'Saint-Édouard-de-Lotbinière', 'Alonsa', 'Listuguj', 'Bowden', 'St. Joseph', 'Osler', 'Saint-Hubert-de-Rivière-du-Loup', 'Saint-Jude', 'Dildo', 'La Minerve', 'Lanigan', 'Lajord No. 128', 'Moonbeam', 'Notre-Dame-des-Pins', 'Saint-Alban', 'Saint-Pierre-les-Becquets', 'Arborg', 'Vauxhall', 'Bayfield', 'Beaver River', 'Irricana', 'Labrecque', 'New Bandon', 'Wemotaci', 'Sainte-Hénédine', "L'Anse-Saint-Jean", 'Bassano', 'Parrsboro', 'Kaleden', "St. George's", 'Fort Simpson', 'Akwesasne', 'LAvenir', 'Ignace', 'Claremont', 'Teulon', 'Peel', 'Musquash', 'Notre-Dame-du-Portage', 'St. Lawrence', 'Oxford', 'Minto-Odanah', "St. Alban's", 'Saint James', "Saint-Norbert-d'Arthabaska", 'Manning', 'Glenella-Lansdowne', 'Saint-Hilarion', 'Saint-Siméon', 'Saint-Barnabé', 'Sainte-Félicité', 'Two Borders', 'Queensbury', 'Bury', 'Lac-Bouchette', 'Saint-Lazare-de-Bellechasse', 'Saint-Michel-du-Squatec', 'Saint-Joachim-de-Shefford', 'St-Pierre-Jolys', 'Grand-Remous', 'Saint-Gabriel-de-Rimouski', 'Armstrong', 'Rogersville', 'Langenburg', 'Sainte-Marie-Salomé', 'Moose Jaw No. 161', 'Saint-Cyprien', 'Maidstone', 'Très-Saint-Sacrement', 'Battle River No. 438', 'Miltonvale Park', 'McAdam', 'Saints-Anges', 'Saint-Urbain-Premier', 'Centreville-Wareham-Trinity', 'Alberton', 'Winnipeg Beach', 'Sainte-Agathe-de-Lotbinière', 'Salmo', 'Kipling', 'Sagamok', 'Trécesson', 'Tara', 'Grande-Vallée', 'Bertrand', 'Newcastle', 'Mont-Carmel', 'Saint Martins', 'Saint-Eugène', 'Notre-Dame-des-Neiges', 'Saint-André', 'Centreville', 'Roland', 'Saint-Léon-de-Standon', 'Saint-Modeste', 'Carnduff', 'Carling', 'Eckville', 'Nain', 'Hillsburgh', 'Foam Lake', 'Sainte-Sabine', 'Saint-Maxime-du-Mont-Louis', 'Blanc-Sablon', 'Cobalt', 'Gravelbourg', 'South River', 'Hudson Bay No. 394', 'McKellar', 'Frelighsburg', 'Buffalo Narrows', 'Ayers Cliff', 'Les Méchins', 'Sainte-Marguerite', 'Saint-Claude', 'Air Ronge', 'Chipman', 'Girardville', 'Saint-Bruno-de-Guigues', 'Grenfell', 'Dorchester', 'South Algonquin', 'Windermere', 'Saint-Narcisse-de-Beaurivage', 'Saint-René-de-Matane', "Sainte-Jeanne-d'Arc", 'Plaisance', 'Roxton-Sud', 'St. Louis No. 431', 'Youbou', 'Duchess', 'Saint-Frédéric', 'Viking', 'Sioux Narrows-Nestor Falls', 'Whitecourt', 'Repulse Bay', 'Montréal-Est', 'King', 'Regina Beach', 'Saint-Patrice-de-Beaurivage', 'Ootischenia', 'Hensall', 'Bentley', 'Durham', 'Sainte-Marthe', 'Notre-Dame-du-Nord', 'Pinehouse', 'Saint-Aimé-des-Lacs', 'Lac-Drolet', 'Preeceville', 'Maple Creek No. 111', "Harbour Main-Chapel's Cove-Lakeview", 'Saint-Wenceslas', 'Weyburn No. 67', 'Birch Hills', 'Wedgeport', 'Kerrobert', 'Havelock', 'Eston', 'Sainte-Geneviève-de-Batiscan', 'Saint-Justin', 'Saint-Norbert', 'Schreiber', 'Trochu', 'Botsford', 'Riviere-Ouelle', 'Greenwich', 'Stukely-Sud', 'Saint-Georges-de-Clarenceville', 'Sainte-Thérèse-de-Gaspé', 'Beachburg', 'Desbiens', 'Clyde River', 'La Macaza', 'Souris', 'Kindersley No. 290', 'Laird', 'Falher', 'Saint-Vallier', 'Coleraine', 'Melita', 'Noonan', 'Sainte-Pétronille', 'Delisle', 'Bristol', 'Mahone Bay', 'Waldheim', 'Saint-Sylvestre', 'Taloyoak', 'Onoway', 'Saint-Stanislas', 'Malpeque', 'Plantagenet', 'Longue-Rive', 'Argyle', 'Davidson', 'Plaster Rock', 'Wilmot', 'Valemount', 'Saint-Léonard-de-Portneuf', 'Alberta Beach', 'Saint-Narcisse-de-Rimouski', 'Saint-Bonaventure', 'Longlaketon No. 219', 'Papineau-Cameron', 'Assiginack', 'Brébeuf', 'Hudson Hope', 'Prince', 'Baie-du-Febvre', 'Durham-Sud', 'Melbourne', 'Nipawin No. 487', 'Duck Lake No. 463', 'Oyen', 'Nova Scotia']
     
-    canada_city_proviences = ['Ontario', 'Quebec', 'British Columbia', 'Alberta Wide', 'Alberta Wide', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Ontario', 'Ontario', 'British Columbia','Ontario', 'Quebec', 'Nova Scotia', 'Ontario', 'British Columbia', 'Ontario', 'Ontario','Ontario', 'Ontario', 'Quebec', 'Ontario', 'Saskatchewan', 'Quebec', 'British Columbia','Saskatchewan', 'British Columbia', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Quebec', 'Quebec', 'British Columbia', 'British Columbia', 'British Columbia','Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'British Columbia', 'British Columbia','Quebec', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Ontario', 'New Brunswick','Ontario', 'British Columbia', 'Ontario', 'Alberta Wide', 'British Columbia', 'Ontario', 'NovaScotia', 'Alberta Wide', 'Quebec', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'BritishColumbia', 'Quebec', 'Quebec', 'Ontario', 'British Columbia', 'British Columbia', 'BritishColumbia', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Alberta Wide','British Columbia', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Ontario', 'Alberta Wide','Quebec', 'Alberta Wide', 'Alberta Wide', 'Ontario', 'Alberta Wide', 'Ontario', 'Quebec','Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Ontario','Ontario', 'Quebec', 'British Columbia', 'British Columbia', 'Quebec', 'Ontario', 'Prince EdwardIsland', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario','Ontario', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Ontario','Saskatchewan', 'British Columbia', 'Ontario', 'British Columbia', 'Alberta Wide','Saskatchewan', 'British Columbia', 'British Columbia', 'Ontario', 'British Columbia', 'Quebec','Quebec', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Ontario', 'Quebec', 'Ontario','Ontario', 'Ontario', 'Quebec', 'Alberta Wide', 'British Columbia', 'Quebec', 'Alberta Wide','Quebec', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Quebec', 'Alberta Wide', 'Quebec', 'British Columbia', 'Quebec', 'Yukon', 'Ontario', 'Ontario','Alberta Wide', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Newfoundland and Labrador','Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Newfoundland andLabrador', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'NovaScotia', 'Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Alberta Wide', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Alberta Wide','Quebec', 'Northwest Territories', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'BritishColumbia', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Alberta Wide', 'Ontario', 'BritishColumbia', 'Ontario', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'British Columbia','Quebec', 'British Columbia', 'British Columbia', 'British Columbia', 'Quebec', 'New Brunswick','Ontario', 'Quebec', 'Alberta Wide', 'Ontario', 'Nova Scotia', 'Alberta Wide', 'Ontario','Ontario', 'Ontario', 'Ontario', 'Ontario', 'British Columbia', 'British Columbia', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Ontario', 'Ontario','Saskatchewan', 'New Brunswick', 'Ontario', 'Ontario', 'Ontario', 'Manitoba', 'Manitoba','British Columbia', 'Manitoba', 'Quebec', 'Ontario', 'Alberta Wide', 'Prince Edward Island','British Columbia', 'Alberta Wide', 'Quebec', 'Ontario', 'Quebec', 'Alberta Wide', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Ontario', 'Ontario', 'Alberta Wide', 'Saskatchewan', 'Ontario', 'Quebec', 'Alberta Wide', 'Ontario', 'Manitoba', 'Quebec','Alberta Wide', 'Ontario', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Ontario', 'BritishColumbia', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Alberta Wide', 'BritishColumbia', 'British Columbia', 'British Columbia', 'Ontario', 'Quebec', 'Ontario', 'NovaScotia', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Alberta Wide', 'Ontario', 'Quebec','Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'British Columbia','Quebec', 'Quebec', 'Nova Scotia', 'Quebec', 'Quebec', 'Ontario', 'Manitoba', 'Ontario','British Columbia', 'Ontario', 'Ontario', 'Newfoundland and Labrador', 'British Columbia', 'NewBrunswick', 'Ontario', 'British Columbia', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Ontario','Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Saskatchewan', 'Quebec', 'Ontario','Ontario', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec','Quebec', 'British Columbia', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Ontario','Ontario', 'Quebec', 'New Brunswick', 'British Columbia', 'British Columbia', 'Nova Scotia','Nova Scotia', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario','British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Alberta Wide','Quebec', 'British Columbia', 'Ontario', 'Alberta Wide', 'Ontario', 'Prince Edward Island','Ontario', 'Quebec', 'Saskatchewan', 'Quebec', 'Nova Scotia', 'Ontario', 'Quebec', 'Ontario','Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Quebec', 'Alberta Wide', 'Ontario', 'NewBrunswick', 'Alberta Wide', 'Ontario', 'Manitoba', 'Ontario', 'British Columbia', 'Quebec','Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario','Manitoba', 'Ontario', 'Saskatchewan', 'British Columbia', 'Nova Scotia', 'Manitoba', 'Quebec','Alberta Wide', 'Ontario', 'Alberta Wide', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Alberta Wide', 'Newfoundland and Labrador', 'Ontario', 'British Columbia', 'Ontario', 'Newfoundland andLabrador', 'Quebec', 'British Columbia', 'Nova Scotia', 'Alberta Wide', 'Ontario', 'NovaScotia', 'Newfoundland and Labrador', 'Quebec', 'Alberta Wide', 'Alberta Wide', 'Quebec','Manitoba', 'Ontario', 'Ontario', 'Nunavut', 'Ontario', 'Quebec', 'British Columbia', 'Quebec','Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Ontario','Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Alberta Wide', 'Alberta Wide','Newfoundland and Labrador', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Quebec','British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec','Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Alberta Wide','Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Ontario', 'New Brunswick','Alberta Wide', 'Quebec', 'Quebec', 'Nova Scotia', 'Alberta Wide', 'Ontario', 'Newfoundland andLabrador', 'Ontario', 'Alberta Wide', 'Nova Scotia', 'Quebec', 'Ontario', 'Quebec', 'NewBrunswick', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland andLabrador', 'Quebec', 'Ontario', 'Alberta Wide', 'Quebec', 'New Brunswick', 'Quebec', 'BritishColumbia', 'Manitoba', 'New Brunswick', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'BritishColumbia', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Saskatchewan', 'Alberta Wide','Alberta Wide', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec','Alberta Wide', 'Ontario', 'Ontario', 'Ontario', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec','Manitoba', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Quebec', 'Alberta Wide', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia','Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'BritishColumbia', 'British Columbia', 'Prince Edward Island', 'Saskatchewan', 'Ontario', 'NewBrunswick', 'New Brunswick', 'Ontario', 'Newfoundland and Labrador', 'Ontario', 'Alberta Wide','Quebec', 'British Columbia', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec','Saskatchewan', 'Quebec', 'Ontario', 'Manitoba', 'Quebec', 'New Brunswick', 'British Columbia','Alberta Wide', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Quebec','Manitoba', 'Nova Scotia', 'Ontario', 'Ontario', 'Manitoba', 'New Brunswick', 'Quebec','Ontario', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'NewBrunswick', 'Quebec', 'British Columbia', 'Manitoba', 'New Brunswick', 'Quebec', 'NewBrunswick', 'Ontario', 'Quebec', 'Ontario', 'New Brunswick', 'Quebec', 'British Columbia','Ontario', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'British Columbia', 'Saskatchewan','Alberta Wide', 'Alberta Wide', 'Quebec', 'Saskatchewan', 'Quebec', 'Ontario', 'Ontario','Manitoba', 'Quebec', 'Saskatchewan', 'New Brunswick', 'British Columbia', 'Ontario','Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'New Brunswick', 'New Brunswick', 'BritishColumbia', 'Quebec', 'New Brunswick', 'Quebec', 'Manitoba', 'Nova Scotia', 'Nova Scotia', 'NewBrunswick', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Quebec', 'Alberta Wide', 'Manitoba', 'Ontario', 'Alberta Wide', 'Quebec','Newfoundland and Labrador', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec','New Brunswick', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'NewBrunswick', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'British Columbia', 'Alberta Wide','Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'BritishColumbia', 'British Columbia', 'British Columbia', 'Alberta Wide', 'Quebec', 'Ontario', 'BritishColumbia', 'Ontario', 'Nova Scotia', 'Alberta Wide', 'New Brunswick', 'Nova Scotia', 'BritishColumbia', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta Wide', 'British Columbia','Manitoba', 'Manitoba', 'Alberta Wide', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Ontario','Quebec', 'Northwest Territories', 'Quebec', 'New Brunswick', 'British Columbia', 'Quebec','Ontario', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Manitoba','Manitoba', 'Newfoundland and Labrador', 'Quebec', 'British Columbia', 'New Brunswick','Manitoba', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'Manitoba', 'Quebec', 'Quebec','Quebec', 'Ontario', 'New Brunswick', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'Ontario','Quebec', 'Northwest Territories', 'Quebec', 'British Columbia', 'Ontario', 'Manitoba', 'NovaScotia', 'Alberta Wide', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nova Scotia','Saskatchewan', 'Ontario', 'Alberta Wide', 'Alberta Wide', 'Newfoundland and Labrador','Manitoba', 'Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec','Manitoba', 'Quebec', 'Saskatchewan', 'British Columbia', 'Quebec', 'New Brunswick', 'Ontario','Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Ontario','Quebec', 'Newfoundland and Labrador', 'British Columbia', 'Ontario', 'Alberta Wide','Newfoundland and Labrador', 'Alberta Wide', 'Alberta Wide', 'British Columbia', 'Quebec','Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'New Brunswick','Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nunavut', 'Saskatchewan', 'BritishColumbia', 'British Columbia', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec','Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec','Alberta Wide', 'Quebec', 'Quebec', 'Alberta Wide', 'Quebec', 'Ontario', 'Saskatchewan','Ontario', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia','Alberta Wide', 'Ontario', 'Nunavut', 'Quebec', 'Ontario', 'Newfoundland and Labrador', 'NewBrunswick', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Ontario', 'British Columbia','Saskatchewan', 'Alberta Wide', 'Alberta Wide', 'Alberta Wide', 'Alberta Wide', 'NorthwestTerritories', 'Quebec', 'Quebec', 'Ontario', 'Nova Scotia', 'Quebec', 'New Brunswick', 'Quebec','Quebec', 'Saskatchewan', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Saskatchewan','Ontario', 'Quebec', 'Nova Scotia', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Ontario', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Quebec', 'Quebec','Ontario', 'Quebec', 'Manitoba', 'Quebec', 'British Columbia', 'New Brunswick', 'Manitoba','Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Alberta Wide','Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Ontario','Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'British Columbia', 'Ontario', 'BritishColumbia', 'Newfoundland and Labrador', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick','Saskatchewan', 'British Columbia', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec','Quebec', 'Nova Scotia', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Nova Scotia', 'Alberta Wide','British Columbia', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'NewBrunswick', 'British Columbia', 'New Brunswick', 'Quebec', 'Quebec', 'Newfoundland andLabrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Alberta Wide', 'Quebec', 'Newfoundlandand Labrador', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Saskatchewan', 'New Brunswick','Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'British Columbia', 'Quebec', 'Ontario','Saskatchewan', 'Newfoundland and Labrador', 'Alberta Wide', 'Ontario', 'Quebec', 'Quebec','British Columbia', 'Quebec', 'Quebec', 'Nunavut', 'British Columbia', 'Newfoundland andLabrador', 'Quebec', 'British Columbia', 'Nova Scotia', 'Quebec', 'Quebec', 'Ontario', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Newfoundland and Labrador','Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Alberta Wide', 'New Brunswick', 'Ontario','British Columbia', 'Quebec', 'Quebec', 'Alberta Wide', 'Quebec', 'British Columbia', 'NewBrunswick', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Quebec', 'New Brunswick','Quebec', 'Alberta Wide', 'Ontario', 'Ontario', 'Quebec', 'New Brunswick', 'Prince EdwardIsland', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Alberta Wide', 'Quebec', 'Quebec','Saskatchewan', 'Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Saskatchewan','Alberta Wide', 'Saskatchewan', 'New Brunswick', 'Newfoundland and Labrador', 'Quebec','Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'BritishColumbia', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Northwest Territories', 'Quebec','Quebec', 'Quebec', 'Alberta Wide', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Saskatchewan', 'Saskatchewan','Saskatchewan', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta Wide', 'Quebec', 'NewBrunswick', 'Newfoundland and Labrador', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'NewBrunswick', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'Ontario', 'Alberta Wide','Quebec', 'Quebec', 'Saskatchewan', 'Nunavut', 'Quebec', 'Ontario', 'Quebec', 'Quebec','Manitoba', 'Ontario', 'Quebec', 'Quebec', 'Nova Scotia', 'Quebec', 'Manitoba', 'New Brunswick','New Brunswick', 'British Columbia', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador','Quebec', 'British Columbia', 'Quebec', 'British Columbia', 'Manitoba', 'Ontario', 'Quebec','Saskatchewan', 'New Brunswick', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'NewBrunswick', 'Newfoundland and Labrador', 'Nunavut', 'Manitoba', 'British Columbia', 'Quebec','Manitoba', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Manitoba','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Newfoundland andLabrador', 'Quebec', 'Saskatchewan', 'Quebec', 'Manitoba', 'Saskatchewan', 'Manitoba', 'PrinceEdward Island', 'Newfoundland and Labrador', 'Nunavut', 'British Columbia', 'Quebec', 'Ontario','Quebec', 'Quebec', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario','Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'British Columbia','Newfoundland and Labrador', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'NewBrunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec','British Columbia', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec','Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'Alberta Wide', 'NewBrunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Alberta Wide', 'Manitoba', 'Alberta Wide', 'Quebec', 'Saskatchewan', 'Manitoba', 'Ontario','Saskatchewan', 'British Columbia', 'Quebec', 'British Columbia', 'Quebec', 'Newfoundland andLabrador', 'Saskatchewan', 'Saskatchewan', 'New Brunswick', 'Nunavut', 'Quebec', 'NewBrunswick', 'Quebec', 'Nunavut', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'NewBrunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'British Columbia','Quebec', 'British Columbia', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Manitoba','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Alberta Wide', 'Saskatchewan', 'Quebec','Nunavut', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Saskatchewan', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Alberta Wide','Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Newfoundland and Labrador','Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Saskatchewan', 'New Brunswick', 'BritishColumbia', 'New Brunswick', 'Saskatchewan', 'Quebec', 'New Brunswick', 'Quebec', 'Yukon','Quebec', 'Quebec', 'Nova Scotia', 'British Columbia', 'Manitoba', 'Saskatchewan', 'NovaScotia', 'Quebec', 'Manitoba', 'New Brunswick', 'Alberta Wide', 'Saskatchewan', 'Alberta Wide','Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Manitoba', 'Manitoba', 'British Columbia','Quebec', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Ontario','Saskatchewan', 'British Columbia', 'Nunavut', 'Quebec', 'Alberta Wide', 'Quebec', 'Manitoba','Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'New Brunswick', 'Alberta Wide','Newfoundland and Labrador', 'Saskatchewan', 'New Brunswick', 'Alberta Wide', 'Saskatchewan','New Brunswick', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'Quebec','Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Ontario', 'Quebec', 'Alberta Wide','Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'New Brunswick', 'Ontario', 'Quebec','Quebec', 'Manitoba', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Quebec', 'Manitoba','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Alberta Wide', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Saskatchewan', 'Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Alberta Wide', 'Ontario', 'Saskatchewan', 'Alberta Wide', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec','Quebec', 'Alberta Wide', 'Nova Scotia', 'British Columbia', 'Newfoundland and Labrador','Northwest Territories', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'New Brunswick','New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Nova Scotia', 'Manitoba', 'Newfoundlandand Labrador', 'New Brunswick', 'Quebec', 'Alberta Wide', 'Manitoba', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Saskatchewan', 'Quebec','Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Prince Edward Island', 'NewBrunswick', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Prince Edward Island', 'Manitoba','Quebec', 'British Columbia', 'Saskatchewan', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'NewBrunswick', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick','Nova Scotia', 'Manitoba', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Alberta Wide','Newfoundland and Labrador', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Ontario','Saskatchewan', 'Ontario', 'Saskatchewan', 'Ontario', 'Quebec', 'Saskatchewan', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec','Saskatchewan', 'New Brunswick', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Saskatchewan', 'British Columbia', 'Alberta Wide', 'Quebec', 'Alberta Wide', 'Ontario', 'Alberta Wide', 'Nunavut', 'Quebec', 'Ontario', 'Saskatchewan', 'Quebec','British Columbia', 'Ontario', 'Alberta Wide', 'New Brunswick', 'Quebec', 'Quebec','Saskatchewan', 'Quebec', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Newfoundland and Labrador','Quebec', 'Saskatchewan', 'Saskatchewan', 'Nova Scotia', 'Saskatchewan', 'New Brunswick','Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Alberta Wide', 'New Brunswick','Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Nunavut','Quebec', 'Prince Edward Island', 'Saskatchewan', 'Ontario', 'Alberta Wide', 'Quebec', 'Quebec','Manitoba', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Nova Scotia', 'Saskatchewan','Quebec', 'Nunavut', 'Alberta Wide', 'Quebec', 'Prince Edward Island', 'Ontario', 'Quebec','Manitoba', 'Saskatchewan', 'New Brunswick', 'New Brunswick', 'British Columbia', 'Quebec','Alberta Wide', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Quebec', 'BritishColumbia', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Alberta Wide', 'Nova Scotia Wide']
+    canada_city_proviences = ['Ontario', 'Quebec', 'British Columbia', 'Alberta', 'Alberta', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Ontario', 'Ontario', 'British Columbia','Ontario', 'Quebec', 'Nova Scotia', 'Ontario', 'British Columbia', 'Ontario', 'Ontario','Ontario', 'Ontario', 'Quebec', 'Ontario', 'Saskatchewan', 'Quebec', 'British Columbia','Saskatchewan', 'British Columbia', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Quebec', 'Quebec', 'British Columbia', 'British Columbia', 'British Columbia','Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'British Columbia', 'British Columbia','Quebec', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Ontario', 'New Brunswick','Ontario', 'British Columbia', 'Ontario', 'Alberta', 'British Columbia', 'Ontario', 'NovaScotia', 'Alberta', 'Quebec', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'BritishColumbia', 'Quebec', 'Quebec', 'Ontario', 'British Columbia', 'British Columbia', 'BritishColumbia', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Alberta','British Columbia', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Ontario', 'Alberta','Quebec', 'Alberta', 'Alberta', 'Ontario', 'Alberta', 'Ontario', 'Quebec','Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Ontario','Ontario', 'Quebec', 'British Columbia', 'British Columbia', 'Quebec', 'Ontario', 'Prince EdwardIsland', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario','Ontario', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Ontario','Saskatchewan', 'British Columbia', 'Ontario', 'British Columbia', 'Alberta','Saskatchewan', 'British Columbia', 'British Columbia', 'Ontario', 'British Columbia', 'Quebec','Quebec', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Ontario', 'Quebec', 'Ontario','Ontario', 'Ontario', 'Quebec', 'Alberta', 'British Columbia', 'Quebec', 'Alberta','Quebec', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Quebec', 'Alberta', 'Quebec', 'British Columbia', 'Quebec', 'Yukon', 'Ontario', 'Ontario','Alberta', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Newfoundland and Labrador','Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Newfoundland andLabrador', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'NovaScotia', 'Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Alberta', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Alberta','Quebec', 'Northwest Territories', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'BritishColumbia', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Alberta', 'Ontario', 'BritishColumbia', 'Ontario', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'British Columbia','Quebec', 'British Columbia', 'British Columbia', 'British Columbia', 'Quebec', 'New Brunswick','Ontario', 'Quebec', 'Alberta', 'Ontario', 'Nova Scotia', 'Alberta', 'Ontario','Ontario', 'Ontario', 'Ontario', 'Ontario', 'British Columbia', 'British Columbia', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Ontario', 'Ontario','Saskatchewan', 'New Brunswick', 'Ontario', 'Ontario', 'Ontario', 'Manitoba', 'Manitoba','British Columbia', 'Manitoba', 'Quebec', 'Ontario', 'Alberta', 'Prince Edward Island','British Columbia', 'Alberta', 'Quebec', 'Ontario', 'Quebec', 'Alberta', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Ontario', 'Ontario', 'Alberta', 'Saskatchewan', 'Ontario', 'Quebec', 'Alberta', 'Ontario', 'Manitoba', 'Quebec','Alberta', 'Ontario', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Ontario', 'BritishColumbia', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Alberta', 'BritishColumbia', 'British Columbia', 'British Columbia', 'Ontario', 'Quebec', 'Ontario', 'NovaScotia', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Alberta', 'Ontario', 'Quebec','Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'British Columbia','Quebec', 'Quebec', 'Nova Scotia', 'Quebec', 'Quebec', 'Ontario', 'Manitoba', 'Ontario','British Columbia', 'Ontario', 'Ontario', 'Newfoundland and Labrador', 'British Columbia', 'NewBrunswick', 'Ontario', 'British Columbia', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Ontario','Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Saskatchewan', 'Quebec', 'Ontario','Ontario', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec','Quebec', 'British Columbia', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Ontario','Ontario', 'Quebec', 'New Brunswick', 'British Columbia', 'British Columbia', 'Nova Scotia','Nova Scotia', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario','British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Alberta','Quebec', 'British Columbia', 'Ontario', 'Alberta', 'Ontario', 'Prince Edward Island','Ontario', 'Quebec', 'Saskatchewan', 'Quebec', 'Nova Scotia', 'Ontario', 'Quebec', 'Ontario','Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Quebec', 'Alberta', 'Ontario', 'NewBrunswick', 'Alberta', 'Ontario', 'Manitoba', 'Ontario', 'British Columbia', 'Quebec','Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario','Manitoba', 'Ontario', 'Saskatchewan', 'British Columbia', 'Nova Scotia', 'Manitoba', 'Quebec','Alberta', 'Ontario', 'Alberta', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Alberta', 'Newfoundland and Labrador', 'Ontario', 'British Columbia', 'Ontario', 'Newfoundland andLabrador', 'Quebec', 'British Columbia', 'Nova Scotia', 'Alberta', 'Ontario', 'NovaScotia', 'Newfoundland and Labrador', 'Quebec', 'Alberta', 'Alberta', 'Quebec','Manitoba', 'Ontario', 'Ontario', 'Nunavut', 'Ontario', 'Quebec', 'British Columbia', 'Quebec','Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Ontario','Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Alberta', 'Alberta','Newfoundland and Labrador', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Quebec','British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec','Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Alberta','Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Ontario', 'New Brunswick','Alberta', 'Quebec', 'Quebec', 'Nova Scotia', 'Alberta', 'Ontario', 'Newfoundland andLabrador', 'Ontario', 'Alberta', 'Nova Scotia', 'Quebec', 'Ontario', 'Quebec', 'NewBrunswick', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland andLabrador', 'Quebec', 'Ontario', 'Alberta', 'Quebec', 'New Brunswick', 'Quebec', 'BritishColumbia', 'Manitoba', 'New Brunswick', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'BritishColumbia', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Saskatchewan', 'Alberta','Alberta', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec','Alberta', 'Ontario', 'Ontario', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Quebec','Manitoba', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Quebec', 'Alberta', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia','Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'BritishColumbia', 'British Columbia', 'Prince Edward Island', 'Saskatchewan', 'Ontario', 'NewBrunswick', 'New Brunswick', 'Ontario', 'Newfoundland and Labrador', 'Ontario', 'Alberta','Quebec', 'British Columbia', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec','Saskatchewan', 'Quebec', 'Ontario', 'Manitoba', 'Quebec', 'New Brunswick', 'British Columbia','Alberta', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Quebec','Manitoba', 'Nova Scotia', 'Ontario', 'Ontario', 'Manitoba', 'New Brunswick', 'Quebec','Ontario', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'NewBrunswick', 'Quebec', 'British Columbia', 'Manitoba', 'New Brunswick', 'Quebec', 'NewBrunswick', 'Ontario', 'Quebec', 'Ontario', 'New Brunswick', 'Quebec', 'British Columbia','Ontario', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'British Columbia', 'Saskatchewan','Alberta', 'Alberta', 'Quebec', 'Saskatchewan', 'Quebec', 'Ontario', 'Ontario','Manitoba', 'Quebec', 'Saskatchewan', 'New Brunswick', 'British Columbia', 'Ontario','Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'New Brunswick', 'New Brunswick', 'BritishColumbia', 'Quebec', 'New Brunswick', 'Quebec', 'Manitoba', 'Nova Scotia', 'Nova Scotia', 'NewBrunswick', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario','Quebec', 'Quebec', 'Alberta', 'Manitoba', 'Ontario', 'Alberta', 'Quebec','Newfoundland and Labrador', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec','New Brunswick', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'NewBrunswick', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'British Columbia', 'Alberta','Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'BritishColumbia', 'British Columbia', 'British Columbia', 'Alberta', 'Quebec', 'Ontario', 'BritishColumbia', 'Ontario', 'Nova Scotia', 'Alberta', 'New Brunswick', 'Nova Scotia', 'BritishColumbia', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta', 'British Columbia','Manitoba', 'Manitoba', 'Alberta', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Ontario','Quebec', 'Northwest Territories', 'Quebec', 'New Brunswick', 'British Columbia', 'Quebec','Ontario', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Manitoba','Manitoba', 'Newfoundland and Labrador', 'Quebec', 'British Columbia', 'New Brunswick','Manitoba', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'Manitoba', 'Quebec', 'Quebec','Quebec', 'Ontario', 'New Brunswick', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Ontario','Quebec', 'Northwest Territories', 'Quebec', 'British Columbia', 'Ontario', 'Manitoba', 'NovaScotia', 'Alberta', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nova Scotia','Saskatchewan', 'Ontario', 'Alberta', 'Alberta', 'Newfoundland and Labrador','Manitoba', 'Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec','Manitoba', 'Quebec', 'Saskatchewan', 'British Columbia', 'Quebec', 'New Brunswick', 'Ontario','Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Ontario','Quebec', 'Newfoundland and Labrador', 'British Columbia', 'Ontario', 'Alberta','Newfoundland and Labrador', 'Alberta', 'Alberta', 'British Columbia', 'Quebec','Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'New Brunswick','Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nunavut', 'Saskatchewan', 'BritishColumbia', 'British Columbia', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec','Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec','Alberta', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Ontario', 'Saskatchewan','Ontario', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia','Alberta', 'Ontario', 'Nunavut', 'Quebec', 'Ontario', 'Newfoundland and Labrador', 'NewBrunswick', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Ontario', 'British Columbia','Saskatchewan', 'Alberta', 'Alberta', 'Alberta', 'Alberta', 'NorthwestTerritories', 'Quebec', 'Quebec', 'Ontario', 'Nova Scotia', 'Quebec', 'New Brunswick', 'Quebec','Quebec', 'Saskatchewan', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Saskatchewan','Ontario', 'Quebec', 'Nova Scotia', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Ontario', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Quebec', 'Quebec','Ontario', 'Quebec', 'Manitoba', 'Quebec', 'British Columbia', 'New Brunswick', 'Manitoba','Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Alberta','Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Ontario','Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'British Columbia', 'Ontario', 'BritishColumbia', 'Newfoundland and Labrador', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick','Saskatchewan', 'British Columbia', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec','Quebec', 'Nova Scotia', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Nova Scotia', 'Alberta','British Columbia', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'NewBrunswick', 'British Columbia', 'New Brunswick', 'Quebec', 'Quebec', 'Newfoundland andLabrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Alberta', 'Quebec', 'Newfoundlandand Labrador', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Saskatchewan', 'New Brunswick','Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'British Columbia', 'Quebec', 'Ontario','Saskatchewan', 'Newfoundland and Labrador', 'Alberta', 'Ontario', 'Quebec', 'Quebec','British Columbia', 'Quebec', 'Quebec', 'Nunavut', 'British Columbia', 'Newfoundland andLabrador', 'Quebec', 'British Columbia', 'Nova Scotia', 'Quebec', 'Quebec', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba','Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Newfoundland and Labrador','Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'New Brunswick', 'Ontario','British Columbia', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'British Columbia', 'NewBrunswick', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Quebec', 'New Brunswick','Quebec', 'Alberta', 'Ontario', 'Ontario', 'Quebec', 'New Brunswick', 'Prince EdwardIsland', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Alberta', 'Quebec', 'Quebec','Saskatchewan', 'Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Saskatchewan','Alberta', 'Saskatchewan', 'New Brunswick', 'Newfoundland and Labrador', 'Quebec','Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'BritishColumbia', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Northwest Territories', 'Quebec','Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Saskatchewan', 'Saskatchewan','Saskatchewan', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'NewBrunswick', 'Newfoundland and Labrador', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'NewBrunswick', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'Ontario', 'Alberta','Quebec', 'Quebec', 'Saskatchewan', 'Nunavut', 'Quebec', 'Ontario', 'Quebec', 'Quebec','Manitoba', 'Ontario', 'Quebec', 'Quebec', 'Nova Scotia', 'Quebec', 'Manitoba', 'New Brunswick','New Brunswick', 'British Columbia', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador','Quebec', 'British Columbia', 'Quebec', 'British Columbia', 'Manitoba', 'Ontario', 'Quebec','Saskatchewan', 'New Brunswick', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'NewBrunswick', 'Newfoundland and Labrador', 'Nunavut', 'Manitoba', 'British Columbia', 'Quebec','Manitoba', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Manitoba','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Ontario', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Newfoundland andLabrador', 'Quebec', 'Saskatchewan', 'Quebec', 'Manitoba', 'Saskatchewan', 'Manitoba', 'PrinceEdward Island', 'Newfoundland and Labrador', 'Nunavut', 'British Columbia', 'Quebec', 'Ontario','Quebec', 'Quebec', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario','Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'British Columbia','Newfoundland and Labrador', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'NewBrunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec','British Columbia', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec','Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'Alberta', 'NewBrunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Alberta', 'Manitoba', 'Alberta', 'Quebec', 'Saskatchewan', 'Manitoba', 'Ontario','Saskatchewan', 'British Columbia', 'Quebec', 'British Columbia', 'Quebec', 'Newfoundland andLabrador', 'Saskatchewan', 'Saskatchewan', 'New Brunswick', 'Nunavut', 'Quebec', 'NewBrunswick', 'Quebec', 'Nunavut', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'NewBrunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'British Columbia','Quebec', 'British Columbia', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Manitoba','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Alberta', 'Saskatchewan', 'Quebec','Nunavut', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Saskatchewan', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Alberta','Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Newfoundland and Labrador','Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Saskatchewan', 'New Brunswick', 'BritishColumbia', 'New Brunswick', 'Saskatchewan', 'Quebec', 'New Brunswick', 'Quebec', 'Yukon','Quebec', 'Quebec', 'Nova Scotia', 'British Columbia', 'Manitoba', 'Saskatchewan', 'NovaScotia', 'Quebec', 'Manitoba', 'New Brunswick', 'Alberta', 'Saskatchewan', 'Alberta','Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Manitoba', 'Manitoba', 'British Columbia','Quebec', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Ontario','Saskatchewan', 'British Columbia', 'Nunavut', 'Quebec', 'Alberta', 'Quebec', 'Manitoba','Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'New Brunswick', 'Alberta','Newfoundland and Labrador', 'Saskatchewan', 'New Brunswick', 'Alberta', 'Saskatchewan','New Brunswick', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'Quebec','Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Ontario', 'Quebec', 'Alberta','Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'New Brunswick', 'Ontario', 'Quebec','Quebec', 'Manitoba', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Quebec', 'Manitoba','Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Alberta', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec','Saskatchewan', 'Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Alberta', 'Ontario', 'Saskatchewan', 'Alberta', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec','Quebec', 'Alberta', 'Nova Scotia', 'British Columbia', 'Newfoundland and Labrador','Northwest Territories', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'New Brunswick','New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Nova Scotia', 'Manitoba', 'Newfoundlandand Labrador', 'New Brunswick', 'Quebec', 'Alberta', 'Manitoba', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Saskatchewan', 'Quebec','Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Prince Edward Island', 'NewBrunswick', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Prince Edward Island', 'Manitoba','Quebec', 'British Columbia', 'Saskatchewan', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'NewBrunswick', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick','Nova Scotia', 'Manitoba', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Alberta','Newfoundland and Labrador', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Ontario','Saskatchewan', 'Ontario', 'Saskatchewan', 'Ontario', 'Quebec', 'Saskatchewan', 'Quebec','Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec','Saskatchewan', 'New Brunswick', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec','Quebec', 'Quebec', 'Saskatchewan', 'British Columbia', 'Alberta', 'Quebec', 'Alberta', 'Ontario', 'Alberta', 'Nunavut', 'Quebec', 'Ontario', 'Saskatchewan', 'Quebec','British Columbia', 'Ontario', 'Alberta', 'New Brunswick', 'Quebec', 'Quebec','Saskatchewan', 'Quebec', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Newfoundland and Labrador','Quebec', 'Saskatchewan', 'Saskatchewan', 'Nova Scotia', 'Saskatchewan', 'New Brunswick','Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Alberta', 'New Brunswick','Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Nunavut','Quebec', 'Prince Edward Island', 'Saskatchewan', 'Ontario', 'Alberta', 'Quebec', 'Quebec','Manitoba', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Nova Scotia', 'Saskatchewan','Quebec', 'Nunavut', 'Alberta', 'Quebec', 'Prince Edward Island', 'Ontario', 'Quebec','Manitoba', 'Saskatchewan', 'New Brunswick', 'New Brunswick', 'British Columbia', 'Quebec','Alberta', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Quebec', 'BritishColumbia', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Alberta', 'Nova Scotia Wide']
     
     query_relaxation_tags = []
     
     # print('class_tag_mapping',class_tag_mapping)
     canada_cities = list(map(lambda x: x.lower() ,canada_cities))
 
-    if 'city' in class_tag_mapping:
-        for loc_tag in class_tag_mapping['city']:
+    if 'Location' in class_tag_mapping:
+        for loc_tag in class_tag_mapping['Location']:
+            loc_tag = loc_tag.lower()
             if loc_tag in canada_cities: 
                 index = canada_cities.index(loc_tag)
                 query_relaxation_tags.append(canada_city_proviences[index])
-                tags_params.append((canada_city_proviences[index], 'city'))
+                tags_params.append((canada_city_proviences[index], 'Location'))
             else:
                 similar_tags = difflib.get_close_matches(loc_tag, canada_cities, n=2, cutoff=0.9)
                 if len(similar_tags) > 0:
                     index = canada_cities.index(similar_tags[0])
                     query_relaxation_tags.append(canada_city_proviences[index])
-                    tags_params.append((canada_city_proviences[index], 'city'))
+                    tags_params.append((canada_city_proviences[index], 'Location'))
                 else:
                     similar_tags = difflib.get_close_matches(loc_tag, canada_city_proviences, n=2, cutoff=0.60)
                     if len(similar_tags) > 0:
                         query_relaxation_tags.append(similar_tags[0])
-                        tags_params.append((similar_tags[0], 'city'))
+                        tags_params.append((similar_tags[0], 'Location'))
 
         
     #adding obvious location tags
@@ -1030,82 +956,107 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     tags_params_mapped.update(should_be_added)
     tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
 
-    print('tags_params_mapped', tags_params_mapped)
-    # print('query_relaxation_tags', query_relaxation_tags)
-    
-    # print('query_relaxation_tags',query_relaxation_tags)
-    # print('tags_params', tags_params)
-
-    
-    resQueryset = resQueryset.filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+    if vip_tags:
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
+    else:
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
 
 
-    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id').all()
+    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category').all()
     query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+    query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
 
     #retrieve tag ids from tag names
-    tags = Tag.objects.filter(name__in=tags_params_mapped).values('id','tag_category').all()
+    tags = Tag.objects.filter(approved=1).filter(name__in=tags_params_mapped).values('id','tag_category').all()
     tags_id_list = list(map(lambda x: x['id'], tags))
     tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
     
     
     
-    # input_location_type_mh
+    # input_lo_format_infot_servt_mh_cost_au_lang
     # scoring and ordering by scores
     resource_scores = {}
+    resource_score_reasons = {}
     res_counter = 0
     for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], resQueryset)):
-        resource_scores[resource[0]] = [0,0,0]
-        if resource[1] is None or resource[1]=='':
-            resource_scores[resource[0]] = 0
-            continue
+        resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
+        resource_score_reasons[resource[0]] = ""
 
-        index = json.loads(resource[1])
+        index = None
         original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
         original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
+        if resource[1] is not None and resource[1]!='':
+            index = json.loads(resource[1])
         
-        for tag in tags_id_list:
-            t_cat = tags_cat_list[tags_id_list.index(tag)]
+        for i, tag in enumerate(tags_id_list):
+            t_cat = tags_cat_list[i]
 
             tag = str(tag)
-            if tag in index:
-                if t_cat=="Health Issue":
-                    resource_scores[resource[0]][2] += index[tag]
-                elif t_cat=="Location":
-                    resource_scores[resource[0]][0] += index[tag]
-                elif t_cat in ("Resource Type for Education/Informational", "Resource Type for Programs and Services"):
-                    resource_scores[resource[0]][1] += index[tag]
+            if resource[1] is not None and resource[1]!='':
+                if tag in index:
+                    if t_cat=="Location":
+                        resource_scores[resource[0]][0] += index[tag]
+                    elif t_cat=="Resource format":
+                        resource_scores[resource[0]][1] += index[tag]
+                    elif t_cat=="Resource Type for Education/Informational":
+                        resource_scores[resource[0]][2] += index[tag]
+                    elif t_cat=="Resource Type for Programs and Services":
+                        resource_scores[resource[0]][3] += index[tag]
+                    elif t_cat=="Health Issue":
+                        resource_scores[resource[0]][4] += index[tag]
+                    elif t_cat=="Costs":
+                        resource_scores[resource[0]][5] += index[tag]
+                    elif t_cat=="Audience":
+                        resource_scores[resource[0]][6] += index[tag]
+                    elif t_cat=="Language":
+                        resource_scores[resource[0]][7] += index[tag]
+
+            if tag in original_tag_ids:
+                ii = original_tag_ids.index(tag)
+                sc = 10
+                if original_tag_categories[ii] == 'Location':
+                    resource_scores[resource[0]][0] += sc 
+                elif original_tag_categories[ii] == 'Resource format':
+                    resource_scores[resource[0]][1] += sc 
+                elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
+                    resource_scores[resource[0]][2] += sc 
+                elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
+                    resource_scores[resource[0]][3] += sc 
+                elif original_tag_categories[ii] == 'Health Issue':
+                    resource_scores[resource[0]][4] += sc 
+                elif original_tag_categories[ii] == 'Costs':
+                    resource_scores[resource[0]][5] += sc 
+                elif original_tag_categories[ii] == 'Audience':
+                    resource_scores[resource[0]][6] += sc 
+                elif original_tag_categories[ii] == 'Language':
+                    resource_scores[resource[0]][7] += sc 
+            elif tag in query_relaxation_tags_id:
+                ii = query_relaxation_tags_id.index(tag)
+                sc = 1
+                if query_relaxation_tags_categories[ii] == 'Location':
+                    resource_scores[resource[0]][0] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Resource format':
+                    resource_scores[resource[0]][1] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
+                    resource_scores[resource[0]][2] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
+                    resource_scores[resource[0]][3] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Health Issue':
+                    resource_scores[resource[0]][4] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Costs':
+                    resource_scores[resource[0]][5] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Audience':
+                    resource_scores[resource[0]][6] += sc 
+                elif query_relaxation_tags_categories[ii] == 'Language':
+                    resource_scores[resource[0]][7] += sc 
 
                 
-            if tag in original_tag_ids:
-                i = original_tag_ids.index(tag)
+                
+                
 
-                if original_tag_categories[i] == 'Location':
-                    resource_scores[resource[0]][0] += 10
-                elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][2] += 20
-                elif original_tag_categories[i] in ('Resource Type for Programs and Services', 'Resource Type for Education/Informational'):
-                    resource_scores[resource[0]][1] += 10
-
-        for original_tag_id in original_tag_ids:
-            if original_tag_id in query_relaxation_tags_id:
-                #for query relaxation
-                i = original_tag_ids.index(original_tag_id)
-
-                if original_tag_categories[i] == 'Location':
-                    resource_scores[resource[0]][0] += 6
-                elif original_tag_categories[i] == 'Health Issue':
-                    resource_scores[resource[0]][2] += 12
-                elif original_tag_categories[i] in ('Resource Type for Programs and Services', 'Resource Type for Education/Informational'):
-                    resource_scores[resource[0]][1] += 6
-
-        #added like a rule 
-        if "Informational Website" in tags_params_mapped:
-            resource_scores[resource[0]][1] = 10
-
-        resource_scores[resource[0]] = cos(torch.FloatTensor(input_location_type_mh), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
+        resource_scores[resource[0]] = cos(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()*10
 
         # print(resource_scores[resource[0]])
 
@@ -1115,36 +1066,36 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 continue
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.55
+                resource_scores[resource[0]] += 0.05
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.55
+                resource_scores[resource[0]] += 0.05
             
             
             if (tag == 'Informational Website') and (resource[4] == 'RS' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 2
+                resource_scores[resource[0]] += 1
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 2
+                resource_scores[resource[0]] += 1
 
             if (tag == 'Definition') and (resource[5]):
-                resource_scores[resource[0]] += 0.45
+                resource_scores[resource[0]] += 1
 
             if (tag == 'Domestic Violence') and ("sheltersafe" in resource[3].lower()):
-                resource_scores[resource[0]] += 15.5
+                resource_scores[resource[0]] += 0.05
 
             if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
-                resource_scores[resource[0]] += 0.95
+                resource_scores[resource[0]] += 0.05
 
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
             if (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
-                resource_scores[resource[0]] += 0.55
+                resource_scores[resource[0]] += 0.05
         
         res_counter+=1
 
-
     topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
 
     topitemsasdict = dict(topitems)
 
@@ -1152,13 +1103,11 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
         resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
 
         
-        
         thisSet = []
         #make result distinct
         for query in resQueryset:
             if query.id not in thisSet:
                 thisSet.append(query.id)
-
         newQuerySet = Resource.objects.filter(id__in=thisSet)
         for qs in newQuerySet:
             qs.chatbot_api_rcmnd_count += 1
@@ -1167,21 +1116,17 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
             if qs.id not in topitemsasdict.keys():
                 qs.score = 0
             else:
-                qs.score = topitemsasdict[qs.id] 
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet)]
+                qs.index = number_of_filters
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters)
+
         return newQuerySet
 
 
-
-    #  tags = Tag.objects.filter(name__in=tags_params).values('id').all()
-    #  tagsList = list(map(lambda x: x.id, tags))
-    # print(tagsList)
-    
-    # resQueryset = resQueryset.filter(tags__id__in=tagsList)
-    # resQueryset = resQueryset.order_by('public_view_count')
-
     return resQueryset
 
-# new new
+# rasa will call it
 def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     resQueryset = Resource.objects.filter(
         (Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
@@ -3202,7 +3147,7 @@ class EmotionTest(APIView):
 class ResourceByIntentEntityView_new(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
     permission_classes = {permissions.AllowAny}
-    pagination_class = StandardResultSetPagination
+    #pagination_class = StandardResultSetPagination
 
     def get_queryset(self):
         return ResourceByIntentEntityViewQuerySet_new(self.request.query_params)
