@@ -664,9 +664,9 @@ def calculateTagWeightsForResources(query_params):
 #     print("--------------------------------------------done--------------------------------------------")
 #     # print(response)
 #     return tags
-
+# testing new features
 def ResourceByIntentEntityViewQuerySet_new(query_params):
-    resQueryset = Resource.objects.filter(
+    resQueryset = Resource.objects.filter(visible=1).filter(
         (Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
     
     word_mapping = [('family_member', 'Caregiver/Parent')
@@ -822,14 +822,13 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
     for tag_param in tags_params:
         tag_param = tag_param[0]
-        print("tag_param", tag_param)
 
         if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
-            print("found in approved tags")
+            #found in approved tags
             continue
         else:
             if tag_param in word_mapping_keys:
-                print("found in word mapping")
+                #found in word mapping
                 should_be_romoved.add(tag_param)
                 for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
                     should_be_added.add(related_word[1])
@@ -838,7 +837,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 if len(similar_tags) > 0:
                     should_be_romoved.add(tag_param)
                     should_be_added.add(similar_tags[0])
-                    print("found using distance")
+                    #found using distance
 
 
 
@@ -889,7 +888,12 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     # Audience
     # Language
 
-    #VIP tags are tags that all should be present in a resource to be a candidate 
+    """
+    VIP tags are tags that at least on of them
+    should be present in a resource to be a candidate 
+    it is NOW ONLY mental_health tags
+    """
+
     vip_tags = []
     input_lo_format_infot_servt_mh_cost_au_lang = []
     if 'Location' in class_tag_mapping:
@@ -974,13 +978,15 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
 
 
-    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category').all()
+    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
     query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
     query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
+    query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
 
     #retrieve tag ids from tag names
-    tags = Tag.objects.filter(approved=1).filter(name__in=tags_params_mapped).values('id','tag_category').all()
+    tags = Tag.objects.filter(approved=1).filter(name__in=tags_params_mapped).values('id','name','tag_category').all()
     tags_id_list = list(map(lambda x: x['id'], tags))
+    tags_name_list = list(map(lambda x: x['name'], tags))
     tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
     
@@ -998,6 +1004,8 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
         index = None
         original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
         original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
+        original_tag_names = list(map(lambda x: str(x.name), resource[2]))
+
         if resource[1] is not None and resource[1]!='':
             index = json.loads(resource[1])
         
@@ -1009,59 +1017,83 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 if tag in index:
                     if t_cat=="Location":
                         resource_scores[resource[0]][0] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ loc score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Resource format":
                         resource_scores[resource[0]][1] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ format score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Resource Type for Education/Informational":
                         resource_scores[resource[0]][2] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ infoType score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Resource Type for Programs and Services":
                         resource_scores[resource[0]][3] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ servType score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Health Issue":
                         resource_scores[resource[0]][4] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ MH score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Costs":
                         resource_scores[resource[0]][5] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ Costs score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Audience":
                         resource_scores[resource[0]][6] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ Audi score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Language":
                         resource_scores[resource[0]][7] += index[tag]
+                        resource_score_reasons[resource[0]] += "+ lang score from TF-IDF for "+tags_name_list[i]
 
             if tag in original_tag_ids:
                 ii = original_tag_ids.index(tag)
                 sc = 10
                 if original_tag_categories[ii] == 'Location':
                     resource_scores[resource[0]][0] += sc 
+                    resource_score_reasons[resource[0]] += "+ loc score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Resource format':
                     resource_scores[resource[0]][1] += sc 
+                    resource_score_reasons[resource[0]] += "+ format score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
                     resource_scores[resource[0]][2] += sc 
+                    resource_score_reasons[resource[0]] += "+ infoType score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
                     resource_scores[resource[0]][3] += sc 
+                    resource_score_reasons[resource[0]] += "+ ServType score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Health Issue':
                     resource_scores[resource[0]][4] += sc 
+                    resource_score_reasons[resource[0]] += "+ MH score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Costs':
                     resource_scores[resource[0]][5] += sc 
+                    resource_score_reasons[resource[0]] += "+ costs score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Audience':
                     resource_scores[resource[0]][6] += sc 
+                    resource_score_reasons[resource[0]] += "+ Audi score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Language':
                     resource_scores[resource[0]][7] += sc 
+                    resource_score_reasons[resource[0]] += "+ lang score from tags for "+original_tag_names[ii]
             elif tag in query_relaxation_tags_id:
                 ii = query_relaxation_tags_id.index(tag)
                 sc = 1
                 if query_relaxation_tags_categories[ii] == 'Location':
                     resource_scores[resource[0]][0] += sc 
+                    resource_score_reasons[resource[0]] += "+ loc score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource format':
                     resource_scores[resource[0]][1] += sc 
+                    resource_score_reasons[resource[0]] += "+ format score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
                     resource_scores[resource[0]][2] += sc 
+                    resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
                     resource_scores[resource[0]][3] += sc 
+                    resource_score_reasons[resource[0]] += "+ servType score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Health Issue':
                     resource_scores[resource[0]][4] += sc 
+                    resource_score_reasons[resource[0]] += "+ MH score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Costs':
                     resource_scores[resource[0]][5] += sc 
+                    resource_score_reasons[resource[0]] += "+ Costs score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Audience':
                     resource_scores[resource[0]][6] += sc 
+                    resource_score_reasons[resource[0]] += "+ Audi score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Language':
                     resource_scores[resource[0]][7] += sc 
+                    resource_score_reasons[resource[0]] += "+ Lang score from tags for "+query_relaxation_tags_names[ii]
 
                 
                 
@@ -1078,30 +1110,38 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
                 resource_scores[resource[0]] += 0.05
+                resource_score_reasons[resource[0]] += "+ overal score, tag in title. tag:"+tag
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
                 resource_scores[resource[0]] += 0.05
+                resource_score_reasons[resource[0]] += "+ overal score, tag in title. tag:"+tag
             
             
             if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
+                resource_score_reasons[resource[0]] += "+ overal score, resource is informational or both. tag:"+tag
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
+                resource_score_reasons[resource[0]] += "+ overal score, resource is prog_serv or both. tag:"+tag
 
             if (tag == 'Definition' or tag == 'definition') and (resource[5]):
                 resource_scores[resource[0]] += 3
+                resource_score_reasons[resource[0]] += "+ overal score, resource has a definition. tag:"+tag
 
             if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.05
+                resource_score_reasons[resource[0]] += "+ overal score, resource has shelter in its title. tag:"+tag
 
             if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.05
+                resource_score_reasons[resource[0]] += "+ overal score, resource has counsel in its title. tag: "+tag
 
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
             if (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
                 resource_scores[resource[0]] += 0.05
+                resource_score_reasons[resource[0]] += "+ acronym in title of resource found. tag:"+tag
         
         res_counter+=1
 
@@ -1131,7 +1171,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
                 number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
 
-                qs.index = number_of_filters
+                qs.index = {"t":number_of_filters, "r":resource_score_reasons[qs.id]}
                 qs.score = topitemsasdict[qs.id] + len(number_of_filters)
 
         return newQuerySet
