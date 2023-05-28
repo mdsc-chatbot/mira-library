@@ -1660,8 +1660,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         
         res_counter+=1
 
-    #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
-    topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
 
     topitemsasdict = dict(topitems)
 
