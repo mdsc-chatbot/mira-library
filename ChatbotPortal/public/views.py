@@ -1172,7 +1172,9 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
 
                 qs.index = {"t":number_of_filters, "r":resource_score_reasons[qs.id]}
-                qs.score = topitemsasdict[qs.id] + len(number_of_filters)
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - len(qs.tags)*0.1
+
 
         return newQuerySet
 
