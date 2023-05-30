@@ -996,7 +996,6 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     # scoring and ordering by scores
     resource_scores = {}
     resource_score_reasons = {}
-    res_counter = 0
     for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], resQueryset)):
         resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
         resource_score_reasons[resource[0]] = ""
@@ -1139,11 +1138,16 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
-            if (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
+            if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
                 resource_scores[resource[0]] += 0.05
                 resource_score_reasons[resource[0]] += "+ acronym in title of resource found. tag:"+tag
+
+            if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
+            ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
+            ('WHO' in resource[3]) or ('CDC' in resource[3]):
+                resource_scores[resource[0]] += 0.0001
+                resource_score_reasons[resource[0]] += "+ resource organization is well known"
         
-        res_counter+=1
 
     #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
     topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
@@ -1173,7 +1177,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
                 qs.index = {"t":number_of_filters, "r":resource_score_reasons[qs.id]}
                 # gives more score to resources that that have most of our requested tags.
-                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - len(qs.tags)*0.1
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.1)
 
 
         return newQuerySet
@@ -1513,7 +1517,6 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     # scoring and ordering by scores
     resource_scores = {}
     resource_score_reasons = {}
-    res_counter = 0
     for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], resQueryset)):
         resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
         resource_score_reasons[resource[0]] = ""
@@ -1656,11 +1659,16 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
-            if (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
+            if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
                 resource_scores[resource[0]] += 0.05
                 resource_score_reasons[resource[0]] += "+ acronym in title of resource found. tag:"+tag
+
+            if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
+            ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
+            ('WHO' in resource[3]) or ('CDC' in resource[3]):
+                resource_scores[resource[0]] += 0.0001
+                resource_score_reasons[resource[0]] += "+ resource organization is well known"
         
-        res_counter+=1
 
     topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
@@ -1688,8 +1696,10 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
                 number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
 
-                #qs.index = {"t":number_of_filters, "r":resource_score_reasons[qs.id]}
-                qs.score = topitemsasdict[qs.id] + len(number_of_filters)
+                qs.index = number_of_filters
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.1)
+
 
         return newQuerySet
 
