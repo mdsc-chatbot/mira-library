@@ -53,6 +53,9 @@ export default class ReviewMatrix extends React.Component {
             isRegisteredCharity: false,
             isPublicHealthcareProvider: false,
             isAcademicInst: false,
+            isFNGov: false,
+            isInGov: false,
+            isMetGov: false,
             modals: [],
         };
 
@@ -131,7 +134,10 @@ export default class ReviewMatrix extends React.Component {
                 checkBoxName == 'isNonProfitCompany' ? this.setState({ isNonProfitCompany: !this.state.isNonProfitCompany }) :
                     checkBoxName == 'isRegisteredCharity' ? this.setState({ isRegisteredCharity: !this.state.isRegisteredCharity }) :
                         checkBoxName == 'isPublicHealthcareProvider' ? this.setState({ isPublicHealthcareProvider: !this.state.isPublicHealthcareProvider }) :
-                            checkBoxName == 'isAcademicInst' ? this.setState({ isAcademicInst: !this.state.isAcademicInst }) : null;
+                            checkBoxName == 'isAcademicInst' ? this.setState({ isAcademicInst: !this.state.isAcademicInst }) : 
+                            checkBoxName == 'isFNGov' ? this.setState({ isFNGov: !this.state.isFNGov }) : 
+                                checkBoxName == 'isInGov' ? this.setState({ isInGov: !this.state.isInGov }) : 
+                                    checkBoxName == 'isMetGov' ? this.setState({ isMetGov: !this.state.isMetGov }) : null;
     }
 
     componentDidUpdate(previousProps, previousState) {
@@ -216,6 +222,9 @@ export default class ReviewMatrix extends React.Component {
                 isRegisteredCharity: this.state.isRegisteredCharity,
                 isPublicHealthcareProvider: this.state.isPublicHealthcareProvider,
                 isAcademicInst: this.state.isAcademicInst,
+                isMetGov: this.state.isMetGov,
+                isInGov: this.state.isInGov,
+                isFNGov: this.state.isFNGov,
             }
         };
         console.log('reviewData', reviewData)
@@ -276,6 +285,9 @@ export default class ReviewMatrix extends React.Component {
                                 <div><Checkbox onChange={(e) => this.handleOrgCBChange('isRegisteredCharity')} checked={this.state.isRegisteredCharity} label='Registered charity' /></div>
                                 <div><Checkbox onChange={(e) => this.handleOrgCBChange('isPublicHealthcareProvider')} checked={this.state.isPublicHealthcareProvider} label='A public healthcare provider' /></div>
                                 <div><Checkbox onChange={(e) => this.handleOrgCBChange('isAcademicInst')} checked={this.state.isAcademicInst} label='Academic institution' /></div>
+                                <div><Checkbox onChange={(e) => this.handleOrgCBChange('isFNGov')} checked={this.state.isFNGov} label='First Nations Government' /></div>
+                                <div><Checkbox onChange={(e) => this.handleOrgCBChange('isInGov')} checked={this.state.isInGov} label='Inuit Government' /></div>
+                                <div><Checkbox onChange={(e) => this.handleOrgCBChange('isMetGov')} checked={this.state.isMetGov} label='Métis Governing Agency' /></div>
                             </Table.Cell>
                         </Table.Row>
                         <Table.Row>
