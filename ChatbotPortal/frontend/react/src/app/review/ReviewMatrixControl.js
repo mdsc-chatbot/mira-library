@@ -45,6 +45,7 @@ export default class ReviewMatrix extends React.Component {
             maxScore: 86, //max possible score that a resource can get (it can be changed by makinga question Not applicable)
             bHarmful: false,
             bViable: false,
+            bCSafe: false,
             reviewData: {},
             isGoverment: false,
             isProfitCompanyOrDeveloper: false,
@@ -59,7 +60,7 @@ export default class ReviewMatrix extends React.Component {
         for (var i = 0; i < 7; i++) this.state.questionScores.push(0);
         for (var i = 0; i < 9; i++) this.state.boolQuestionIsNA.push(false);
         for (var i = 0; i < 7; i++) this.state.rateQuestionIsNA.push(false);
-        for (var i = 0; i < 15; i++) this.state.modals.push(false);
+        for (var i = 0; i < 16; i++) this.state.modals.push(false);
     }
 
     handleCBChange = (event, position) => {
@@ -223,6 +224,7 @@ export default class ReviewMatrix extends React.Component {
 
     toggleHarm = () => this.setState((prevState) => ({ bHarmful: !prevState.bHarmful }))
     toggleViable = () => this.setState((prevState) => ({ bViable: !prevState.bViable }))
+    toggleCSafe = () => this.setState((prevState) => ({ bCSafe: !prevState.bCSafe }))
     setModalState = (isOpen, index) => {
         var newModals = this.state.modals
         newModals[index] = isOpen
@@ -807,14 +809,43 @@ export default class ReviewMatrix extends React.Component {
                                 <div><Checkbox onChange={this.toggleHarm} checked={this.state.bHarmful} /></div>
                             </Table.Cell>
                         </Table.Row>
+                        <Table.Row positive>
+                            <Table.Cell>Is the resource culturally safe and competent?
+                            <Modal
+                                basic
+                                onClose={() => this.setModalState(false,15)}
+                                onOpen={() => this.setModalState(true,15)}
+                                open={this.state.modals[15]}
+                                size='small'
+                                trigger={<Icon color="blue" name='info circle'/>}
+                                >
+                                <Header icon>
+                                    <Icon name='info circle' />
+                                    Is the resource culturally safe and competent?
+                                </Header>
+                                <Modal.Content>
+                                <p><span>Is the resource based on respectful engagement that recognizes and strives to address inequalities in service delivery and engagement? Does the resource take into account diversity across cultures and contain appropiate resources based on inclusivity?&nbsp;</span></p>
+                                </Modal.Content>
+                                <Modal.Actions>
+                                    <Button basic color='blue' inverted onClick={() => this.setModalState(false,15)}>
+                                    <Icon name='checkmark' /> OK
+                                    </Button>
+                                </Modal.Actions>
+                            </Modal>    
+                            </Table.Cell>
+                            <Table.Cell>
+                                <div><Checkbox label="If yes or NA, check box. If no, leave blank." checked={this.state.bCSafe} onChange={this.toggleCSafe} /></div>
+                            </Table.Cell>
+                        </Table.Row>
                     </Table.Body>
                 </Table>
                 {this.state.bHarmful ? <h3 class="ui red header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp; Harmful resource is not accepted</h3> :
                     !this.state.bViable ? <h3 class="ui red header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp; Resources should be functional/viable</h3> :
-                        ((this.state.bScore + this.state.rScore) * 2 / this.state.maxScore).toFixed(2) > (this.state.treshholdScore / 100) && !this.state.bHarmful && this.state.bViable
-                            ? <h3 class="ui green header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp; This resource passes all given criteria. Approval is recommended. If you feel it necessary to reject this resource, please explain why in the review comments.</h3>
-                            :
-                            <h3 class="ui red header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp;This resource does not meet the minimum standards for approval. If you feel it necessary to approve this resource, please explain why in the review comments.</h3>
+                        !this.state.bCSafe ? <h3 class="ui red header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp; Resources should be culturally safe, if applicable</h3> :
+                            ((this.state.bScore + this.state.rScore) * 2 / this.state.maxScore).toFixed(2) > (this.state.treshholdScore / 100) && !this.state.bHarmful && this.state.bViable && this.state.bCSafe
+                                ? <h3 class="ui green header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp; This resource passes all given criteria. Approval is recommended. If you feel it necessary to reject this resource, please explain why in the review comments.</h3>
+                                :
+                                <h3 class="ui red header">Score:{(this.state.bScore + this.state.rScore) * 2}/{this.state.maxScore} &nbsp;&nbsp;This resource does not meet the minimum standards for approval. If you feel it necessary to approve this resource, please explain why in the review comments.</h3>
                 }
             </React.Fragment>
         );
