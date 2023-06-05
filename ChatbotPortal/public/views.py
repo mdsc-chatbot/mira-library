@@ -3416,7 +3416,7 @@ def add_tag_relation(request):
 
 def get_tag_group_stats(request):
     tag_groups = {
-        'Indigenous':['Indigenous', 'Indigenous Women', 'Inuit', 'Mأ©tis'],
+        'Indigenous':['Indigenous', 'Indigenous Women', 'Inuit', 'M\u00e9tis'],
         'Youth':['Youth', 'Children', 'Black Youth', 'Mental health supports for Youth', 'Mental health supports for Children', 'Caregiver/Parent'],
         'Veterans':['Family Member of Veteran', 'Military Veterans'],
         'Healthcare Workers':['Doctor', 'First responder', 'Medical student', 'Nurse', 'Paramedic', 'Practising or retired physician', 'Resident Doctor'],
