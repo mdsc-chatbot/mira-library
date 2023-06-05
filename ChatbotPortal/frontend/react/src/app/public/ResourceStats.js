@@ -18,12 +18,6 @@ export default class ResourceStatistics extends React.Component {
     }
 
     componentDidMount() {
-        const retrieve_url = this.context.security.is_reviewer || this.context.security.is_superuser ? 'retrieve-admin' : 'retrieve';
-        const headers = {};
-        if (this.context.security.token) {
-            headers['Authorization'] = `Bearer ${this.context.security.token}`;
-        }
-
         axios
             .get('/api/public/resource-stats')
             .then(res => {
