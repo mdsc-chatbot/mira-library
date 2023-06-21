@@ -533,7 +533,7 @@ def addViewToResource(query_params):
     return {'statuse':'done'}
 
 def calculateStatsResources(query_params):
-    allRes = Resource.objects.all()
+    allRes = Resource.objects.filter(Q(visible=1))
     
     resRej = Resource.objects.filter((Q(review_status="rejected") & Q(review_status_2="rejected")) | (Q(review_status_2_2="rejected") & Q(review_status_1_1="rejected")) | (Q(review_status="rejected") & Q(review_status_2_2="rejected")) | (Q(review_status="rejected") & Q(review_status_1_1="rejected")) | (Q(review_status_2="rejected") & Q(review_status_2_2="rejected")) | (Q(review_status_2="rejected") & Q(review_status_1_1="rejected")) | Q(review_status_3="rejected"))
 
