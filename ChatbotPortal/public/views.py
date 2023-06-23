@@ -984,7 +984,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
 
     #retrieve tag ids from tag names
-    tags = Tag.objects.filter(approved=1).filter(name__in=tags_params_mapped).values('id','name','tag_category').all()
+    tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)|Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
     tags_id_list = list(map(lambda x: x['id'], tags))
     tags_name_list = list(map(lambda x: x['name'], tags))
     tags_cat_list = list(map(lambda x: x['tag_category'], tags))
@@ -1177,7 +1177,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
                 qs.index = {"t":number_of_filters, "r":resource_score_reasons[qs.id]}
                 # gives more score to resources that that have most of our requested tags.
-                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.1)
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
 
 
         return newQuerySet
@@ -1505,7 +1505,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
 
     #retrieve tag ids from tag names
-    tags = Tag.objects.filter(approved=1).filter(name__in=tags_params_mapped).values('id','name','tag_category').all()
+    tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)|Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
     tags_id_list = list(map(lambda x: x['id'], tags))
     tags_name_list = list(map(lambda x: x['name'], tags))
     tags_cat_list = list(map(lambda x: x['tag_category'], tags))
@@ -1698,7 +1698,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
                 qs.index = number_of_filters
                 # gives more score to resources that that have most of our requested tags.
-                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.1)
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
 
 
         return newQuerySet
