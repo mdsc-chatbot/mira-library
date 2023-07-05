@@ -675,23 +675,18 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('family_member', 'Family member (other)')
     ,('family_member', 'Family member of physician or medical learner')
     ,('female_resources', 'Female')
-    ,('healthcare_worker', 'First responder')
     ,('lgbtq2s_resources', 'Gender fluid, non-binary, and/or two spirit')
     ,('lgbtq2s_resources', 'LGBTQ2S+')
     ,('male_resources', 'Male')
-    ,('healthcare_worker', 'Medical student')
     ,('veteran', 'Military Veterans')
     ,('new_canadian', 'New Canadian')
-    ,('healthcare_worker', 'Nurse')
-    ,('healthcare_worker', 'Practising or retired physician')
-    ,('healthcare_worker', 'Resident doctor')
+    ,('nurse', 'Nurse')
     ,('employment', 'Social worker')
     ,('employment', 'Student (postsecondary)')
     ,('family_member', 'Family Member of Veteran')
     ,('indigenous_resources', 'Indigenous')
     ,('employment', 'fire fighter')
     ,('Over 18', 'Youth')
-    ,('healthcare_worker', 'Service Providers')
     ,('lgbtq2s_resources', 'Transgender')
     ,('lgbtq2s_resources', 'Non-Binary')
     ,('paid_resources', 'Fee-for-service available to everyone')
@@ -742,9 +737,10 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('specialist', 'Therapist/Counsellor/Psychotherapist')
     ,('counsellor_psychotherapist', 'Therapist/Counsellor/Psychotherapist')
     ,('healer', 'Traditional Indigenous Healer')
-    ,('doctor', 'Resident doctor')
-    ,('doctor', 'Practising or retired physician')
     ,('doctor', 'Doctor')
+    ,('doctor', 'Physician')
+    ,('doctor', 'Resident doctor')
+    ,('doctor', 'Healthcare Workers')
     ,('fire fighter', 'First responder')
     ,('fire fighter', 'Social worker')
     ,('community support', 'Group therapy')
@@ -758,8 +754,10 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ,('generalized anxiety disorder', 'Generalized Anxiety Disorder')
     ,('generalized anxiety disorder', 'General public/all')
     ,('generalized anxiety disorder', 'Stress')
-    ,('health professional','Psychologist')
-    ,('health professional','Family Doctor')
+    ,('health professional','Medical Student')
+    ,('health professional','Resident doctor')
+    ,('health professional','Service Providers')
+    ,('health professional','Social worker')
     ,('alberta','Alberta')
     ,('schizophrenia','Schizophrenia and psychosis')
     ,('covid-19','COVID-19 (context specific - ensure any other concerns are also noted)')
@@ -781,7 +779,12 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
     ('military', 'Military Veterans'),
     ('military', 'Family Member of Veteran'),
-    ('first responder', 'First responder'),
+    ('first responder', 'Fire Fighter'),
+    ('first responder', 'Paramedic'),
+    ('first responder', 'Police'),
+    ('first responder', 'RCMP'),
+    ('first responder', 'Emergency Dispatch Officer'),
+    ('first responder', 'First Responder'),
     ('2slgbtq ', '2SLGBTQ+'),
     ('crisis_distress_support', 'General Distress')
     ]
@@ -1071,28 +1074,28 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
                 sc = 1
                 if query_relaxation_tags_categories[ii] == 'Location':
                     resource_scores[resource[0]][0] += sc 
-                    resource_score_reasons[resource[0]] += "+ loc score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& loc score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource format':
                     resource_scores[resource[0]][1] += sc 
-                    resource_score_reasons[resource[0]] += "+ format score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& format score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
                     resource_scores[resource[0]][2] += sc 
-                    resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& infoType score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
                     resource_scores[resource[0]][3] += sc 
-                    resource_score_reasons[resource[0]] += "+ servType score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& servType score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Health Issue':
                     resource_scores[resource[0]][4] += sc 
-                    resource_score_reasons[resource[0]] += "+ MH score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& MH score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Costs':
                     resource_scores[resource[0]][5] += sc 
-                    resource_score_reasons[resource[0]] += "+ Costs score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& Costs score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Audience':
                     resource_scores[resource[0]][6] += sc 
-                    resource_score_reasons[resource[0]] += "+ Audi score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& Audi score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Language':
                     resource_scores[resource[0]][7] += sc 
-                    resource_score_reasons[resource[0]] += "+ Lang score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& Lang score from tags for "+query_relaxation_tags_names[ii]
 
                 
                 
@@ -1109,44 +1112,44 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, tag in title. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, tag in title. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
             
             
             if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
-                resource_score_reasons[resource[0]] += "+ overal score, resource is informational or both. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
-                resource_score_reasons[resource[0]] += "+ overal score, resource is prog_serv or both. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
             if (tag == 'Definition' or tag == 'definition') and (resource[5]):
                 resource_scores[resource[0]] += 3
-                resource_score_reasons[resource[0]] += "+ overal score, resource has a definition. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource has a definition. tag:"+tag
 
             if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, resource has shelter in its title. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource has shelter in its title. tag:"+tag
 
             if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, resource has counsel in its title. tag: "+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource has counsel in its title. tag: "+tag
 
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
             if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ acronym in title of resource found. tag:"+tag
+                resource_score_reasons[resource[0]] += "& acronym in title of resource found. tag:"+tag
 
             if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
             ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
             ('WHO' in resource[3]) or ('CDC' in resource[3]):
                 resource_scores[resource[0]] += 0.0001
-                resource_score_reasons[resource[0]] += "+ resource organization is well known"
+                resource_score_reasons[resource[0]] += "& resource organization is well known"
         
 
     #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
@@ -1196,23 +1199,18 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ,('family_member', 'Family member (other)')
     ,('family_member', 'Family member of physician or medical learner')
     ,('female_resources', 'Female')
-    ,('healthcare_worker', 'First responder')
     ,('lgbtq2s_resources', 'Gender fluid, non-binary, and/or two spirit')
     ,('lgbtq2s_resources', 'LGBTQ2S+')
     ,('male_resources', 'Male')
-    ,('healthcare_worker', 'Medical student')
     ,('veteran', 'Military Veterans')
     ,('new_canadian', 'New Canadian')
-    ,('healthcare_worker', 'Nurse')
-    ,('healthcare_worker', 'Practising or retired physician')
-    ,('healthcare_worker', 'Resident doctor')
+    ,('nurse', 'Nurse')
     ,('employment', 'Social worker')
     ,('employment', 'Student (postsecondary)')
     ,('family_member', 'Family Member of Veteran')
     ,('indigenous_resources', 'Indigenous')
     ,('employment', 'fire fighter')
     ,('Over 18', 'Youth')
-    ,('healthcare_worker', 'Service Providers')
     ,('lgbtq2s_resources', 'Transgender')
     ,('lgbtq2s_resources', 'Non-Binary')
     ,('paid_resources', 'Fee-for-service available to everyone')
@@ -1263,9 +1261,10 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ,('specialist', 'Therapist/Counsellor/Psychotherapist')
     ,('counsellor_psychotherapist', 'Therapist/Counsellor/Psychotherapist')
     ,('healer', 'Traditional Indigenous Healer')
-    ,('doctor', 'Resident doctor')
-    ,('doctor', 'Practising or retired physician')
     ,('doctor', 'Doctor')
+    ,('doctor', 'Physician')
+    ,('doctor', 'Resident doctor')
+    ,('doctor', 'Healthcare Workers')
     ,('fire fighter', 'First responder')
     ,('fire fighter', 'Social worker')
     ,('community support', 'Group therapy')
@@ -1279,8 +1278,10 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ,('generalized anxiety disorder', 'Generalized Anxiety Disorder')
     ,('generalized anxiety disorder', 'General public/all')
     ,('generalized anxiety disorder', 'Stress')
-    ,('health professional','Psychologist')
-    ,('health professional','Family Doctor')
+    ,('health professional','Medical Student')
+    ,('health professional','Resident doctor')
+    ,('health professional','Service Providers')
+    ,('health professional','Social worker')
     ,('alberta','Alberta')
     ,('schizophrenia','Schizophrenia and psychosis')
     ,('covid-19','COVID-19 (context specific - ensure any other concerns are also noted)')
@@ -1302,7 +1303,12 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
     ('military', 'Military Veterans'),
     ('military', 'Family Member of Veteran'),
-    ('first responder', 'First responder'),
+    ('first responder', 'Fire Fighter'),
+    ('first responder', 'Paramedic'),
+    ('first responder', 'Police'),
+    ('first responder', 'RCMP'),
+    ('first responder', 'Emergency Dispatch Officer'),
+    ('first responder', 'First Responder'),
     ('2slgbtq ', '2SLGBTQ+'),
     ('crisis_distress_support', 'General Distress')
     ]
@@ -1537,83 +1543,83 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 if tag in index:
                     if t_cat=="Location":
                         resource_scores[resource[0]][0] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ loc score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& loc score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Resource format":
                         resource_scores[resource[0]][1] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ format score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& format score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Resource Type for Education/Informational":
                         resource_scores[resource[0]][2] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ infoType score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& infoType score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Resource Type for Programs and Services":
                         resource_scores[resource[0]][3] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ servType score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& servType score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Health Issue":
                         resource_scores[resource[0]][4] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ MH score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& MH score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Costs":
                         resource_scores[resource[0]][5] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ Costs score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& Costs score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Audience":
                         resource_scores[resource[0]][6] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ Audi score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& Audi score from TF-IDF for "+tags_name_list[i]
                     elif t_cat=="Language":
                         resource_scores[resource[0]][7] += index[tag]
-                        resource_score_reasons[resource[0]] += "+ lang score from TF-IDF for "+tags_name_list[i]
+                        resource_score_reasons[resource[0]] += "& lang score from TF-IDF for "+tags_name_list[i]
 
             if tag in original_tag_ids:
                 ii = original_tag_ids.index(tag)
                 sc = 10
                 if original_tag_categories[ii] == 'Location':
                     resource_scores[resource[0]][0] += sc 
-                    resource_score_reasons[resource[0]] += "+ loc score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& loc score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Resource format':
                     resource_scores[resource[0]][1] += sc 
-                    resource_score_reasons[resource[0]] += "+ format score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& format score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
                     resource_scores[resource[0]][2] += sc 
-                    resource_score_reasons[resource[0]] += "+ infoType score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& infoType score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
                     resource_scores[resource[0]][3] += sc 
-                    resource_score_reasons[resource[0]] += "+ ServType score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& ServType score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Health Issue':
                     resource_scores[resource[0]][4] += sc 
-                    resource_score_reasons[resource[0]] += "+ MH score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& MH score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Costs':
                     resource_scores[resource[0]][5] += sc 
-                    resource_score_reasons[resource[0]] += "+ costs score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& costs score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Audience':
                     resource_scores[resource[0]][6] += sc 
-                    resource_score_reasons[resource[0]] += "+ Audi score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& Audi score from tags for "+original_tag_names[ii]
                 elif original_tag_categories[ii] == 'Language':
                     resource_scores[resource[0]][7] += sc 
-                    resource_score_reasons[resource[0]] += "+ lang score from tags for "+original_tag_names[ii]
+                    resource_score_reasons[resource[0]] += "& lang score from tags for "+original_tag_names[ii]
             elif tag in query_relaxation_tags_id:
                 ii = query_relaxation_tags_id.index(tag)
                 sc = 1
                 if query_relaxation_tags_categories[ii] == 'Location':
                     resource_scores[resource[0]][0] += sc 
-                    resource_score_reasons[resource[0]] += "+ loc score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& loc score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource format':
                     resource_scores[resource[0]][1] += sc 
-                    resource_score_reasons[resource[0]] += "+ format score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& format score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
                     resource_scores[resource[0]][2] += sc 
                     resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
                     resource_scores[resource[0]][3] += sc 
-                    resource_score_reasons[resource[0]] += "+ servType score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& servType score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Health Issue':
                     resource_scores[resource[0]][4] += sc 
-                    resource_score_reasons[resource[0]] += "+ MH score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& MH score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Costs':
                     resource_scores[resource[0]][5] += sc 
-                    resource_score_reasons[resource[0]] += "+ Costs score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& Costs score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Audience':
                     resource_scores[resource[0]][6] += sc 
-                    resource_score_reasons[resource[0]] += "+ Audi score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& Audi score from tags for "+query_relaxation_tags_names[ii]
                 elif query_relaxation_tags_categories[ii] == 'Language':
                     resource_scores[resource[0]][7] += sc 
-                    resource_score_reasons[resource[0]] += "+ Lang score from tags for "+query_relaxation_tags_names[ii]
+                    resource_score_reasons[resource[0]] += "& Lang score from tags for "+query_relaxation_tags_names[ii]
 
                 
                 
@@ -1630,44 +1636,44 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
             if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, tag in title. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
             
             if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, tag in title. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
             
             
             if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
-                resource_score_reasons[resource[0]] += "+ overal score, resource is informational or both. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
             elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
-                resource_score_reasons[resource[0]] += "+ overal score, resource is prog_serv or both. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
             if (tag == 'Definition' or tag == 'definition') and (resource[5]):
                 resource_scores[resource[0]] += 3
-                resource_score_reasons[resource[0]] += "+ overal score, resource has a definition. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource has a definition. tag:"+tag
 
             if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, resource has shelter in its title. tag:"+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource has shelter in its title. tag:"+tag
 
             if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ overal score, resource has counsel in its title. tag: "+tag
+                resource_score_reasons[resource[0]] += "& overal score, resource has counsel in its title. tag: "+tag
 
             sum_tag = ""
             for w in tag.replace("-", " ").split(" "):
                 if len(w)>0: sum_tag += w[0]
             if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
                 resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "+ acronym in title of resource found. tag:"+tag
+                resource_score_reasons[resource[0]] += "& acronym in title of resource found. tag:"+tag
 
             if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
             ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
             ('WHO' in resource[3]) or ('CDC' in resource[3]):
                 resource_scores[resource[0]] += 0.0001
-                resource_score_reasons[resource[0]] += "+ resource organization is well known"
+                resource_score_reasons[resource[0]] += "& resource organization is well known"
         
 
     topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
