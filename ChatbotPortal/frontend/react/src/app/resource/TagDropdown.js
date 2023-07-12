@@ -272,9 +272,9 @@ export default class TagDropdown extends React.Component {
                             value={this.props.value}
                         />
                     </Segment>
-                    <Segment>
+                    {/*<Segment>
                         <TagPopup onNewTag={this.handleNewTagAdded} />
-                    </Segment>
+                    </Segment>*/}
                 </SegmentGroup>
             </React.Fragment>
         );
