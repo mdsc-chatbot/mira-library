@@ -3451,8 +3451,10 @@ class ResourceView(generics.ListAPIView):
     pagination_class = StandardResultSetPagination
 
     def get_queryset(self):
-        return ResourceViewQuerySet(self.request.query_params)
-
+        queryset = ResourceViewQuerySet(self.request.query_params)
+        if json.loads(self.request.query_params.get("alphabetical")):
+            queryset = queryset.order_by('title')
+        return queryset
 
 class TagView(generics.ListAPIView):
     serializer_class = TagSerializer
@@ -3507,40 +3509,6 @@ class DetailedResourceAdminView(generics.RetrieveAPIView):
 #     relation = TagRelationship(parent_id = parent_id, tag_id = tag_id)
 #     relation.save()
 #     return JsonResponse({})
-
-def get_tag_group_stats(request):
-    tag_groups = {
-        'Indigenous':['Indigenous', 'Indigenous Women', 'Inuit', 'MÃ©tis'],
-        'Youth':['Youth', 'Children', 'Black Youth', 'Mental health supports for Youth', 'Mental health supports for Children', 'Caregiver/Parent'],
-        'Veterans':['Family Member of Veteran', 'Military Veterans'],
-        'Healthcare Workers':['Doctor', 'First responder', 'Medical student', 'Nurse', 'Paramedic', 'Practising or retired physician', 'Resident Doctor'],
-        'French':['French']
-    }
-    response = []
-    #compute all resource totals
-    total_all = Resource.objects.count()
-    total_approved = Resource.objects.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved")).count()
-    total_pending = Resource.objects.filter((Q(review_status="pending") & Q(review_status_2="pending") & Q(review_status_1_1="pending")) | (Q(review_status_2="pending") & Q(review_status_1_1="pending") & Q(review_status_2_2="pending"))).count()
-    total_rejected = total_all - total_approved - total_pending
-    response.append(["Total", "All tags", total_approved, total_pending, total_rejected])
-
-    for group in tag_groups.keys():
-        #get relevent tags for the names
-        tags = Tag.objects.filter(name__in=tag_groups[group])
-
-        #get total
-        all_matching = Resource.objects.filter(tags__in=tags)
-        all_count = all_matching.count()
-
-        approved_count = all_matching.filter((Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved")).count()
-
-        pending_count = all_matching.filter((Q(review_status="pending") & Q(review_status_2="pending") & Q(review_status_1_1="pending")) | (Q(review_status_2="pending") & Q(review_status_1_1="pending") & Q(review_status_2_2="pending"))).count()
-
-        rejected_count = all_count - pending_count - approved_count
-
-        response.append([group, ", ".join(tag_groups[group]), approved_count, pending_count, rejected_count])
-
-    return JsonResponse(response, safe=False)
 
 def add_tag_relation(request):
     data = json.loads(request.body)

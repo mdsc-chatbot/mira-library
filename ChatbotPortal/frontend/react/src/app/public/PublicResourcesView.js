@@ -75,6 +75,7 @@ class PublicResourcesView extends Component {
             totalResourceCount: 0,
             sortOption: 0,
             sidebarVisible: false,
+            sortAlpha: false,
         };
     }
 
@@ -100,7 +101,8 @@ class PublicResourcesView extends Component {
                         search: this.state.search,
                         tags: this.state.selectedTags.toString(),
                         categories: this.state.selectedCategories.toString(),
-                        sort: this.state.sortOption
+                        sort: this.state.sortOption,
+                        alphabetical: this.state.sortAlpha
                     }
                 },
                 {
@@ -116,8 +118,11 @@ class PublicResourcesView extends Component {
                             return -1;
                         } 
                             return 0;
-                    }    
-                    res.data.results = res.data.results.sort(compareByScore)    
+                    }
+                    if(!this.state.sortAlpha)    
+                    {
+                        res.data.results = res.data.results.sort(compareByScore);
+                    }
                 }
                 
                 this.setState({
@@ -306,6 +311,7 @@ class PublicResourcesView extends Component {
                             handleCategorySelected={this.handleCategorySelected}
                             handleTagDeselected={this.handleTagDeselected}
                         />
+                        <Button color={this.state.sortAlpha ? 'blue' : null} name="alphaButton" onClick={() => { this.setState({ sortAlpha: !this.state.sortAlpha }) }} size="large">Sort Alphabetical</Button>
                     </Sidebar>
                     <Sidebar.Pusher>
                         <Segment basic>
