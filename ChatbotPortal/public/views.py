@@ -3452,7 +3452,7 @@ class ResourceView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = ResourceViewQuerySet(self.request.query_params)
-        if json.loads(self.request.query_params.get("alphabetical")):
+        if json.loads(self.request.query_params.dict().get("alphabetical", "False")):
             queryset = queryset.order_by('title')
         return queryset
 
