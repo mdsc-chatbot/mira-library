@@ -1906,16 +1906,16 @@ def EmotionTestFunc(query_params):
 
     emotion_response_bags = {
         "clarification": [ # clarification + emotional or topic fact with doubt if needed
-            "Let me see if I've gotten this right...",
-            "I want to make sure I understand...",
-            "Okay, I think I understand what you're feeling...",
+            # "Let me see if I've gotten this right...",
+            # "I want to make sure I understand...",
+            # "Okay, I think I understand what you're feeling...",
             "I am doing my best to understand how you are feeling but I am still unsure...",
-            "I'm still shaky on the details can you explain more....",
-            "Right now I am only able to understand a few details can you give me more..."
+            "I'm still shaky on the details. please explain more...",
+            "Right now I am only able to understand a few details can you give me more? "
         ],
         "response_to_neg_feelings": [ # response 
             "That must be hard.",
-            "I can detect that must be hard.",
+            "I can detect that it must be hard.",
             "I think anyone would feel bad too in the same situation.",
             "I can see how that would be difficult.",
             "That sounds very challenging.",
@@ -1928,12 +1928,8 @@ def EmotionTestFunc(query_params):
             "Your words are safe with me.",
         ],
         "response_to_pos_feelings": [ # response 
-            "I support your position here.",
-            "That seems like a good thing.",
             "I'm glad you told me.",
-            "That seems good.",
-            "Feeling that way could be good.",
-            "Seems like that could make things easier.",
+            "I'm happy you told me."
         ]
     }
 
@@ -1945,19 +1941,13 @@ def EmotionTestFunc(query_params):
         if (detected_emotion['label']=="joy"):
             emotion_des = emotion_response_pos_sentence
             if (detected_emotion['score']<0.5):
-                if(num_run_eliza<2):
                     emotion_des = clarification_sentence\
-                    + "I can detect you feel happy. "
-                else:
-                    emotion_des = "I am here for you. "
+                    
         elif (detected_emotion['label']=="sadness"):
             emotion_des = emotion_response_neg_sentence
             if (detected_emotion['score']<0.5):
-                if(num_run_eliza<2):
                     emotion_des = clarification_sentence\
-                    + "I can detect you are sad."
-                else:
-                    emotion_des = "Your words are valued with me. "
+    
         elif (detected_emotion['label']=="fear"):
             emotion_des = emotion_response_neg_sentence
             if (detected_emotion['score']<0.5):
@@ -1990,7 +1980,7 @@ def EmotionTestFunc(query_params):
         'dec_rules':[
             {#example: oh so sorry about X
                 'key': 'sorry',
-                'decomp': '* sorry *',
+                'decomp': '*\bsorry\b*',
                 'reasmb_neutral': 
                 [
                     "We are not perfect, we can make mistakes. What else do you think about that ?",
@@ -2003,8 +1993,8 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "There is no need to apologize, you're okay.",
-                    "Apologies are not necessary. Tell me more about your feelings",
+                    "There is no need to apologize, you're okay. How are you feeling now?",
+                    "Tell me more about your feelings.",
                     "What feelings do you have about this?",
                 ],
             },
@@ -2024,8 +2014,6 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "There is no need to apologize, let's move on.",
-                    "Apologies are not necessary.",
                     "what do you think caused being sorry (2) ?",
                     "what do you think made you feel sorry (2) ?"
                 ],
@@ -2630,7 +2618,7 @@ def EmotionTestFunc(query_params):
                 [
                     "Could you tell me more?",
                     "Thanks for sharing with me. Can you elaborate on that?",
-                    "I'm sorry, I'm not sure what you mean by (1)",
+                    "I'm not sure what you mean by (1)",
                     "Let's discuss further. Tell me more.",
                     "Can you elaborate on that ?",
                     "Let's discuss further. Tell me more about that.",
@@ -3172,7 +3160,7 @@ def EmotionTestFunc(query_params):
         reg = regex.findall( r'@\w+' ,decomp)
         if reg:
             reg = reg[0][1:]
-            return replace_decomp_with_syns(decomp.replace('@'+reg, '('+'|'.join(find_syns(reg))+')'))
+            return replace_decomp_with_syns(decomp.replace('@'+reg, '('+'|'.join(["\b"+syn+"\b" for syn in find_syns(reg)])+')'))
         return decomp
 
     def rule_can_parse(decomp_rule, sentence): #tag[1]=decomp_sentence
