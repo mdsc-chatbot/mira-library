@@ -1993,10 +1993,10 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "There is no need to apologize, you're okay. How are you feeling now?",
+                    "How are you feeling now?",
                     "Tell me more about your feelings.",
-                    "What feelings do you have about this?",
-                ],
+                    "What other feelings do you have about this?",
+                ]
             },
             {#example: I am sorry about X
                 'key': 'i am sorry',
@@ -2041,12 +2041,11 @@ def EmotionTestFunc(query_params):
                 [
                     "Do you often think of (2)?",
                     "Does thinking of (2) bring anything else to mind?",
-                    "What else do you recollect?",
                     "What in the present situation reminds you of (2)?"
                 ],
             },{ #example: I remember X
                 'key': 'i remember',
-                'decomp': '*i remember *',
+                'decomp': '*\bi\b remember *',
                 'reasmb_neutral': 
                 [
                     "Do you often think of it?",
@@ -2626,7 +2625,7 @@ def EmotionTestFunc(query_params):
                 ]
             },{ # i think i am not prepared for it
                 'key': 'and',
-                'decomp': '* and *',
+                'decomp': '*\band\b*',
                 'reasmb_neutral': 
                 [
                     "Let`s discuss further. Tell me more about that?",
@@ -2644,6 +2643,7 @@ def EmotionTestFunc(query_params):
                     "Do you wana talk more about (2)",
                     "I wana talk more why (2)",
                     "I want to know why (2)",
+					"Tell me more about (2)"
                 ]
             },
             { # you are very funny
@@ -2667,7 +2667,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # yes
                 'key': 'yes',
-                'decomp': "yes",
+                'decomp': "\byes\b",
                 'reasmb_neutral': 
                 [
                     "great. Let`s discuss further. Tell me more about that?",
@@ -2686,7 +2686,7 @@ def EmotionTestFunc(query_params):
                 ]
             },{ # no  
                 'key': 'no',
-                'decomp': "no",
+                'decomp': "\bno\b",
                 'reasmb_neutral': 
                 [
                     "Why are you saying no?",
@@ -2709,7 +2709,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i dislike my work
                 'key': 'my',
-                'decomp': "* my *",
+                'decomp': "*\bmy\b*",
                 'reasmb_neutral': 
                 [
                     "Let`s discuss further. Why?",
@@ -2728,7 +2728,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # I like living with my lovely family in Canada.
                 'key': 'my family',
-                'decomp': "* my * @family *",
+                'decomp': "*\bmy\b* @family *",
                 'reasmb_neutral': 
                 [
                     "Tell me more about your family.",
@@ -2819,7 +2819,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # because i do not want it
                 'key': 'because',
-                'decomp': "*because *",
+                'decomp': "*\bbecause\b*",
                 'reasmb_neutral': 
                 [
                     "Is that the reason ?",
@@ -2923,7 +2923,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # always
                 'key': 'always',
-                'decomp': "*always*",
+                'decomp': "*\balways\b*",
                 'reasmb_neutral': 
                 [
                     "Can you think of a specific example ?",
@@ -2944,9 +2944,29 @@ def EmotionTestFunc(query_params):
                     "What incident are you thinking of?",
                     "Why Always?"
                 ],
+            },{ # last night
+                'key': 'always',
+                'decomp': "*\blast\b \bnight\b*",
+                'reasmb_neutral': 
+                [
+                    "Can you think of a specific example other than last night?",
+                    "Tell me more about that night.",
+                    "What incident are you thinking of now?"
+                ],
+                'reasmb_empathy':
+                [
+                    "Can you think of a specific example other than last night?",
+                    "Is there something specific that makes you think about last night?"
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "Tell me more about that night when (1)",
+                    "What else happened in that night?",
+					"Is there something specific that makes you think about last night?"
+                ],
             },{ # they dressed alike in black trousers and jackets.
                 'key': 'alike',
-                'decomp': "* alike *",
+                'decomp': "*\balike\b*",
                 'reasmb_neutral': 
                 [
                     "In what way ?",
@@ -3070,7 +3090,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{# they told me my job/work is not good
                 'key': 'My job',
-                'decomp': "* my @job *",
+                'decomp': "*\bmy\b @job*",
                 'reasmb_neutral': 
                 [
                     "How your work impacts your feeling?",
@@ -3288,6 +3308,8 @@ def EmotionTestFunc(query_params):
                     .replace(' cannot ', ' can not ')\
                     .replace(' cannot<end_mark>', ' can not')\
                     .replace(' me ', ' You ')\
+                    .replace(' we ', ' You ')\
+                    .replace('<start_mark>we ', 'You ')\
                     .replace('<end_mark>', ' ')\
                     .replace('<start_mark>', ' ')
                 
@@ -3317,6 +3339,8 @@ def EmotionTestFunc(query_params):
                 .replace(' cannot ', ' can not ')\
                 .replace(' cannot<end_mark>', ' can not')\
                 .replace(' me ', ' You ')\
+                .replace(' we ', ' You ')\
+                .replace('<start_mark>we ', 'You ')\
                 .replace('<end_mark>', ' ')\
                 .replace('<start_mark>', ' ')
 
