@@ -2594,7 +2594,6 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "Tell me more about your feelings about this.",
                     "Do you often feel (1)?",
                     "Do you enjoy feeling (1)?",
                     "Of what does feeling (1) remind you?"
@@ -2628,7 +2627,7 @@ def EmotionTestFunc(query_params):
                 'decomp': r'*\band\b*',
                 'reasmb_neutral': 
                 [
-                    "Let`s discuss further. Tell me more about that?",
+                    "Let`s discuss further. Tell me more about that.",
                     "Can you elaborate on that ?",
                 ],
                 'reasmb_empathy':
@@ -2641,7 +2640,7 @@ def EmotionTestFunc(query_params):
                 'reasmb_dynamic_neutral':
                 [
                     "Do you wana talk more about (2)",
-                    "I wana talk more why (2)",
+                    "I wana talk more about it. Why (2)",
                     "I want to know why (2)",
 					"Tell me more about (2)"
                 ]
@@ -2670,7 +2669,7 @@ def EmotionTestFunc(query_params):
                 'decomp': r"\byes\b",
                 'reasmb_neutral': 
                 [
-                    "great. Let`s discuss further. Tell me more about that?",
+                    "Got it. Let`s discuss further. Tell me more about that?",
                     "I see. Let`s discuss further. Tell me more about that?"
                 ],
                 'reasmb_empathy':
@@ -2682,7 +2681,8 @@ def EmotionTestFunc(query_params):
                 ],
                 'reasmb_dynamic_neutral': 
                 [
-                    "I see. Let`s discuss further. Can you please provide more information that I can help you with?"
+                    "I see. Let`s discuss further. Can you please provide more information that I can help you with?",
+                    "I see. Let's discuss further. Could you give me some more information?"
                 ]
             },{ # no  
                 'key': 'no',
