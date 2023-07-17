@@ -1920,7 +1920,7 @@ def EmotionTestFunc(query_params):
             "I can see how that would be difficult.",
             "That sounds very challenging.",
             "That sounds difficult.",
-            "I am sorry that is happening.",
+            "That must be challenging.",
             "That can't be easy to sit with.",
             "I'm sorry that is happening.",
             "That's a troubling though.",
@@ -3164,7 +3164,7 @@ def EmotionTestFunc(query_params):
             if max_val < cosine_scores[i][0]:
                 max_val = cosine_scores[i][0]
                 key = i
-                # print("{} \t\t {} \t\t Score: {:.4f}".format(sentences1[i], sentences2[0], cosine_scores[i][0]))
+        
         print("most similar", sentences1[key], 'cosine scores', cosine_scores, "sentences", sentences1)
         return list(sentences1[key])
 
@@ -3217,6 +3217,12 @@ def EmotionTestFunc(query_params):
                 ranking['score'] += 8
             else:   
                 ranking['score'] += number_of_stars*8
+
+            number_of_spaces = len(list(filter(lambda i: i==' ' ,tag[1])))
+            if number_of_spaces == 0:
+                ranking['score'] += 1
+            else:   
+                ranking['score'] += number_of_spaces*1
 
                 
             # step 1: check if key name is among the important words of the user input
