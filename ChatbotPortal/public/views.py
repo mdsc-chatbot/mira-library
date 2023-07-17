@@ -1980,7 +1980,7 @@ def EmotionTestFunc(query_params):
         'dec_rules':[
             {#example: oh so sorry about X
                 'key': 'sorry',
-                'decomp': '*\bsorry\b*',
+                'decomp': r'*\bsorry\b*',
                 'reasmb_neutral': 
                 [
                     "We are not perfect, we can make mistakes. What else do you think about that ?",
@@ -2000,7 +2000,7 @@ def EmotionTestFunc(query_params):
             },
             {#example: I am sorry about X
                 'key': 'i am sorry',
-                'decomp': '* i am sorry *',
+                'decomp': r'*\bi\b am sorry *',
                 'reasmb_neutral': 
                 [
                     "We are not perfect, we can make mistakes, You do not need to be sorry.",
@@ -2020,7 +2020,7 @@ def EmotionTestFunc(query_params):
             }
             ,{#example: I also remember X
                 'key': 'i also remember',
-                'decomp': '*i also remember *',
+                'decomp': r'*\bi\b also remember *',
                 'reasmb_neutral': 
                 [
                     "Do you often think of that ?",
@@ -2045,7 +2045,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #example: I remember X
                 'key': 'i remember',
-                'decomp': '*\bi\b remember *',
+                'decomp': r'*\bi\b remember *',
                 'reasmb_neutral': 
                 [
                     "Do you often think of it?",
@@ -2073,7 +2073,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #example: do you remember X
                 'key': 'do you remember',
-                'decomp': '*do you remember *',
+                'decomp': r'*do you remember *',
                 'reasmb_neutral': 
                 [
                     "This conversation is anonymous - so I actually can't remember. Why do you think I should recall it now ?",
@@ -2092,7 +2092,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #example: what if i didn't run.
                 'key': 'if',
-                'decomp': '* if *',
+                'decomp': r'*\bif\b*',
                 'reasmb_neutral': 
                 [
                     "Do you think its very likely ?",
@@ -2115,7 +2115,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #i dreamed of my love every night.
                 'key': 'i dreamed',
-                'decomp': '*i dreamed *',
+                'decomp': r'*\bi\b dreamed *',
                 'reasmb_neutral': 
                 [
                     "Tell me more about your dream ?",
@@ -2136,7 +2136,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #i dream of my love every night.
                 'key': 'dream',
-                'decomp': '* dream *',
+                'decomp': r'*\bdream\b*',
                 'reasmb_neutral': 
                 [
                     "What does that dream suggest to you ?",
@@ -2161,7 +2161,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #perhaps i do not have a soul.
                 'key': 'perhaps',
-                'decomp': '*perhaps *',
+                'decomp': r'*\bperhaps\b *',
                 'reasmb_neutral': 
                 [
                     "You don't seem certain. Why is that ?",
@@ -2183,7 +2183,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #hello
                 'key': 'hello',
-                'decomp': '@hello',
+                'decomp': r'@hello',
                 'reasmb_neutral': 
                 [
                     "Hello! I'm here to listen. Tell me what's on your mind.",
@@ -2200,7 +2200,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # computer
                 'key': 'computer',
-                'decomp': '* computer *',
+                'decomp': r'*\bcomputer\b*',
                 'reasmb_neutral': 
                 [
                     "Do computers worry you ?",
@@ -2222,7 +2222,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # am I a bad person?
                 'key': 'am i',
-                'decomp': 'am i *',
+                'decomp': r'am i *',
                 'reasmb_neutral': 
                 [
                     "Do you really believe you are like that ?",
@@ -2245,7 +2245,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # are you married?
                 'key': 'are you', 
-                'decomp': 'are you *',
+                'decomp': r'are you *',
                 'reasmb_neutral': 
                 [
                     "Why are you interested in it ?",
@@ -2265,7 +2265,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # they are cool.
                 'key': 'they are',
-                'decomp': '* they are *',
+                'decomp': r'*\bthey\b are *',
                 'reasmb_neutral': 
                 [
                     "Did you think they might not be like it ?",
@@ -2286,7 +2286,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # I am happy you are cool.
                 'key': 'you are',
-                'decomp': '* you are *',
+                'decomp': r'*\byou\b are *',
                 'reasmb_neutral': 
                 [
                     "Did you think they might not be like it ?",
@@ -2307,7 +2307,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ #I think your questions are hard
                 'key': 'your',
-                'decomp': '* your *',
+                'decomp': r'*\byour\b*',
                 'reasmb_neutral': 
                 [
                     "Why are you concerned about it ?",
@@ -2328,7 +2328,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # was I a good person?
                 'key': 'was i',
-                'decomp': 'was i *',
+                'decomp': r'was i *',
                 'reasmb_neutral': 
                 [
                     "What if you were like that ?",
@@ -2352,7 +2352,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i was so bad
                 'key': 'i was',
-                'decomp': 'i was *',
+                'decomp': r'i was *',
                 'reasmb_neutral': 
                 [
                     "Were you really ?",
@@ -2371,7 +2371,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # were you in this situation before?
                 'key': 'were you',
-                'decomp': 'were you *',
+                'decomp': r'were you *',
                 'reasmb_neutral': 
                 [
                     "What suggests that ?",
@@ -2390,7 +2390,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # I want to take a flight and escape.
                 'key': 'I want',
-                'decomp': 'i @desire *',
+                'decomp': r'i @desire *',
                 'reasmb_neutral': 
                 [
                     "What would it mean to you if you got what you desire ?",
@@ -2415,7 +2415,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # all I want is to take a flight and escape.
                 'key': 'want',
-                'decomp': 'i @desire is *',
+                'decomp': r'i @desire is *',
                 'reasmb_neutral': 
                 [
                     "What would it mean to you if you got what you desire ?",
@@ -2440,7 +2440,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i am very sad 
                 'key': 'i am sad',
-                'decomp': 'i am * @sad *',
+                'decomp': r'i am\b*@sad *',
                 'reasmb_neutral': 
                 [
                     "I am sorry to hear that. Can you tell me more about it?",
@@ -2467,7 +2467,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i am very happy
                 'key': 'i am happy',
-                'decomp': 'i am * @happy *',
+                'decomp': r'i am * @happy *',
                 'reasmb_neutral': 
                 [
                     "What makes you happier just now ?",
@@ -2490,7 +2490,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i wish I was not a looser.
                 'key': 'i wish',
-                'decomp': '@i * @belief *', 
+                'decomp': r'@i * @belief *', 
                 'reasmb_neutral': 
                 [
                     "Do you really think so ?",
@@ -2513,7 +2513,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i am a good person.
                 'key': 'i am',
-                'decomp': 'i am *',
+                'decomp': r'i am *',
                 'reasmb_neutral': 
                 [
                     "How long have you been like that ?",
@@ -2534,7 +2534,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i can not go out without my mother
                 'key': 'i can not',
-                'decomp': 'i @cannot *',
+                'decomp': r'i @cannot *',
                 'reasmb_neutral': 
                 [
                     "What makes you think you can't ?",
@@ -2555,7 +2555,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i don't think i have good relationships
                 'key': 'i do not',
-                'decomp': "i don't *",
+                'decomp': r"i don't *",
                 'reasmb_neutral': 
                 [
                     "Why?",
@@ -2574,7 +2574,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i feel like a baby
                 'key': 'i feel',
-                'decomp': "i feel *",
+                'decomp': r"i feel *",
                 'reasmb_neutral': 
                 [
                     "Tell me more about your feelings about this.",
@@ -2601,7 +2601,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i think i am not prepared for it
                 'key': 'every thing',
-                'decomp': '*',
+                'decomp': r'*',
                 'reasmb_neutral': 
                 [
                     "Let`s discuss further. Tell me more about that?",
@@ -2625,7 +2625,7 @@ def EmotionTestFunc(query_params):
                 ]
             },{ # i think i am not prepared for it
                 'key': 'and',
-                'decomp': '*\band\b*',
+                'decomp': r'*\band\b*',
                 'reasmb_neutral': 
                 [
                     "Let`s discuss further. Tell me more about that?",
@@ -2648,7 +2648,7 @@ def EmotionTestFunc(query_params):
             },
             { # you are very funny
                 'key': 'you are',
-                'decomp': "you are *",
+                'decomp': r"you are *",
                 'reasmb_neutral': 
                 [
                     "What makes you think about it",
@@ -2667,7 +2667,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # yes
                 'key': 'yes',
-                'decomp': "\byes\b",
+                'decomp': r"\byes\b",
                 'reasmb_neutral': 
                 [
                     "great. Let`s discuss further. Tell me more about that?",
@@ -2686,7 +2686,7 @@ def EmotionTestFunc(query_params):
                 ]
             },{ # no  
                 'key': 'no',
-                'decomp': "\bno\b",
+                'decomp': r"\bno\b",
                 'reasmb_neutral': 
                 [
                     "Why are you saying no?",
@@ -2709,7 +2709,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # i dislike my work
                 'key': 'my',
-                'decomp': "*\bmy\b*",
+                'decomp': r"*\bmy\b*",
                 'reasmb_neutral': 
                 [
                     "Let`s discuss further. Why?",
@@ -2728,7 +2728,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # I like living with my lovely family in Canada.
                 'key': 'my family',
-                'decomp': "*\bmy\b* @family *",
+                'decomp': r"*\bmy\b* @family *",
                 'reasmb_neutral': 
                 [
                     "Tell me more about your family.",
@@ -2749,7 +2749,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # can you tell me how to behave better?
                 'key': 'can you',
-                'decomp': "can you *",
+                'decomp': r"can you *",
                 'reasmb_neutral': 
                 [
                     "You believe I can. don't you ?",
@@ -2764,7 +2764,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # can i ask a question?
                 'key': 'can i',
-                'decomp': "can i *",
+                'decomp': r"can i *",
                 'reasmb_neutral': 
                 [
                     "Do you want to be able to do it ?",
@@ -2784,7 +2784,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # what can i call you?
                 'key': 'what',
-                'decomp': "what *",
+                'decomp': r"what *",
                 'reasmb_neutral': 
                 [
                     "Why do you ask ?",
@@ -2819,7 +2819,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # because i do not want it
                 'key': 'because',
-                'decomp': "*\bbecause\b*",
+                'decomp': r"*\bbecause\b*",
                 'reasmb_neutral': 
                 [
                     "Is that the reason ?",
@@ -2845,7 +2845,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # why don't you check again and let me know?
                 'key': 'why do not you',
-                'decomp': "why don't you *",
+                'decomp': r"why don't you *",
                 'reasmb_neutral': 
                 [
                     "Do you believe I don't ?",
@@ -2864,7 +2864,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # why can't i be happy?
                 'key': 'why can not i',
-                'decomp': "*why can't i *",
+                'decomp': r"*\bwhy\b can't i *",
                 'reasmb_neutral': 
                 [
                     "Why do you think you should be able to do that ?",
@@ -2891,7 +2891,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # everyone is happy but not me.
                 'key': 'everyone',
-                'decomp': "*@everyone *",
+                'decomp': r"*@everyone *",
                 'reasmb_neutral': 
                 [
                     "I understand. Can you think of anyone in particular ?",
@@ -2923,7 +2923,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # always
                 'key': 'always',
-                'decomp': "*\balways\b*",
+                'decomp': r"*\balways\b*",
                 'reasmb_neutral': 
                 [
                     "Can you think of a specific example ?",
@@ -2946,7 +2946,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # last night
                 'key': 'always',
-                'decomp': "*\blast\b \bnight\b*",
+                'decomp': r"*\blast\b \bnight\b*",
                 'reasmb_neutral': 
                 [
                     "Can you think of a specific example other than last night?",
@@ -2966,7 +2966,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # they dressed alike in black trousers and jackets.
                 'key': 'alike',
-                'decomp': "*\balike\b*",
+                'decomp': r"*\balike\b*",
                 'reasmb_neutral': 
                 [
                     "In what way ?",
@@ -2998,7 +2998,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # I am happy like you!
                 'key': 'am like',
-                'decomp': "* @be * like *",
+                'decomp': r"* @be * like *",
                 'reasmb_neutral': 
                 [
                     "In what way ?",
@@ -3030,7 +3030,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{ # this makes me anxious
                 'key': 'makes me Anxious',
-                'decomp': "* @makes me @anxiety",
+                'decomp': r"* @makes me @anxiety",
                 'reasmb_neutral': 
                 [
                     "Why do you feel that way?",
@@ -3050,7 +3050,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{
                 'key': 'Anxious because',
-                'decomp': "* @anxiety * @because *",
+                'decomp': r"* @anxiety * @because *",
                 'reasmb_neutral': 
                 [
                     "Why do you feel that way?",
@@ -3070,7 +3070,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{
                 'key': 'Anxiety because',
-                'decomp': "* @anxiety @because *",
+                'decomp': r"* @anxiety @because *",
                 'reasmb_neutral': 
                 [
                     "Why do you feel that way?",
@@ -3090,7 +3090,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{# they told me my job/work is not good
                 'key': 'My job',
-                'decomp': "*\bmy\b @job*",
+                'decomp': r"*\bmy\b @job*",
                 'reasmb_neutral': 
                 [
                     "How your work impacts your feeling?",
@@ -3114,7 +3114,7 @@ def EmotionTestFunc(query_params):
                 ],
             },{# they told me I am big
                 'key': 'told me',
-                'decomp': "* told me *",
+                'decomp': r"*\btold\b me *",
                 'reasmb_neutral': 
                 [
                     "How important is what others tell you?",
@@ -3180,7 +3180,7 @@ def EmotionTestFunc(query_params):
         reg = regex.findall( r'@\w+' ,decomp)
         if reg:
             reg = reg[0][1:]
-            return replace_decomp_with_syns(decomp.replace('@'+reg, '('+'|'.join(["\b"+syn+"\b" for syn in find_syns(reg)])+')'))
+            return replace_decomp_with_syns(decomp.replace('@'+reg, '('+'|'.join([r"\b"+syn+r"\b" for syn in find_syns(reg)])+')'))
         return decomp
 
     def rule_can_parse(decomp_rule, sentence): #tag[1]=decomp_sentence
