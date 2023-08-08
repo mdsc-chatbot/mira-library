@@ -3136,6 +3136,36 @@ def EmotionTestFunc(query_params):
                     "What is your response when '(2)' is being said.",
                     "Do they have any reason for saying (2)?"
                 ],
+            },{# who are you?
+                'key': 'who you',
+                'decomp': r"*\bwho\b are \byou\b*",
+                'reasmb_neutral': 
+                [
+                    "I am Mira, a chatbot to help you find resources on mental health. I am a program built by researchers at the University of Alberta for the Mood Disorder Society of Canada. They also call me Chatty Mira.",
+                ],
+                'reasmb_empathy':
+                [
+                    "I am Mira, a chatbot to help you find resources on mental health. I am a program built by researchers at the University of Alberta for the Mood Disorder Society of Canada. They also call me Chatty Mira.",
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "I am Mira, a chatbot to help you find resources on mental health. I am a program built by researchers at the University of Alberta for the Mood Disorder Society of Canada. They also call me Chatty Mira.",
+                ],
+            },{# where are you?
+                'key': 'where you',
+                'decomp': r"*\bwhere\b are \byou\b*",
+                'reasmb_neutral': 
+                [
+                    "I am a software program running on a server. The server is currently located at the University of Alberta in Edmonton, Canada. I guess you could say I am in Edmonton.",
+                ],
+                'reasmb_empathy':
+                [
+                    "I am a software program running on a server. The server is currently located at the University of Alberta in Edmonton, Canada. I guess you could say I am in Edmonton.",
+                ],
+                'reasmb_dynamic_neutral': 
+                [
+                    "I am a software program running on a server. The server is currently located at the University of Alberta in Edmonton, Canada. I guess you could say I am in Edmonton.",
+                ],
             }
         ]
     }
