@@ -375,73 +375,9 @@ def ResourceViewQuerySet(query_params):
     if (tag_param != None and tag_param != ""):
         # Assumes that tags are separated via commas in a string
         tag_list = tag_param.split(',')
+        
+        queryset = queryset.filter(Q(tags__id__in=tag_list))
 
-        query_relaxation_tags = []
-        location_tags = Tag.objects.filter(id__in=tag_list).values('name').all()
-        query_relaxation_tags = list(map(lambda x: x['name'], location_tags))
-
-        global GAZETTEER_cities
-        canada_cities = GAZETTEER_cities.copy()
-        global GAZETTEER_proviences
-        canada_city_proviences = GAZETTEER_proviences.copy()
-
-        for tag in location_tags:   
-            tag = tag['name']
-            try:         
-                index = canada_cities.index(tag)
-                if index >= 0:
-                    query_relaxation_tags.append(canada_city_proviences[index])
-                    canada_cities.pop(index)
-                    canada_city_proviences.pop(index)
-            except ValueError:
-                print('error!')
-                continue
-
-
-        #adding obvious location tags
-        query_relaxation_tags.append('Worldwide')
-        query_relaxation_tags.append('All Canada')
-
-        # queryset = queryset.exclude(tags__name__in=canada_cities)
-        queryset = queryset.filter(Q(tags__id__in=tag_list) | Q(tags__name__in=query_relaxation_tags))
-
-
-        # scoring and ordering by scores
-        resource_scores = {}
-        for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title], queryset)):
-            resource_scores[resource[0]] = 0
-            if resource[1] is None or resource[1]=='':
-                continue
-            index = json.loads(resource[1])
-            original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
-            for tag in tag_list:
-                if tag in index:
-                    resource_scores[resource[0]] += index[tag]
-                if tag in original_tag_ids:
-                    resource_scores[resource[0]] += 0.65
-
-        topitems = heapq.nlargest(30, resource_scores.items(), key=itemgetter(1))
-        # topitemsasdict = dict(filter(lambda x: x[1]>0, topitems))
-        topitemsasdict = dict(topitems)
-        if len(topitems) > 1:
-            queryset = queryset.filter(id__in=topitemsasdict.keys())
-            
-            #this set
-            thisSet = []
-            #make result distinct
-            for query in queryset:
-                if query.id not in thisSet:
-                    thisSet.append(query.id)
-            newQuerySet = Resource.objects.filter(id__in=thisSet)
-
-            for qs in newQuerySet:
-                if qs.id not in topitemsasdict.keys():
-                    qs.score = 0
-                else:
-                    qs.score = topitemsasdict[qs.id]
-
-            newQuerySet.order_by('score')
-            return newQuerySet
     
     return queryset
 
