@@ -688,8 +688,9 @@ def calculateCountsForResources(query_params):
     query_relaxation_tags.append('All Canada')
     query_relaxation_tags.append('General public/all')
     #adding nearby cities
-    for nearby_city in loc_tag_List:
-        query_relaxation_tags.append(nearby_city)
+    if loc_tag_List:
+        for nearby_city in loc_tag_List:
+            query_relaxation_tags.append(nearby_city)
     # queryset = queryset.exclude(tags__name__in=canada_cities)
     
 
@@ -1235,8 +1236,9 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
     query_relaxation_tags.append('All Canada')
     query_relaxation_tags.append('General public/all')
     #adding nearby cities
-    for nearby_city in loc_tag_List:
-        query_relaxation_tags.append(nearby_city)
+    if loc_tag_List:
+        for nearby_city in loc_tag_List:
+            query_relaxation_tags.append(nearby_city)
     # queryset = queryset.exclude(tags__name__in=canada_cities)
     
 
@@ -1760,8 +1762,9 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     query_relaxation_tags.append('All Canada')
     query_relaxation_tags.append('General public/all')
     #adding nearby cities
-    for nearby_city in loc_tag_List:
-        query_relaxation_tags.append(nearby_city)
+    if loc_tag_List:
+        for nearby_city in loc_tag_List:
+            query_relaxation_tags.append(nearby_city)
     # queryset = queryset.exclude(tags__name__in=canada_cities)
     
 
