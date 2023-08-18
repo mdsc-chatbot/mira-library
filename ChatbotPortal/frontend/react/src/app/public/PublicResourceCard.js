@@ -22,7 +22,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types'
-import {Card, Rating, Icon, Label} from "semantic-ui-react";
+import {Card, Rating, Icon, Label, CardDescription} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import styles from './PublicResourceCard.css'
 import FlagPopup from '../resource/FlagPopup';
@@ -60,9 +60,13 @@ export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSe
                     </a></p>
                     ) : null}
                     <Link target="_blank" to={location => ({...location, pathname: `${location.pathname}${locationPrefix}/${resource.id}`})}>
-                        <p>More Details ...</p>
+                        <p>More Detail</p>
                     </Link>
-                    <br/>
+
+                    <Link target="_blank" to= {"/resource/"+resource.id}>
+                        <p>Edit Resource</p>
+                    </Link>
+
                     {   
                         resource.tags.map( tag => (allTags.filter(t=>(selectedTags.includes(t.id) && t.name == tag)).length > 0) ? 
                         (<Label color='grey' className={styles.tagsLineHeight} tag_name={tag} onClick={handleTagInCardsDeselected} tiny horizontal>{tag}&nbsp;<Icon name="x" color="yellow"></Icon></Label>) :
@@ -71,6 +75,8 @@ export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSe
                     <div style={{float: "right"}}><FlagPopup resource_id={resource.id}></FlagPopup></div>
                 </Card.Description>
             </Card.Content>
+  
+
             {/* <Card.Content extra>
                 {window.screen.width <= 767 ?
                     (
