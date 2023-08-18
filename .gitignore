@@ -27,9 +27,10 @@ ChatbotPortal/settings.py
 settings.py
  
 # Byte-compiled / optimized / DLL files
-__pycache__/
 *.py[cod]
 *$py.class
+__pycache__/
+*.pyc
 
 # C extensions
 *.so
