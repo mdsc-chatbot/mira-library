@@ -772,7 +772,7 @@ def calculateCountsForResources(query_params):
     
         btn_2 = Tag.objects.filter(id=sorted_selected_tags[0:2][1]).values('name').get()
         btn_2 = btn_2['name']
-        return {'resource_counts':len(newQuerySet), 'btns':[btn_1,btn_2]}
+        return {'resource_counts': "more than 10", 'btns':[btn_1,btn_2]} #len(newQuerySet)
     else:
         return {'resource_counts':10, 'btns':["General well-being (All/Any)","Mental Health in General"]}
 
