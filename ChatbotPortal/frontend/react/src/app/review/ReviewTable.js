@@ -494,7 +494,8 @@ export default class ReviewTable extends Component {
                 numOfRejects +=1
 
 
-            if (numOfApproves+numOfRejects >= 2) {
+            if ((numOfApproves-numOfRejects >= 2) || 
+                (numOfRejects-numOfApproves >= 2)) {
                 return false;
             }
             return true;
