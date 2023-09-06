@@ -41,6 +41,8 @@ export default class ResourceSubmitForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            created_by_user: null,
+            created_by_user_pk: null,
             public_ident: "",
             token: "",
             dimmerLoading: false,
@@ -210,6 +212,8 @@ export default class ResourceSubmitForm extends Component {
                 this.setState({ rating: res.data.rating });
                 this.setState({ comments: res.data.comments });
                 this.setState({ description: res.data.description });
+                this.setState({ created_by_user: res.data.created_by_user });
+                this.setState({ created_by_user_pk: res.data.created_by_user_pk });
                 this.setState({ organization_description: res.data.organization_description });
 
                 if(res.data.email!=null && res.data.email!=""){ 
@@ -247,6 +251,8 @@ export default class ResourceSubmitForm extends Component {
     componentDidMount() {
         //check if resource id is in url to know if we come to form for editing the resource or not
         const resourceId = this.props.location.search ? this.props.location.search.substring(4) : '';
+        if (!this.context.security.is_logged_in) console.log('not logged in')
+        console.log(resourceId)
         if (resourceId != '' && this.context.security.is_logged_in) this.get_resource_details(resourceId);
     }
 
@@ -256,7 +262,12 @@ export default class ResourceSubmitForm extends Component {
         let created_by_user_pk = null;
         
         const resourceFormData = new FormData();
-        if (this.context.security.is_logged_in) {
+        if (this.state.created_by_user !== null && this.state.created_by_user_pk !== null)
+        {
+            created_by_user = this.state.created_by_user
+            created_by_user_pk = this.state.created_by_user_pk
+        }
+        else if (this.context.security.is_logged_in) {
             created_by_user = this.context.security.first_name;
             created_by_user_pk = this.context.security.id;
         }

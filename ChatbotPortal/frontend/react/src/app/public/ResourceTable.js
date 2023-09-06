@@ -25,7 +25,7 @@ import {Card, Rating, Loader} from 'semantic-ui-react';
 import {Link} from 'react-router-dom';
 import {PublicResourceCard} from "./PublicResourceCard";
 
-export function ResourceTable({resources, loadingResources, handleTagInCardsSelected, selectedTags, allTags, handleTagInCardsDeselected}) {
+export function ResourceTable({resources, loadingResources, handleTagInCardsSelected, selectedTags, allTags, handleTagInCardsDeselected, isEditor}) {
     /**
      * Three possible cases, each with different shown UI:
      * CASE 1: Resources is not loaded
@@ -70,7 +70,7 @@ export function ResourceTable({resources, loadingResources, handleTagInCardsSele
                 <Card.Group itemsPerRow="1" stackable>
                     {resources.map(resource => (
                         <PublicResourceCard resource={resource} handleTagInCardsSelected={handleTagInCardsSelected} selectedTags={selectedTags} allTags={allTags} 
-                        handleTagInCardsDeselected={handleTagInCardsDeselected}
+                        handleTagInCardsDeselected={handleTagInCardsDeselected} isEditor={isEditor}
                         locationPrefix="/detail" />
                     ))}
                 </Card.Group>

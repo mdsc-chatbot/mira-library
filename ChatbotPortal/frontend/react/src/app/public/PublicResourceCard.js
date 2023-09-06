@@ -26,8 +26,9 @@ import {Card, Rating, Icon, Label} from "semantic-ui-react";
 import {Link} from "react-router-dom";
 import styles from './PublicResourceCard.css'
 import FlagPopup from '../resource/FlagPopup';
+import { baseRoute } from "../App";
 
-export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSelected, selectedTags=[], allTags, handleTagInCardsDeselected}) {
+export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSelected, selectedTags=[], allTags, handleTagInCardsDeselected, isEditor}) {
     return (
         <Card>
             <Card.Content className=" ui left aligned">
@@ -68,7 +69,12 @@ export function PublicResourceCard({resource, locationPrefix, handleTagInCardsSe
                         (<Label color='grey' className={styles.tagsLineHeight} tag_name={tag} onClick={handleTagInCardsDeselected} tiny horizontal>{tag}&nbsp;<Icon name="x" color="yellow"></Icon></Label>) :
                         (<Label className={styles.tagsLineHeight} onClick={handleTagInCardsSelected} tag_name={tag} tiny horizontal>{tag}</Label>))
                     }
-                    <div style={{float: "right"}}><FlagPopup resource_id={resource.id}></FlagPopup></div>
+                    <div style={{float: "right"}}>
+                        {isEditor ? (
+                            <Link to={baseRoute+"/resource_submit?id="+resource.id}><button color="blue" fluid size="large">Edit Resource</button></Link>
+                        ) : null}
+                        <FlagPopup resource_id={resource.id}></FlagPopup>
+                        </div>
                 </Card.Description>
             </Card.Content>
             {/* <Card.Content extra>

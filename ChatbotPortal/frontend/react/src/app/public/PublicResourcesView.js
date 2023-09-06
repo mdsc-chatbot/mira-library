@@ -350,6 +350,7 @@ class PublicResourcesView extends Component {
                                                 handleTagInCardsDeselected={this.handleTagInCardsDeselected}
                                                 selectedTags={this.state.selectedTags}
                                                 allTags={this.state.tags}
+                                                isEditor={this.context.security.is_editor}
                                             />
                                         </Segment>
                                     </Grid.Column>
