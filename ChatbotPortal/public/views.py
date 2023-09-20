@@ -502,7 +502,12 @@ def calculateCountsForResources(query_params):
     ('first responder', 'Emergency Dispatch Officer'),
     # ('first responder', 'First Responder'),
     ('2slgbtq ', '2SLGBTQ+'),
-    ('crisis_distress_support', 'General Distress')
+    ('crisis_distress_support', 'General Distress'),
+    ('age','Youth'),
+    ('age','Mental Health Supports for Youth'),
+    ('age','Children'),
+    ('age','Adolescent'),
+    ('age','Parent/Caregiver')
     ]
 
     #tags that we should exclude their resources
