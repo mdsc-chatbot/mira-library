@@ -1782,7 +1782,14 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     else:
         resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
+    #filter by location, so we guarantee we have something related (if it exists)
+    if 'Location' in class_tag_mapping:
+        nquery = resQueryset.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
 
+        #only actually update the queryset if we have matches
+        if len(nquery)!=0:
+            print(class_tag_mapping['Location'])
+        resQueryset = nquery
 
     #retrieve tag ids from tag names
     tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
