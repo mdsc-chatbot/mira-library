@@ -2057,12 +2057,19 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         #return newQuerySet
     #return resQueryset_mapped, resQueryset
 
-    new_mapped = {'message': "Here are top results that matched all your specifications", 'resources':ResourceSerializer(newQuerySet,many=True).data}
-    new_relaxed = {'message': "Here are top results with some query relaxation", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data}
+    message_resource_list = []
+
+    if len(newQuerySet) > 1: #if we have results at all
+        message_resource_list.append({'message': "Here are the top results that closely match what you are looking for.", 'resources':ResourceSerializer(newQuerySet,many=True).data})
+        if len(newQuerySet)<5 and len(newQuerySetRelaxed)>1:
+            #if we don't have a lot, append some extras
+            message_resource_list.append({'message': "I also have some less specific results that might still be relevent.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    elif len(newQuerySetRelaxed)>1: #if we have no main matches, we need to relax in general
+        message_resource_list.append({'message': "Unfortunatly I couldn't find any direct matches. I have some related resources that might help you though.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    else: #no matches at all mean we return an empty set; the chatbot should handle this case
+        message_resource_list.append({'message': "", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
     #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
     #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
-
-    message_resource_list = [new_mapped, new_relaxed]
 
     return Response(message_resource_list)
 
