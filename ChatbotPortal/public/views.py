@@ -2009,8 +2009,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         for query in resQueryset_mapped:
             if query.id not in thisSet:
                 thisSet.append(query.id)
-        newQuerySet = Resource.objects.filter(id__in=thisSet)
-        for qs in newQuerySet:
+        newQuerySet_mapped = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySet_mapped:
             qs.chatbot_api_rcmnd_count += 1
             qs.save()
             
@@ -2024,7 +2024,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 qs.index = number_of_filters
                 # gives more score to resources that that have most of our requested tags.
                 qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
-        return newQuerySet
+        #return newQuerySet_mapped
     #return resQueryset_mapped
         topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
@@ -2054,8 +2054,17 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 qs.index = number_of_filters
                 # gives more score to resources that that have most of our requested tags.
                 qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
-        return newQuerySet
-    return resQueryset_mapped, resQueryset
+        #return newQuerySet
+    #return resQueryset_mapped, resQueryset
+
+    new_mapped = {message: "Here are top results that matched all your specifications", resources:[newQuerySet_mapped]}
+    new_relaxed = {message: "Here are top results with some query relaxation", resources:[newQuerySet]}
+    mapped = {message: "Here are all results that matched all your specifications", resources:[resQueryset_mapped]}
+    relaxed = {message: "Here are all results with some query relaxation", resources:[resQueryset]}
+
+    message_resource_list = [new_mapped, new_relaxed, mapped, relaxed]
+
+    return message_resource_list
 
 
 def VerifyApprovedResources(query_params):
