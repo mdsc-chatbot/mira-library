@@ -1777,15 +1777,13 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     tags_params_mapped = set(tags_params_mapped)
     tags_params_mapped.update(should_be_added)
     tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
-    
-    #for mapped tags only 
-    resQueryset_mapped = resQueryset.filter(visible=1).filter((Q(tags__name__in=tags_params_mapped)))
 
     if vip_tags:
-        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
     else:
-        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
-
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
 
     #filter by location, so we guarantee we have something related (if it exists)
@@ -1794,15 +1792,16 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
         #only actually update the queryset if we have matches
         if len(nquery)!=0:
-            print(class_tag_mapping['Location'])
+            #print(class_tag_mapping['Location'])
             resQueryset = nquery
 
-        nquery_mapped = resQueryset_mapped.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+        #only hard location filter if we aren't relaxing the query
+        #nquery = resQuerysetRelaxed.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
 
         #only actually update the queryset if we have matches
-        if len(nquery_mapped)!=0:
-            print(class_tag_mapping['Location'])
-            resQueryset_mapped = nquery_mapped
+        #if len(nquery)!=0:
+            #print(class_tag_mapping['Location'])
+            #resQuerysetRelaxed = nquery
 
 
     #retrieve tag ids from tag names
@@ -1995,23 +1994,23 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     
         #
         
-    scores_mapped = scoring(resQueryset_mapped, tags_params_mapped, query_relaxation_tags, 0)
-    scores_relaxed = scoring(resQueryset, tags_params_mapped, query_relaxation_tags, 1)
+    scores = scoring(resQueryset, tags_params_mapped, query_relaxation_tags, 0)
+    scores_relaxed = scoring(resQuerysetRelaxed, tags_params_mapped, query_relaxation_tags, 1)
 
     #No Query Relaxation
-    topitems = heapq.nlargest(15, scores_mapped.items(), key=itemgetter(1))
+    topitems = heapq.nlargest(15, scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
     topitemsasdict = dict(topitems)
 
     if len(topitems) > 1:
-        resQueryset_mapped = resQueryset_mapped.filter(id__in=topitemsasdict.keys())
+        resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
         thisSet = []
         #make result distinct
-        for query in resQueryset_mapped:
+        for query in resQueryset:
             if query.id not in thisSet:
                 thisSet.append(query.id)
-        newQuerySet_mapped = Resource.objects.filter(id__in=thisSet)
-        for qs in newQuerySet_mapped:
+        newQuerySet = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySet:
             qs.chatbot_api_rcmnd_count += 1
             qs.save()
             
@@ -2034,14 +2033,14 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
     topitemsasdict = dict(topitems)
     if len(topitems) > 1:
-        resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())   
+        resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())   
         thisSet = []
         #make result distinct
-        for query in resQueryset:
+        for query in resQuerysetRelaxed:
             if query.id not in thisSet:
                 thisSet.append(query.id)
-        newQuerySet = Resource.objects.filter(id__in=thisSet)
-        for qs in newQuerySet:
+        newQuerySetRelaxed = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySetRelaxed:
             qs.chatbot_api_rcmnd_count += 1
             qs.save()
             
@@ -2059,7 +2058,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     #return resQueryset_mapped, resQueryset
 
     new_mapped = {'message': "Here are top results that matched all your specifications", 'resources':ResourceSerializer(newQuerySet,many=True).data}
-    new_relaxed = {'message': "Here are top results with some query relaxation", 'resources':ResourceSerializer(newQuerySet_mapped,many=True).data}
+    new_relaxed = {'message': "Here are top results with some query relaxation", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data}
     #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
     #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
 
