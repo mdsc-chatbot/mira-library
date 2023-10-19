@@ -1820,19 +1820,19 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
         if QR: 
             #do query relaxation
-            tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
             tags_id_list = list(map(lambda x: x['id'], tags))
             tags_name_list = list(map(lambda x: x['name'], tags))
             tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
-            query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
+            #query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
             query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
             query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
             query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
 
         else:
             #no query relaxation
-            tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)).values('id','name','tag_category').all()
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)).values('id','name','tag_category').all()
             tags_id_list = list(map(lambda x: x['id'], tags))
             tags_name_list = list(map(lambda x: x['name'], tags))
             tags_cat_list = list(map(lambda x: x['tag_category'], tags))
@@ -1912,7 +1912,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                     elif original_tag_categories[ii] == 'Language':
                         resource_scores[resource[0]][7] += sc 
                         resource_score_reasons[resource[0]] += "& lang score from tags for "+original_tag_names[ii]
-                elif tag in query_relaxation_tags_id and QR:
+                elif QR and tag in query_relaxation_tags_id:
                     ii = query_relaxation_tags_id.index(tag)
                     sc = 1
                     if query_relaxation_tags_categories[ii] == 'Location':
@@ -2026,7 +2026,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
         #return newQuerySet_mapped
     #return resQueryset_mapped
-        topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
     
     #Do Query Relaxation
@@ -2057,12 +2057,12 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         #return newQuerySet
     #return resQueryset_mapped, resQueryset
 
-    new_mapped = {message: "Here are top results that matched all your specifications", resources:[newQuerySet_mapped]}
-    new_relaxed = {message: "Here are top results with some query relaxation", resources:[newQuerySet]}
-    mapped = {message: "Here are all results that matched all your specifications", resources:[resQueryset_mapped]}
-    relaxed = {message: "Here are all results with some query relaxation", resources:[resQueryset]}
+    new_mapped = {'message': "Here are top results that matched all your specifications", 'resources':[newQuerySet_mapped]}
+    new_relaxed = {'message': "Here are top results with some query relaxation", 'resources':[newQuerySet]}
+    #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
+    #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
 
-    message_resource_list = [new_mapped, new_relaxed, mapped, relaxed]
+    message_resource_list = [new_mapped, new_relaxed]
 
     return message_resource_list
 
