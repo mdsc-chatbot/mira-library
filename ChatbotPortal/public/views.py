@@ -66,6 +66,7 @@ import regex
 import random
 #add to server
 import numpy as np
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 GAZETTEER_city_lat_lon = { # all lower case
@@ -1794,14 +1795,14 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         #only actually update the queryset if we have matches
         if len(nquery)!=0:
             print(class_tag_mapping['Location'])
-        resQueryset = nquery
+            resQueryset = nquery
 
         nquery_mapped = resQueryset_mapped.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
 
         #only actually update the queryset if we have matches
         if len(nquery_mapped)!=0:
             print(class_tag_mapping['Location'])
-        resQueryset_mapped = nquery_mapped
+            resQueryset_mapped = nquery_mapped
 
 
     #retrieve tag ids from tag names
@@ -2057,14 +2058,14 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         #return newQuerySet
     #return resQueryset_mapped, resQueryset
 
-    new_mapped = {'message': "Here are top results that matched all your specifications", 'resources':[newQuerySet_mapped]}
-    new_relaxed = {'message': "Here are top results with some query relaxation", 'resources':[newQuerySet]}
+    new_mapped = {'message': "Here are top results that matched all your specifications", 'resources':ResourceSerializer(newQuerySet,many=True).data}
+    new_relaxed = {'message': "Here are top results with some query relaxation", 'resources':ResourceSerializer(newQuerySet_mapped,many=True).data}
     #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
     #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
 
     message_resource_list = [new_mapped, new_relaxed]
 
-    return message_resource_list
+    return Response(message_resource_list)
 
 
 def VerifyApprovedResources(query_params):
@@ -3684,7 +3685,7 @@ class ResourceByIntentEntityView_new_new(generics.ListAPIView):
     permission_classes = {permissions.AllowAny}
     pagination_class = StandardResultSetPagination
 
-    def get_queryset(self):
+    def get(self, request, format=None):
         return ResourceByIntentEntityViewQuerySet_new_new(self.request.query_params)
 
 class ResourceStatsView(APIView):
