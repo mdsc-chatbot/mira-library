@@ -2202,6 +2202,10 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
     tags_params = query_params.getlist('tags')
     tags_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,tags_params))
 
+
+    filter_params = query_params.getlist('filter', [])
+    filter_params = list(map(lambda x: x.lower(), filter_params))
+
     tags_params_temp = []    
     for tag in tags_params: 
         if "(" in tag:
@@ -2219,17 +2223,17 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
     all_possible_tag_names = list(map(lambda x: x[0], all_possible_tags))
     all_possible_tag_names_lower_cased = list(map(lambda x: x[0].lower(), all_possible_tags))
 
-    cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
-    
-
-    should_be_romoved = set()
+    should_be_removed = set()
     should_be_added = set()
+    filter_to_remove = set()
+    filter_to_add = set()
     #query matching with simillar words
     class_tag_mapping = {}
 
 
     word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
 
+    #map intents, entities, and filters to matching tags
     for tag_param in tags_params:
         tag_param = tag_param[0]
 
@@ -2237,26 +2241,36 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
             #found in approved tags
             for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
                     should_be_added.add(related_word[1])
+            if tag_param in filter_params:
+                    for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                        filter_to_add.add(related_word[1])
         else:
             if tag_param in word_mapping_keys:
                 #found in word mapping
-                should_be_romoved.add(tag_param)
+                should_be_removed.add(tag_param)
                 for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
                     should_be_added.add(related_word[1])
+                if tag_param in filter_params:
+                    filter_to_remove.add(tag_param)
+                    for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                        filter_to_add.add(related_word[1])
             else:
                 similar_tags = difflib.get_close_matches(tag_param, all_possible_tag_names, n=2, cutoff=0.7)
                 if len(similar_tags) > 0:
-                    should_be_romoved.add(tag_param)
+                    should_be_removed.add(tag_param)
                     should_be_added.add(similar_tags[0])
+                    if tag_param in filter_params:
+                        filter_to_remove.add(tag_param)
+                        filter_to_add.add(similar_tags[0])
                     #found using distance
 
 
 
     # remove some unusfull intents
-    should_be_romoved.add('where_live')
-    should_be_romoved.add('for_me')
-    should_be_romoved.add('consent_agree')
-    should_be_romoved.add('show_resource')
+    should_be_removed.add('where_live')
+    should_be_removed.add('for_me')
+    should_be_removed.add('consent_agree')
+    should_be_removed.add('show_resource')
 
     
     query_relaxation_tags = []
@@ -2383,7 +2397,7 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
 
     tags_params_mapped = set(tags_params_mapped)
     tags_params_mapped.update(should_be_added)
-    tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
+    tags_params_mapped = tags_params_mapped.difference(should_be_removed)
 
     if vip_tags:
         resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & Q(tags__name__in=tags_params_mapped))
@@ -2395,12 +2409,10 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
 
     #filter by location, so we guarantee we have something related (if it exists)
     if 'Location' in class_tag_mapping:
-        nquery = resQueryset.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+        nquery = resQueryset.filter(tags__name__in=class_tag_mapping['Location'])
 
         #only actually update the queryset if we have matches
-        if len(nquery)!=0:
-            #print(class_tag_mapping['Location'])
-            resQueryset = nquery
+        resQueryset = nquery
 
         #only hard location filter if we aren't relaxing the query
         #nquery = resQuerysetRelaxed.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
@@ -2411,17 +2423,16 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
             #resQuerysetRelaxed = nquery
 
     #attempt filter by each tag, report ones that fail
+    tag_filters = set(filter_params)
+    tag_filters.update(filter_to_add)
+    tag_filters = tags_params_mapped.difference(should_be_removed)
+    for fvalue in tag_filters:
+        resQueryset = resQueryset.filter(tags__name__in=fvalue)
 
     #retrieve tag ids from tag names
     tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
-    #tags_id_list = list(map(lambda x: x['id'], tags))
-    #tags_name_list = list(map(lambda x: x['name'], tags))
-    #tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
     query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
-    #query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
-    #query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
-    #query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
 
 
     def scoring(querySet, tags_params_mapped, query_relaxation_tags, QR=1):
