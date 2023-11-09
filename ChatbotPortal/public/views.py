@@ -376,8 +376,8 @@ def ResourceViewQuerySet(query_params):
     if (tag_param != None and tag_param != ""):
         # Assumes that tags are separated via commas in a string
         tag_list = tag_param.split(',')
-        
-        queryset = queryset.filter(Q(tags__id__in=tag_list))
+        for tag in tag_list:
+            queryset = queryset.filter(Q(tags__id=tag))
 
     
     return queryset
@@ -1803,6 +1803,614 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
             #print(class_tag_mapping['Location'])
             #resQuerysetRelaxed = nquery
 
+
+    #retrieve tag ids from tag names
+    tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
+    #tags_id_list = list(map(lambda x: x['id'], tags))
+    #tags_name_list = list(map(lambda x: x['name'], tags))
+    #tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
+    #query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+    #query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
+    #query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
+
+
+    def scoring(querySet, tags_params_mapped, query_relaxation_tags, QR=1):
+
+        if QR: 
+            #do query relaxation
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
+            tags_id_list = list(map(lambda x: x['id'], tags))
+            tags_name_list = list(map(lambda x: x['name'], tags))
+            tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+            #query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
+            query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+            query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
+            query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
+
+        else:
+            #no query relaxation
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)).values('id','name','tag_category').all()
+            tags_id_list = list(map(lambda x: x['id'], tags))
+            tags_name_list = list(map(lambda x: x['name'], tags))
+            tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+    
+        # input_lo_format_infot_servt_mh_cost_au_lang
+        # scoring and ordering by scores
+        resource_scores = {}
+        resource_score_reasons = {}
+        for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], querySet)):
+            resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
+            resource_score_reasons[resource[0]] = ""
+
+            index = None
+            original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
+            original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
+            original_tag_names = list(map(lambda x: str(x.name), resource[2]))
+
+            if resource[1] is not None and resource[1]!='':
+                index = json.loads(resource[1])
+            
+            for i, tag in enumerate(tags_id_list):
+                t_cat = tags_cat_list[i]
+
+                tag = str(tag)
+                if resource[1] is not None and resource[1]!='':
+                    if tag in index:
+                        if t_cat=="Location":
+                            resource_scores[resource[0]][0] += index[tag]
+                            resource_score_reasons[resource[0]] += "& loc score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource format":
+                            resource_scores[resource[0]][1] += index[tag]
+                            resource_score_reasons[resource[0]] += "& format score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource Type for Education/Informational":
+                            resource_scores[resource[0]][2] += index[tag]
+                            resource_score_reasons[resource[0]] += "& infoType score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource Type for Programs and Services":
+                            resource_scores[resource[0]][3] += index[tag]
+                            resource_score_reasons[resource[0]] += "& servType score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Health Issue":
+                            resource_scores[resource[0]][4] += index[tag]
+                            resource_score_reasons[resource[0]] += "& MH score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Costs":
+                            resource_scores[resource[0]][5] += index[tag]
+                            resource_score_reasons[resource[0]] += "& Costs score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Audience":
+                            resource_scores[resource[0]][6] += index[tag]
+                            resource_score_reasons[resource[0]] += "& Audi score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Language":
+                            resource_scores[resource[0]][7] += index[tag]
+                            resource_score_reasons[resource[0]] += "& lang score from TF-IDF for "+tags_name_list[i]
+
+                if tag in original_tag_ids:
+                    ii = original_tag_ids.index(tag)
+                    sc = 10
+                    if original_tag_categories[ii] == 'Location':
+                        resource_scores[resource[0]][0] += sc 
+                        resource_score_reasons[resource[0]] += "& loc score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource format':
+                        resource_scores[resource[0]][1] += sc 
+                        resource_score_reasons[resource[0]] += "& format score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
+                        resource_scores[resource[0]][2] += sc 
+                        resource_score_reasons[resource[0]] += "& infoType score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
+                        resource_scores[resource[0]][3] += sc 
+                        resource_score_reasons[resource[0]] += "& ServType score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Health Issue':
+                        resource_scores[resource[0]][4] += sc 
+                        resource_score_reasons[resource[0]] += "& MH score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Costs':
+                        resource_scores[resource[0]][5] += sc 
+                        resource_score_reasons[resource[0]] += "& costs score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Audience':
+                        resource_scores[resource[0]][6] += sc 
+                        resource_score_reasons[resource[0]] += "& Audi score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Language':
+                        resource_scores[resource[0]][7] += sc 
+                        resource_score_reasons[resource[0]] += "& lang score from tags for "+original_tag_names[ii]
+                elif QR and tag in query_relaxation_tags_id:
+                    ii = query_relaxation_tags_id.index(tag)
+                    sc = 1
+                    if query_relaxation_tags_categories[ii] == 'Location':
+                        resource_scores[resource[0]][0] += sc 
+                        resource_score_reasons[resource[0]] += "& loc score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource format':
+                        resource_scores[resource[0]][1] += sc 
+                        resource_score_reasons[resource[0]] += "& format score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
+                        resource_scores[resource[0]][2] += sc 
+                        resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
+                        resource_scores[resource[0]][3] += sc 
+                        resource_score_reasons[resource[0]] += "& servType score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Health Issue':
+                        resource_scores[resource[0]][4] += sc 
+                        resource_score_reasons[resource[0]] += "& MH score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Costs':
+                        resource_scores[resource[0]][5] += sc 
+                        resource_score_reasons[resource[0]] += "& Costs score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Audience':
+                        resource_scores[resource[0]][6] += sc 
+                        resource_score_reasons[resource[0]] += "& Audi score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Language':
+                        resource_scores[resource[0]][7] += sc 
+                        resource_score_reasons[resource[0]] += "& Lang score from tags for "+query_relaxation_tags_names[ii]
+
+
+            resource_scores[resource[0]] = torch.dot(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()/1000
+
+            # print(resource_scores[resource[0]])
+            #tags_params_mapped = string value of tags
+            for tag in tags_params_mapped:
+                if len(tag)<2:
+                    continue
+
+                if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
+                
+                if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
+                
+                
+                if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
+                    resource_scores[resource[0]] += 1
+                    resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
+                elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+                    resource_scores[resource[0]] += 1
+                    resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
+
+                if (tag == 'Definition' or tag == 'definition') and (resource[5]):
+                    resource_scores[resource[0]] += 3
+                    resource_score_reasons[resource[0]] += "& overal score, resource has a definition. tag:"+tag
+
+                if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, resource has shelter in its title. tag:"+tag
+
+                if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, resource has counsel in its title. tag: "+tag
+
+                sum_tag = ""
+                for w in tag.replace("-", " ").split(" "):
+                    if len(w)>0: sum_tag += w[0]
+                if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& acronym in title of resource found. tag:"+tag
+
+                if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
+                ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
+                ('WHO' in resource[3]) or ('CDC' in resource[3]):
+                    resource_scores[resource[0]] += 0.0001
+                    resource_score_reasons[resource[0]] += "& resource organization is well known"
+
+        return resource_scores
+    
+        #
+        
+    scores = scoring(resQueryset, tags_params_mapped, query_relaxation_tags, 0)
+    scores_relaxed = scoring(resQuerysetRelaxed, tags_params_mapped, query_relaxation_tags, 1)
+
+    #No Query Relaxation
+    topitems = heapq.nlargest(15, scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    topitemsasdict = dict(topitems)
+
+    if len(topitems) > 1:
+        resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
+        thisSet = []
+        #make result distinct
+        for query in resQueryset:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        newQuerySet = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySet:
+            qs.chatbot_api_rcmnd_count += 1
+            qs.save()
+            
+            if qs.id not in topitemsasdict.keys():
+                qs.score = 0
+            else:
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
+                number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
+
+                qs.index = number_of_filters
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
+        #return newQuerySet_mapped
+    #return resQueryset_mapped
+    #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    
+    #Do Query Relaxation
+    topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
+    topitemsasdict = dict(topitems)
+    if len(topitems) > 1:
+        resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())   
+        thisSet = []
+        #make result distinct
+        for query in resQuerysetRelaxed:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        newQuerySetRelaxed = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySetRelaxed:
+            qs.chatbot_api_rcmnd_count += 1
+            qs.save()
+            
+            if qs.id not in topitemsasdict.keys():
+                qs.score = 0
+            else:
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
+                number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
+
+                qs.index = number_of_filters
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
+        #return newQuerySet
+    #return resQueryset_mapped, resQueryset
+
+    message_resource_list = []
+
+    if len(newQuerySet) > 1: #if we have results at all
+        message_resource_list.append({'message': "Here are the top results that closely match what you are looking for.", 'resources':ResourceSerializer(newQuerySet,many=True).data})
+        if len(newQuerySet)<5 and len(newQuerySetRelaxed)>1:
+            #if we don't have a lot, append some extras
+            message_resource_list.append({'message': "I also have some less specific results that might still be relevent.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    elif len(newQuerySetRelaxed)>1: #if we have no main matches, we need to relax in general
+        message_resource_list.append({'message': "Unfortunatly I couldn't find any direct matches. I have some related resources that might help you though.", 'resources':ResourceSerializer(newQuerySetRelaxed.difference(newQuerySet),many=True).data})
+    else: #no matches at all mean we return an empty set; the chatbot should handle this case
+        message_resource_list.append({'message': "", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
+    #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
+
+    return Response(message_resource_list)
+
+def ResourceByIntentEntityViewQuerySet_Filter(query_params):
+    resQueryset = Resource.objects.filter(visible=1).filter(
+        (Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
+    
+    word_mapping = [('family_member', 'Caregiver/Parent')
+    ,('family_member', 'Children')
+    ,('employer_resources', 'Employer/Administrator')
+    ,('family_member', 'Family member (other)')
+    ,('family_member', 'Family member of physician or medical learner')
+    ,('female_resources', 'Female')
+    ,('lgbtq2s_resources', 'Gender fluid, non-binary, and/or two spirit')
+    ,('lgbtq2s_resources', 'LGBTQ2S+')
+    ,('male_resources', 'Male')
+    ,('veteran', 'Military Veterans')
+    ,('new_canadian', 'New Canadian')
+    ,('nurse', 'Nurse')
+    ,('employment', 'Social worker')
+    ,('employment', 'Student (postsecondary)')
+    ,('family_member', 'Family Member of Veteran')
+    ,('indigenous_resources', 'Indigenous')
+    ,('employment', 'fire fighter')
+    ,('over 18', 'Youth')
+    ,('lgbtq2s_resources', 'Transgender')
+    ,('lgbtq2s_resources', 'Non-Binary')
+    ,('paid_resources', 'Fee-for-service available to everyone')
+    ,('free_resources', 'Free')
+    ,('free_resources', 'Free for members')
+    ,('free_resources', 'N/A (ex. websites, podcasts)')
+    ,('paid_resources', 'Paid')
+    ,('free_resources', 'Requires paid membership')
+    ,('free_resources', 'Requires provincial health card')
+    ,('paid_and_free', 'Unknown')
+    ,('paid_and_free', 'Both free and paid')
+    ,('book_and_pamphlet', 'Brochure')
+    ,('causes', 'cause')
+    ,('group_class', 'Classes/course (in person)')
+    ,('virtual', 'Mobile App')
+    ,('online_courses_and_webinar', 'Webinar/Online course (go at your own pace)')
+    ,('online_courses_and_webinar', 'Webinar/Online course (scheduled)')
+    ,('screening', 'Screening tool')
+    ,('information', 'Statistic')
+    ,('information', 'information')
+    ,('symptom_List', 'Symptoms')
+    ,('treatment_Info', 'Treatments')
+    ,('information', 'Informational Website')
+    ,('coping_skills', 'Informational Website')
+    ,('self_help', 'Informational Website')
+    ,('self_help', 'Worksheet')
+    ,('online_courses_and_webinar', 'Online course (go at your own pace)')
+    ,('online_courses_and_webinar', 'Online course (scheduled)')
+    ,('self_help', 'Self-Help Books')
+    ,('addiction_substance_use_programs', 'Addiction and recovery')
+    ,('prevalence', 'Prevalence')
+    ,('virtual', 'Online Group Support')
+    ,('peer_support', 'Community Support')
+    ,('suicidal_other', 'Crisis Support/Distress Counselling')
+    ,('suicidal_self', 'Crisis Support/Distress Counselling')
+    ,('peer_support', 'Peer Support')
+    ,('help_from_another_person', 'Online chat')
+    ,('specialist', 'Medical services')
+    ,('housing', 'Housing - Emergency')
+    ,('group_class', 'Group therapy')
+    ,('peer_support', 'In-person Group Support Meeting')
+    ,('in_person', 'In-person Group Support Meeting')
+    ,('help_from_another_person', 'Phone line/call centre')
+    ,('psychiatrist', 'Psychiatrist')
+    ,('psychologist', 'Psychologist')
+    ,('addiction_substance_use_programs', 'Rehabilitation')
+    ,('specialist', 'Therapist/Counsellor/Psychotherapist')
+    ,('counsellor_psychotherapist', 'Therapist/Counsellor/Psychotherapist')
+    ,('healer', 'Traditional Indigenous Healer')
+    # ,('doctor', 'Doctor')
+    ,('doctor', 'Physician')
+    ,('doctor', 'Resident doctor')
+    ,('doctor', 'Healthcare Workers')
+    ,('fire fighter', 'First responder')
+    ,('fire fighter', 'Social worker')
+    ,('community support', 'Group therapy')
+    ,('community support', 'In-person Group Support Meeting')
+    ,('community support', 'Peer Support')	
+    ,('peer_support', 'Group therapy')
+    ,('domestic_abuse_support', 'Violence intervention')
+    ,('domestic_abuse_support', 'Domestic Violence')
+    ,('domestic_abuse_support', 'Abuse')
+    ,('generalized anxiety disorder', 'Anxiety')
+    ,('generalized anxiety disorder', 'Generalized Anxiety Disorder')
+    ,('generalized anxiety disorder', 'General public/all')
+    ,('generalized anxiety disorder', 'Stress')
+    ,('health professional','Medical Student')
+    ,('health professional','Resident doctor')
+    ,('health professional','Service Providers')
+    ,('health professional','Social worker')
+    ,('alberta','Alberta')
+    ,('schizophrenia','Schizophrenia and psychosis')
+    ,('covid-19','COVID-19 (context specific - ensure any other concerns are also noted)')
+    ,('covid','COVID-19 (context specific - ensure any other concerns are also noted)')
+    ,('eating','Eating Disorders')
+    ,('distress','General Distress')
+    ,('hiv','Human Immunodeficiency Virus (HIV)')
+    ,('addiction','Addictions (including Drugs, Alcohol, and Gambling)')
+    ,('addiction','Behavioural Addiction')
+    ,('addiction','Substance use')
+    ,('resilience','Resiliency')
+    ,('psychologist','Therapist/Counsellor/Psychotherapist')
+    ,('psychiatrist','Therapist/Counsellor/Psychotherapist')
+    ,('coping_skill','Self-Help Books')
+    ,('psychedelics','psilocybin')
+    ,('crisis_distress_support','Crisis Support/Distress Counselling')
+    ,('book_and_pamplet','Book')
+    ,('book_and_pamplet','Booklet'),
+    ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
+    ('military', 'Military Veterans'),
+    ('military', 'Family Member of Veteran'),
+    ('first responder', 'Fire Fighter'),
+    ('first responder', 'Paramedic'),
+    ('first responder', 'Police'),
+    ('first responder', 'RCMP'),
+    ('first responder', 'Emergency Dispatch Officer'),
+    # ('first responder', 'First Responder'),
+    ('2slgbtq ', '2SLGBTQ+'),
+    ('crisis_distress_support', 'General Distress')
+    ]
+
+    n_tags_params = query_params.getlist('ntags')
+    n_tags_params = list(map(lambda x: x.lower() ,n_tags_params))
+    
+    tags_params = query_params.getlist('tags')
+    tags_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,tags_params))
+
+    tags_params_temp = []    
+    for tag in tags_params: 
+        if "(" in tag:
+            x = tag 
+            tags_params_temp.append((x[:x.index("(")], x[x.index("(")+1:-1])) 
+        else: 
+            tags_params_temp.append((tag,-1)) 
+    tags_params = tags_params_temp
+
+
+    all_possible_tags = Tag.objects.filter(approved=1).all()
+    
+    all_possible_tags = list(filter(lambda x: x.name.lower() not in n_tags_params , all_possible_tags))
+    all_possible_tags = list(map(lambda x: (x.name, x.tag_category), all_possible_tags))
+    all_possible_tag_names = list(map(lambda x: x[0], all_possible_tags))
+    all_possible_tag_names_lower_cased = list(map(lambda x: x[0].lower(), all_possible_tags))
+
+    cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
+    
+
+    should_be_romoved = set()
+    should_be_added = set()
+    #query matching with simillar words
+    class_tag_mapping = {}
+
+
+    word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
+
+    for tag_param in tags_params:
+        tag_param = tag_param[0]
+
+        if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
+            #found in approved tags
+            for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                    should_be_added.add(related_word[1])
+        else:
+            if tag_param in word_mapping_keys:
+                #found in word mapping
+                should_be_romoved.add(tag_param)
+                for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                    should_be_added.add(related_word[1])
+            else:
+                similar_tags = difflib.get_close_matches(tag_param, all_possible_tag_names, n=2, cutoff=0.7)
+                if len(similar_tags) > 0:
+                    should_be_romoved.add(tag_param)
+                    should_be_added.add(similar_tags[0])
+                    #found using distance
+
+
+
+    # remove some unusfull intents
+    should_be_romoved.add('where_live')
+    should_be_romoved.add('for_me')
+    should_be_romoved.add('consent_agree')
+    should_be_romoved.add('show_resource')
+
+    
+    query_relaxation_tags = []
+    tags_params_mapped = list(map(lambda x: x[0] ,tags_params))
+    
+    # finding classes of the
+    for tag_ in should_be_added:
+        try:
+            tag_category = [tag[1] for tag in all_possible_tags if tag[0] == tag_][0]
+            if not (tag_category in class_tag_mapping):
+                class_tag_mapping[tag_category] = []
+            class_tag_mapping[tag_category].append(tag_)
+        except:
+            print("category not found")
+
+    for tag_ in tags_params_mapped:
+        try:
+            tag_category = [tag[1] for tag in all_possible_tags if tag[0].lower() == tag_][0]
+            if not (tag_category in class_tag_mapping):
+                class_tag_mapping[tag_category] = []
+            class_tag_mapping[tag_category].append(tag_)
+        except:
+            print("category not found")
+    
+    # Location
+    # Resource format
+    # Resource Type for Education/Informational
+    # Resource Type for Programs and Services
+    # Health Issue
+    # Costs
+    # Audience
+    # Language
+
+    """
+    VIP tags are tags that at least on of them
+    should be present in a resource to be a candidate 
+    it is NOW ONLY mental_health tags
+    """
+
+    vip_tags = []
+    input_lo_format_infot_servt_mh_cost_au_lang = []
+    if 'Location' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Resource format' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource format']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Education/Informational' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Education/Informational']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Programs and Services' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Programs and Services']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Health Issue' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Health Issue']))
+        for item in class_tag_mapping['Health Issue']:
+            vip_tags.append(item)
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Costs' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Costs']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Audience' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Audience']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Language' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Language']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+
+    global GAZETTEER_cities
+    canada_cities = GAZETTEER_cities.copy()
+    global GAZETTEER_proviences
+    canada_city_proviences = GAZETTEER_proviences.copy()
+
+    loc_tag_List = None
+    if 'Location' in class_tag_mapping:
+        for loc_tag in class_tag_mapping['Location']:
+            loc_tag = loc_tag.lower()
+            if loc_tag in canada_cities: 
+                index = canada_cities.index(loc_tag)
+                query_relaxation_tags.append(canada_city_proviences[index])
+                tags_params.append((canada_city_proviences[index], 'Location'))
+                loc_tag_List = get_nearby_cities(loc_tag)
+            else:
+                similar_tags = difflib.get_close_matches(loc_tag, canada_cities, n=2, cutoff=0.9)
+                if len(similar_tags) > 0:
+                    index = canada_cities.index(similar_tags[0])
+                    query_relaxation_tags.append(canada_city_proviences[index])
+                    tags_params.append((canada_city_proviences[index], 'Location'))
+                    loc_tag_List = get_nearby_cities(similar_tags[0])
+                else:
+                    similar_tags = difflib.get_close_matches(loc_tag, canada_city_proviences, n=2, cutoff=0.60)
+                    if len(similar_tags) > 0:
+                        query_relaxation_tags.append(similar_tags[0])
+                        tags_params.append((similar_tags[0], 'Location'))
+                        loc_tag_List = get_nearby_cities(similar_tags[0])
+
+        
+    #adding obvious location tags
+    query_relaxation_tags.append('Worldwide')
+    query_relaxation_tags.append('All Canada')
+    query_relaxation_tags.append('General public/all')
+    #adding nearby cities
+    if loc_tag_List:
+        for nearby_city in loc_tag_List:
+            query_relaxation_tags.append(nearby_city)
+    # queryset = queryset.exclude(tags__name__in=canada_cities)
+    
+
+    tags_params_mapped = set(tags_params_mapped)
+    tags_params_mapped.update(should_be_added)
+    tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
+
+    if vip_tags:
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
+    else:
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+
+
+    #filter by location, so we guarantee we have something related (if it exists)
+    if 'Location' in class_tag_mapping:
+        nquery = resQueryset.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+
+        #only actually update the queryset if we have matches
+        if len(nquery)!=0:
+            #print(class_tag_mapping['Location'])
+            resQueryset = nquery
+
+        #only hard location filter if we aren't relaxing the query
+        #nquery = resQuerysetRelaxed.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+
+        #only actually update the queryset if we have matches
+        #if len(nquery)!=0:
+            #print(class_tag_mapping['Location'])
+            #resQuerysetRelaxed = nquery
+
+    #attempt filter by each tag, report ones that fail
 
     #retrieve tag ids from tag names
     tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()

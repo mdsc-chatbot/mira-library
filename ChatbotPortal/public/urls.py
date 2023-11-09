@@ -22,7 +22,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from django.urls import path
-from .views import ResourceView, get_tag_group_stats, TagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView, ResourceStatsView, ResourceByIntentEntityView_new, AddViewOfResourceView, ResourceByIntentEntityView_new_new, EmotionTest#, add_tag_relation, get_relations_by_tag
+from .views import ResourceView, get_tag_group_stats, TagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView, ResourceStatsView, ResourceByIntentEntityView_new, AddViewOfResourceView, ResourceByIntentEntityView_new_new, ResourceByIntentEntityView_Filter, EmotionTest#, add_tag_relation, get_relations_by_tag
 
 urlpatterns = [
     # path('current_user/', current_user, name='current_user'),
@@ -34,6 +34,7 @@ urlpatterns = [
     path('resources', ResourceView.as_view(), name='resources'),
     path('resources-by-intent-entity-new-new', ResourceByIntentEntityView_new.as_view(), name='resource_by_intent_entity'),
     path('resources-by-intent-entity-new', ResourceByIntentEntityView_new_new.as_view(), name='resource_by_intent_entity'),
+    path('resources-by-intent-entity-filter', ResourceByIntentEntityView_Filter.as_view(), name='resource_by_intent_entity'),
     path('resources-stats', ResourceStatsView.as_view(), name='resources-stats'),
     path('resource-stats', get_tag_group_stats, name='resource-stats'),
     path('resource-count-and-filter', ResourceCountAndFilterView.as_view(), name='count_resource'),
