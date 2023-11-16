@@ -2001,7 +2001,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     topitems = heapq.nlargest(15, scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
     topitemsasdict = dict(topitems)
-
+    newQuerySet = Resource.objects.none()
     if len(topitems) > 1:
         resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
         thisSet = []
@@ -2030,6 +2030,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
     
     #Do Query Relaxation
+    newQuerySetRelaxed = Resource.objects.none()
     topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
     topitemsasdict = dict(topitems)
     if len(topitems) > 1:
@@ -2620,7 +2621,7 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
     topitems = heapq.nlargest(15, scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
     topitemsasdict = dict(topitems)
-
+    newQuerySet = Resource.objects.none()
     if len(topitems) > 1:
         resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
         thisSet = []
@@ -2651,6 +2652,7 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
     #Do Query Relaxation
     topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
     topitemsasdict = dict(topitems)
+    newQuerySetRelaxed = Resource.objects.none()
     if len(topitems) > 1:
         resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())   
         thisSet = []
@@ -4312,6 +4314,14 @@ class ResourceByIntentEntityView_new_new(generics.ListAPIView):
 
     def get(self, request, format=None):
         return ResourceByIntentEntityViewQuerySet_new_new(self.request.query_params)
+    
+class ResourceByIntentEntityView_Filter(generics.ListAPIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    pagination_class = StandardResultSetPagination
+
+    def get(self, request, format=None):
+        return ResourceByIntentEntityViewQuerySet_Filter(self.request.query_params)
 
 class ResourceStatsView(APIView):
     serializer_class = RetrievePublicResourceSerializer
