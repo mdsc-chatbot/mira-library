@@ -1399,7 +1399,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
             if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
                 resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
-            elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+            if (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
                 resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
@@ -1695,6 +1695,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     """
 
     vip_tags = []
+    filter_out_tags = ['indigenous', 'french', 'youth', 'military veterans', 'healthcare workers', '2slgbtq+', 'first responders']
     input_lo_format_infot_servt_mh_cost_au_lang = []
     if 'Location' in class_tag_mapping:
         input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
@@ -1730,6 +1731,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
     if 'Audience' in class_tag_mapping:
         input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Audience']))
+        for item in class_tag_mapping['Audience']:
+            if item in filter_out_tags: filter_out_tags.remove(item)
     else:
         input_lo_format_infot_servt_mh_cost_au_lang.append(1)
 
@@ -1790,6 +1793,8 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped))
         resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
+    resQueryset = resQueryset.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name="Non-Exclusive") )
+    resQuerysetRelaxed = resQuerysetRelaxed.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name="Non-Exclusive"))
 
     #filter by location, so we guarantee we have something related (if it exists)
     if 'Location' in class_tag_mapping:
@@ -1966,7 +1971,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                     resource_scores[resource[0]] += 1
                     resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
-                elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+                if (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                     resource_scores[resource[0]] += 1
                     resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
@@ -2210,7 +2215,7 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
 
 
     filter_params = query_params.getlist('filter', [])
-    filter_params = list(map(lambda x: x.lower(), filter_params))
+    filter_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,filter_params))
 
     tags_params_temp = []    
     for tag in tags_params: 
@@ -2431,9 +2436,10 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
     #attempt filter by each tag, report ones that fail
     tag_filters = set(filter_params)
     tag_filters.update(filter_to_add)
-    tag_filters = tags_params_mapped.difference(should_be_removed)
+    tag_filters = tag_filters.difference(filter_to_remove)
+    print(f"Filters: {tag_filters}")
     for fvalue in tag_filters:
-        resQueryset = resQueryset.filter(tags__name__in=fvalue)
+        resQueryset = resQueryset.filter(tags__name=fvalue)
 
     #retrieve tag ids from tag names
     tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
@@ -2586,7 +2592,7 @@ def ResourceByIntentEntityViewQuerySet_Filter(query_params):
                 if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                     resource_scores[resource[0]] += 1
                     resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
-                elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+                if (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                     resource_scores[resource[0]] += 1
                     resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
