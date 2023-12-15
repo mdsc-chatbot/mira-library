@@ -66,6 +66,7 @@ import regex
 import random
 #add to server
 import numpy as np
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 GAZETTEER_city_lat_lon = { # all lower case
@@ -96,7 +97,7 @@ GAZETTEER_city_lat_lon = { # all lower case
     "gatineau":(45.4803639,-76.8092629),
     "prince edward island":(46.2083778,-64.4994645),
     "prince george":(53.9308496,-122.9559524),
-    "québec city":(46.7122169,-71.7695852),
+    "quأ©bec city":(46.7122169,-71.7695852),
     "levis":(46.7086362,-71.5874192),
     "saskatoon":(52.1505698,-106.8292186),
     "warman":(52.3222522,-106.6525785),
@@ -137,22 +138,22 @@ GAZETTEER_city_lat_lon = { # all lower case
     "varennes":(45.683334, -73.433334),
     "val-d'or":(48.099998, -77.783333),
     "valcourt":(45.500000, -72.316666),
-    "trois-rivières":(46.349998, -72.550003),
+    "trois-riviأ¨res":(46.349998, -72.550003),
     "trois-pistoles":(48.119999, -69.180000),
     "thurso":(45.599998, -75.250000),
     "thetford mines":(46.099998, -71.300003),
     "terrebonne":(45.700001,	-73.633331),
-    "témiscouata-sur-le-lac":(47.680000, -68.879997),
-    "témiscaming":(46.716667, -79.099998),
+    "tأ©miscouata-sur-le-lac":(47.680000, -68.879997),
+    "tأ©miscaming":(46.716667, -79.099998),
     "stanstead":(45.016666, -72.099998),
     "sorel-tracy":(46.033333, -73.116669),
     "shawinigan":(46.566666, -72.750000),
-    "sept-îles":(50.216667, -66.383331),
+    "sept-أ®les":(50.216667, -66.383331),
     "senneterre":(48.383331, -77.233330),
     "scotstown":(45.529999,	-71.279999),
     "salaberry-de-valleyfield":(45.250000,	-74.129997),
     "saint-sauveur":(45.900002,	-74.169998),
-    "saint-rémi":(45.266666,	-73.616669),
+    "saint-rأ©mi":(45.266666,	-73.616669),
     "saint-raymond":(46.900002,	-71.833336),
     "saint-pie":(45.500000,	-72.900002),
     "saint-pascal":(47.533333,	-69.800003),
@@ -162,13 +163,13 @@ GAZETTEER_city_lat_lon = { # all lower case
     "saint-lambert":(45.500000,	-73.516670),
     "saint-lazare":(45.400002,	-74.133331),
     "saint-joseph-de-beauce":(46.299999,	-70.883331),
-    "saint-jérôme":(45.783333,	-74.000000),
+    "saint-jأ©rأ´me":(45.783333,	-74.000000),
     "saint-jean-sur-richelieu":(45.316666,	-73.266670),
     "saint-hyacinthe":(45.616669,	-72.949997),
     "saint-georges":(46.116669,	-70.666664),
-    "saint-félicien":(48.650002,	-72.449997),
+    "saint-fأ©licien":(48.650002,	-72.449997),
     "saint-eustache":(45.570000,	-73.900002),
-    "sainte-thérèse":(45.633331,	-73.849998),
+    "sainte-thأ©rأ¨se":(45.633331,	-73.849998),
     "sainte-marthe-sur-le-lac":(45.529999,	-73.930000),
     "sainte-marie":(46.450001,	-71.033333),
     "sainte-marguerite-du-lac-masson":(46.029999, -74.050003),
@@ -177,37 +178,37 @@ GAZETTEER_city_lat_lon = { # all lower case
     "sainte-catherine":(45.400002, -73.580002),
     "sainte-anne-des-plaines":(45.766666, -73.816666),
     "sainte-anne-de-bellevue":(45.403889, -73.952499),
-    "sainte-anne-de-beaupré":(47.016666, -70.933334),
+    "sainte-anne-de-beauprأ©":(47.016666, -70.933334),
     "sainte-agathe-des-monts":(46.049999, -74.279999),
-    "sainte-adèle":(45.950001, -74.129997),
+    "sainte-adأ¨le":(45.950001, -74.129997),
     "saint-constant":(45.369999, -73.570000),
     "saint-colomban":(45.730000, -74.129997),
-    "saint-césaire":(45.416668, -73.000000),
+    "saint-cأ©saire":(45.416668, -73.000000),
     "saint-bruno-de-montarville":(45.533333, -73.349998),
     "saint-basile-le-grand":(45.533333, -73.283333),
     "saint-basile":(46.750000, -71.816666),
     "saint-augustin-de-desmaures":(46.733334, -71.466667),
     "saguenay":(48.416668, -71.066666),
     "rouyn-noranda":(48.233334, -79.016670),
-    "rosemère":(45.636944,	-73.800003),
+    "rosemأ¨re":(45.636944,	-73.800003),
     "roberval":(48.520000,	-72.230003),
-    "rivière-rouge":(46.416668,	-74.866669),
-    "rivière-du-loup":(47.833332,	-69.533333),
+    "riviأ¨re-rouge":(46.416668,	-74.866669),
+    "riviأ¨re-du-loup":(47.833332,	-69.533333),
     "richmond":(45.666668,	-72.150002),
     "richelieu":(45.450001,	-73.250000),
     "princeville":(46.166668,	-71.883331),
-    "prévost":(45.869999,	-74.080002),
+    "prأ©vost":(45.869999,	-74.080002),
     "portneuf":(46.700001,	-71.883331),
     "port-cartier":(50.033333,	-66.866669),
     "pont-rouge":(45.450001,	-73.816666),
-    "pohénégamook":(47.466667,	-69.216667),
+    "pohأ©nأ©gamook":(47.466667,	-69.216667),
     "plessisville":(46.216667,	-71.783333),
     "pincourt":(45.383331,	-73.983330),
-    "percé":(48.533333,	-64.216667),
-    "paspébiac":(48.033333,	-65.250000),
+    "percأ©":(48.533333,	-64.216667),
+    "paspأ©biac":(48.033333,	-65.250000),
     "otterburn park":(45.533333,	-73.216667),
     "notre-dame-des-prairies":(46.049999,	-73.433334),
-    "notre-dame-de-l'île-perrot":(45.366669,	-73.933334),
+    "notre-dame-de-l'أ®le-perrot":(45.366669,	-73.933334),
     "normandin":(48.833332,	-72.533333),
     "nicolet":(46.216667,	-72.616669),
     "new richmond":(48.166668,	-65.866669),
@@ -218,7 +219,7 @@ GAZETTEER_city_lat_lon = { # all lower case
     "mont-saint-hilaire":(45.562222,	-73.191666),
     "montreal":(45.5593046,-73.8766833)
 }
-GAZETTEER_cities = ['toronto', 'montreal', 'vancouver', 'calgary', 'edmonton', 'ottawa', 'mississauga', 'winnipeg', 'quebec city', 'hamilton', 'brampton', 'surrey', 'kitchener', 'laval', 'halifax', 'london', 'victoria', 'markham', 'st. catharines', 'niagara falls', 'vaughan', 'gatineau', 'windsor', 'saskatoon', 'longueuil', 'burnaby', 'regina', 'richmond', 'richmond hill', 'oakville', 'burlington', 'barrie', 'oshawa', 'sherbrooke', 'saguenay', 'lévis', 'kelowna', 'abbotsford', 'coquitlam', 'trois-rivières', 'guelph', 'cambridge', 'whitby', 'ajax', 'langley', 'saanich', 'terrebonne', 'milton', "st. john's", 'moncton', 'thunder bay', 'dieppe', 'waterloo', 'delta', 'chatham', 'red deer', 'kamloops', 'brantford', 'cape breton', 'lethbridge', 'saint-jean-sur-richelieu', 'clarington', 'pickering', 'nanaimo', 'sudbury', 'north vancouver', 'brossard', 'repentigny', 'newmarket', 'chilliwack', 'white rock', 'maple ridge', 'peterborough', 'kawartha lakes', 'prince george', 'sault ste. marie', 'sarnia', 'wood buffalo', 'new westminster', 'châteauguay', 'saint-jérôme', 'drummondville', 'saint john', 'caledon', 'st. albert', 'granby', 'medicine hat', 'grande prairie', 'st. thomas', 'airdrie', 'halton hills', 'saint-hyacinthe', 'lac-brome', 'port coquitlam', 'fredericton', 'blainville', 'aurora', 'welland', 'north bay', 'beloeil', 'belleville', 'mirabel', 'shawinigan', 'dollard-des-ormeaux', 'brandon', 'rimouski', 'cornwall', 'stouffville', 'georgina', 'victoriaville', 'vernon', 'duncan', 'saint-eustache', 'quinte west', 'charlottetown', 'mascouche', 'west vancouver', 'salaberry-de-valleyfield', 'rouyn-noranda', 'timmins', 'sorel-tracy', 'new tecumseth', 'woodstock', 'boucherville', 'mission', 'vaudreuil-dorion', 'brant', 'lakeshore', 'innisfil', 'prince albert', 'langford station', 'bradford west gwillimbury', 'campbell river', 'spruce grove', 'moose jaw', 'penticton', 'port moody', 'leamington', 'east kelowna', 'côte-saint-luc', 'val-dor', 'owen sound', 'stratford', 'lloydminster', 'pointe-claire', 'orillia', 'alma', 'orangeville', 'fort erie', 'lasalle', 'sainte-julie', 'leduc', 'north cowichan', 'chambly', 'okotoks', 'sept-îles', 'centre wellington', 'saint-constant', 'grimsby', 'boisbriand', 'conception bay south', 'saint-bruno-de-montarville', 'sainte-thérèse', 'cochrane', 'thetford mines', 'courtenay', 'magog', 'whitehorse', 'woolwich', 'clarence-rockland', 'fort saskatchewan', 'east gwillimbury', 'lincoln', 'la prairie', 'tecumseh', 'mount pearl park', 'amherstburg', 'saint-lambert', 'brockville', 'collingwood', 'scugog', 'kingsville', 'baie-comeau', 'paradise', 'uxbridge', 'essa', 'candiac', 'oro-medonte', 'varennes', 'strathroy-caradoc', 'wasaga beach', 'new glasgow', 'wilmot', 'essex', 'fort st. john', 'kirkland', 'lassomption', 'westmount', 'saint-lazare', 'chestermere', 'huntsville', 'corner brook', 'riverview', 'lloydminster', 'joliette', 'yellowknife', 'squamish', 'mont-royal', 'rivière-du-loup', 'cobourg', 'cranbrook', 'beaconsfield', 'springwater', 'dorval', 'thorold', 'camrose', 'south frontenac', 'pitt meadows', 'port colborne', 'quispamsis', 'mont-saint-hilaire', 'bathurst', 'saint-augustin-de-desmaures', 'oak bay', 'sainte-marthe-sur-le-lac', 'salmon arm', 'port alberni', 'esquimalt', 'deux-montagnes', 'miramichi', 'niagara-on-the-lake', 'saint-lin--laurentides', 'beaumont', 'middlesex centre', 'inverness', 'stony plain', 'petawawa', 'pelham', 'selwyn', 'loyalist', 'midland', 'colwood', 'central saanich', 'sainte-catherine', 'port hope', 'lancienne-lorette', 'saint-basile-le-grand', 'swift current', 'edmundston', 'russell', 'north grenville', 'yorkton', 'tracadie', 'bracebridge', 'greater napanee', 'tillsonburg', 'steinbach', 'hanover', 'terrace', 'springfield', 'gaspé', 'kenora', 'cold lake', 'summerside', 'comox', 'sylvan lake', 'pincourt', 'west lincoln', 'matane', 'brooks', 'sainte-anne-des-plaines', 'west nipissing / nipissing ouest', 'rosemère', 'mistassini', 'grand falls', 'clearview', 'st. clair', 'canmore', 'north battleford', 'pembroke', 'mont-laurier', 'strathmore', 'saugeen shores', 'thompson', 'lavaltrie', 'high river', 'severn', 'sainte-sophie', 'saint-charles-borromée', 'portage la prairie', 'thames centre', 'mississippi mills', 'powell river', 'south glengarry', 'north perth', 'mercier', 'south stormont', 'saint-colomban', 'lacombe', 'sooke', 'dawson creek', 'lake country', 'trent hills', 'sainte-marie', 'guelph/eramosa', 'truro', 'amos', 'the nation / la nation', 'ingersoll', 'winkler', 'wetaskiwin', 'central elgin', 'lachute', 'west grey', 'parksville', 'cowansville', 'bécancour', 'gravenhurst', 'perth east', 'prince rupert', 'prévost', 'sainte-adèle', 'kentville', 'beauharnois', 'les îles-de-la-madeleine', 'wellington north', 'st. andrews', 'carleton place', 'whistler', 'brighton', 'tiny', 'gander', 'sidney', 'rothesay', 'brock', 'summerland', 'val-des-monts', 'taché', 'montmagny', 'erin', 'kincardine', 'north dundas', 'wellesley', 'estevan', 'north saanich', 'warman', 'la tuque', 'norwich', 'meaford', 'adjala-tosorontio', 'hamilton township', 'st. clements', 'saint-amable', 'weyburn', 'south dundas', 'lîle-perrot', "notre-dame-de-l'île-perrot", 'williams lake', 'elliot lake', 'cantley', 'nelson', 'lambton shores', 'mapleton', 'georgian bluffs', 'rawdon', 'campbellton', 'view royal', 'coldstream', 'chester', 'queens', 'selkirk', 'saint-félicien', 'hawkesbury', 'roberval', 'sainte-agathe-des-monts', 'north dumfries', 'rideau lakes', 'sechelt', 'north glengarry', 'south huron', 'marieville', 'tay', 'temiskaming shores', 'hinton', 'saint-sauveur', 'quesnel', 'elizabethtown-kitley', 'morinville', 'grey highlands', 'stratford', 'alfred and plantagenet', 'mont-tremblant', 'martensville', 'saint-raymond', 'amherst', 'ramara', 'bois-des-filion', 'leeds and the thousand islands', 'carignan', 'brockton', 'laurentian valley', 'east st. paul', 'lorraine', 'sainte-julienne', 'blackfalds', 'malahide', 'oromocto', 'olds', 'huron east', 'stanley', 'penetanguishene', 'qualicum beach', 'notre-dame-des-prairies', 'west perth', 'cavan monaghan', 'arnprior', 'smiths falls', 'pont-rouge', 'champlain', 'coaticook', 'minto', 'morden', 'mono', 'corman park no. 344', 'ladysmith', 'bridgewater', 'dauphin', 'otterburn park', 'taber', 'south bruce peninsula', 'edson', 'farnham', 'kapuskasing', 'la malbaie', 'renfrew', 'coaldale', "portugal cove-st. philip's", 'zorra', 'kitimat', 'shelburne', 'happy valley', 'saint-hippolyte', 'castlegar', 'church point', 'drumheller', 'kirkland lake', 'argyle', 'torbay', 'la pêche', 'banff', 'innisfail', 'nicolet', 'rockwood', 'drummond/north elmsley', 'dryden', 'iqaluit', 'fort frances', 'la sarre', 'trail', 'chandler', 'stone mills', 'hanover', 'south-west oxford', 'acton vale', 'bromont', 'beckwith', 'goderich', 'plympton-wyoming', 'central huron', 'rigaud', 'louiseville', 'chibougamau', 'aylmer', 'delson', 'kimberley', 'blandford-blenheim', 'bayham', 'augusta', 'puslinch', 'beauport', 'saint-rémi', 'st. marys', 'drayton valley', 'ponoka', 'labrador city', 'donnacona', 'southgate', 'mcnab/braeside', 'macdonald', 'hampstead', 'baie-saint-paul', 'merritt', 'bluewater', 'east zorra-tavistock', 'brownsburg', 'stoneham-et-tewkesbury', 'asbestos', 'huron-kinloss', 'coteau-du-lac', 'the blue mountains', 'whitewater region', 'edwardsburgh/cardinal', 'sainte-anne-des-monts', 'old chelsea', 'north stormont', 'alnwick/haldimand', 'peace river', 'arran-elderslie', 'saint-zotique', 'val-shefford', 'douro-dummer', 'plessisville', 'ritchot', 'otonabee-south monaghan', 'shediac', 'slave lake', 'port-cartier', 'saint-lambert-de-lauzon', 'barrington', 'rocky mountain house', 'chatsworth', 'stephenville', 'muskoka falls', 'devon', 'yarmouth', 'boischatel', 'parry sound', 'pointe-calumet', 'beaubassin east / beaubassin-est', 'wainfleet', 'cramahe', 'beauceville', 'north middlesex', 'amqui', 'sainte-catherine-de-la-jacques-cartier', 'clarenville', 'mont-joli', 'dysart et al', 'wainwright', 'contrecoeur', 'beresford', 'saint-joseph-du-lac', 'hope', 'gimli', 'douglas', 'saint-apollinaire', 'hindon hill', 'les cèdres', 'la broquerie', 'kent', 'tweed', 'saint-félix-de-valois', 'bay roberts', 'melfort', 'bonnyville', 'stettler', 'saint-calixte', 'lac-mégantic', 'perth', 'oliver paipoonge', 'humboldt', 'charlemagne', 'pontiac', 'st. paul', 'petrolia', 'southwest middlesex', 'front of yonge', 'vegreville', 'sainte-brigitte-de-laval', 'princeville', 'verchères', 'the pas', 'saint-césaire', 'la ronge', 'tay valley', 'south bruce', 'mcmasterville', 'redcliff', 'crowsnest pass', 'saint-philippe', 'richelieu', 'notre-dame-du-mont-carmel', "l'ange-gardien", 'sainte-martine', 'saint-pie', 'peachland', 'ashfield-colborne-wawanosh', 'trent lakes', 'northern rockies', 'cookshire', 'west st. paul', 'windsor', 'lepiphanie', 'creston', 'smithers', 'cornwall', 'meadow lake', 'lanark highlands', 'sackville', 'grand falls', 'cochrane', 'marystown', 'sioux lookout', 'didsbury', 'saint-honoré', 'fernie', 'deer lake', 'woodstock', 'val-david', 'flin flon', 'hudson', 'gananoque', 'brokenhead', 'saint-paul', 'burton', 'spallumcheen', 'westlock', 'témiscouata-sur-le-lac', 'shannon', 'osoyoos', 'montréal-ouest', 'hearst', 'saint-henri', 'ste. anne', 'antigonish', 'espanola', 'west elgin', 'flin flon (part)', 'grand bay-westfield', 'sainte-anne-de-bellevue', 'north huron', 'oliver', "saint-roch-de-l'achigan", 'stirling-rawdon', 'chisasibi', 'carbonear', 'saint marys', 'chertsey', 'armstrong', 'stonewall', 'shippagan', 'lanoraie', 'memramcook', 'centre hastings', 'warwick', 'east ferris', 'hanwell', 'saint-joseph-de-beauce', 'metchosin', 'lucan biddulph', 'rivière-rouge', 'greenstone', 'saint-mathias-sur-richelieu', 'neepawa', 'gibsons', 'kindersley', 'jasper', 'barrhead', 'les coteaux', 'melville', 'saint-germain-de-grantham', 'iroquois falls', 'havelock-belmont-methuen', 'cornwallis', 'saint-boniface', 'edenwold no. 158', 'coverdale', 'vanderhoof', 'southwold', 'goulds', 'saint stephen', 'waterloo', 'nipawin', 'neuville', 'saint-cyrille-de-wendover', 'central frontenac', 'mont-orford', 'saint-jean-de-matha', 'seguin', 'tyendinaga', 'hampton', 'sussex', 'grand forks', 'la pocatière', 'caraquet', 'saint-étienne-des-grès', 'altona', 'stellarton', 'wolfville', 'new maryland', 'port hardy', 'saint-donat', 'château-richer', 'madawaska valley', 'deep river', 'asphodel-norwood', 'red lake', 'métabetchouan-lac-à-la-croix', 'berthierville', 'vermilion', 'niverville', 'hastings highlands', 'carstairs', 'danville', 'channel-port aux basques', 'battleford', 'lac-etchemin', 'saint-antonin', 'saint-jacques', 'swan river', 'sutton', 'northern bruce peninsula', 'lislet-sur-mer', 'carleton-sur-mer', 'oka', 'prescott', 'amaranth', 'marmora and lake', 'maniwaki', 'morin-heights', 'dundas', 'napierville', 'crabtree', 'bancroft', 'saint-tite', 'howick', 'dutton/dunwich', 'callander', 'simonds', 'baie-durfé', 'new richmond', 'perth south', 'roxton pond', 'sparwood', 'claresholm', 'breslau', 'montague', 'cumberland', 'beaupré', 'saint-andré-avellin', 'saint-ambroise-de-kildare', 'east angus', 'rossland', 'mackenzie', 'golden', 'raymond', "saint-adolphe-d'howard", 'warwick', 'bowen island', 'bonnechere valley', 'windsor', 'pincher creek', 'alnwick', 'westville', 'fruitvale', 'pasadena', 'saint-prosper', 'ormstown', 'cardston', 'westbank', 'de salaberry', 'headingley', 'grande cache', 'atholville', 'saint-agapit', 'prince albert no. 461', 'casselman', 'saint-ambroise', 'hay river', 'mistissini', 'studholm', 'lumby', 'saint-faustin--lac-carré', 'morris-turnberry', 'placentia', 'saint-pascal', 'mulmur', 'blind river', 'dunham', 'havre-saint-pierre', 'saint-anselme', 'trois-pistoles', 'grande-rivière', 'powassan', 'malartic', 'bonavista', 'killarney - turtle mountain', 'woodlands', 'lewisporte', 'saint-denis-de-brompton', 'invermere', 'salisbury', 'bifrost-riverton', 'buckland no. 491', 'cartier', 'sainte-anne-des-lacs', 'highlands east', 'alexander', 'sainte-claire', 'percé', 'saint-jean-port-joli', 'east hawkesbury', 'bright', 'penhold', "saint-andré-d'argenteuil", 'saint-côme--linière', 'saint-sulpice', 'marathon', 'forestville', 'inuvik', 'richmond', 'lake cowichan', 'sables-spanish rivers', 'hillsburg-roblin-shell river', 'port hawkesbury', 'three hills', 'lorette', 'paspebiac', 'saint-thomas', 'saint-jean-baptiste', 'portneuf', 'pictou', 'tisdale', 'lake of bays', 'high level', 'gibbons', 'bishops falls', 'westlake-gladstone', 'normandin', 'saint-alphonse-rodriguez', 'beauséjour', 'dalhousie', 'saint-alphonse-de-granby', 'lac du bonnet', 'clermont', 'virden', 'compton', 'white city', 'ellison', 'mont-saint-grégoire', 'wellington', 'merrickville', 'saint-liboire', 'dégelis', 'morris', 'saint-alexis-des-monts', 'cap-saint-ignace', 'saint-anaclet-de-lessard', 'carman', 'athens', 'melancthon', 'cap santé', 'harbour grace', 'houston', 'adelaide-metcalfe', 'crossfield', 'springdale', 'fort macleod', 'athabasca', 'enderby', 'saint-ferréol-les-neiges', 'laurentian hills', 'grand valley', 'senneterre', 'sainte-marie-madeleine', 'admaston/bromley', 'saint-gabriel-de-valcartier', 'north algona wilberforce', 'kingston', 'wawa', "saint-christophe-d'arthabaska", 'sainte-mélanie', 'ascot corner', 'horton', 'saint-michel', 'botwood', "saint-paul-d'abbotsford", 'saint-marc-des-carrières', 'stanstead', 'sainte-anne-de-beaupré', 'sainte-luce', 'saint-gabriel', 'rankin inlet', 'vanscoy no. 345', 'cedar', 'princeton', 'la loche', 'kingsclear', 'ferme-neuve', 'thurso', 'adstock', 'shuniah', 'enniskillen', 'yamachiche', 'saint-maurice', 'bonaventure', 'val-morin', 'pohénégamook', 'wakefield', 'stoke', 'sainte-marguerite-du-lac-masson', 'saint-prime', 'kuujjuaq', 'atikokan', 'grenville-sur-la-rouge', 'north cypress-langford', 'sainte-anne-de-sorel', 'macamic', 'sundre', 'rougemont', 'piedmont', 'grimshaw', 'lac-des-écorces', 'northeastern manitoulin and the islands', 'pelican narrows', 'mcdougall', 'black diamond', 'saint-pamphile', 'bedford', 'weedon-centre', 'lacolle', 'saint-gabriel-de-brandon', 'errington', 'coalhurst', 'french river / rivière des français', 'arviat', 'saint-david-de-falardeau', 'markstay', 'spaniards bay', 'cocagne', 'saint-bruno', 'chetwynd', 'laurier-station', 'saint-anicet', 'saint-mathieu-de-beloeil', 'cap-chat', 'sexsmith', 'notre-dame-de-lourdes', 'ville-marie', 'saint-isidore', 'shippegan', 'east garafraxa', 'pemberton', 'unity', 'rimbey', 'high prairie', 'turner valley', 'hanna', 'fort smith', 'maria', 'saint-chrysostome', 'greater madawaska', 'berwick', 'saint-damase', 'lincoln', 'disraeli', 'sainte-victoire-de-sorel', 'meadow lake no. 588', 'elkford', 'georgian bay', 'saint-alexandre', 'hérbertville', 'moosomin', 'north kawartha', 'sainte-thècle', 'trenton', 'fermont', 'esterhazy', 'wickham', 'la présentation', 'beaverlodge', 'sainte-catherine-de-hatley', 'saint-basile', 'saint-raphaël', 'holyrood', 'gracefield', 'saint-martin', 'causapscal', 'brigham', 'perry', 'port-daniel--gascons', 'rosetown', 'minnedosa', 'labelle', 'huntingdon', 'hébertville', 'black river-matheson', 'saint-michel-des-saints', 'dufferin', 'saint-victor', 'sicamous', 'cap pele', 'kelsey', 'killaloe, hagarty and richards', 'alvinston', 'dundurn no. 314', 'saint-éphrem-de-beauce', 'assiniboia', 'témiscaming', 'magrath', 'sainte-geneviève-de-berthier', 'buctouche', 'grand manan', 'sainte-madeleine', 'boissevain', 'scott', 'sainte-croix', 'algonquin highlands', 'valcourt', 'saint george', 'paquetville', 'saint-dominique', 'clearwater', 'addington highlands', 'lillooet', 'burin', 'grand bank', 'léry', 'minto', 'rosthern no. 403', 'chase', 'mansfield-et-pontefract', 'saint-denis', 'outlook', 'mitchell', 'saint-gédéon-de-beauce', "saint-léonard-d'aston", 'lunenburg', 'northesk', 'albanel', 'st. anthony', 'pessamit', 'maskinongé', 'saint-charles-de-bellechasse', 'fogo island', 'east broughton', 'lantz', 'calmar', 'highlands', 'saint-polycarpe', 'logy bay-middle cove-outer cove', 'deschambault', 'canora', 'upper miramichi', 'anmore', 'hardwicke', 'saint-côme', 'waskaganish', 'twillingate', 'saint-quentin', 'lebel-sur-quévillon', 'pilot butte', 'nanton', 'pierreville', 'new-wes-valley', 'pennfield ridge', 'west interlake', 'biggar', 'britannia no. 502', 'kent', 'wabana', 'saint-gilles', 'wendake', 'saint-bernard', 'sainte-cécile-de-milton', 'saint-roch-de-richelieu', 'saint-nazaire', 'saint-elzéar', 'hinchinbrooke', 'saint-françois-xavier-de-brompton', 'papineauville', 'prairie view', 'cowichan bay', 'saint-ignace-de-loyola', 'central manitoulin', 'maple creek', 'glovertown', 'tofield', 'madoc', 'upton', 'sainte-anne-de-sabrevois', 'logan lake', 'sainte-anne-de-la-pérade', 'saint-damien-de-buckland', 'baker lake', 'saltair', 'pouch cove', 'saint-ferdinand', 'port mcneill', 'digby', 'manouane', 'saint-gervais', 'neebing', 'redwater', 'saint-alexandre-de-kamouraska', 'saint-marc-sur-richelieu', 'mandeville', 'caplan', 'point edward', 'allardville', 'waterville', 'saint-damien', 'lac-nominingue', 'obedjiwan', 'rama', 'mccreary', 'deloraine-winchester', 'oakland-wawanesa', 'brenda-waskada', 'russell-binscarth', 'ellice-archie', 'souris-glenwood', 'riverdale', 'pembina', 'wallace-woodworth', 'lorne', 'ethelbert', 'yellowhead', 'swan valley west', 'grey', 'gilbert plains', 'norfolk-treherne', 'hamiota', 'emerson-franklin', 'sifton', 'rossburn', 'grand view', 'grassland', 'louise', 'ste. rose', 'cartwright-roblin', 'mossey river', 'lakeshore', 'riding mountain west', 'clanwilliam-erickson', 'glenboro-south cypress', 'north norfolk', 'reinland', 'minitonas-bowsman', 'kippens', 'blucher', 'hatley', 'saint-gédéon', 'kingsey falls', 'provost', 'saint-charles', 'mattawa', 'tumbler ridge', 'terrasse-vaudreuil', "l'ascension-de-notre-seigneur", 'bow island', 'barraute', 'one hundred mile house', 'kedgwick', 'gambo', 'saint-liguori', 'bonfield', 'pointe-lebel', 'saint mary', 'saint-patrice-de-sherrington', 'fox creek', 'dawn-euphemia', 'chapleau', 'saint-esprit', 'westfield beach', 'montague', 'mashteuiatsh', 'saint-françois-du-lac', 'eel river crossing', 'saint-fulgence', 'millet', 'vallée-jonction', 'saint-georges-de-cacouna', 'lumsden no. 189', 'manitouwadge', 'wellington', 'swift current no. 137', 'tofino', 'fort quappelle', 'vulcan', 'indian head', 'petit rocher', 'wabush', 'saint-fabien', 'watrous', 'north frontenac', 'lac-supérieur', 'les escoumins', 'richibucto', 'rivière-beaudette', 'saint-barthélemy', "nisga'a", 'austin', 'saint-mathieu', "saint-paul-de-l'île-aux-noix", 'orkney no. 244', 'behchokò', 'saint-joseph-de-coleraine', 'saint-cyprien-de-napierville', 'sayabec', 'valleyview', 'déléage', 'potton', 'sainte-béatrix', 'sainte-justine', 'eastman', 'saint-valérien-de-milton', 'saint-cuthbert', 'saint-blaise-sur-richelieu', 'middleton', 'maugerville', 'dalmeny', 'kamsack', 'lumsden', 'trinity bay north', 'saint-michel-de-bellechasse', 'sainte-angèle-de-monnoir', 'picture butte', 'sacré-coeur-saguenay', 'saint-louis', 'victoria', 'saint-robert', 'armstrong', "saint-pierre-de-l'île-d'orléans", 'la guadeloupe', 'saint andrews', 'burns lake', 'povungnituk', 'manners sutton', 'gore', 'deseronto', 'lamont', 'chambord', 'dudswell', 'wynyard', 'cambridge bay', 'saint-narcisse', 'frontenac islands', 'waswanipi', 'inukjuak', 'piney', 'komoka', 'saint-zacharie', 'hemmingford', 'shelburne', 'saint-clet', 'carberry', 'brighton', 'saint-antoine', 'warfield', 'northampton', 'saint-ours', 'stephenville crossing', 'sainte-anne-de-la-pocatière', 'ucluelet', 'saint-placide', 'barrière', 'fisher', 'nipissing', 'sainte-clotilde', 'shaunavon', 'wicklow', 'southesk', 'nouvelle', 'rosthern', 'yamaska', 'neguac', 'flat rock', 'igloolik', 'grunthal', 'naramata', 'saint-élie-de-caxton', 'blumenort', 'balmoral', 'price', 'rosedale', 'saint-jacques-le-mineur', 'huron shores', 'champlain', 'whitehead', 'saint-antoine-sur-richelieu', 'saint-pacôme', 'saint-stanislas-de-kostka', 'frontenac', 'stuartburn', 'yamaska-est', "sainte-émélie-de-l'énergie", 'saint-charles-sur-richelieu', 'saint-joseph-de-sorel', 'nipigon', 'rivière-blanche', 'sainte-hélène-de-bagot', 'franklin centre', 'harbour breton', 'massey drive', 'mille-isles', 'wilton no. 472', 'lyster', 'oakview', 'balgonie', 'harrison park', 'kensington', 'witless bay', 'pond inlet', 'royston', 'sainte-clotilde-de-horton', 'burford', 'fossambault-sur-le-lac', 'saint-benoît-labre', 'coombs', 'terrace bay', 'chapais', 'saint-honoré-de-shenley', 'cleveland', 'macdonald, meredith and aberdeen additional', 'messines', 'saint-jean-de-dieu', 'nakusp', 'florenceville', 'saint-antoine-de-tilly', 'lakeview', 'humbermouth', 'fort st. james', 'saint-françois-de-la-rivière-du-sud', 'saint-jacques', 'uashat', 'perth', 'eeyou istchee baie-james', 'shellbrook no. 493', 'shawville', 'saint-lucien', 'lambton', "saint-laurent-de-l'île-d'orléans", 'saint-flavien', 'grenville', 'chute-aux-outardes', 'sainte-marcelline-de-kildare', 'saint-félix-de-kingsey', 'upper island cove', 'glenelg', 'sainte-élisabeth', 'ashcroft', 'clarkes beach', 'saint-bernard-de-lacolle', 'belledune', 'saint-guillaume', 'venise-en-québec', 'maliotenam', 'ripon', 'hilliers', 'saint-joseph', 'saint-paulin', 'bon accord', 'saint david', 'saint-albert', 'matagami', 'springfield', 'amherst', 'notre-dame-du-laus', 'st. george', 'wembley', 'victoria', 'springbrook', 'saint-tite-des-caps', 'hudson bay', 'pinawa', 'brudenell, lyndoch and raglan', 'carlyle', 'keremeos', 'val-joli', 'gold river', 'saint-casimir', 'bay bulls', 'langham', 'frenchman butte', 'gordon', 'kugluktuk', 'saint-malachie', 'southampton', 'salluit', 'pangnirtung', 'saint-louis-de-gonzague', 'moosonee', 'englehart', 'saint-urbain', 'tring-jonction', 'nauwigewauk', 'pointe-à-la-croix', 'denmark', 'saint-joachim', 'torch river no. 488', "saint-théodore-d'acton", 'grindrod', 'l îsle-verte', 'harrison hot springs', 'palmarolle', 'henryville', 'sussex corner', 'saint-odilon-de-cranbourne', 'pipestone', 'laurierville', 'la doré', 'lac-au-saumon', 'wotton', 'prairie lakes', 'elk point', 'shellbrook', 'wemindji', 'cape dorset', 'strong', 'lappe', 'rivière-héva', 'fort-coulonge', 'irishtown-summerside', 'godmanchester', 'macklin', 'armour', 'saint-simon', 'st. françois xavier', 'tingwick', 'saint-aubert', 'saint-mathieu-du-parc', 'wabasca', 'ragueneau', 'notre-dame-du-bon-conseil', 'wasagamack', 'saint-ubalde', 'creighton', 'fortune', 'faraday', 'berthier-sur-mer', 'frampton', 'magnetawan', 'new carlisle', 'laird no. 404', 'petitcodiac', 'popkum', 'norton', 'canwood no. 494', 'wentworth-nord', 'bas caraquet', 'sainte-ursule', 'dawson', 'nantes', 'lac-aux-sables', 'stewiacke', 'taylor', 'rosser', 'estevan no. 5', 'falmouth', 'vaudreuil-sur-le-lac', 'grahamdale', 'cardwell', 'two hills', 'spiritwood no. 496', 'legal', 'amulet', 'hérouxville', 'pointe-des-cascades', 'weldford', 'reynolds', 'st. laurent', 'lions bay', "l'isle-aux-allumettes", 'emo', "sainte-brigide-d'iberville", 'les éboulements', 'dunsmuir', 'pointe-aux-outardes', 'smooth rock falls', 'oxbow', 'telkwa', 'gjoa haven', 'sainte-barbe', 'mayerthorpe', 'saint-louis-du-ha! ha!', 'powerview-pine falls', 'baie verte', 'saint-édouard', 'charlo', 'hillsborough', 'bruederheim', 'burgeo', 'wadena', 'richmond', 'swan hills', 'wilkie', 'saint-léonard', 'rivière-bleue', 'noyan', 'ile-à-la-crosse', 'landmark', 'saint-hugues', 'chisholm', 'sainte-anne-du-sault', 'la conception', 'saint-valère', 'sorrento', 'lamèque', 'thessalon', "l'isle-aux-coudres", 'nobleford', 'larouche', "south qu'appelle no. 157", 'elton', 'lorrainville', 'conestogo', 'upham', 'st.-charles', 'sainte-lucie-des-laurentides', 'saint-alexis', 'gillam', 'roxton falls', 'montcalm', 'clarendon', 'mervin no. 499', 'saint-ludger', 'coldwell', 'saint-arsène', 'racine', 'saint-majorique-de-grantham', 'saint-zénon', 'saint-armand', 'saint-édouard-de-lotbinière', 'alonsa', 'listuguj', 'bowden', 'st. joseph', 'osler', 'saint-hubert-de-rivière-du-loup', 'saint-jude', 'dildo', 'la minerve', 'lanigan', 'lajord no. 128', 'moonbeam', 'notre-dame-des-pins', 'saint-alban', 'saint-pierre-les-becquets', 'arborg', 'vauxhall', 'bayfield', 'beaver river', 'irricana', 'labrecque', 'new bandon', 'wemotaci', 'sainte-hénédine', "l'anse-saint-jean", 'bassano', 'parrsboro', 'kaleden', "st. george's", 'fort simpson', 'akwesasne', 'lavenir', 'ignace', 'claremont', 'teulon', 'peel', 'musquash', 'notre-dame-du-portage', 'st. lawrence', 'oxford', 'minto-odanah', "st. alban's", 'saint james', "saint-norbert-d'arthabaska", 'manning', 'glenella-lansdowne', 'saint-hilarion', 'saint-siméon', 'saint-barnabé', 'sainte-félicité', 'two borders', 'queensbury', 'bury', 'lac-bouchette', 'saint-lazare-de-bellechasse', 'saint-michel-du-squatec', 'saint-joachim-de-shefford', 'st-pierre-jolys', 'grand-remous', 'saint-gabriel-de-rimouski', 'armstrong', 'rogersville', 'langenburg', 'sainte-marie-salomé', 'moose jaw no. 161', 'saint-cyprien', 'maidstone', 'très-saint-sacrement', 'battle river no. 438', 'miltonvale park', 'mcadam', 'saints-anges', 'saint-urbain-premier', 'centreville-wareham-trinity', 'alberton', 'winnipeg beach', 'sainte-agathe-de-lotbinière', 'salmo', 'kipling', 'sagamok', 'trécesson', 'tara', 'grande-vallée', 'bertrand', 'newcastle', 'mont-carmel', 'saint martins', 'saint-eugène', 'notre-dame-des-neiges', 'saint-andré', 'centreville', 'roland', 'saint-léon-de-standon', 'saint-modeste', 'carnduff', 'carling', 'eckville', 'nain', 'hillsburgh', 'foam lake', 'sainte-sabine', 'saint-maxime-du-mont-louis', 'blanc-sablon', 'cobalt', 'gravelbourg', 'south river', 'hudson bay no. 394', 'mckellar', 'frelighsburg', 'buffalo narrows', 'ayers cliff', 'les méchins', 'sainte-marguerite', 'saint-claude', 'air ronge', 'chipman', 'girardville', 'saint-bruno-de-guigues', 'grenfell', 'dorchester', 'south algonquin', 'windermere', 'saint-narcisse-de-beaurivage', 'saint-rené-de-matane', "sainte-jeanne-d'arc", 'plaisance', 'roxton-sud', 'st. louis no. 431', 'youbou', 'duchess', 'saint-frédéric', 'viking', 'sioux narrows-nestor falls', 'whitecourt', 'repulse bay', 'montréal-est', 'king', 'regina beach', 'saint-patrice-de-beaurivage', 'ootischenia', 'hensall', 'bentley', 'durham', 'sainte-marthe', 'notre-dame-du-nord', 'pinehouse', 'saint-aimé-des-lacs', 'lac-drolet', 'preeceville', 'maple creek no. 111', "harbour main-chapel's cove-lakeview", 'saint-wenceslas', 'weyburn no. 67', 'birch hills', 'wedgeport', 'kerrobert', 'havelock', 'eston', 'sainte-geneviève-de-batiscan', 'saint-justin', 'saint-norbert', 'schreiber', 'trochu', 'botsford', 'riviere-ouelle', 'greenwich', 'stukely-sud', 'saint-georges-de-clarenceville', 'sainte-thérèse-de-gaspé', 'beachburg', 'desbiens', 'clyde river', 'la macaza', 'souris', 'kindersley no. 290', 'laird', 'falher', 'saint-vallier', 'coleraine', 'melita', 'noonan', 'sainte-pétronille', 'delisle', 'bristol', 'mahone bay', 'waldheim', 'saint-sylvestre', 'taloyoak', 'onoway', 'saint-stanislas', 'malpeque', 'plantagenet', 'longue-rive', 'argyle', 'davidson', 'plaster rock', 'wilmot', 'valemount', 'saint-léonard-de-portneuf', 'alberta beach', 'saint-narcisse-de-rimouski', 'saint-bonaventure', 'longlaketon no. 219', 'papineau-cameron', 'assiginack', 'brébeuf', 'hudson hope', 'prince', 'baie-du-febvre', 'durham-sud', 'melbourne', 'nipawin no. 487', 'duck lake no. 463', 'oyen', 'st. albert']
+GAZETTEER_cities = ['toronto', 'montreal', 'vancouver', 'calgary', 'edmonton', 'ottawa', 'mississauga', 'winnipeg', 'quebec city', 'hamilton', 'brampton', 'surrey', 'kitchener', 'laval', 'halifax', 'london', 'victoria', 'markham', 'st. catharines', 'niagara falls', 'vaughan', 'gatineau', 'windsor', 'saskatoon', 'longueuil', 'burnaby', 'regina', 'richmond', 'richmond hill', 'oakville', 'burlington', 'barrie', 'oshawa', 'sherbrooke', 'saguenay', 'lأ©vis', 'kelowna', 'abbotsford', 'coquitlam', 'trois-riviأ¨res', 'guelph', 'cambridge', 'whitby', 'ajax', 'langley', 'saanich', 'terrebonne', 'milton', "st. john's", 'moncton', 'thunder bay', 'dieppe', 'waterloo', 'delta', 'chatham', 'red deer', 'kamloops', 'brantford', 'cape breton', 'lethbridge', 'saint-jean-sur-richelieu', 'clarington', 'pickering', 'nanaimo', 'sudbury', 'north vancouver', 'brossard', 'repentigny', 'newmarket', 'chilliwack', 'white rock', 'maple ridge', 'peterborough', 'kawartha lakes', 'prince george', 'sault ste. marie', 'sarnia', 'wood buffalo', 'new westminster', 'chأ¢teauguay', 'saint-jأ©rأ´me', 'drummondville', 'saint john', 'caledon', 'st. albert', 'granby', 'medicine hat', 'grande prairie', 'st. thomas', 'airdrie', 'halton hills', 'saint-hyacinthe', 'lac-brome', 'port coquitlam', 'fredericton', 'blainville', 'aurora', 'welland', 'north bay', 'beloeil', 'belleville', 'mirabel', 'shawinigan', 'dollard-des-ormeaux', 'brandon', 'rimouski', 'cornwall', 'stouffville', 'georgina', 'victoriaville', 'vernon', 'duncan', 'saint-eustache', 'quinte west', 'charlottetown', 'mascouche', 'west vancouver', 'salaberry-de-valleyfield', 'rouyn-noranda', 'timmins', 'sorel-tracy', 'new tecumseth', 'woodstock', 'boucherville', 'mission', 'vaudreuil-dorion', 'brant', 'lakeshore', 'innisfil', 'prince albert', 'langford station', 'bradford west gwillimbury', 'campbell river', 'spruce grove', 'moose jaw', 'penticton', 'port moody', 'leamington', 'east kelowna', 'cأ´te-saint-luc', 'val-dor', 'owen sound', 'stratford', 'lloydminster', 'pointe-claire', 'orillia', 'alma', 'orangeville', 'fort erie', 'lasalle', 'sainte-julie', 'leduc', 'north cowichan', 'chambly', 'okotoks', 'sept-أ®les', 'centre wellington', 'saint-constant', 'grimsby', 'boisbriand', 'conception bay south', 'saint-bruno-de-montarville', 'sainte-thأ©rأ¨se', 'cochrane', 'thetford mines', 'courtenay', 'magog', 'whitehorse', 'woolwich', 'clarence-rockland', 'fort saskatchewan', 'east gwillimbury', 'lincoln', 'la prairie', 'tecumseh', 'mount pearl park', 'amherstburg', 'saint-lambert', 'brockville', 'collingwood', 'scugog', 'kingsville', 'baie-comeau', 'paradise', 'uxbridge', 'essa', 'candiac', 'oro-medonte', 'varennes', 'strathroy-caradoc', 'wasaga beach', 'new glasgow', 'wilmot', 'essex', 'fort st. john', 'kirkland', 'lassomption', 'westmount', 'saint-lazare', 'chestermere', 'huntsville', 'corner brook', 'riverview', 'lloydminster', 'joliette', 'yellowknife', 'squamish', 'mont-royal', 'riviأ¨re-du-loup', 'cobourg', 'cranbrook', 'beaconsfield', 'springwater', 'dorval', 'thorold', 'camrose', 'south frontenac', 'pitt meadows', 'port colborne', 'quispamsis', 'mont-saint-hilaire', 'bathurst', 'saint-augustin-de-desmaures', 'oak bay', 'sainte-marthe-sur-le-lac', 'salmon arm', 'port alberni', 'esquimalt', 'deux-montagnes', 'miramichi', 'niagara-on-the-lake', 'saint-lin--laurentides', 'beaumont', 'middlesex centre', 'inverness', 'stony plain', 'petawawa', 'pelham', 'selwyn', 'loyalist', 'midland', 'colwood', 'central saanich', 'sainte-catherine', 'port hope', 'lancienne-lorette', 'saint-basile-le-grand', 'swift current', 'edmundston', 'russell', 'north grenville', 'yorkton', 'tracadie', 'bracebridge', 'greater napanee', 'tillsonburg', 'steinbach', 'hanover', 'terrace', 'springfield', 'gaspأ©', 'kenora', 'cold lake', 'summerside', 'comox', 'sylvan lake', 'pincourt', 'west lincoln', 'matane', 'brooks', 'sainte-anne-des-plaines', 'west nipissing / nipissing ouest', 'rosemأ¨re', 'mistassini', 'grand falls', 'clearview', 'st. clair', 'canmore', 'north battleford', 'pembroke', 'mont-laurier', 'strathmore', 'saugeen shores', 'thompson', 'lavaltrie', 'high river', 'severn', 'sainte-sophie', 'saint-charles-borromأ©e', 'portage la prairie', 'thames centre', 'mississippi mills', 'powell river', 'south glengarry', 'north perth', 'mercier', 'south stormont', 'saint-colomban', 'lacombe', 'sooke', 'dawson creek', 'lake country', 'trent hills', 'sainte-marie', 'guelph/eramosa', 'truro', 'amos', 'the nation / la nation', 'ingersoll', 'winkler', 'wetaskiwin', 'central elgin', 'lachute', 'west grey', 'parksville', 'cowansville', 'bأ©cancour', 'gravenhurst', 'perth east', 'prince rupert', 'prأ©vost', 'sainte-adأ¨le', 'kentville', 'beauharnois', 'les أ®les-de-la-madeleine', 'wellington north', 'st. andrews', 'carleton place', 'whistler', 'brighton', 'tiny', 'gander', 'sidney', 'rothesay', 'brock', 'summerland', 'val-des-monts', 'tachأ©', 'montmagny', 'erin', 'kincardine', 'north dundas', 'wellesley', 'estevan', 'north saanich', 'warman', 'la tuque', 'norwich', 'meaford', 'adjala-tosorontio', 'hamilton township', 'st. clements', 'saint-amable', 'weyburn', 'south dundas', 'lأ®le-perrot', "notre-dame-de-l'أ®le-perrot", 'williams lake', 'elliot lake', 'cantley', 'nelson', 'lambton shores', 'mapleton', 'georgian bluffs', 'rawdon', 'campbellton', 'view royal', 'coldstream', 'chester', 'queens', 'selkirk', 'saint-fأ©licien', 'hawkesbury', 'roberval', 'sainte-agathe-des-monts', 'north dumfries', 'rideau lakes', 'sechelt', 'north glengarry', 'south huron', 'marieville', 'tay', 'temiskaming shores', 'hinton', 'saint-sauveur', 'quesnel', 'elizabethtown-kitley', 'morinville', 'grey highlands', 'stratford', 'alfred and plantagenet', 'mont-tremblant', 'martensville', 'saint-raymond', 'amherst', 'ramara', 'bois-des-filion', 'leeds and the thousand islands', 'carignan', 'brockton', 'laurentian valley', 'east st. paul', 'lorraine', 'sainte-julienne', 'blackfalds', 'malahide', 'oromocto', 'olds', 'huron east', 'stanley', 'penetanguishene', 'qualicum beach', 'notre-dame-des-prairies', 'west perth', 'cavan monaghan', 'arnprior', 'smiths falls', 'pont-rouge', 'champlain', 'coaticook', 'minto', 'morden', 'mono', 'corman park no. 344', 'ladysmith', 'bridgewater', 'dauphin', 'otterburn park', 'taber', 'south bruce peninsula', 'edson', 'farnham', 'kapuskasing', 'la malbaie', 'renfrew', 'coaldale', "portugal cove-st. philip's", 'zorra', 'kitimat', 'shelburne', 'happy valley', 'saint-hippolyte', 'castlegar', 'church point', 'drumheller', 'kirkland lake', 'argyle', 'torbay', 'la pأھche', 'banff', 'innisfail', 'nicolet', 'rockwood', 'drummond/north elmsley', 'dryden', 'iqaluit', 'fort frances', 'la sarre', 'trail', 'chandler', 'stone mills', 'hanover', 'south-west oxford', 'acton vale', 'bromont', 'beckwith', 'goderich', 'plympton-wyoming', 'central huron', 'rigaud', 'louiseville', 'chibougamau', 'aylmer', 'delson', 'kimberley', 'blandford-blenheim', 'bayham', 'augusta', 'puslinch', 'beauport', 'saint-rأ©mi', 'st. marys', 'drayton valley', 'ponoka', 'labrador city', 'donnacona', 'southgate', 'mcnab/braeside', 'macdonald', 'hampstead', 'baie-saint-paul', 'merritt', 'bluewater', 'east zorra-tavistock', 'brownsburg', 'stoneham-et-tewkesbury', 'asbestos', 'huron-kinloss', 'coteau-du-lac', 'the blue mountains', 'whitewater region', 'edwardsburgh/cardinal', 'sainte-anne-des-monts', 'old chelsea', 'north stormont', 'alnwick/haldimand', 'peace river', 'arran-elderslie', 'saint-zotique', 'val-shefford', 'douro-dummer', 'plessisville', 'ritchot', 'otonabee-south monaghan', 'shediac', 'slave lake', 'port-cartier', 'saint-lambert-de-lauzon', 'barrington', 'rocky mountain house', 'chatsworth', 'stephenville', 'muskoka falls', 'devon', 'yarmouth', 'boischatel', 'parry sound', 'pointe-calumet', 'beaubassin east / beaubassin-est', 'wainfleet', 'cramahe', 'beauceville', 'north middlesex', 'amqui', 'sainte-catherine-de-la-jacques-cartier', 'clarenville', 'mont-joli', 'dysart et al', 'wainwright', 'contrecoeur', 'beresford', 'saint-joseph-du-lac', 'hope', 'gimli', 'douglas', 'saint-apollinaire', 'hindon hill', 'les cأ¨dres', 'la broquerie', 'kent', 'tweed', 'saint-fأ©lix-de-valois', 'bay roberts', 'melfort', 'bonnyville', 'stettler', 'saint-calixte', 'lac-mأ©gantic', 'perth', 'oliver paipoonge', 'humboldt', 'charlemagne', 'pontiac', 'st. paul', 'petrolia', 'southwest middlesex', 'front of yonge', 'vegreville', 'sainte-brigitte-de-laval', 'princeville', 'verchأ¨res', 'the pas', 'saint-cأ©saire', 'la ronge', 'tay valley', 'south bruce', 'mcmasterville', 'redcliff', 'crowsnest pass', 'saint-philippe', 'richelieu', 'notre-dame-du-mont-carmel', "l'ange-gardien", 'sainte-martine', 'saint-pie', 'peachland', 'ashfield-colborne-wawanosh', 'trent lakes', 'northern rockies', 'cookshire', 'west st. paul', 'windsor', 'lepiphanie', 'creston', 'smithers', 'cornwall', 'meadow lake', 'lanark highlands', 'sackville', 'grand falls', 'cochrane', 'marystown', 'sioux lookout', 'didsbury', 'saint-honorأ©', 'fernie', 'deer lake', 'woodstock', 'val-david', 'flin flon', 'hudson', 'gananoque', 'brokenhead', 'saint-paul', 'burton', 'spallumcheen', 'westlock', 'tأ©miscouata-sur-le-lac', 'shannon', 'osoyoos', 'montrأ©al-ouest', 'hearst', 'saint-henri', 'ste. anne', 'antigonish', 'espanola', 'west elgin', 'flin flon (part)', 'grand bay-westfield', 'sainte-anne-de-bellevue', 'north huron', 'oliver', "saint-roch-de-l'achigan", 'stirling-rawdon', 'chisasibi', 'carbonear', 'saint marys', 'chertsey', 'armstrong', 'stonewall', 'shippagan', 'lanoraie', 'memramcook', 'centre hastings', 'warwick', 'east ferris', 'hanwell', 'saint-joseph-de-beauce', 'metchosin', 'lucan biddulph', 'riviأ¨re-rouge', 'greenstone', 'saint-mathias-sur-richelieu', 'neepawa', 'gibsons', 'kindersley', 'jasper', 'barrhead', 'les coteaux', 'melville', 'saint-germain-de-grantham', 'iroquois falls', 'havelock-belmont-methuen', 'cornwallis', 'saint-boniface', 'edenwold no. 158', 'coverdale', 'vanderhoof', 'southwold', 'goulds', 'saint stephen', 'waterloo', 'nipawin', 'neuville', 'saint-cyrille-de-wendover', 'central frontenac', 'mont-orford', 'saint-jean-de-matha', 'seguin', 'tyendinaga', 'hampton', 'sussex', 'grand forks', 'la pocatiأ¨re', 'caraquet', 'saint-أ©tienne-des-grأ¨s', 'altona', 'stellarton', 'wolfville', 'new maryland', 'port hardy', 'saint-donat', 'chأ¢teau-richer', 'madawaska valley', 'deep river', 'asphodel-norwood', 'red lake', 'mأ©tabetchouan-lac-أ -la-croix', 'berthierville', 'vermilion', 'niverville', 'hastings highlands', 'carstairs', 'danville', 'channel-port aux basques', 'battleford', 'lac-etchemin', 'saint-antonin', 'saint-jacques', 'swan river', 'sutton', 'northern bruce peninsula', 'lislet-sur-mer', 'carleton-sur-mer', 'oka', 'prescott', 'amaranth', 'marmora and lake', 'maniwaki', 'morin-heights', 'dundas', 'napierville', 'crabtree', 'bancroft', 'saint-tite', 'howick', 'dutton/dunwich', 'callander', 'simonds', 'baie-durfأ©', 'new richmond', 'perth south', 'roxton pond', 'sparwood', 'claresholm', 'breslau', 'montague', 'cumberland', 'beauprأ©', 'saint-andrأ©-avellin', 'saint-ambroise-de-kildare', 'east angus', 'rossland', 'mackenzie', 'golden', 'raymond', "saint-adolphe-d'howard", 'warwick', 'bowen island', 'bonnechere valley', 'windsor', 'pincher creek', 'alnwick', 'westville', 'fruitvale', 'pasadena', 'saint-prosper', 'ormstown', 'cardston', 'westbank', 'de salaberry', 'headingley', 'grande cache', 'atholville', 'saint-agapit', 'prince albert no. 461', 'casselman', 'saint-ambroise', 'hay river', 'mistissini', 'studholm', 'lumby', 'saint-faustin--lac-carrأ©', 'morris-turnberry', 'placentia', 'saint-pascal', 'mulmur', 'blind river', 'dunham', 'havre-saint-pierre', 'saint-anselme', 'trois-pistoles', 'grande-riviأ¨re', 'powassan', 'malartic', 'bonavista', 'killarney - turtle mountain', 'woodlands', 'lewisporte', 'saint-denis-de-brompton', 'invermere', 'salisbury', 'bifrost-riverton', 'buckland no. 491', 'cartier', 'sainte-anne-des-lacs', 'highlands east', 'alexander', 'sainte-claire', 'percأ©', 'saint-jean-port-joli', 'east hawkesbury', 'bright', 'penhold', "saint-andrأ©-d'argenteuil", 'saint-cأ´me--liniأ¨re', 'saint-sulpice', 'marathon', 'forestville', 'inuvik', 'richmond', 'lake cowichan', 'sables-spanish rivers', 'hillsburg-roblin-shell river', 'port hawkesbury', 'three hills', 'lorette', 'paspebiac', 'saint-thomas', 'saint-jean-baptiste', 'portneuf', 'pictou', 'tisdale', 'lake of bays', 'high level', 'gibbons', 'bishops falls', 'westlake-gladstone', 'normandin', 'saint-alphonse-rodriguez', 'beausأ©jour', 'dalhousie', 'saint-alphonse-de-granby', 'lac du bonnet', 'clermont', 'virden', 'compton', 'white city', 'ellison', 'mont-saint-grأ©goire', 'wellington', 'merrickville', 'saint-liboire', 'dأ©gelis', 'morris', 'saint-alexis-des-monts', 'cap-saint-ignace', 'saint-anaclet-de-lessard', 'carman', 'athens', 'melancthon', 'cap santأ©', 'harbour grace', 'houston', 'adelaide-metcalfe', 'crossfield', 'springdale', 'fort macleod', 'athabasca', 'enderby', 'saint-ferrأ©ol-les-neiges', 'laurentian hills', 'grand valley', 'senneterre', 'sainte-marie-madeleine', 'admaston/bromley', 'saint-gabriel-de-valcartier', 'north algona wilberforce', 'kingston', 'wawa', "saint-christophe-d'arthabaska", 'sainte-mأ©lanie', 'ascot corner', 'horton', 'saint-michel', 'botwood', "saint-paul-d'abbotsford", 'saint-marc-des-carriأ¨res', 'stanstead', 'sainte-anne-de-beauprأ©', 'sainte-luce', 'saint-gabriel', 'rankin inlet', 'vanscoy no. 345', 'cedar', 'princeton', 'la loche', 'kingsclear', 'ferme-neuve', 'thurso', 'adstock', 'shuniah', 'enniskillen', 'yamachiche', 'saint-maurice', 'bonaventure', 'val-morin', 'pohأ©nأ©gamook', 'wakefield', 'stoke', 'sainte-marguerite-du-lac-masson', 'saint-prime', 'kuujjuaq', 'atikokan', 'grenville-sur-la-rouge', 'north cypress-langford', 'sainte-anne-de-sorel', 'macamic', 'sundre', 'rougemont', 'piedmont', 'grimshaw', 'lac-des-أ©corces', 'northeastern manitoulin and the islands', 'pelican narrows', 'mcdougall', 'black diamond', 'saint-pamphile', 'bedford', 'weedon-centre', 'lacolle', 'saint-gabriel-de-brandon', 'errington', 'coalhurst', 'french river / riviأ¨re des franأ§ais', 'arviat', 'saint-david-de-falardeau', 'markstay', 'spaniards bay', 'cocagne', 'saint-bruno', 'chetwynd', 'laurier-station', 'saint-anicet', 'saint-mathieu-de-beloeil', 'cap-chat', 'sexsmith', 'notre-dame-de-lourdes', 'ville-marie', 'saint-isidore', 'shippegan', 'east garafraxa', 'pemberton', 'unity', 'rimbey', 'high prairie', 'turner valley', 'hanna', 'fort smith', 'maria', 'saint-chrysostome', 'greater madawaska', 'berwick', 'saint-damase', 'lincoln', 'disraeli', 'sainte-victoire-de-sorel', 'meadow lake no. 588', 'elkford', 'georgian bay', 'saint-alexandre', 'hأ©rbertville', 'moosomin', 'north kawartha', 'sainte-thأ¨cle', 'trenton', 'fermont', 'esterhazy', 'wickham', 'la prأ©sentation', 'beaverlodge', 'sainte-catherine-de-hatley', 'saint-basile', 'saint-raphaأ«l', 'holyrood', 'gracefield', 'saint-martin', 'causapscal', 'brigham', 'perry', 'port-daniel--gascons', 'rosetown', 'minnedosa', 'labelle', 'huntingdon', 'hأ©bertville', 'black river-matheson', 'saint-michel-des-saints', 'dufferin', 'saint-victor', 'sicamous', 'cap pele', 'kelsey', 'killaloe, hagarty and richards', 'alvinston', 'dundurn no. 314', 'saint-أ©phrem-de-beauce', 'assiniboia', 'tأ©miscaming', 'magrath', 'sainte-geneviأ¨ve-de-berthier', 'buctouche', 'grand manan', 'sainte-madeleine', 'boissevain', 'scott', 'sainte-croix', 'algonquin highlands', 'valcourt', 'saint george', 'paquetville', 'saint-dominique', 'clearwater', 'addington highlands', 'lillooet', 'burin', 'grand bank', 'lأ©ry', 'minto', 'rosthern no. 403', 'chase', 'mansfield-et-pontefract', 'saint-denis', 'outlook', 'mitchell', 'saint-gأ©dأ©on-de-beauce', "saint-lأ©onard-d'aston", 'lunenburg', 'northesk', 'albanel', 'st. anthony', 'pessamit', 'maskinongأ©', 'saint-charles-de-bellechasse', 'fogo island', 'east broughton', 'lantz', 'calmar', 'highlands', 'saint-polycarpe', 'logy bay-middle cove-outer cove', 'deschambault', 'canora', 'upper miramichi', 'anmore', 'hardwicke', 'saint-cأ´me', 'waskaganish', 'twillingate', 'saint-quentin', 'lebel-sur-quأ©villon', 'pilot butte', 'nanton', 'pierreville', 'new-wes-valley', 'pennfield ridge', 'west interlake', 'biggar', 'britannia no. 502', 'kent', 'wabana', 'saint-gilles', 'wendake', 'saint-bernard', 'sainte-cأ©cile-de-milton', 'saint-roch-de-richelieu', 'saint-nazaire', 'saint-elzأ©ar', 'hinchinbrooke', 'saint-franأ§ois-xavier-de-brompton', 'papineauville', 'prairie view', 'cowichan bay', 'saint-ignace-de-loyola', 'central manitoulin', 'maple creek', 'glovertown', 'tofield', 'madoc', 'upton', 'sainte-anne-de-sabrevois', 'logan lake', 'sainte-anne-de-la-pأ©rade', 'saint-damien-de-buckland', 'baker lake', 'saltair', 'pouch cove', 'saint-ferdinand', 'port mcneill', 'digby', 'manouane', 'saint-gervais', 'neebing', 'redwater', 'saint-alexandre-de-kamouraska', 'saint-marc-sur-richelieu', 'mandeville', 'caplan', 'point edward', 'allardville', 'waterville', 'saint-damien', 'lac-nominingue', 'obedjiwan', 'rama', 'mccreary', 'deloraine-winchester', 'oakland-wawanesa', 'brenda-waskada', 'russell-binscarth', 'ellice-archie', 'souris-glenwood', 'riverdale', 'pembina', 'wallace-woodworth', 'lorne', 'ethelbert', 'yellowhead', 'swan valley west', 'grey', 'gilbert plains', 'norfolk-treherne', 'hamiota', 'emerson-franklin', 'sifton', 'rossburn', 'grand view', 'grassland', 'louise', 'ste. rose', 'cartwright-roblin', 'mossey river', 'lakeshore', 'riding mountain west', 'clanwilliam-erickson', 'glenboro-south cypress', 'north norfolk', 'reinland', 'minitonas-bowsman', 'kippens', 'blucher', 'hatley', 'saint-gأ©dأ©on', 'kingsey falls', 'provost', 'saint-charles', 'mattawa', 'tumbler ridge', 'terrasse-vaudreuil', "l'ascension-de-notre-seigneur", 'bow island', 'barraute', 'one hundred mile house', 'kedgwick', 'gambo', 'saint-liguori', 'bonfield', 'pointe-lebel', 'saint mary', 'saint-patrice-de-sherrington', 'fox creek', 'dawn-euphemia', 'chapleau', 'saint-esprit', 'westfield beach', 'montague', 'mashteuiatsh', 'saint-franأ§ois-du-lac', 'eel river crossing', 'saint-fulgence', 'millet', 'vallأ©e-jonction', 'saint-georges-de-cacouna', 'lumsden no. 189', 'manitouwadge', 'wellington', 'swift current no. 137', 'tofino', 'fort quappelle', 'vulcan', 'indian head', 'petit rocher', 'wabush', 'saint-fabien', 'watrous', 'north frontenac', 'lac-supأ©rieur', 'les escoumins', 'richibucto', 'riviأ¨re-beaudette', 'saint-barthأ©lemy', "nisga'a", 'austin', 'saint-mathieu', "saint-paul-de-l'أ®le-aux-noix", 'orkney no. 244', 'behchokأ²', 'saint-joseph-de-coleraine', 'saint-cyprien-de-napierville', 'sayabec', 'valleyview', 'dأ©lأ©age', 'potton', 'sainte-bأ©atrix', 'sainte-justine', 'eastman', 'saint-valأ©rien-de-milton', 'saint-cuthbert', 'saint-blaise-sur-richelieu', 'middleton', 'maugerville', 'dalmeny', 'kamsack', 'lumsden', 'trinity bay north', 'saint-michel-de-bellechasse', 'sainte-angأ¨le-de-monnoir', 'picture butte', 'sacrأ©-coeur-saguenay', 'saint-louis', 'victoria', 'saint-robert', 'armstrong', "saint-pierre-de-l'أ®le-d'orlأ©ans", 'la guadeloupe', 'saint andrews', 'burns lake', 'povungnituk', 'manners sutton', 'gore', 'deseronto', 'lamont', 'chambord', 'dudswell', 'wynyard', 'cambridge bay', 'saint-narcisse', 'frontenac islands', 'waswanipi', 'inukjuak', 'piney', 'komoka', 'saint-zacharie', 'hemmingford', 'shelburne', 'saint-clet', 'carberry', 'brighton', 'saint-antoine', 'warfield', 'northampton', 'saint-ours', 'stephenville crossing', 'sainte-anne-de-la-pocatiأ¨re', 'ucluelet', 'saint-placide', 'barriأ¨re', 'fisher', 'nipissing', 'sainte-clotilde', 'shaunavon', 'wicklow', 'southesk', 'nouvelle', 'rosthern', 'yamaska', 'neguac', 'flat rock', 'igloolik', 'grunthal', 'naramata', 'saint-أ©lie-de-caxton', 'blumenort', 'balmoral', 'price', 'rosedale', 'saint-jacques-le-mineur', 'huron shores', 'champlain', 'whitehead', 'saint-antoine-sur-richelieu', 'saint-pacأ´me', 'saint-stanislas-de-kostka', 'frontenac', 'stuartburn', 'yamaska-est', "sainte-أ©mأ©lie-de-l'أ©nergie", 'saint-charles-sur-richelieu', 'saint-joseph-de-sorel', 'nipigon', 'riviأ¨re-blanche', 'sainte-hأ©lأ¨ne-de-bagot', 'franklin centre', 'harbour breton', 'massey drive', 'mille-isles', 'wilton no. 472', 'lyster', 'oakview', 'balgonie', 'harrison park', 'kensington', 'witless bay', 'pond inlet', 'royston', 'sainte-clotilde-de-horton', 'burford', 'fossambault-sur-le-lac', 'saint-benoأ®t-labre', 'coombs', 'terrace bay', 'chapais', 'saint-honorأ©-de-shenley', 'cleveland', 'macdonald, meredith and aberdeen additional', 'messines', 'saint-jean-de-dieu', 'nakusp', 'florenceville', 'saint-antoine-de-tilly', 'lakeview', 'humbermouth', 'fort st. james', 'saint-franأ§ois-de-la-riviأ¨re-du-sud', 'saint-jacques', 'uashat', 'perth', 'eeyou istchee baie-james', 'shellbrook no. 493', 'shawville', 'saint-lucien', 'lambton', "saint-laurent-de-l'أ®le-d'orlأ©ans", 'saint-flavien', 'grenville', 'chute-aux-outardes', 'sainte-marcelline-de-kildare', 'saint-fأ©lix-de-kingsey', 'upper island cove', 'glenelg', 'sainte-أ©lisabeth', 'ashcroft', 'clarkes beach', 'saint-bernard-de-lacolle', 'belledune', 'saint-guillaume', 'venise-en-quأ©bec', 'maliotenam', 'ripon', 'hilliers', 'saint-joseph', 'saint-paulin', 'bon accord', 'saint david', 'saint-albert', 'matagami', 'springfield', 'amherst', 'notre-dame-du-laus', 'st. george', 'wembley', 'victoria', 'springbrook', 'saint-tite-des-caps', 'hudson bay', 'pinawa', 'brudenell, lyndoch and raglan', 'carlyle', 'keremeos', 'val-joli', 'gold river', 'saint-casimir', 'bay bulls', 'langham', 'frenchman butte', 'gordon', 'kugluktuk', 'saint-malachie', 'southampton', 'salluit', 'pangnirtung', 'saint-louis-de-gonzague', 'moosonee', 'englehart', 'saint-urbain', 'tring-jonction', 'nauwigewauk', 'pointe-أ -la-croix', 'denmark', 'saint-joachim', 'torch river no. 488', "saint-thأ©odore-d'acton", 'grindrod', 'l أ®sle-verte', 'harrison hot springs', 'palmarolle', 'henryville', 'sussex corner', 'saint-odilon-de-cranbourne', 'pipestone', 'laurierville', 'la dorأ©', 'lac-au-saumon', 'wotton', 'prairie lakes', 'elk point', 'shellbrook', 'wemindji', 'cape dorset', 'strong', 'lappe', 'riviأ¨re-hأ©va', 'fort-coulonge', 'irishtown-summerside', 'godmanchester', 'macklin', 'armour', 'saint-simon', 'st. franأ§ois xavier', 'tingwick', 'saint-aubert', 'saint-mathieu-du-parc', 'wabasca', 'ragueneau', 'notre-dame-du-bon-conseil', 'wasagamack', 'saint-ubalde', 'creighton', 'fortune', 'faraday', 'berthier-sur-mer', 'frampton', 'magnetawan', 'new carlisle', 'laird no. 404', 'petitcodiac', 'popkum', 'norton', 'canwood no. 494', 'wentworth-nord', 'bas caraquet', 'sainte-ursule', 'dawson', 'nantes', 'lac-aux-sables', 'stewiacke', 'taylor', 'rosser', 'estevan no. 5', 'falmouth', 'vaudreuil-sur-le-lac', 'grahamdale', 'cardwell', 'two hills', 'spiritwood no. 496', 'legal', 'amulet', 'hأ©rouxville', 'pointe-des-cascades', 'weldford', 'reynolds', 'st. laurent', 'lions bay', "l'isle-aux-allumettes", 'emo', "sainte-brigide-d'iberville", 'les أ©boulements', 'dunsmuir', 'pointe-aux-outardes', 'smooth rock falls', 'oxbow', 'telkwa', 'gjoa haven', 'sainte-barbe', 'mayerthorpe', 'saint-louis-du-ha! ha!', 'powerview-pine falls', 'baie verte', 'saint-أ©douard', 'charlo', 'hillsborough', 'bruederheim', 'burgeo', 'wadena', 'richmond', 'swan hills', 'wilkie', 'saint-lأ©onard', 'riviأ¨re-bleue', 'noyan', 'ile-أ -la-crosse', 'landmark', 'saint-hugues', 'chisholm', 'sainte-anne-du-sault', 'la conception', 'saint-valأ¨re', 'sorrento', 'lamأ¨que', 'thessalon', "l'isle-aux-coudres", 'nobleford', 'larouche', "south qu'appelle no. 157", 'elton', 'lorrainville', 'conestogo', 'upham', 'st.-charles', 'sainte-lucie-des-laurentides', 'saint-alexis', 'gillam', 'roxton falls', 'montcalm', 'clarendon', 'mervin no. 499', 'saint-ludger', 'coldwell', 'saint-arsأ¨ne', 'racine', 'saint-majorique-de-grantham', 'saint-zأ©non', 'saint-armand', 'saint-أ©douard-de-lotbiniأ¨re', 'alonsa', 'listuguj', 'bowden', 'st. joseph', 'osler', 'saint-hubert-de-riviأ¨re-du-loup', 'saint-jude', 'dildo', 'la minerve', 'lanigan', 'lajord no. 128', 'moonbeam', 'notre-dame-des-pins', 'saint-alban', 'saint-pierre-les-becquets', 'arborg', 'vauxhall', 'bayfield', 'beaver river', 'irricana', 'labrecque', 'new bandon', 'wemotaci', 'sainte-hأ©nأ©dine', "l'anse-saint-jean", 'bassano', 'parrsboro', 'kaleden', "st. george's", 'fort simpson', 'akwesasne', 'lavenir', 'ignace', 'claremont', 'teulon', 'peel', 'musquash', 'notre-dame-du-portage', 'st. lawrence', 'oxford', 'minto-odanah', "st. alban's", 'saint james', "saint-norbert-d'arthabaska", 'manning', 'glenella-lansdowne', 'saint-hilarion', 'saint-simأ©on', 'saint-barnabأ©', 'sainte-fأ©licitأ©', 'two borders', 'queensbury', 'bury', 'lac-bouchette', 'saint-lazare-de-bellechasse', 'saint-michel-du-squatec', 'saint-joachim-de-shefford', 'st-pierre-jolys', 'grand-remous', 'saint-gabriel-de-rimouski', 'armstrong', 'rogersville', 'langenburg', 'sainte-marie-salomأ©', 'moose jaw no. 161', 'saint-cyprien', 'maidstone', 'trأ¨s-saint-sacrement', 'battle river no. 438', 'miltonvale park', 'mcadam', 'saints-anges', 'saint-urbain-premier', 'centreville-wareham-trinity', 'alberton', 'winnipeg beach', 'sainte-agathe-de-lotbiniأ¨re', 'salmo', 'kipling', 'sagamok', 'trأ©cesson', 'tara', 'grande-vallأ©e', 'bertrand', 'newcastle', 'mont-carmel', 'saint martins', 'saint-eugأ¨ne', 'notre-dame-des-neiges', 'saint-andrأ©', 'centreville', 'roland', 'saint-lأ©on-de-standon', 'saint-modeste', 'carnduff', 'carling', 'eckville', 'nain', 'hillsburgh', 'foam lake', 'sainte-sabine', 'saint-maxime-du-mont-louis', 'blanc-sablon', 'cobalt', 'gravelbourg', 'south river', 'hudson bay no. 394', 'mckellar', 'frelighsburg', 'buffalo narrows', 'ayers cliff', 'les mأ©chins', 'sainte-marguerite', 'saint-claude', 'air ronge', 'chipman', 'girardville', 'saint-bruno-de-guigues', 'grenfell', 'dorchester', 'south algonquin', 'windermere', 'saint-narcisse-de-beaurivage', 'saint-renأ©-de-matane', "sainte-jeanne-d'arc", 'plaisance', 'roxton-sud', 'st. louis no. 431', 'youbou', 'duchess', 'saint-frأ©dأ©ric', 'viking', 'sioux narrows-nestor falls', 'whitecourt', 'repulse bay', 'montrأ©al-est', 'king', 'regina beach', 'saint-patrice-de-beaurivage', 'ootischenia', 'hensall', 'bentley', 'durham', 'sainte-marthe', 'notre-dame-du-nord', 'pinehouse', 'saint-aimأ©-des-lacs', 'lac-drolet', 'preeceville', 'maple creek no. 111', "harbour main-chapel's cove-lakeview", 'saint-wenceslas', 'weyburn no. 67', 'birch hills', 'wedgeport', 'kerrobert', 'havelock', 'eston', 'sainte-geneviأ¨ve-de-batiscan', 'saint-justin', 'saint-norbert', 'schreiber', 'trochu', 'botsford', 'riviere-ouelle', 'greenwich', 'stukely-sud', 'saint-georges-de-clarenceville', 'sainte-thأ©rأ¨se-de-gaspأ©', 'beachburg', 'desbiens', 'clyde river', 'la macaza', 'souris', 'kindersley no. 290', 'laird', 'falher', 'saint-vallier', 'coleraine', 'melita', 'noonan', 'sainte-pأ©tronille', 'delisle', 'bristol', 'mahone bay', 'waldheim', 'saint-sylvestre', 'taloyoak', 'onoway', 'saint-stanislas', 'malpeque', 'plantagenet', 'longue-rive', 'argyle', 'davidson', 'plaster rock', 'wilmot', 'valemount', 'saint-lأ©onard-de-portneuf', 'alberta beach', 'saint-narcisse-de-rimouski', 'saint-bonaventure', 'longlaketon no. 219', 'papineau-cameron', 'assiginack', 'brأ©beuf', 'hudson hope', 'prince', 'baie-du-febvre', 'durham-sud', 'melbourne', 'nipawin no. 487', 'duck lake no. 463', 'oyen', 'st. albert']
 GAZETTEER_proviences = ['Ontario', 'Quebec', 'British Columbia', 'Alberta', 'Alberta', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'Quebec', 'Nova Scotia', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Saskatchewan', 'Quebec', 'British Columbia', 'Saskatchewan', 'British Columbia', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'British Columbia', 'British Columbia', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'British Columbia', 'British Columbia', 'Quebec', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Ontario', 'New Brunswick', 'Ontario', 'British Columbia', 'Ontario', 'Alberta', 'British Columbia', 'Ontario', 'Nova Scotia', 'Alberta', 'Quebec', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'British Columbia', 'British Columbia', 'British Columbia', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Alberta', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Ontario', 'Alberta', 'Quebec', 'Alberta', 'Alberta', 'Ontario', 'Alberta', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'British Columbia', 'British Columbia', 'Quebec', 'Ontario', 'Prince Edward Island', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Ontario', 'British Columbia', 'Alberta', 'Saskatchewan', 'British Columbia', 'British Columbia', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Alberta', 'British Columbia', 'Quebec', 'Alberta', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'British Columbia', 'Quebec', 'Yukon', 'Ontario', 'Ontario', 'Alberta', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Newfoundland and Labrador', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Nova Scotia', 'Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Alberta', 'Quebec', 'Northwest Territories', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Alberta', 'Ontario', 'British Columbia', 'Ontario', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'British Columbia', 'Quebec', 'British Columbia', 'British Columbia', 'British Columbia', 'Quebec', 'New Brunswick', 'Ontario', 'Quebec', 'Alberta', 'Ontario', 'Nova Scotia', 'Alberta', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'British Columbia', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Ontario', 'Ontario', 'Saskatchewan', 'New Brunswick', 'Ontario', 'Ontario', 'Ontario', 'Manitoba', 'Manitoba', 'British Columbia', 'Manitoba', 'Quebec', 'Ontario', 'Alberta', 'Prince Edward Island', 'British Columbia', 'Alberta', 'Quebec', 'Ontario', 'Quebec', 'Alberta', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Ontario', 'Ontario', 'Alberta', 'Saskatchewan', 'Ontario', 'Quebec', 'Alberta', 'Ontario', 'Manitoba', 'Quebec', 'Alberta', 'Ontario', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Alberta', 'British Columbia', 'British Columbia', 'British Columbia', 'Ontario', 'Quebec', 'Ontario', 'Nova Scotia', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Alberta', 'Ontario', 'Quebec', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Nova Scotia', 'Quebec', 'Quebec', 'Ontario', 'Manitoba', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Newfoundland and Labrador', 'British Columbia', 'New Brunswick', 'Ontario', 'British Columbia', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Saskatchewan', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'New Brunswick', 'British Columbia', 'British Columbia', 'Nova Scotia', 'Nova Scotia', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Alberta', 'Quebec', 'British Columbia', 'Ontario', 'Alberta', 'Ontario', 'Prince Edward Island', 'Ontario', 'Quebec', 'Saskatchewan', 'Quebec', 'Nova Scotia', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Quebec', 'Alberta', 'Ontario', 'New Brunswick', 'Alberta', 'Ontario', 'Manitoba', 'Ontario', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Manitoba', 'Ontario', 'Saskatchewan', 'British Columbia', 'Nova Scotia', 'Manitoba', 'Quebec', 'Alberta', 'Ontario', 'Alberta', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Alberta', 'Newfoundland and Labrador', 'Ontario', 'British Columbia', 'Ontario', 'Newfoundland and Labrador', 'Quebec', 'British Columbia', 'Nova Scotia', 'Alberta', 'Ontario', 'Nova Scotia', 'Newfoundland and Labrador', 'Quebec', 'Alberta', 'Alberta', 'Quebec', 'Manitoba', 'Ontario', 'Ontario', 'Nunavut', 'Ontario', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Alberta', 'Alberta', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Quebec', 'British Columbia', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Alberta', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Ontario', 'New Brunswick', 'Alberta', 'Quebec', 'Quebec', 'Nova Scotia', 'Alberta', 'Ontario', 'Newfoundland and Labrador', 'Ontario', 'Alberta', 'Nova Scotia', 'Quebec', 'Ontario', 'Quebec', 'New Brunswick', 'Ontario', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Alberta', 'Quebec', 'New Brunswick', 'Quebec', 'British Columbia', 'Manitoba', 'New Brunswick', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'British Columbia', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Saskatchewan', 'Alberta', 'Alberta', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Alberta', 'Ontario', 'Ontario', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Quebec', 'Alberta', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia', 'Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'British Columbia', 'British Columbia', 'Prince Edward Island', 'Saskatchewan', 'Ontario', 'New Brunswick', 'New Brunswick', 'Ontario', 'Newfoundland and Labrador', 'Ontario', 'Alberta', 'Quebec', 'British Columbia', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Ontario', 'Manitoba', 'Quebec', 'New Brunswick', 'British Columbia', 'Alberta', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Nova Scotia', 'Ontario', 'Ontario', 'Manitoba', 'New Brunswick', 'Quebec', 'Ontario', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'British Columbia', 'Manitoba', 'New Brunswick', 'Quebec', 'New Brunswick', 'Ontario', 'Quebec', 'Ontario', 'New Brunswick', 'Quebec', 'British Columbia', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'British Columbia', 'Saskatchewan', 'Alberta', 'Alberta', 'Quebec', 'Saskatchewan', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'Quebec', 'Saskatchewan', 'New Brunswick', 'British Columbia', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'New Brunswick', 'New Brunswick', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'Manitoba', 'Nova Scotia', 'Nova Scotia', 'New Brunswick', 'British Columbia', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Alberta', 'Manitoba', 'Ontario', 'Alberta', 'Quebec', 'Newfoundland and Labrador', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'Ontario', 'Ontario', 'New Brunswick', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'British Columbia', 'Alberta', 'Ontario', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia', 'British Columbia', 'British Columbia', 'Alberta', 'Quebec', 'Ontario', 'British Columbia', 'Ontario', 'Nova Scotia', 'Alberta', 'New Brunswick', 'Nova Scotia', 'British Columbia', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta', 'British Columbia', 'Manitoba', 'Manitoba', 'Alberta', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec', 'Northwest Territories', 'Quebec', 'New Brunswick', 'British Columbia', 'Quebec', 'Ontario', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Manitoba', 'Manitoba', 'Newfoundland and Labrador', 'Quebec', 'British Columbia', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Northwest Territories', 'Quebec', 'British Columbia', 'Ontario', 'Manitoba', 'Nova Scotia', 'Alberta', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nova Scotia', 'Saskatchewan', 'Ontario', 'Alberta', 'Alberta', 'Newfoundland and Labrador', 'Manitoba', 'Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'British Columbia', 'Quebec', 'New Brunswick', 'Ontario', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'British Columbia', 'Ontario', 'Alberta', 'Newfoundland and Labrador', 'Alberta', 'Alberta', 'British Columbia', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Ontario', 'New Brunswick', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nunavut', 'Saskatchewan', 'British Columbia', 'British Columbia', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Ontario', 'Saskatchewan', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia', 'Alberta', 'Ontario', 'Nunavut', 'Quebec', 'Ontario', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Ontario', 'British Columbia', 'Saskatchewan', 'Alberta', 'Alberta', 'Alberta', 'Alberta', 'Northwest Territories', 'Quebec', 'Quebec', 'Ontario', 'Nova Scotia', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Saskatchewan', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec', 'Nova Scotia', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'British Columbia', 'New Brunswick', 'Manitoba', 'Ontario', 'Ontario', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Alberta', 'Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'British Columbia', 'Ontario', 'British Columbia', 'Newfoundland and Labrador', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'Saskatchewan', 'British Columbia', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Nova Scotia', 'Alberta', 'British Columbia', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'New Brunswick', 'British Columbia', 'New Brunswick', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Alberta', 'Quebec', 'Newfoundland and Labrador', 'New Brunswick', 'Manitoba', 'Saskatchewan', 'Saskatchewan', 'New Brunswick', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'British Columbia', 'Quebec', 'Ontario', 'Saskatchewan', 'Newfoundland and Labrador', 'Alberta', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Nunavut', 'British Columbia', 'Newfoundland and Labrador', 'Quebec', 'British Columbia', 'Nova Scotia', 'Quebec', 'Quebec', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Manitoba', 'Newfoundland and Labrador', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'New Brunswick', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'British Columbia', 'New Brunswick', 'Newfoundland and Labrador', 'Quebec', 'Ontario', 'Quebec', 'New Brunswick', 'Quebec', 'Alberta', 'Ontario', 'Ontario', 'Quebec', 'New Brunswick', 'Prince Edward Island', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Saskatchewan', 'British Columbia', 'Saskatchewan', 'Alberta', 'Saskatchewan', 'New Brunswick', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Northwest Territories', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Nova Scotia', 'New Brunswick', 'Saskatchewan', 'Saskatchewan', 'Saskatchewan', 'Newfoundland and Labrador', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'New Brunswick', 'Newfoundland and Labrador', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'New Brunswick', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Saskatchewan', 'Nunavut', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Manitoba', 'Ontario', 'Quebec', 'Quebec', 'Nova Scotia', 'Quebec', 'Manitoba', 'New Brunswick', 'New Brunswick', 'British Columbia', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'British Columbia', 'Quebec', 'British Columbia', 'Manitoba', 'Ontario', 'Quebec', 'Saskatchewan', 'New Brunswick', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'New Brunswick', 'Newfoundland and Labrador', 'Nunavut', 'Manitoba', 'British Columbia', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'Quebec', 'Manitoba', 'Saskatchewan', 'Manitoba', 'Prince Edward Island', 'Newfoundland and Labrador', 'Nunavut', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'British Columbia', 'Newfoundland and Labrador', 'British Columbia', 'Quebec', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'British Columbia', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Quebec', 'Alberta', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Alberta', 'Manitoba', 'Alberta', 'Quebec', 'Saskatchewan', 'Manitoba', 'Ontario', 'Saskatchewan', 'British Columbia', 'Quebec', 'British Columbia', 'Quebec', 'Newfoundland and Labrador', 'Saskatchewan', 'Saskatchewan', 'New Brunswick', 'Nunavut', 'Quebec', 'New Brunswick', 'Quebec', 'Nunavut', 'Quebec', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'British Columbia', 'Quebec', 'British Columbia', 'Quebec', 'Quebec', 'New Brunswick', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Alberta', 'Saskatchewan', 'Quebec', 'Nunavut', 'Ontario', 'Ontario', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'Ontario', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Newfoundland and Labrador', 'Ontario', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Saskatchewan', 'New Brunswick', 'British Columbia', 'New Brunswick', 'Saskatchewan', 'Quebec', 'New Brunswick', 'Quebec', 'Yukon', 'Quebec', 'Quebec', 'Nova Scotia', 'British Columbia', 'Manitoba', 'Saskatchewan', 'Nova Scotia', 'Quebec', 'Manitoba', 'New Brunswick', 'Alberta', 'Saskatchewan', 'Alberta', 'Quebec', 'Quebec', 'Quebec', 'New Brunswick', 'Manitoba', 'Manitoba', 'British Columbia', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'British Columbia', 'Quebec', 'Ontario', 'Saskatchewan', 'British Columbia', 'Nunavut', 'Quebec', 'Alberta', 'Quebec', 'Manitoba', 'Newfoundland and Labrador', 'Quebec', 'New Brunswick', 'New Brunswick', 'Alberta', 'Newfoundland and Labrador', 'Saskatchewan', 'New Brunswick', 'Alberta', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'British Columbia', 'New Brunswick', 'Ontario', 'Quebec', 'Alberta', 'Quebec', 'Saskatchewan', 'Manitoba', 'Quebec', 'Ontario', 'New Brunswick', 'Ontario', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Manitoba', 'Quebec', 'Saskatchewan', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Alberta', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Alberta', 'Ontario', 'Saskatchewan', 'Alberta', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Alberta', 'Nova Scotia', 'British Columbia', 'Newfoundland and Labrador', 'Northwest Territories', 'Quebec', 'Quebec', 'Ontario', 'Ontario', 'Manitoba', 'New Brunswick', 'New Brunswick', 'Quebec', 'Newfoundland and Labrador', 'Nova Scotia', 'Manitoba', 'Newfoundland and Labrador', 'New Brunswick', 'Quebec', 'Alberta', 'Manitoba', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Manitoba', 'Quebec', 'Quebec', 'Ontario', 'New Brunswick', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Quebec', 'Saskatchewan', 'Prince Edward Island', 'New Brunswick', 'Quebec', 'Quebec', 'Newfoundland and Labrador', 'Prince Edward Island', 'Manitoba', 'Quebec', 'British Columbia', 'Saskatchewan', 'Ontario', 'Quebec', 'Ontario', 'Quebec', 'New Brunswick', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'New Brunswick', 'Nova Scotia', 'Manitoba', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Alberta', 'Newfoundland and Labrador', 'Ontario', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Saskatchewan', 'Ontario', 'Saskatchewan', 'Ontario', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Quebec', 'Quebec', 'Saskatchewan', 'New Brunswick', 'Ontario', 'British Columbia', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'British Columbia', 'Alberta', 'Quebec', 'Alberta', 'Ontario', 'Alberta', 'Nunavut', 'Quebec', 'Ontario', 'Saskatchewan', 'Quebec', 'British Columbia', 'Ontario', 'Alberta', 'New Brunswick', 'Quebec', 'Quebec', 'Saskatchewan', 'Quebec', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Newfoundland and Labrador', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Nova Scotia', 'Saskatchewan', 'New Brunswick', 'Saskatchewan', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Alberta', 'New Brunswick', 'Quebec', 'New Brunswick', 'Quebec', 'Quebec', 'Quebec', 'Ontario', 'Quebec', 'Nunavut', 'Quebec', 'Prince Edward Island', 'Saskatchewan', 'Ontario', 'Alberta', 'Quebec', 'Quebec', 'Manitoba', 'New Brunswick', 'Quebec', 'Saskatchewan', 'Quebec', 'Nova Scotia', 'Saskatchewan', 'Quebec', 'Nunavut', 'Alberta', 'Quebec', 'Prince Edward Island', 'Ontario', 'Quebec', 'Manitoba', 'Saskatchewan', 'New Brunswick', 'New Brunswick', 'British Columbia', 'Quebec', 'Alberta', 'Quebec', 'Quebec', 'Saskatchewan', 'Ontario', 'Ontario', 'Quebec', 'British Columbia', 'Ontario', 'Quebec', 'Quebec', 'Quebec', 'Saskatchewan', 'Saskatchewan', 'Alberta', 'Alberta']
 
 def get_nearby_cities(location_name:str, distance_km=45):
@@ -375,8 +376,8 @@ def ResourceViewQuerySet(query_params):
     if (tag_param != None and tag_param != ""):
         # Assumes that tags are separated via commas in a string
         tag_list = tag_param.split(',')
-        
-        queryset = queryset.filter(Q(tags__id__in=tag_list))
+        for tag in tag_list:
+            queryset = queryset.filter(Q(tags__id=tag))
 
     
     return queryset
@@ -1398,7 +1399,7 @@ def ResourceByIntentEntityViewQuerySet_new(query_params):
             if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
                 resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
-            elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+            if (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
                 resource_scores[resource[0]] += 1
                 resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
@@ -1585,7 +1586,12 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     ('first responder', 'Emergency Dispatch Officer'),
     # ('first responder', 'First Responder'),
     ('2slgbtq ', '2SLGBTQ+'),
-    ('crisis_distress_support', 'General Distress')
+    ('crisis_distress_support', 'General Distress'),
+    ('age','Youth'),
+    ('age','Mental Health Supports for Youth'),
+    ('age','Children'),
+    ('age','Adolescent'),
+    ('age','Parent/Caregiver')
     ]
 
     n_tags_params = query_params.getlist('ntags')
@@ -1627,7 +1633,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
         if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
             #found in approved tags
-            for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+            for related_word in filter(lambda x: x[0] == tag_param, word_mapping):
                     should_be_added.add(related_word[1])
         else:
             if tag_param in word_mapping_keys:
@@ -1649,6 +1655,637 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     should_be_romoved.add('for_me')
     should_be_romoved.add('consent_agree')
     should_be_romoved.add('show_resource')
+
+    
+    query_relaxation_tags = []
+    tags_params_mapped = list(map(lambda x: x[0] ,tags_params))
+    
+    # finding classes of the
+    for tag_ in should_be_added:
+        try:
+            tag_category = [tag[1] for tag in all_possible_tags if tag[0] == tag_][0]
+            if not (tag_category in class_tag_mapping):
+                class_tag_mapping[tag_category] = []
+            class_tag_mapping[tag_category].append(tag_)
+        except:
+            print("category not found")
+
+    for tag_ in tags_params_mapped:
+        try:
+            tag_category = [tag[1] for tag in all_possible_tags if tag[0].lower() == tag_][0]
+            if not (tag_category in class_tag_mapping):
+                class_tag_mapping[tag_category] = []
+            class_tag_mapping[tag_category].append(tag_)
+        except:
+            print("category not found")
+    
+    # Location
+    # Resource format
+    # Resource Type for Education/Informational
+    # Resource Type for Programs and Services
+    # Health Issue
+    # Costs
+    # Audience
+    # Language
+
+    """
+    VIP tags are tags that at least on of them
+    should be present in a resource to be a candidate 
+    it is NOW ONLY mental_health tags
+    """
+
+    vip_tags = []
+    filter_out_tags = ['indigenous', 'french', 'youth', 'military veterans', 'healthcare workers', '2slgbtq+', 'first responders']
+    input_lo_format_infot_servt_mh_cost_au_lang = []
+    if 'Location' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Resource format' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource format']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Education/Informational' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Education/Informational']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Resource Type for Programs and Services' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Resource Type for Programs and Services']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Health Issue' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Health Issue']))
+        for item in class_tag_mapping['Health Issue']:
+            vip_tags.append(item)
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+    
+    if 'Costs' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Costs']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Audience' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Audience']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+    if 'Language' in class_tag_mapping:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Language']))
+    else:
+        input_lo_format_infot_servt_mh_cost_au_lang.append(1)
+
+
+    global GAZETTEER_cities
+    canada_cities = GAZETTEER_cities.copy()
+    global GAZETTEER_proviences
+    canada_city_proviences = GAZETTEER_proviences.copy()
+
+    loc_tag_List = None
+    if 'Location' in class_tag_mapping:
+        for loc_tag in class_tag_mapping['Location']:
+            loc_tag = loc_tag.lower()
+            if loc_tag in canada_cities: 
+                index = canada_cities.index(loc_tag)
+                query_relaxation_tags.append(canada_city_proviences[index])
+                tags_params.append((canada_city_proviences[index], 'Location'))
+                loc_tag_List = get_nearby_cities(loc_tag)
+            else:
+                similar_tags = difflib.get_close_matches(loc_tag, canada_cities, n=2, cutoff=0.9)
+                if len(similar_tags) > 0:
+                    index = canada_cities.index(similar_tags[0])
+                    query_relaxation_tags.append(canada_city_proviences[index])
+                    tags_params.append((canada_city_proviences[index], 'Location'))
+                    loc_tag_List = get_nearby_cities(similar_tags[0])
+                else:
+                    similar_tags = difflib.get_close_matches(loc_tag, canada_city_proviences, n=2, cutoff=0.60)
+                    if len(similar_tags) > 0:
+                        query_relaxation_tags.append(similar_tags[0])
+                        tags_params.append((similar_tags[0], 'Location'))
+                        loc_tag_List = get_nearby_cities(similar_tags[0])
+
+        
+    #adding obvious location tags
+    query_relaxation_tags.append('Worldwide')
+    query_relaxation_tags.append('All Canada')
+    query_relaxation_tags.append('General public/all')
+    #adding nearby cities
+    if loc_tag_List:
+        for nearby_city in loc_tag_List:
+            query_relaxation_tags.append(nearby_city)
+    # queryset = queryset.exclude(tags__name__in=canada_cities)
+    
+
+    tags_params_mapped = set(tags_params_mapped)
+    tags_params_mapped.update(should_be_added)
+    tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
+
+    if vip_tags:
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
+    else:
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+
+    #handle filtering
+    for item in tags_params_mapped:
+            if item.lower() in filter_out_tags: 
+                filter_out_tags.remove(item.lower())
+    resQueryset = resQueryset.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name__in=["Non-Exclusive"]) )
+    resQuerysetRelaxed = resQuerysetRelaxed.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name__in=["Non-Exclusive"]))
+
+    #filter by location, so we guarantee we have something related (if it exists)
+    if 'Location' in class_tag_mapping:
+        nquery = resQueryset.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+
+        #only actually update the queryset if we have matches
+        if len(nquery)!=0:
+            #print(class_tag_mapping['Location'])
+            resQueryset = nquery
+
+        #only hard location filter if we aren't relaxing the query
+        #nquery = resQuerysetRelaxed.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+
+        #only actually update the queryset if we have matches
+        #if len(nquery)!=0:
+            #print(class_tag_mapping['Location'])
+            #resQuerysetRelaxed = nquery
+
+
+    #retrieve tag ids from tag names
+    tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
+    #tags_id_list = list(map(lambda x: x['id'], tags))
+    #tags_name_list = list(map(lambda x: x['name'], tags))
+    #tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+    query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
+    #query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+    #query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
+    #query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
+
+
+    def scoring(querySet, tags_params_mapped, query_relaxation_tags, QR=1):
+
+        if QR: 
+            #do query relaxation
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
+            tags_id_list = list(map(lambda x: x['id'], tags))
+            tags_name_list = list(map(lambda x: x['name'], tags))
+            tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+            #query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
+            query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+            query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
+            query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
+
+        else:
+            #no query relaxation
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)).values('id','name','tag_category').all()
+            tags_id_list = list(map(lambda x: x['id'], tags))
+            tags_name_list = list(map(lambda x: x['name'], tags))
+            tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+    
+        # input_lo_format_infot_servt_mh_cost_au_lang
+        # scoring and ordering by scores
+        resource_scores = {}
+        resource_score_reasons = {}
+        for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], querySet)):
+            resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
+            resource_score_reasons[resource[0]] = ""
+
+            index = None
+            original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
+            original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
+            original_tag_names = list(map(lambda x: str(x.name), resource[2]))
+
+            if resource[1] is not None and resource[1]!='':
+                index = json.loads(resource[1])
+            
+            for i, tag in enumerate(tags_id_list):
+                t_cat = tags_cat_list[i]
+
+                tag = str(tag)
+                if resource[1] is not None and resource[1]!='':
+                    if tag in index:
+                        if t_cat=="Location":
+                            resource_scores[resource[0]][0] += index[tag]
+                            resource_score_reasons[resource[0]] += "& loc score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource format":
+                            resource_scores[resource[0]][1] += index[tag]
+                            resource_score_reasons[resource[0]] += "& format score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource Type for Education/Informational":
+                            resource_scores[resource[0]][2] += index[tag]
+                            resource_score_reasons[resource[0]] += "& infoType score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource Type for Programs and Services":
+                            resource_scores[resource[0]][3] += index[tag]
+                            resource_score_reasons[resource[0]] += "& servType score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Health Issue":
+                            resource_scores[resource[0]][4] += index[tag]
+                            resource_score_reasons[resource[0]] += "& MH score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Costs":
+                            resource_scores[resource[0]][5] += index[tag]
+                            resource_score_reasons[resource[0]] += "& Costs score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Audience":
+                            resource_scores[resource[0]][6] += index[tag]
+                            resource_score_reasons[resource[0]] += "& Audi score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Language":
+                            resource_scores[resource[0]][7] += index[tag]
+                            resource_score_reasons[resource[0]] += "& lang score from TF-IDF for "+tags_name_list[i]
+
+                if tag in original_tag_ids:
+                    ii = original_tag_ids.index(tag)
+                    sc = 10
+                    if original_tag_categories[ii] == 'Location':
+                        resource_scores[resource[0]][0] += sc 
+                        resource_score_reasons[resource[0]] += "& loc score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource format':
+                        resource_scores[resource[0]][1] += sc 
+                        resource_score_reasons[resource[0]] += "& format score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
+                        resource_scores[resource[0]][2] += sc 
+                        resource_score_reasons[resource[0]] += "& infoType score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
+                        resource_scores[resource[0]][3] += sc 
+                        resource_score_reasons[resource[0]] += "& ServType score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Health Issue':
+                        resource_scores[resource[0]][4] += sc 
+                        resource_score_reasons[resource[0]] += "& MH score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Costs':
+                        resource_scores[resource[0]][5] += sc 
+                        resource_score_reasons[resource[0]] += "& costs score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Audience':
+                        resource_scores[resource[0]][6] += sc 
+                        resource_score_reasons[resource[0]] += "& Audi score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Language':
+                        resource_scores[resource[0]][7] += sc 
+                        resource_score_reasons[resource[0]] += "& lang score from tags for "+original_tag_names[ii]
+                elif QR and tag in query_relaxation_tags_id:
+                    ii = query_relaxation_tags_id.index(tag)
+                    sc = 1
+                    if query_relaxation_tags_categories[ii] == 'Location':
+                        resource_scores[resource[0]][0] += sc 
+                        resource_score_reasons[resource[0]] += "& loc score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource format':
+                        resource_scores[resource[0]][1] += sc 
+                        resource_score_reasons[resource[0]] += "& format score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
+                        resource_scores[resource[0]][2] += sc 
+                        resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
+                        resource_scores[resource[0]][3] += sc 
+                        resource_score_reasons[resource[0]] += "& servType score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Health Issue':
+                        resource_scores[resource[0]][4] += sc 
+                        resource_score_reasons[resource[0]] += "& MH score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Costs':
+                        resource_scores[resource[0]][5] += sc 
+                        resource_score_reasons[resource[0]] += "& Costs score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Audience':
+                        resource_scores[resource[0]][6] += sc 
+                        resource_score_reasons[resource[0]] += "& Audi score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Language':
+                        resource_scores[resource[0]][7] += sc 
+                        resource_score_reasons[resource[0]] += "& Lang score from tags for "+query_relaxation_tags_names[ii]
+
+
+            resource_scores[resource[0]] = torch.dot(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()/1000
+
+            # print(resource_scores[resource[0]])
+            #tags_params_mapped = string value of tags
+            for tag in tags_params_mapped:
+                if len(tag)<2:
+                    continue
+
+                if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
+                
+                if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
+                
+                
+                if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
+                    resource_scores[resource[0]] += 1
+                    resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
+                if (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+                    resource_scores[resource[0]] += 1
+                    resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
+
+                if (tag == 'Definition' or tag == 'definition') and (resource[5]):
+                    resource_scores[resource[0]] += 3
+                    resource_score_reasons[resource[0]] += "& overal score, resource has a definition. tag:"+tag
+
+                if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, resource has shelter in its title. tag:"+tag
+
+                if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, resource has counsel in its title. tag: "+tag
+
+                sum_tag = ""
+                for w in tag.replace("-", " ").split(" "):
+                    if len(w)>0: sum_tag += w[0]
+                if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& acronym in title of resource found. tag:"+tag
+
+                if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
+                ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
+                ('WHO' in resource[3]) or ('CDC' in resource[3]):
+                    resource_scores[resource[0]] += 0.0001
+                    resource_score_reasons[resource[0]] += "& resource organization is well known"
+
+        return resource_scores
+    
+        #
+        
+    scores = scoring(resQueryset, tags_params_mapped, query_relaxation_tags, 0)
+    scores_relaxed = scoring(resQuerysetRelaxed, tags_params_mapped, query_relaxation_tags, 1)
+
+    #No Query Relaxation
+    topitems = heapq.nlargest(15, scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    topitemsasdict = dict(topitems)
+    newQuerySet = Resource.objects.none()
+    if len(topitems) > 1:
+        resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
+        thisSet = []
+        #make result distinct
+        for query in resQueryset:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        newQuerySet = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySet:
+            qs.chatbot_api_rcmnd_count += 1
+            qs.save()
+            
+            if qs.id not in topitemsasdict.keys():
+                qs.score = 0
+            else:
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
+                number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
+
+                qs.index = number_of_filters
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
+        #return newQuerySet_mapped
+    #return resQueryset_mapped
+    #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    
+    #Do Query Relaxation
+    newQuerySetRelaxed = Resource.objects.none()
+    topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
+    topitemsasdict = dict(topitems)
+    if len(topitems) > 1:
+        resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())
+        if len(newQuerySet) > 0:
+            resQuerysetRelaxed = resQuerysetRelaxed.exclude(id__in=newQuerySet.values('id'))
+        thisSet = []
+        #make result distinct
+        for query in resQuerysetRelaxed:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        newQuerySetRelaxed = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySetRelaxed:
+            qs.chatbot_api_rcmnd_count += 1
+            qs.save()
+            
+            if qs.id not in topitemsasdict.keys():
+                qs.score = 0
+            else:
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
+                number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
+
+                qs.index = number_of_filters
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
+        #return newQuerySet
+    #return resQueryset_mapped, resQueryset
+
+    message_resource_list = []
+
+    if len(newQuerySet) > 1: #if we have results at all
+        message_resource_list.append({'message': "Here are the top results that closely match what you are looking for.", 'resources':ResourceSerializer(newQuerySet,many=True).data})
+        if len(newQuerySet)<5 and len(newQuerySetRelaxed)>1:
+            #if we don't have a lot, append some extras
+            message_resource_list.append({'message': "I also have some less specific results that might still be relevent.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    elif len(newQuerySetRelaxed)>1: #if we have no main matches, we need to relax in general
+        message_resource_list.append({'message': "Unfortunatly I couldn't find any direct matches. I have some related resources that might help you though.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    else: #no matches at all mean we return an empty set; the chatbot should handle this case
+        message_resource_list.append({'message': "", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
+    #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
+
+    return Response(message_resource_list)
+
+def ResourceByIntentEntityViewQuerySet_Filter(query_params):
+    resQueryset = Resource.objects.filter(visible=1).filter(
+        (Q(review_status="approved") & Q(review_status_2="approved")) | (Q(review_status_2_2="approved") & Q(review_status_1_1="approved")) | (Q(review_status="approved") & Q(review_status_2_2="approved")) | (Q(review_status="approved") & Q(review_status_1_1="approved")) | (Q(review_status_2="approved") & Q(review_status_2_2="approved")) | (Q(review_status_2="approved") & Q(review_status_1_1="approved")) | Q(review_status_3="approved"))
+    
+    word_mapping = [('family_member', 'Caregiver/Parent')
+    ,('family_member', 'Children')
+    ,('employer_resources', 'Employer/Administrator')
+    ,('family_member', 'Family member (other)')
+    ,('family_member', 'Family member of physician or medical learner')
+    ,('female_resources', 'Female')
+    ,('lgbtq2s_resources', 'Gender fluid, non-binary, and/or two spirit')
+    ,('lgbtq2s_resources', 'LGBTQ2S+')
+    ,('male_resources', 'Male')
+    ,('veteran', 'Military Veterans')
+    ,('new_canadian', 'New Canadian')
+    ,('nurse', 'Nurse')
+    ,('employment', 'Social worker')
+    ,('employment', 'Student (postsecondary)')
+    ,('family_member', 'Family Member of Veteran')
+    ,('indigenous_resources', 'Indigenous')
+    ,('employment', 'fire fighter')
+    ,('over 18', 'Youth')
+    ,('lgbtq2s_resources', 'Transgender')
+    ,('lgbtq2s_resources', 'Non-Binary')
+    ,('paid_resources', 'Fee-for-service available to everyone')
+    ,('free_resources', 'Free')
+    ,('free_resources', 'Free for members')
+    ,('free_resources', 'N/A (ex. websites, podcasts)')
+    ,('paid_resources', 'Paid')
+    ,('free_resources', 'Requires paid membership')
+    ,('free_resources', 'Requires provincial health card')
+    ,('paid_and_free', 'Unknown')
+    ,('paid_and_free', 'Both free and paid')
+    ,('book_and_pamphlet', 'Brochure')
+    ,('causes', 'cause')
+    ,('group_class', 'Classes/course (in person)')
+    ,('virtual', 'Mobile App')
+    ,('online_courses_and_webinar', 'Webinar/Online course (go at your own pace)')
+    ,('online_courses_and_webinar', 'Webinar/Online course (scheduled)')
+    ,('screening', 'Screening tool')
+    ,('information', 'Statistic')
+    ,('information', 'information')
+    ,('symptom_List', 'Symptoms')
+    ,('treatment_Info', 'Treatments')
+    ,('information', 'Informational Website')
+    ,('coping_skills', 'Informational Website')
+    ,('self_help', 'Informational Website')
+    ,('self_help', 'Worksheet')
+    ,('online_courses_and_webinar', 'Online course (go at your own pace)')
+    ,('online_courses_and_webinar', 'Online course (scheduled)')
+    ,('self_help', 'Self-Help Books')
+    ,('addiction_substance_use_programs', 'Addiction and recovery')
+    ,('prevalence', 'Prevalence')
+    ,('virtual', 'Online Group Support')
+    ,('peer_support', 'Community Support')
+    ,('suicidal_other', 'Crisis Support/Distress Counselling')
+    ,('suicidal_self', 'Crisis Support/Distress Counselling')
+    ,('peer_support', 'Peer Support')
+    ,('help_from_another_person', 'Online chat')
+    ,('specialist', 'Medical services')
+    ,('housing', 'Housing - Emergency')
+    ,('group_class', 'Group therapy')
+    ,('peer_support', 'In-person Group Support Meeting')
+    ,('in_person', 'In-person Group Support Meeting')
+    ,('help_from_another_person', 'Phone line/call centre')
+    ,('psychiatrist', 'Psychiatrist')
+    ,('psychologist', 'Psychologist')
+    ,('addiction_substance_use_programs', 'Rehabilitation')
+    ,('specialist', 'Therapist/Counsellor/Psychotherapist')
+    ,('counsellor_psychotherapist', 'Therapist/Counsellor/Psychotherapist')
+    ,('healer', 'Traditional Indigenous Healer')
+    # ,('doctor', 'Doctor')
+    ,('doctor', 'Physician')
+    ,('doctor', 'Resident doctor')
+    ,('doctor', 'Healthcare Workers')
+    ,('fire fighter', 'First responder')
+    ,('fire fighter', 'Social worker')
+    ,('community support', 'Group therapy')
+    ,('community support', 'In-person Group Support Meeting')
+    ,('community support', 'Peer Support')	
+    ,('peer_support', 'Group therapy')
+    ,('domestic_abuse_support', 'Violence intervention')
+    ,('domestic_abuse_support', 'Domestic Violence')
+    ,('domestic_abuse_support', 'Abuse')
+    ,('generalized anxiety disorder', 'Anxiety')
+    ,('generalized anxiety disorder', 'Generalized Anxiety Disorder')
+    ,('generalized anxiety disorder', 'General public/all')
+    ,('generalized anxiety disorder', 'Stress')
+    ,('health professional','Medical Student')
+    ,('health professional','Resident doctor')
+    ,('health professional','Service Providers')
+    ,('health professional','Social worker')
+    ,('alberta','Alberta')
+    ,('schizophrenia','Schizophrenia and psychosis')
+    ,('covid-19','COVID-19 (context specific - ensure any other concerns are also noted)')
+    ,('covid','COVID-19 (context specific - ensure any other concerns are also noted)')
+    ,('eating','Eating Disorders')
+    ,('distress','General Distress')
+    ,('hiv','Human Immunodeficiency Virus (HIV)')
+    ,('addiction','Addictions (including Drugs, Alcohol, and Gambling)')
+    ,('addiction','Behavioural Addiction')
+    ,('addiction','Substance use')
+    ,('resilience','Resiliency')
+    ,('psychologist','Therapist/Counsellor/Psychotherapist')
+    ,('psychiatrist','Therapist/Counsellor/Psychotherapist')
+    ,('coping_skill','Self-Help Books')
+    ,('psychedelics','psilocybin')
+    ,('crisis_distress_support','Crisis Support/Distress Counselling')
+    ,('book_and_pamplet','Book')
+    ,('book_and_pamplet','Booklet'),
+    ('ptsd', 'Post-Traumatic Stress Disorder (PTSD), Trauma and Abuse'),
+    ('military', 'Military Veterans'),
+    ('military', 'Family Member of Veteran'),
+    ('first responder', 'Fire Fighter'),
+    ('first responder', 'Paramedic'),
+    ('first responder', 'Police'),
+    ('first responder', 'RCMP'),
+    ('first responder', 'Emergency Dispatch Officer'),
+    # ('first responder', 'First Responder'),
+    ('2slgbtq ', '2SLGBTQ+'),
+    ('crisis_distress_support', 'General Distress')
+    ]
+
+    n_tags_params = query_params.getlist('ntags')
+    n_tags_params = list(map(lambda x: x.lower() ,n_tags_params))
+    
+    tags_params = query_params.getlist('tags')
+    tags_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,tags_params))
+
+
+    filter_params = query_params.getlist('filter', [])
+    filter_params = list(map(lambda x: (x[5:]).lower() if 'need_' in x else x.lower() ,filter_params))
+
+    tags_params_temp = []    
+    for tag in tags_params: 
+        if "(" in tag:
+            x = tag 
+            tags_params_temp.append((x[:x.index("(")], x[x.index("(")+1:-1])) 
+        else: 
+            tags_params_temp.append((tag,-1)) 
+    tags_params = tags_params_temp
+
+
+    all_possible_tags = Tag.objects.filter(approved=1).all()
+    
+    all_possible_tags = list(filter(lambda x: x.name.lower() not in n_tags_params , all_possible_tags))
+    all_possible_tags = list(map(lambda x: (x.name, x.tag_category), all_possible_tags))
+    all_possible_tag_names = list(map(lambda x: x[0], all_possible_tags))
+    all_possible_tag_names_lower_cased = list(map(lambda x: x[0].lower(), all_possible_tags))
+
+    should_be_removed = set()
+    should_be_added = set()
+    filter_to_remove = set()
+    filter_to_add = set()
+    #query matching with simillar words
+    class_tag_mapping = {}
+
+
+    word_mapping_keys = list(map(lambda x: x[0] ,word_mapping))
+
+    #map intents, entities, and filters to matching tags
+    for tag_param in tags_params:
+        tag_param = tag_param[0]
+
+        if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
+            #found in approved tags
+            for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                    should_be_added.add(related_word[1])
+            if tag_param in filter_params:
+                    for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                        filter_to_add.add(related_word[1])
+        else:
+            if tag_param in word_mapping_keys:
+                #found in word mapping
+                should_be_removed.add(tag_param)
+                for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                    should_be_added.add(related_word[1])
+                if tag_param in filter_params:
+                    filter_to_remove.add(tag_param)
+                    for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+                        filter_to_add.add(related_word[1])
+            else:
+                similar_tags = difflib.get_close_matches(tag_param, all_possible_tag_names, n=2, cutoff=0.7)
+                if len(similar_tags) > 0:
+                    should_be_removed.add(tag_param)
+                    should_be_added.add(similar_tags[0])
+                    if tag_param in filter_params:
+                        filter_to_remove.add(tag_param)
+                        filter_to_add.add(similar_tags[0])
+                    #found using distance
+
+
+
+    # remove some unusfull intents
+    should_be_removed.add('where_live')
+    should_be_removed.add('for_me')
+    should_be_removed.add('consent_agree')
+    should_be_removed.add('show_resource')
 
     
     query_relaxation_tags = []
@@ -1775,202 +2412,233 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
     tags_params_mapped = set(tags_params_mapped)
     tags_params_mapped.update(should_be_added)
-    tags_params_mapped = tags_params_mapped.difference(should_be_romoved)
+    tags_params_mapped = tags_params_mapped.difference(should_be_removed)
 
     if vip_tags:
-        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=vip_tags) & (Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags)))
     else:
-        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+        resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped))
+        resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
+
 
     #filter by location, so we guarantee we have something related (if it exists)
     if 'Location' in class_tag_mapping:
-        nquery = resQueryset.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+        nquery = resQueryset.filter(tags__name__in=class_tag_mapping['Location'])
 
         #only actually update the queryset if we have matches
-        if len(nquery)!=0:
-            print(class_tag_mapping['Location'])
         resQueryset = nquery
+
+        #only hard location filter if we aren't relaxing the query
+        #nquery = resQuerysetRelaxed.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
+
+        #only actually update the queryset if we have matches
+        #if len(nquery)!=0:
+            #print(class_tag_mapping['Location'])
+            #resQuerysetRelaxed = nquery
+
+    #attempt filter by each tag, report ones that fail
+    tag_filters = set(filter_params)
+    tag_filters.update(filter_to_add)
+    tag_filters = tag_filters.difference(filter_to_remove)
+    print(f"Filters: {tag_filters}")
+    for fvalue in tag_filters:
+        resQueryset = resQueryset.filter(tags__name=fvalue)
 
     #retrieve tag ids from tag names
     tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
-    tags_id_list = list(map(lambda x: x['id'], tags))
-    tags_name_list = list(map(lambda x: x['name'], tags))
-    tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
     query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
-    query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
-    query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
-    query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
+
+
+    def scoring(querySet, tags_params_mapped, query_relaxation_tags, QR=1):
+
+        if QR: 
+            #do query relaxation
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped) | Q(name__in=query_relaxation_tags)).values('id','name','tag_category').all()
+            tags_id_list = list(map(lambda x: x['id'], tags))
+            tags_name_list = list(map(lambda x: x['name'], tags))
+            tags_cat_list = list(map(lambda x: x['tag_category'], tags))
+
+            #query_relaxation_tags = Tag.objects.filter(name__in=query_relaxation_tags).values('id','tag_category','name').all()
+            query_relaxation_tags_id = list(map(lambda x: x['id'], query_relaxation_tags))
+            query_relaxation_tags_categories = list(map(lambda x: x['tag_category'], query_relaxation_tags))
+            query_relaxation_tags_names = list(map(lambda x: x['name'], query_relaxation_tags))
+
+        else:
+            #no query relaxation
+            #tags = Tag.objects.filter(approved=1).filter(Q(name__in=tags_params_mapped)).values('id','name','tag_category').all()
+            tags_id_list = list(map(lambda x: x['id'], tags))
+            tags_name_list = list(map(lambda x: x['name'], tags))
+            tags_cat_list = list(map(lambda x: x['tag_category'], tags))
 
     
-    
-    
-    # input_lo_format_infot_servt_mh_cost_au_lang
-    # scoring and ordering by scores
-    resource_scores = {}
-    resource_score_reasons = {}
-    for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], resQueryset)):
-        resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
-        resource_score_reasons[resource[0]] = ""
+        # input_lo_format_infot_servt_mh_cost_au_lang
+        # scoring and ordering by scores
+        resource_scores = {}
+        resource_score_reasons = {}
+        for resource in list(map(lambda x: [x.id,x.index,list(x.tags.all()), x.title, x.resource_type, x.definition], querySet)):
+            resource_scores[resource[0]] = [0,0,0,0,0,0,0,0]
+            resource_score_reasons[resource[0]] = ""
 
-        index = None
-        original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
-        original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
-        original_tag_names = list(map(lambda x: str(x.name), resource[2]))
+            index = None
+            original_tag_ids = list(map(lambda x: str(x.id), resource[2]))
+            original_tag_categories = list(map(lambda x: str(x.tag_category), resource[2]))
+            original_tag_names = list(map(lambda x: str(x.name), resource[2]))
 
-        if resource[1] is not None and resource[1]!='':
-            index = json.loads(resource[1])
-        
-        for i, tag in enumerate(tags_id_list):
-            t_cat = tags_cat_list[i]
-
-            tag = str(tag)
             if resource[1] is not None and resource[1]!='':
-                if tag in index:
-                    if t_cat=="Location":
-                        resource_scores[resource[0]][0] += index[tag]
-                        resource_score_reasons[resource[0]] += "& loc score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Resource format":
-                        resource_scores[resource[0]][1] += index[tag]
-                        resource_score_reasons[resource[0]] += "& format score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Resource Type for Education/Informational":
-                        resource_scores[resource[0]][2] += index[tag]
-                        resource_score_reasons[resource[0]] += "& infoType score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Resource Type for Programs and Services":
-                        resource_scores[resource[0]][3] += index[tag]
-                        resource_score_reasons[resource[0]] += "& servType score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Health Issue":
-                        resource_scores[resource[0]][4] += index[tag]
-                        resource_score_reasons[resource[0]] += "& MH score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Costs":
-                        resource_scores[resource[0]][5] += index[tag]
-                        resource_score_reasons[resource[0]] += "& Costs score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Audience":
-                        resource_scores[resource[0]][6] += index[tag]
-                        resource_score_reasons[resource[0]] += "& Audi score from TF-IDF for "+tags_name_list[i]
-                    elif t_cat=="Language":
-                        resource_scores[resource[0]][7] += index[tag]
-                        resource_score_reasons[resource[0]] += "& lang score from TF-IDF for "+tags_name_list[i]
+                index = json.loads(resource[1])
+            
+            for i, tag in enumerate(tags_id_list):
+                t_cat = tags_cat_list[i]
 
-            if tag in original_tag_ids:
-                ii = original_tag_ids.index(tag)
-                sc = 10
-                if original_tag_categories[ii] == 'Location':
-                    resource_scores[resource[0]][0] += sc 
-                    resource_score_reasons[resource[0]] += "& loc score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Resource format':
-                    resource_scores[resource[0]][1] += sc 
-                    resource_score_reasons[resource[0]] += "& format score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
-                    resource_scores[resource[0]][2] += sc 
-                    resource_score_reasons[resource[0]] += "& infoType score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
-                    resource_scores[resource[0]][3] += sc 
-                    resource_score_reasons[resource[0]] += "& ServType score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Health Issue':
-                    resource_scores[resource[0]][4] += sc 
-                    resource_score_reasons[resource[0]] += "& MH score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Costs':
-                    resource_scores[resource[0]][5] += sc 
-                    resource_score_reasons[resource[0]] += "& costs score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Audience':
-                    resource_scores[resource[0]][6] += sc 
-                    resource_score_reasons[resource[0]] += "& Audi score from tags for "+original_tag_names[ii]
-                elif original_tag_categories[ii] == 'Language':
-                    resource_scores[resource[0]][7] += sc 
-                    resource_score_reasons[resource[0]] += "& lang score from tags for "+original_tag_names[ii]
-            elif tag in query_relaxation_tags_id:
-                ii = query_relaxation_tags_id.index(tag)
-                sc = 1
-                if query_relaxation_tags_categories[ii] == 'Location':
-                    resource_scores[resource[0]][0] += sc 
-                    resource_score_reasons[resource[0]] += "& loc score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Resource format':
-                    resource_scores[resource[0]][1] += sc 
-                    resource_score_reasons[resource[0]] += "& format score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
-                    resource_scores[resource[0]][2] += sc 
-                    resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
-                    resource_scores[resource[0]][3] += sc 
-                    resource_score_reasons[resource[0]] += "& servType score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Health Issue':
-                    resource_scores[resource[0]][4] += sc 
-                    resource_score_reasons[resource[0]] += "& MH score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Costs':
-                    resource_scores[resource[0]][5] += sc 
-                    resource_score_reasons[resource[0]] += "& Costs score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Audience':
-                    resource_scores[resource[0]][6] += sc 
-                    resource_score_reasons[resource[0]] += "& Audi score from tags for "+query_relaxation_tags_names[ii]
-                elif query_relaxation_tags_categories[ii] == 'Language':
-                    resource_scores[resource[0]][7] += sc 
-                    resource_score_reasons[resource[0]] += "& Lang score from tags for "+query_relaxation_tags_names[ii]
+                tag = str(tag)
+                if resource[1] is not None and resource[1]!='':
+                    if tag in index:
+                        if t_cat=="Location":
+                            resource_scores[resource[0]][0] += index[tag]
+                            resource_score_reasons[resource[0]] += "& loc score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource format":
+                            resource_scores[resource[0]][1] += index[tag]
+                            resource_score_reasons[resource[0]] += "& format score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource Type for Education/Informational":
+                            resource_scores[resource[0]][2] += index[tag]
+                            resource_score_reasons[resource[0]] += "& infoType score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Resource Type for Programs and Services":
+                            resource_scores[resource[0]][3] += index[tag]
+                            resource_score_reasons[resource[0]] += "& servType score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Health Issue":
+                            resource_scores[resource[0]][4] += index[tag]
+                            resource_score_reasons[resource[0]] += "& MH score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Costs":
+                            resource_scores[resource[0]][5] += index[tag]
+                            resource_score_reasons[resource[0]] += "& Costs score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Audience":
+                            resource_scores[resource[0]][6] += index[tag]
+                            resource_score_reasons[resource[0]] += "& Audi score from TF-IDF for "+tags_name_list[i]
+                        elif t_cat=="Language":
+                            resource_scores[resource[0]][7] += index[tag]
+                            resource_score_reasons[resource[0]] += "& lang score from TF-IDF for "+tags_name_list[i]
 
+                if tag in original_tag_ids:
+                    ii = original_tag_ids.index(tag)
+                    sc = 10
+                    if original_tag_categories[ii] == 'Location':
+                        resource_scores[resource[0]][0] += sc 
+                        resource_score_reasons[resource[0]] += "& loc score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource format':
+                        resource_scores[resource[0]][1] += sc 
+                        resource_score_reasons[resource[0]] += "& format score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource Type for Education/Informational':
+                        resource_scores[resource[0]][2] += sc 
+                        resource_score_reasons[resource[0]] += "& infoType score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Resource Type for Programs and Services':
+                        resource_scores[resource[0]][3] += sc 
+                        resource_score_reasons[resource[0]] += "& ServType score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Health Issue':
+                        resource_scores[resource[0]][4] += sc 
+                        resource_score_reasons[resource[0]] += "& MH score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Costs':
+                        resource_scores[resource[0]][5] += sc 
+                        resource_score_reasons[resource[0]] += "& costs score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Audience':
+                        resource_scores[resource[0]][6] += sc 
+                        resource_score_reasons[resource[0]] += "& Audi score from tags for "+original_tag_names[ii]
+                    elif original_tag_categories[ii] == 'Language':
+                        resource_scores[resource[0]][7] += sc 
+                        resource_score_reasons[resource[0]] += "& lang score from tags for "+original_tag_names[ii]
+                elif QR and tag in query_relaxation_tags_id:
+                    ii = query_relaxation_tags_id.index(tag)
+                    sc = 1
+                    if query_relaxation_tags_categories[ii] == 'Location':
+                        resource_scores[resource[0]][0] += sc 
+                        resource_score_reasons[resource[0]] += "& loc score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource format':
+                        resource_scores[resource[0]][1] += sc 
+                        resource_score_reasons[resource[0]] += "& format score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource Type for Education/Informational':
+                        resource_scores[resource[0]][2] += sc 
+                        resource_score_reasons[resource[0]] += "+ infoType score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Resource Type for Programs and Services':
+                        resource_scores[resource[0]][3] += sc 
+                        resource_score_reasons[resource[0]] += "& servType score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Health Issue':
+                        resource_scores[resource[0]][4] += sc 
+                        resource_score_reasons[resource[0]] += "& MH score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Costs':
+                        resource_scores[resource[0]][5] += sc 
+                        resource_score_reasons[resource[0]] += "& Costs score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Audience':
+                        resource_scores[resource[0]][6] += sc 
+                        resource_score_reasons[resource[0]] += "& Audi score from tags for "+query_relaxation_tags_names[ii]
+                    elif query_relaxation_tags_categories[ii] == 'Language':
+                        resource_scores[resource[0]][7] += sc 
+                        resource_score_reasons[resource[0]] += "& Lang score from tags for "+query_relaxation_tags_names[ii]
+
+
+            resource_scores[resource[0]] = torch.dot(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()/1000
+
+            # print(resource_scores[resource[0]])
+            #tags_params_mapped = string value of tags
+            for tag in tags_params_mapped:
+                if len(tag)<2:
+                    continue
+
+                if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
+                
+                if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
                 
                 
-                
+                if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
+                    resource_scores[resource[0]] += 1
+                    resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
+                if (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
+                    resource_scores[resource[0]] += 1
+                    resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
 
-        resource_scores[resource[0]] = torch.dot(torch.FloatTensor(input_lo_format_infot_servt_mh_cost_au_lang), torch.FloatTensor(resource_scores[resource[0]])).numpy()/1000
+                if (tag == 'Definition' or tag == 'definition') and (resource[5]):
+                    resource_scores[resource[0]] += 3
+                    resource_score_reasons[resource[0]] += "& overal score, resource has a definition. tag:"+tag
 
-        # print(resource_scores[resource[0]])
+                if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, resource has shelter in its title. tag:"+tag
 
-        #tags_params_mapped = string value of tags
-        for tag in tags_params_mapped:
-            if len(tag)<2:
-                continue
+                if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& overal score, resource has counsel in its title. tag: "+tag
 
-            if len(tag)<10 and tag[:-2].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
-            
-            if len(tag)>=10 and tag[:-4].lower() in resource[3].lower():
-                resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "& overal score, tag in title. tag:"+tag
-            
-            
-            if (tag == 'Informational Website' or tag == 'informational website') and (resource[4] == 'RS' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 1
-                resource_score_reasons[resource[0]] += "& overal score, resource is informational or both. tag:"+tag
-            elif (tag == 'program_services') and (resource[4] == 'SR' or resource[4] == 'BT'):
-                resource_scores[resource[0]] += 1
-                resource_score_reasons[resource[0]] += "& overal score, resource is prog_serv or both. tag:"+tag
+                sum_tag = ""
+                for w in tag.replace("-", " ").split(" "):
+                    if len(w)>0: sum_tag += w[0]
+                if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
+                    resource_scores[resource[0]] += 0.05
+                    resource_score_reasons[resource[0]] += "& acronym in title of resource found. tag:"+tag
 
-            if (tag == 'Definition' or tag == 'definition') and (resource[5]):
-                resource_scores[resource[0]] += 3
-                resource_score_reasons[resource[0]] += "& overal score, resource has a definition. tag:"+tag
+                if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
+                ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
+                ('WHO' in resource[3]) or ('CDC' in resource[3]):
+                    resource_scores[resource[0]] += 0.0001
+                    resource_score_reasons[resource[0]] += "& resource organization is well known"
 
-            if (tag == 'Domestic Violence' or tag == 'domestic violence') and ("sheltersafe" in resource[3].lower()):
-                resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "& overal score, resource has shelter in its title. tag:"+tag
-
-            if (tag == 'Therapist/Counsellor/Psychotherapist') and ("counsel" in resource[3].lower()):
-                resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "& overal score, resource has counsel in its title. tag: "+tag
-
-            sum_tag = ""
-            for w in tag.replace("-", " ").split(" "):
-                if len(w)>0: sum_tag += w[0]
-            if (len(sum_tag) > 2) and (sum_tag.upper() != "") and (sum_tag.upper() in resource[3]):
-                resource_scores[resource[0]] += 0.05
-                resource_score_reasons[resource[0]] += "& acronym in title of resource found. tag:"+tag
-
-            if ('MDSC' in resource[3]) or ('CAMH' in resource[3]) or\
-            ('CMHA' in resource[3]) or ('SAMHSA' in resource[3]) or\
-            ('WHO' in resource[3]) or ('CDC' in resource[3]):
-                resource_scores[resource[0]] += 0.0001
-                resource_score_reasons[resource[0]] += "& resource organization is well known"
+        return resource_scores
+    
+        #
         
+    scores = scoring(resQueryset, tags_params_mapped, query_relaxation_tags, 0)
+    scores_relaxed = scoring(resQuerysetRelaxed, tags_params_mapped, query_relaxation_tags, 1)
 
-    topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #No Query Relaxation
+    topitems = heapq.nlargest(15, scores.items(), key=itemgetter(1))
     #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
-
     topitemsasdict = dict(topitems)
-
+    newQuerySet = Resource.objects.none()
     if len(topitems) > 1:
         resQueryset = resQueryset.filter(id__in=topitemsasdict.keys())
-
-        
         thisSet = []
         #make result distinct
         for query in resQueryset:
@@ -1991,12 +2659,55 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
                 qs.index = number_of_filters
                 # gives more score to resources that that have most of our requested tags.
                 qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
+        #return newQuerySet_mapped
+    #return resQueryset_mapped
+    #topitems = heapq.nlargest(15, resource_scores.items(), key=itemgetter(1))
+    #topitems = sorted(resource_scores.items(), key=lambda x:x[1], reverse=True)
+    
+    #Do Query Relaxation
+    topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
+    topitemsasdict = dict(topitems)
+    newQuerySetRelaxed = Resource.objects.none()
+    if len(topitems) > 1:
+        resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())   
+        thisSet = []
+        #make result distinct
+        for query in resQuerysetRelaxed:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        newQuerySetRelaxed = Resource.objects.filter(id__in=thisSet)
+        for qs in newQuerySetRelaxed:
+            qs.chatbot_api_rcmnd_count += 1
+            qs.save()
+            
+            if qs.id not in topitemsasdict.keys():
+                qs.score = 0
+            else:
+                tagsQuerySet = list(map(lambda x: x.name ,Tag.objects.filter(resource__in=[qs.id])))
+                tagsQuerySet_lower = list(map(lambda x: x.lower(), tagsQuerySet))
+                number_of_filters = [tqs for tqs in tags_params_mapped if (tqs in tagsQuerySet) or (tqs+"\xa0" in tagsQuerySet) or (tqs in tagsQuerySet_lower)]
 
+                qs.index = number_of_filters
+                # gives more score to resources that that have most of our requested tags.
+                qs.score = topitemsasdict[qs.id] + len(number_of_filters) - (len(tagsQuerySet_lower)*0.01)
+        #return newQuerySet
+    #return resQueryset_mapped, resQueryset
 
-        return newQuerySet
+    message_resource_list = []
 
+    if len(newQuerySet) > 1: #if we have results at all
+        message_resource_list.append({'message': "Here are the top results that closely match what you are looking for.", 'resources':ResourceSerializer(newQuerySet,many=True).data})
+        if len(newQuerySet)<5 and len(newQuerySetRelaxed)>1:
+            #if we don't have a lot, append some extras
+            message_resource_list.append({'message': "I also have some less specific results that might still be relevent.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    elif len(newQuerySetRelaxed)>1: #if we have no main matches, we need to relax in general
+        message_resource_list.append({'message': "Unfortunatly I couldn't find any direct matches. I have some related resources that might help you though.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    else: #no matches at all mean we return an empty set; the chatbot should handle this case
+        message_resource_list.append({'message': "", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
+    #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
+    #relaxed = {'message': "Here are all results with some query relaxation", 'resources':[resQueryset]}
 
-    return resQueryset
+    return Response(message_resource_list)
 
 
 def VerifyApprovedResources(query_params):
@@ -2036,6 +2747,8 @@ def VerifyApprovedResources(query_params):
     return result
 
 def EmotionTestFunc(query_params):
+    import pickle
+
     input = query_params.get("text")
     num_run_eliza = int(query_params.get("num_run_eliza"))
     
@@ -2043,6 +2756,10 @@ def EmotionTestFunc(query_params):
     API_TOKEN = "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"
     API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
     headers = {"Authorization": f"Bearer {API_TOKEN}"}
+
+    filename = '/etc/ChatbotAIModel/svm_model.sav'
+    loaded_model = pickle.load(open(filename, 'rb'))
+    predicted_sar = loaded_model.predict([input])
 
     def query(payload):
         response = requests.post(API_URL, headers=headers, json=payload, timeout=20)
@@ -3566,7 +4283,7 @@ def EmotionTestFunc(query_params):
     #     generate_neutral = True
 	
     res = generate_final_response(input, generate_neutral, emotion_des)
-    return {"input":input , "output":res, "emotion":detected_emotion}
+    return {"input":input , "output":res, "emotion":detected_emotion, "SAR":predicted_sar}
 
 class VerifyApprovedResourcesView(generics.ListAPIView):
     serializer_class = RetrievePublicResourceSerializer
@@ -3616,8 +4333,16 @@ class ResourceByIntentEntityView_new_new(generics.ListAPIView):
     permission_classes = {permissions.AllowAny}
     pagination_class = StandardResultSetPagination
 
-    def get_queryset(self):
+    def get(self, request, format=None):
         return ResourceByIntentEntityViewQuerySet_new_new(self.request.query_params)
+    
+class ResourceByIntentEntityView_Filter(generics.ListAPIView):
+    serializer_class = RetrievePublicResourceSerializer
+    permission_classes = {permissions.AllowAny}
+    pagination_class = StandardResultSetPagination
+
+    def get(self, request, format=None):
+        return ResourceByIntentEntityViewQuerySet_Filter(self.request.query_params)
 
 class ResourceStatsView(APIView):
     serializer_class = RetrievePublicResourceSerializer
