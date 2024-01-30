@@ -1602,11 +1602,11 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
     tags_params_temp = []    
     for tag in tags_params: 
-        if "(" in tag:
-            x = tag 
-            tags_params_temp.append((x[:x.index("(")], x[x.index("(")+1:-1])) 
-        else: 
-            tags_params_temp.append((tag,-1)) 
+    #    if "(" in tag:
+    #       x = tag 
+    #       tags_params_temp.append((x[:x.index("(")], x[x.index("(")+1:-1])) 
+    #    else: 
+        tags_params_temp.append((tag,-1)) 
     tags_params = tags_params_temp
 
 
@@ -1633,7 +1633,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
         if tag_param in all_possible_tag_names or tag_param in all_possible_tag_names_lower_cased:
             #found in approved tags
-            for related_word in filter(lambda x: x[0] == tag_param ,word_mapping):
+            for related_word in filter(lambda x: x[0] == tag_param, word_mapping):
                     should_be_added.add(related_word[1])
         else:
             if tag_param in word_mapping_keys:
@@ -1695,7 +1695,23 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     """
 
     vip_tags = []
-    filter_out_tags = ['indigenous', 'french', 'youth', 'military veterans', 'healthcare workers', '2slgbtq+', 'first responders']
+    filter_out_tags = [
+        "indigenous", "first nation", "inuit", "indigenous women", "indigenous Men", "inuit", "kapawe'no", "l'nu'k (mi'kmaq)", "métis", "mi'kmaw", "siksika", "cree", 
+        "acadia first nation", "annapolis valley first nation", "bear river first nation", "eskasoni first nation", "glooscap first nation",
+        "millbrook first nation",
+        "wagmatcook first nation",
+        "we'koqma'q first nation",
+        "sipekne'katik first nation",
+        "kapawe'no first nation",
+        "paqtnkek mi'kmaw nation",
+        "pictou landing first nation",
+        'french', 
+        'youth', 
+        'military veterans', 
+        'healthcare workers', 
+        '2slgbtq+', 
+        'first responders'
+        ]
     input_lo_format_infot_servt_mh_cost_au_lang = []
     if 'Location' in class_tag_mapping:
         input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Location']))
@@ -1731,8 +1747,6 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
 
     if 'Audience' in class_tag_mapping:
         input_lo_format_infot_servt_mh_cost_au_lang.append(50*len(class_tag_mapping['Audience']))
-        for item in class_tag_mapping['Audience']:
-            if item in filter_out_tags: filter_out_tags.remove(item)
     else:
         input_lo_format_infot_servt_mh_cost_au_lang.append(1)
 
@@ -1793,9 +1807,29 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
         resQueryset = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped))
         resQuerysetRelaxed = resQueryset.filter(visible=1).filter(Q(tags__name__in=tags_params_mapped) | Q(tags__name__in=query_relaxation_tags))
 
-    resQueryset = resQueryset.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name="Non-Exclusive") )
-    resQuerysetRelaxed = resQuerysetRelaxed.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name="Non-Exclusive"))
-
+    #handle filtering
+    #for each filter item, filter out all entries on the filter list
+    #resQueryset = resQueryset.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name__in=["Non-Exclusive"]) )
+    #resQuerysetRelaxed = resQuerysetRelaxed.exclude(Q(tags__name__in=filter_out_tags) & ~Q(tags__name__in=["Non-Exclusive"]))
+    #for each matching filter item in the query tags, re-add all resources to that query
+    to_add_back = []
+    for item in tags_params_mapped:
+            #single item vs list
+            if item.lower() in filter_out_tags: 
+                to_add_back.append(item.lower())
+                print(item.lower())
+    #if we have things to add back, recreate the queries
+    if len(to_add_back) > 0:
+        thisSet = []
+        for query in resQueryset:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        resQueryset = Resource.objects.filter(Q(id__in=thisSet) | Q(tags__name__in=to_add_back))
+        thisSet = []
+        for query in resQuerysetRelaxed:
+            if query.id not in thisSet:
+                thisSet.append(query.id)
+        resQuerysetRelaxed = Resource.objects.filter(Q(id__in=thisSet) | Q(tags__name__in=to_add_back))
     #filter by location, so we guarantee we have something related (if it exists)
     if 'Location' in class_tag_mapping:
         nquery = resQueryset.filter(visible=1).filter(tags__name__in=class_tag_mapping['Location'])
@@ -2044,7 +2078,9 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
     topitems = heapq.nlargest(15, scores_relaxed.items(), key=itemgetter(1))
     topitemsasdict = dict(topitems)
     if len(topitems) > 1:
-        resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())   
+        resQuerysetRelaxed = resQuerysetRelaxed.filter(id__in=topitemsasdict.keys())
+        if len(newQuerySet) > 0:
+            resQuerysetRelaxed = resQuerysetRelaxed.exclude(id__in=newQuerySet.values('id'))
         thisSet = []
         #make result distinct
         for query in resQuerysetRelaxed:
@@ -2076,7 +2112,7 @@ def ResourceByIntentEntityViewQuerySet_new_new(query_params):
             #if we don't have a lot, append some extras
             message_resource_list.append({'message': "I also have some less specific results that might still be relevent.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
     elif len(newQuerySetRelaxed)>1: #if we have no main matches, we need to relax in general
-        message_resource_list.append({'message': "Unfortunatly I couldn't find any direct matches. I have some related resources that might help you though.", 'resources':ResourceSerializer(newQuerySetRelaxed.difference(newQuerySet),many=True).data})
+        message_resource_list.append({'message': "Unfortunatly I couldn't find any direct matches. I have some related resources that might help you though.", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
     else: #no matches at all mean we return an empty set; the chatbot should handle this case
         message_resource_list.append({'message': "", 'resources':ResourceSerializer(newQuerySetRelaxed,many=True).data})
     #mapped = {'message': "Here are all results that matched all your specifications", 'resources':[resQueryset_mapped]}
@@ -4439,7 +4475,7 @@ def add_tag_relation(request):
 
 def get_tag_group_stats(request):
     tag_groups = {
-        'Indigenous':['Indigenous', 'Indigenous Women', 'Inuit', 'M\u00e9tis'],
+        'Indigenous':['Indigenous', 'Indigenous Women', 'Inuit', 'M\u00e9tis', "L'nu'k (Mi'kmaq)", "Siksika"],
         'Youth':['Youth', 'Children', 'Black Youth', 'Mental health supports for Youth', 'Mental health supports for Children', 'Caregiver/Parent'],
         'Veterans':['Family Member of Veteran', 'Military Veterans'],
         'Healthcare Workers':['Doctor', 'First responder', 'Medical student', 'Nurse', 'Paramedic', 'Practising or retired physician', 'Resident Doctor'],
