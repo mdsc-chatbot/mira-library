@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='resource',
             name='organization_name',
-            field=models.TextField(blank=True, default='', null=True),
+            field=models.TextField(blank=True, null=True),
         ),
     ]
