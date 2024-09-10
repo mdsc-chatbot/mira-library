@@ -22,7 +22,7 @@ __maintainer__ = "BOLDDUC LABORATORY"
 #  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 from django.urls import path
-from .views import ResourceView, get_tag_group_stats, TagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView, ResourceStatsView, ResourceByIntentEntityView_new, AddViewOfResourceView, ResourceByIntentEntityView_new_new, EmotionTest#, add_tag_relation, get_relations_by_tag
+from .views import ResourceView, get_tag_group_stats, TagView, CategoryView, DetailedResourceView, DetailedResourceAdminView, HomepageResourceView, IndexResourceEntityView, VerifyApprovedResourcesView, ResourceCountAndFilterView, ResourceStatsView, ResourceByIntentEntityView_new, AddViewOfResourceView, ResourceByIntentEntityView_new_new, EmotionTest, AllTagView, add_tag_alias, GetAliasByTagView, remove_tag_alias
 
 urlpatterns = [
     # path('current_user/', current_user, name='current_user'),
@@ -42,7 +42,10 @@ urlpatterns = [
     path('add-view-of-resource', AddViewOfResourceView.as_view(), name='add_view_resource'),
     path('emotion-test', EmotionTest.as_view(), name='Emotion_Test'),
     path('tags', TagView.as_view(), name='tags'),
-    #path('alltags', AllTagView.as_view(), name='alltags'),
+    path('alltags', AllTagView.as_view(), name='alltags'),
+    path("add-tag-alias", add_tag_alias, name='add-tag-alias'),
+    path("get-alias-by-tag", GetAliasByTagView.as_view(), name='get-alias-by-tag'),
+    path("remove-tag-alias", remove_tag_alias, name='remove-tag-alias'),
     #path('get-relations-by-tag', get_relations_by_tag, name='get-relations-by-tag'),
     #path('add-tag-relation', add_tag_relation, name='add-tag-relation'),
     path('categories', CategoryView.as_view(), name='categories'),

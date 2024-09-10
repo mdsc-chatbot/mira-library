@@ -100,6 +100,11 @@ class Category(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=400)
 
+class Alias(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=400)
+    tag = models.ForeignKey('Tag', on_delete=models.CASCADE)
+
 class Resource(models.Model):
 
     title = models.TextField(default="",blank=True, null=True)

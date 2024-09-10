@@ -36,9 +36,9 @@ import json
 import difflib
 from operator import itemgetter
 from django.db.models import Q
-from resource.models import Resource, Tag, Category
+from resource.models import Resource, Tag, Category, Alias
 from resource.serializers import RetrieveResourceSerializer
-from .serializers import ResourceSerializer, TagSerializer, CategorySerializer, RetrievePublicResourceSerializer, TagRelationship
+from .serializers import ResourceSerializer, TagSerializer, CategorySerializer, RetrievePublicResourceSerializer, TagAliasSerializer
 import urllib.request
 from bs4 import BeautifulSoup
 from rest_framework.views import APIView
@@ -53,7 +53,6 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 # from transformers import pipeline
 # import pandas as pd
-from transformers import AutoTokenizer, AutoModel
 import torch
 import torch.nn.functional as F
 from django.http import JsonResponse
@@ -67,6 +66,7 @@ import random
 #add to server
 import numpy as np
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.decorators import login_required
 
 
 GAZETTEER_city_lat_lon = { # all lower case
@@ -4393,6 +4393,22 @@ class TagView(generics.ListAPIView):
         # TODO: Only approved tags?? Waiting for client confirmation
         # TODO: Tag sorting? (Sort desc by most used)
         return Tag.objects.filter(approved=True).order_by('name')
+    
+class AllTagView(generics.ListAPIView):
+    serializer_class = TagSerializer
+    permission_classes = {permissions.AllowAny}
+
+    def get_queryset(self):
+        # TODO: Only approved tags?? Waiting for client confirmation
+        # TODO: Tag sorting? (Sort desc by most used)
+        return Tag.objects.order_by('name')
+    
+class GetAliasByTagView(generics.ListAPIView):
+    serializer_class = TagAliasSerializer
+    permission_classes = {permissions.AllowAny}
+
+    def get_queryset(self):
+        return Alias.objects.filter(tag_id=self.request.query_params['tag_id'])
 
 
 class CategoryView(generics.ListAPIView):
@@ -4439,12 +4455,22 @@ class DetailedResourceAdminView(generics.RetrieveAPIView):
 #     relation.save()
 #     return JsonResponse({})
 
-def add_tag_relation(request):
+@login_required
+def add_tag_alias(request):
     data = json.loads(request.body)
     tag_id = data['tag_id']
-    parent_id = data["parent_id"]
-    relation = TagRelationship(parent_id = parent_id, tag_id = tag_id)
+    name = data["name"]
+    #get tag from tagid
+    tag = Tag.objects.get(id=tag_id)
+    relation = Alias(name=name, tag=tag)
     relation.save()
+    return JsonResponse({})
+
+@login_required
+def remove_tag_alias(request):
+    data = json.loads(request.body)
+    alias_id = data['alias_id']
+    Alias.objects.filter(id=alias_id).delete()
     return JsonResponse({})
 
 def get_tag_group_stats(request):
