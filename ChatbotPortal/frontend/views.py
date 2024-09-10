@@ -44,8 +44,14 @@ def resources(request, path):
         content_type = 'image/png'
     elif path.endswith('.woff2'):
         content_type = 'application/font-woff2'
+    elif path.endswith('.woff'):
+        content_type = 'application/font-woff'
+    elif path.endswith('.ttf'):
+        content_type = 'application/font-ttf'
+    elif path.endswith('.svg'):
+        content_type = 'image/svg+xml' 
 
-    file = open(path_string, encoding="utf-8")
+    file = open(path_string, "rb")
     return HttpResponse(file.read(), content_type=content_type)
 
 def review(request, path):
