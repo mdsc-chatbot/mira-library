@@ -42,7 +42,7 @@ import {
     Segment,
     SegmentGroup
 } from 'semantic-ui-react';
-import styles from "../profile/ProfilePage.css";
+import * as styles from "../profile/ProfilePage.css";
 
 class UserPage extends Component {
     /**
@@ -228,8 +228,8 @@ class UserPage extends Component {
             <React.Fragment>
                 <Responsive as={Container} minWidth={320} onUpdate={this.set_mobile_format}>
                     <Container>
-                        <Form className={styles.centeredForm}>
-                            <Segment className={styles.segmentBackground}>
+                        <Form>
+                            <Segment>
                                 <Label
                                     size='big'
                                     as='h1'
@@ -238,8 +238,7 @@ class UserPage extends Component {
                                     content={this.state.first_name ? `${this.state.first_name}'s Profile` : `${this.state.id}'s profile`}
                                     ribbon>
                                 </Label>
-                                <Card className={styles.cardBackground}
-                                      fluid
+                                <Card fluid
                                       centered>
                                     {typeof (this.state.profile_picture) !== 'object' && this.state.profile_picture ? (
                                         <Image

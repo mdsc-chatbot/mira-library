@@ -24,7 +24,7 @@ import React, { Component } from "react";
 import { Container, Header, Accordion, Divider, Responsive } from "semantic-ui-react";
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
-import styles from "./shared/Link.css";
+import * as styles from "./shared/Link.css";
 import { SecurityContext } from "./contexts/SecurityContext";
 import TermsOfService from "./authentication/TermsOfService";
 

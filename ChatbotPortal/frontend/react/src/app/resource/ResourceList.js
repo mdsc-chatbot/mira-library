@@ -74,7 +74,7 @@ export default class ResourceList extends Component {
         this.get_resources();
     }
 
-    componentWillReceiveProps(newProps) {
+    componentDidUpdate(newProps) {
         if (newProps.token) {
             this.get_resources();
         }
@@ -82,7 +82,7 @@ export default class ResourceList extends Component {
 
     resourcePage = () => {
         return(
-            <Container style={{ paddingBottom: 50 }} textAlign="center" vertical>
+            <Container style={{ paddingBottom: 50 }} textAlign="center" vertical="true">
                 <ResourceStatistic resources={this.state.resources} />
                 <Link to={baseRoute + "/resource_submit"}>
                     <Button name="submit_a_resource" color = 'green' size="medium">
@@ -108,7 +108,7 @@ export default class ResourceList extends Component {
             return (
                 <div>
                     {this.resourcePage()}
-                    <Card.Group itemsPerRow={3} vertical stackable>
+                    <Card.Group itemsPerRow={3} vertical="true" stackable>
                         {resources}
                     </Card.Group>
                 </div>

@@ -23,7 +23,7 @@
 import React from "react";
 import HomepageHead from "./HomepageHead";
 import HomepageContent from "./HomepageContent";
-import styles from "./HomepageHead.css";
+import * as styles from "./HomepageHead.css";
 import {Responsive, Segment} from "semantic-ui-react";
 
 export default class HomePage extends React.Component {

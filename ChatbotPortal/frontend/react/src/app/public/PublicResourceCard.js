@@ -24,7 +24,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import {Card, Rating, Icon, Label} from "semantic-ui-react";
 import {Link} from "react-router-dom";
-import styles from './PublicResourceCard.css'
+import * as styles from './PublicResourceCard.css'
 import FlagPopup from '../resource/FlagPopup';
 import { baseRoute } from "../App";
 

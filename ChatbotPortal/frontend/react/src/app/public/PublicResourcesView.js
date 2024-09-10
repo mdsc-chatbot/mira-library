@@ -36,10 +36,10 @@ import {
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { SecurityContext } from '../contexts/SecurityContext';
-import styles from './PublicResourcePage.css';
+import * as styles from './PublicResourcePage.css';
 import { FilterList } from './FilterList';
 import { ResourceTable } from './ResourceTable';
-import ownStyles from './PublicResourcesView.css'
+import * as ownStyles from './PublicResourcesView.css'
 
 class PublicResourcesView extends Component {
     static contextType = SecurityContext;

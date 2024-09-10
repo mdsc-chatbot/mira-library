@@ -174,7 +174,7 @@ export default class TagDropdown extends React.Component {
     };
 
     checkTagRelatedBooleans = () => {
-        if (this.props.tagCat == 'Resource format') {
+        if (this.props.tagCat == 'Resource Format') {
             this.props.isRelatedToEmail(false);
             this.props.isRelatedToAddress(false);
             this.props.isRelatedToPhonenumber(false);

@@ -25,7 +25,7 @@ import React, {Component} from 'react';
 import axios from "axios";
 import {SecurityContext} from '../contexts/SecurityContext';
 import {Button, Card, Container, Divider, Form, FormInput, Icon, Image, Responsive, Segment, Header} from 'semantic-ui-react';
-import styles from "./ProfilePage.css";
+import * as styles from "./ProfilePage.css";
 import {baseRoute} from "../App";
 import {Link, Redirect} from "react-router-dom";
 import {object} from "prop-types";

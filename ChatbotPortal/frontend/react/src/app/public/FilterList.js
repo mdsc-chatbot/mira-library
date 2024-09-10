@@ -24,7 +24,7 @@
 import React from 'react'
 import PropTypes from 'prop-types';
 import { Segment, Checkbox, Loader, List, Accordion, Label, Icon } from 'semantic-ui-react';
-import styles from './FilterList.css';
+import * as styles from './FilterList.css';
 
 // Stores tags and categories
 export function FilterList({ tags, categories, selectedTags, handleTagSelected, handleCategorySelected, handleTagDeselected }) {
@@ -42,23 +42,59 @@ export function FilterList({ tags, categories, selectedTags, handleTagSelected, 
         return a.localeCompare(b);
     })
 
+    // function showAc (tags, distinctTagCategories, selectedTags, handleTagSelected){
+    //     var panels = [];
+    //     distinctTagCategories.forEach(category => {
+    //         var cn = tags.filter(tag => tag.tag_category == category).map(tag => (
+    //             <List.Item><Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} checked={selectedTags.includes(tag.id)}/></List.Item>
+    //         ));
+    //         var counter = tags.filter(tag => tag.tag_category == category).filter(tag => (selectedTags.includes(tag.id))).length;
+    //         if(counter>0)
+    //             counter = '('+counter+')'
+    //         else
+    //             counter = ''
+    //         panels.push({
+    //             title: { content: category + counter, icon: "dropdown" },
+    //             content: { content: cn }
+    //         });
+    //     });
+    //     console.log(selectedTags)
+    //     return (<Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />);
+    // }
+
+    //same as the above function, but parses out "/" from the category name and adds subcategories
+    //they can only be one layer deep (this is checked in the DB)
     function showAc (tags, distinctTagCategories, selectedTags, handleTagSelected){
         var panels = [];
+        var supercategories = [];
         distinctTagCategories.forEach(category => {
-            var cn = tags.filter(tag => tag.tag_category == category).map(tag => (
+            //we find all supercategories, then for each super category we nest the subcategories, which further nest the tags
+            //if the category does not have a "/", it is a supercategory on it's own, and we nest the tags directly
+            if(category.includes("/")){
+                var supercategory = category.split("/")[0];
+                if(!supercategories.includes(supercategory)){
+                    supercategories.push(supercategory);
+                }
+            } else {
+                supercategories.push(category);
+            }
+        });
+        //next, add the tags
+        supercategories.forEach(supercategory => {
+            var cn = tags.filter(tag => tag.tag_category.includes(supercategory)).map(tag => (
                 <List.Item><Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} checked={selectedTags.includes(tag.id)}/></List.Item>
             ));
-            var counter = tags.filter(tag => tag.tag_category == category).filter(tag => (selectedTags.includes(tag.id))).length;
+            var counter = tags.filter(tag => tag.tag_category.includes(supercategory)).filter(tag => (selectedTags.includes(tag.id))).length;
             if(counter>0)
                 counter = '('+counter+')'
             else
                 counter = ''
             panels.push({
-                title: { content: category + counter, icon: "dropdown" },
+                title: { content: supercategory + counter, icon: "dropdown" },
                 content: { content: cn }
             });
-        });
-        console.log(selectedTags)
+        }
+        );
         return (<Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />);
     }
 

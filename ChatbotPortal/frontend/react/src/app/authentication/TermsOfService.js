@@ -23,7 +23,7 @@
 
 import React, {Component} from 'react'
 import {Header, Modal} from "semantic-ui-react";
-import styles from "../shared/Link.css";
+import * as styles from "../shared/Link.css";
 
 export class TermsOfService extends Component {
     render() {

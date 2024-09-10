@@ -25,7 +25,7 @@ import { Header, Button, Segment, Grid, Responsive, Icon } from "semantic-ui-rea
 import { baseRoute } from "./App";
 import { Link } from "react-router-dom";
 import { SecurityContext } from "./contexts/SecurityContext";
-import styles from './HomepageHead.css'
+import * as styles from './HomepageHead.css'
 
 export class HomepageHead extends Component {
     static contextType = SecurityContext;
@@ -55,7 +55,7 @@ export class HomepageHead extends Component {
 
                 <Segment className={styles.segmentWeb} textAlign="center" vertical>
                     {this.context.security.is_logged_in ? (
-                        <Button.Group className={styles.buttonAlign} fluid widths='2' size='large'>
+                        <Button.Group className={styles.buttonAlign} style={{"justify-content": "center"}} fluid widths='2' size='large'>
                             <Link to={baseRoute + "/public_resource"}>
                                 <Button fluid className={styles.publicResource} color="yellow">
                                 &nbsp;&nbsp;View resources&nbsp;&nbsp;

@@ -34,8 +34,8 @@ import { baseRoute } from './App';
 import { Link } from 'react-router-dom';
 import { SecurityContext } from './contexts/SecurityContext';
 import { MenuContext } from './contexts/MenuContext';
-import styles from './App.css';
-import ownStyles from './HeaderMenu.css';
+import * as styles from './App.css';
+import * as ownStyles from './HeaderMenu.css';
 
 /**
  * This class renders the Header Menu of a logged in user
@@ -65,7 +65,7 @@ https://ibb.co/9wx9pbr */}
 
           <a
             href={baseRoute}
-            active={activeItem === 'Home'}
+            active={activeItem ? 'Home' : undefined}
             onClick={this.handleItemClick}
           >
             <img
@@ -192,7 +192,7 @@ https://ibb.co/9wx9pbr */}
         <Menu inverted pointing fluid widths={2} size='small'>
           <a
             href={baseRoute}
-            active={activeItem === 'Home'}
+            active={activeItem ? 'Home' : undefined}
             onClick={this.handleItemClick}
           >
             <img
@@ -208,7 +208,7 @@ https://ibb.co/9wx9pbr */}
             className={`${ownStyles.fullWidthListbox} ${ownStyles.marginRightMenu}`}
           >
             <Dropdown item text='Menu' floating labeled>
-              <Dropdown.Menu className={styles.headerMobile}>
+              <Dropdown.Menu>
                 <Dropdown.Item>
                   <Menu.Item
                     name='Public Resources'

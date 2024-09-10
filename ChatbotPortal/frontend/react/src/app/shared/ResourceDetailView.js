@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Divider, Icon, Label, Rating, Menu, Header, Grid, Responsive } from "semantic-ui-react";
-import styles from "./ResourceDetailView.css";
-import linkStyles from "../shared/Link.css";
+import * as styles from "./ResourceDetailView.css";
+import * as linkStyles from "../shared/Link.css";
 import { Link } from "react-router-dom";
 import { baseRoute } from "../App";
 import { SecurityContext } from "../contexts/SecurityContext";
@@ -247,7 +247,7 @@ export function ResourceDetailView({ resource , tagsGot = [], viewer}) {
                           "Resource format:",
                           <div id="tags">
                               {tagsGot.filter(tag=> tag.approved === true).map(tag => (
-                                  (tag.tag_category == 'Resource format') ?(
+                                  (tag.tag_category == 'Resource Format') ?(
                                     <Label key={tag.name} size="large" stackable>
                                         {tag.name}
                                     </Label>

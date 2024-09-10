@@ -30,7 +30,7 @@ import {
 } from "semantic-ui-react";
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import styles from './HomepageContent.css';
+import * as styles from './HomepageContent.css';
 import { PublicResourceCard } from './public/PublicResourceCard';
 
 /**

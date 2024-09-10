@@ -22,7 +22,7 @@
  */
 import React, { Component } from "react";
 import { Icon, Grid} from "semantic-ui-react";
-import styles from "./profile/ProfilePage.css";
+import * as styles from "./profile/ProfilePage.css";
 
 /**
  * This class renders the Footer

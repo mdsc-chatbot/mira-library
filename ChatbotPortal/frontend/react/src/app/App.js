@@ -46,7 +46,7 @@ import {Segment} from "semantic-ui-react";
 import EmailValidationRequestPage from "./authentication/EmailValidationRequestPage";
 import ResourceSubmitFormForExtension from "./resource/ResourceSubmitFormForExtension";
 import {MenuContextProvider} from './contexts/MenuContext';
-import styles from "./App.css";
+import * as styles from "./App.css";
 import ResourceStatistics from "./public/ResourceStats";
 
 /**
@@ -59,10 +59,10 @@ export default function App() {
         return(
             <SecurityContextProvider>
                 <MenuContextProvider>
-                    <Segment  className={styles.headerMenu} inverted attached = 'top'>
+                    <Segment className={`${styles.headerMenu}`} inverted attached = 'top'>
                         <HeaderMenu/>
                     </Segment>
-                    <Segment className={`${styles.segmentWeb} ${styles.segmentResponsive}`} attached>
+                    <Segment className={`${styles.segmentWeb} ${styles.segmentResponsive}`} MIRA attached>
                         <Switch>
                             <Route exact path={baseRoute + "/profile"}>
                                 <ProfilePage/>

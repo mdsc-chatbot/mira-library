@@ -26,7 +26,7 @@ import axios from "axios";
 import validator from "validator";
 import {Container, Form, FormInput, Header, Input, Message, Rating, Responsive} from "semantic-ui-react";
 import TagDropdown from "./TagDropdown";
-import styles from "./ResourceSubmitForm.css";
+import * as styles from "./ResourceSubmitForm.css";
 import {MenuContext} from "../contexts/MenuContext"
 import CategoryDropdown from "./CategoryDropdown";
 import UpdateContexts from "./UpdateContexts";

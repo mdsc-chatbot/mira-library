@@ -23,6 +23,7 @@
 import React from 'react';
 import ReviewTable from './ReviewTable';
 import { SecurityContext } from "../contexts/SecurityContext";
+import {Container} from "semantic-ui-react";
 
 export default class ResourcePage extends React.Component {
     constructor(props) {
@@ -34,11 +35,11 @@ export default class ResourcePage extends React.Component {
             <div>
                 <SecurityContext.Consumer>
                     {(securityContext) => (
-                        <container>
+                        <Container>
                             {securityContext.security.is_logged_in ?
                                 <ReviewTable />
                                 : null}
-                        </container>
+                        </Container>
                     )}
                 </SecurityContext.Consumer>
             </div>

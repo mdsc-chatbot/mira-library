@@ -33,7 +33,7 @@ import HoursOfOperationWidget from "./HoursOfOperationWidget";
 import ResourceTypeDropdown from './ResourceTypeDropdown';
 import ResourceFormatDropdown from './ResourceFormatDropdown';
 import { SecurityContext } from '../contexts/SecurityContext';
-import styles from "./ResourceSubmitForm.css";
+import * as styles from "./ResourceSubmitForm.css";
 
 export default class ResourceSubmitForm extends Component {
     static contextType = SecurityContext;
@@ -863,7 +863,7 @@ export default class ResourceSubmitForm extends Component {
                                                     required
                                                     name="tags"
                                                     value={this.state.tags}
-                                                    tagCat="Resource format"
+                                                    tagCat="Resource Format"
                                                     isRelatedToEmail={resourceTypeRelateEmail => this.setState({ resourceTypeRelateEmail })}
                                                     isRelatedToPhonetext={resourceTypeRelateTextnumber => this.setState({ resourceTypeRelateTextnumber })}
                                                     isRelatedToPhonenumber={resourceTypeRelatePhonenumber => this.setState({ resourceTypeRelatePhonenumber })}

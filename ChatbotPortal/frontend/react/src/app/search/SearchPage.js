@@ -39,7 +39,7 @@ import {SecurityContext} from "../contexts/SecurityContext";
 import SearchByAnything from "./SearchByAnything";
 import SearchAdvancedOption from "./SearchAdvancedOption";
 import SearchTable from "./SearchTable";
-import styles from "./SearchPage.css"
+import * as styles from "./SearchPage.css"
 
 class SearchPage extends Component {
 

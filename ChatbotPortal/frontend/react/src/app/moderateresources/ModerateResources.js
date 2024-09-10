@@ -26,11 +26,9 @@ import { Table, Popup, Dropdown, Grid, Button, Icon } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
-import ReviewPopover from "../review/ReviewPopover"
-import { createMasonryCellPositioner } from "react-virtualized";
 
 
-export default class ModerateResources extends Component {
+export class ModerateResources extends Component {
     static contextType = SecurityContext;
 
     constructor(props) {
@@ -107,7 +105,7 @@ export default class ModerateResources extends Component {
             );
     }
 
-    addRelation = (tag_id, parent_id) =>
+    addAlias = (tag_id, name) =>
     {
         const options = {
             "Content-Type": "application/json",
@@ -116,8 +114,8 @@ export default class ModerateResources extends Component {
 
         axios
             .post(
-                "/api/public/add-tag-relation",
-                {'tag_id': tag_id, 'parent_id': parseInt(parent_id)},
+                "/api/public/add-tag-alias",
+                {'tag_id': parseInt(tag_id), 'name': name},
                 { headers: options }
             )
             .then(
@@ -138,11 +136,14 @@ export default class ModerateResources extends Component {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${this.context.security.token}`
         };
-        axios.post(
-            "/api/public/get-relations-by-tag", 
-            {'tag_id' : id}, 
-            { headers: options }
+        axios.get(
+            "/api/public/get-alias-by-tag", 
+            { 
+                headers: options,
+                params: {tag_id: id}
+            }
         ).then(res => {
+            console.log(res.data)
             this.setState({displayedRelations: res.data})
         });
     }
@@ -176,28 +177,51 @@ export default class ModerateResources extends Component {
         return flags_get
     }
 
-    handleInputChange = e => {
-        this.setState({ relationID: e.target.value });
+    handleNewAliasInputChange = e => {
+        this.setState({ newAliasName: e.target.value });
     };
-    showRelations = () => 
+
+    showAliases = () => 
     {
         const relations_get = this.state.displayedRelations.map(r => (
             (
+                //list the alias and an option to delete
+                //EDIT button too close to text, spaceing it out a bit
                 <tr key={r.id} ref={tr => this.results = tr}>
-                    <td><h4>{r.id}<button icon><Icon name="minus" /></button></h4></td>
-                    <td><h4>{this.state.tags.filter(obj => {return id === r.id}).name}</h4></td>
+                    <td><h4>{r.id}</h4></td>
+                    <td><h4>{r.name+"  "}<button icon> <Icon name="minus" onClick={() => this.deleteAlias(r.id)}/></button></h4></td>
                 </tr>
             )
         ));
         //append add row
         relations_get.push(
             <tr>
-                    <td><h4><input type="text" onChange={this.handleInputChange}/><button icon onClick={() => this.addRelation(this.state.activeTag, this.state.relationID)}><Icon name="plus" /></button></h4></td>
-                    <td><h4><input type="text"/></h4></td>
+                    <td><h4></h4></td>
+                    <td><h4><input type="text" onChange={this.handleNewAliasInputChange}/><button icon onClick={() => this.addAlias(this.state.activeTag, this.state.newAliasName)}><Icon name="plus" /></button></h4></td>
             </tr>
         )
         return relations_get
     }
+
+    deleteAlias = (id) =>
+    {
+        const options = {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${this.context.security.token}`
+        };
+
+        axios
+            .delete(
+                "/api/public/remove-tag-alias",
+                { headers: options, data: {alias_id: id} }
+            )
+            .then(
+                response => {
+                    this.setSelectedTag(this.state.activeTag)
+                }
+            );
+    }
+
 
     showResourceData = () => {
         const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
@@ -234,7 +258,7 @@ export default class ModerateResources extends Component {
         return <tr><th style={{ width: 250 }}>Flags</th></tr>
     }
     tagRelationHeader = () => {
-        return <tr><th style={{ width: 250 }}>Parent ID</th><th style={{ width: 250 }}>Parent Name</th></tr>
+        return <tr><th style={{ width: 250 }}>Alias ID</th><th style={{ width: 250 }}>Alias Name</th></tr>
     }
     resourceHeader = () => {
         return <tr><th style={{ width: 350 }}>Title</th><th>Flags</th><th>Visible</th></tr>
@@ -314,7 +338,7 @@ export default class ModerateResources extends Component {
                                                 {this.tagRelationHeader()}
                                             </thead>
                                             <tbody>
-                                            {this.state.displayedRelations === null ? <p></p> : this.showRelations()}
+                                            {this.state.displayedRelations === null ? <p></p> : this.showAliases()}
                                             </tbody>
                                         </Table>
                                     }
@@ -327,3 +351,4 @@ export default class ModerateResources extends Component {
         );
     }
 }
+export default ModerateResources;
