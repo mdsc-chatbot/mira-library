@@ -22,12 +22,13 @@
  */
 import React, { Component } from "react";
 import axios from "axios";
-import { Table, Popup, Dropdown, Grid } from "semantic-ui-react";
+import { Table, Popup, Dropdown, Grid, Input, Checkbox, Loader, Pagination } from "semantic-ui-react";
 import { SecurityContext } from "../contexts/SecurityContext";
 import { baseRoute } from "../App";
 import { Link } from "react-router-dom";
 import ReviewPopover from "../review/ReviewPopover"
 
+const ITEMS_PER_PAGE = 10;
 
 export default class ManageReviews extends Component {
     static contextType = SecurityContext;
@@ -41,520 +42,245 @@ export default class ManageReviews extends Component {
             pending: 'Completed Reviews',
             header: 'Review new resources and tags here!',
             resourceData: {},
-            order: "newest"
+            order: "newest",
+            searchTerm: "",
+            hideApprovedRejected: false,
+            loading: true,
+            currentPage: 1,
+            cachedUserStats: null,
+            cachedTotalStats: null
         };
+
+        // Bind methods
+        this.filterResources = this.filterResources.bind(this);
+        this.resourceIsApproved = this.resourceIsApproved.bind(this);
+        this.resourceNeedTieBreaker = this.resourceNeedTieBreaker.bind(this);
     }
 
-    resourceNeedTieBreaker = (resource) => {
-        if(resource.assigned_reviewer_3 != -1)
-            return false
+    resourceNeedTieBreaker(resource) {
+        if(resource.assigned_reviewer_3 !== -1) return false;
 
-        var numOfApprovals = 0
-        var numOfConflicts = 0
-        var numOfRejects = 0
+        const statuses = [
+            resource.review_status_1_1,
+            resource.review_status_2,
+            resource.review_status_2_2,
+            resource.review_status
+        ];
 
-        if(resource.review_status_1_1 == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status_1_1 == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status_1_1 == 'rejected')
-            numOfRejects +=1
-        
-        if(resource.review_status_2 == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status_2 == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status_2 == 'rejected')
-            numOfRejects +=1
+        const numOfApprovals = statuses.filter(status => status === 'approved').length;
+        const numOfRejects = statuses.filter(status => status === 'rejected').length;
 
-        if(resource.review_status_2_2 == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status_2_2 == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status_2_2 == 'rejected')
-            numOfRejects +=1
-
-        if(resource.review_status == 'approved')
-            numOfApprovals +=1
-        else if(resource.review_status == 'conflict')
-            numOfConflicts +=1
-        else if(resource.review_status == 'rejected')
-            numOfRejects +=1
-
-        if((numOfApprovals == numOfRejects) && (numOfApprovals>0))
-            return true
-        
-        return false
+        return numOfApprovals === numOfRejects && numOfApprovals > 0;
     }
 
-    get_resources = () => {
-        // Having the permission header loaded
-        const options = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.context.security.token}`
-        };
-        axios.get("/chatbotportal/resource", { headers: options }).then(res => {
-            this.setState({
-                resources: res.data
-            });
-        });
+    get_resources = async () => {
+        this.setState({ loading: true });
+        try {
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
+            };
+            const res = await axios.get("/chatbotportal/resource", { headers: options });
+            this.setState({ resources: res.data });
+        } catch (error) {
+            console.error("Error fetching resources:", error);
+        }
+        this.setState({ loading: false });
     };
 
-    get_reviews = () => {
-        // Having the permission header loaded
-        const options = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.context.security.token}`
-        };
-        axios.get("/api/review", { headers: options }).then(res => {
-            this.setState({
-                reviews: res.data
-            });
-        });
+    get_reviews = async () => {
+        try {
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
+            };
+            const res = await axios.get("/api/review", { headers: options });
+            this.setState({ reviews: res.data });
+        } catch (error) {
+            console.error("Error fetching reviews:", error);
+        }
     }
 
-
-    get_users = () => {
-        // Having the permission header loaded
-        const options = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.context.security.token}`
-        };
-        axios.get("/chatbotportal/authentication/super/search/status/1/1/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=&page_size=100", { headers: options }).then(res => {
-            this.setState({
-                users: res.data.results
-            });
-            console.log('users: ' + res.data.results.length);
-        });
+    get_users = async () => {
+        try {
+            const options = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.context.security.token}`
+            };
+            const res = await axios.get("/chatbotportal/authentication/super/search/status/1/1/''/''/''/date_range/''/''/''/id_range/''/''/submission_range/''/''/''/search_value/?search=&page_size=100", { headers: options });
+            this.setState({ users: res.data.results });
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
     }
 
-    componentDidMount() {
-        this.get_resources();
-        this.get_reviews();
-        this.get_users();
+    async componentDidMount() {
+        await Promise.all([
+            this.get_resources(),
+            this.get_reviews(),
+            this.get_users()
+        ]);
     }
 
+    handleOrder = (e, { value }) => { 
+        this.setState({ 
+            order: value,
+            currentPage: 1,
+            cachedUserStats: null,
+            cachedTotalStats: null
+        }); 
+    }
 
-    handleOrder = (e, { value }) => { this.setState({ order: { value }.value }) }
+    handleSearch = (e, { value }) => { 
+        this.setState({ 
+            searchTerm: value,
+            currentPage: 1,
+            cachedUserStats: null,
+            cachedTotalStats: null
+        }); 
+    }
+
+    handleHideApprovedRejected = (e, { checked }) => { 
+        this.setState({ 
+            hideApprovedRejected: checked,
+            currentPage: 1,
+            cachedUserStats: null,
+            cachedTotalStats: null
+        }); 
+    }
+
+    handlePageChange = (e, { activePage }) => {
+        this.setState({ currentPage: activePage });
+    }
 
     handleAssign = (field, value, rid) => {
-        var submitCmd = {}
-        submitCmd[field] = value;
+        const submitCmd = { [field]: value };
 
         const options = {
             "Content-Type": "application/json",
             Authorization: `Bearer ${this.context.security.token}`
         };
 
-        axios
-            .put(
-                "/chatbotportal/resource/" + rid + "/updatepartial/",
-                submitCmd,
-                { headers: options }
-            )
-            .then(
-                response => {
-                },
-                error => {
-                    console.log(error);
-                }
-            );
+        axios.put(
+            "/chatbotportal/resource/" + rid + "/updatepartial/",
+            submitCmd,
+            { headers: options }
+        ).catch(error => {
+            console.error("Error updating assignment:", error);
+        });
     }
 
-    getData = (reviews, ids, currentReviewer) => {
-        function numRevs(id) {
-            var numReviews = reviews.reduce(function (n, reviews) {
-                return n + (reviews.resource_id == id);
-            }, 0); return numReviews
-        }
-        function numRevsApproved(id) {
-            var numReviews = reviews.reduce(function (n, reviews) {
-                return n + (reviews.resource_id == id && reviews.approved === true);
-            }, 0); return numReviews
-        }
-        function numRevsRejected(id) {
-            var numReviews = reviews.reduce(function (n, reviews) {
-                return n + (reviews.resource_id == id && reviews.approved === false);
-            }, 0); return numReviews
-        }
-        function compareOldest(a, b) {
-            if ((new Date(a.timestamp).getTime() / 1000) < (new Date(b.timestamp).getTime() / 1000)) {
-                return -1;
+    sortResources = (resources) => {
+        const sortFunctions = {
+            'oldest': (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
+            'newest': (a, b) => new Date(b.timestamp) - new Date(a.timestamp),
+            'least reviewed': (a, b) => {
+                const getReviewCount = (r) => [r.review_status, r.review_status_2, r.review_status_1_1, r.review_status_2_2]
+                    .filter(s => s !== 'pending').length;
+                return getReviewCount(a) - getReviewCount(b);
+            },
+            'tie breakers': (a, b) => this.resourceNeedTieBreaker(a) ? -1 : 1,
+            'conflict': (a, b) => {
+                const hasConflict = r => ['review_status', 'review_status_2', 'review_status_1_1', 'review_status_2_2']
+                    .some(field => r[field] === 'conflict');
+                return hasConflict(a) ? -1 : hasConflict(b) ? 1 : 0;
             }
-            if ((new Date(a.timestamp).getTime() / 1000) > (new Date(b.timestamp).getTime() / 1000)) {
-                return 1;
-            }
-            return 0;
-        }
-        function compareNewest(a, b) {
-            if ((new Date(a.timestamp).getTime() / 1000) > (new Date(b.timestamp).getTime() / 1000)) {
-                return -1;
-            }
-            if ((new Date(a.timestamp).getTime() / 1000) < (new Date(b.timestamp).getTime() / 1000)) {
-                return 1;
-            }
-            return 0;
-        }
-        function compareReviews(a, b) {
-            if (numRevs(a.id) < numRevs(b.id)) {
-                return -1;
-            }
-            if (numRevs(a.id) > numRevs(b.id)) {
-                return 1;
-            }
-            return 0;
-        }
-        function compareTieBreak(resource) {
-            if(resource.assigned_reviewer_3 != -1)
-                return 1
+        };
 
-            var numOfApprovals = 0
-            var numOfConflicts = 0
-            var numOfRejects = 0
-
-            if(resource.review_status_1_1 == 'approved')
-                numOfApprovals +=1
-            else if(resource.review_status_1_1 == 'conflict')
-                numOfConflicts +=1
-            else if(resource.review_status_1_1 == 'rejected')
-                numOfRejects +=1
-            
-            if(resource.review_status_2 == 'approved')
-                numOfApprovals +=1
-            else if(resource.review_status_2 == 'conflict')
-                numOfConflicts +=1
-            else if(resource.review_status_2 == 'rejected')
-                numOfRejects +=1
-
-            if(resource.review_status_2_2 == 'approved')
-                numOfApprovals +=1
-            else if(resource.review_status_2_2 == 'conflict')
-                numOfConflicts +=1
-            else if(resource.review_status_2_2 == 'rejected')
-                numOfRejects +=1
-
-            if(resource.review_status == 'approved')
-                numOfApprovals +=1
-            else if(resource.review_status == 'conflict')
-                numOfConflicts +=1
-            else if(resource.review_status == 'rejected')
-                numOfRejects +=1
-
-            if((numOfApprovals == numOfRejects) && (numOfApprovals>0))
-                return -1
-
-                
-            return 1
-        }
-        function compareInterestConflict(a) {
-            if (a.review_status_2 === 'conflict' || a.review_status === 'conflict' ||
-             a.review_status_1_1 === 'conflict' || a.review_status_2_2 === 'conflict') {
-                return -1;
-            }
-            return 1;
-        }
-
-        if (this.state.order === 'oldest') {
-            this.state.resources = this.state.resources.sort(compareOldest)
-        } else if (this.state.order === 'newest') {
-            this.state.resources = this.state.resources.sort(compareNewest)
-        } else if (this.state.order === 'least reviewed') {
-            this.state.resources = this.state.resources.sort(compareReviews)
-        } else if (this.state.order === 'tie breakers') {
-            this.state.resources = this.state.resources.sort(compareTieBreak)
-        } else if (this.state.order === 'conflict') {
-            this.state.resources = this.state.resources.sort(compareInterestConflict)
-        }
-
-        //map users for assignment dropdown
-        var userOptions = [];
-        for (var i = 0; i < this.state.users.length; i++) {
-            userOptions.push(
-                {
-                    key: this.state.users[i].id,
-                    value: this.state.users[i].id,
-                    text: this.state.users[i].first_name + " " + this.state.users[i].last_name
-                }
-            )
-        }
-        //add unassigned field
-        userOptions.push(
-            {
-                key: -1,
-                value: -1,
-                text: "Unassigned"
-            }
-        )
-        const resources_get = this.state.resources.length > 0 && this.state.resources.map(r => (
-            // r.review_status !== "approved" || r.review_status_2 !== "approved" 
-            (!this.resourceIsApproved(r)) ? (
-                <tr key={r.id} ref={tr => this.results = tr}>
-                    <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
-                    <td>
-                        <h4>{r.review_status === "approved" ? (<p><i class="green check icon"></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer}/> </p>) : r.review_status === "pending" ? (<p><i class="x icon"></i> pending</p>) : r.review_status === "conflict" ? (<p><i class="red stop circle outline icon"></i>Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer}/></p>) }
-                            {<Dropdown ui read search selection options={userOptions} defaultValue={r.assigned_reviewer} onChange={(event, { value }) => this.handleAssign("assigned_reviewer", value, r.id)} />}</h4>
-                    </td>
-                    <td>
-                        <h4>{r.review_status_2 === "approved" ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2}/></p>) : r.review_status_2 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_2 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2}/></p>)}
-                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_2", value, r.id)} />}</h4>
-                    </td>
-                    <td>
-                        <h4>{r.review_status_1_1 === "approved" ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_1_1}/></p>) : r.review_status_1_1 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_1_1 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_1_1}/></p>)}
-                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_1_1} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_1_1", value, r.id)} />}</h4>
-                    </td>
-                    <td>
-                        <h4>{r.review_status_2_2 === "approved" ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2_2}/></p>) : r.review_status_2_2 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_2_2 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2_2}/></p>)}
-                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_2_2} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_2_2", value, r.id)} />}</h4>
-                    </td>
-                    {(this.resourceNeedTieBreaker(r)) ?
-                    (<td>
-                        <h4>{(r.review_status_3 === "approved") ? (<p><i class="green check icon "></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_3}/></p>) : r.review_status_3 === "pending" ? (<p><i class="x icon "></i> pending</p>) : r.review_status_3 === "conflict" ? (<p><i class="red stop circle outline icon"></i> Conflict of Interest</p>) : (<p><i class="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_3}/></p>)}
-                            {<Dropdown ui red search selection options={userOptions} defaultValue={r.assigned_reviewer_3} onChange={(event, { value }) => this.handleAssign("assigned_reviewer_3", value, r.id)} />}</h4>
-                    </td>): (<td/>)}
-                </tr>
-            ) : (<p></p>)
-        ));
-        return resources_get
+        return [...resources].sort(sortFunctions[this.state.order] || sortFunctions.newest);
     }
 
-    getDataUsers = (reviews, ids, currentReviewer) => {
-        var usersData = [];
-        for (var i = 0; i < this.state.users.length; i++) {
-            usersData.push(
-                {
-                    id: this.state.users[i].id,
-                    fName: this.state.users[i].first_name,
-                    lName: this.state.users[i].last_name,
-                    numApproved: 0,
-                    numRejected: 0,
-                    numPending: 0,
-                    timeForAvg: 0,
-                    countForAvg: 0,
-                }
-            )
-        }
+    filterResources(resources) {
+        return resources.filter(r => {
+            const matchesSearch = r.title.toLowerCase().includes(this.state.searchTerm.toLowerCase());
+            const isApprovedOrRejected = this.resourceIsApproved(r) || this.resourceIsRejected(r);
+            return matchesSearch && (!this.state.hideApprovedRejected || !isApprovedOrRejected);
+        });
+    }
 
+    calculateUserStats() {
+        if (this.state.cachedUserStats) return this.state.cachedUserStats;
 
-        this.state.resources.forEach(r => {
-            if (r.assigned_reviewer != -1) {
-                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer);
-                if (indx != -1) {
-                    if (r.review_status === 'pending') {
-                        usersData[indx].numPending++;
-                    } else if (r.review_status === 'approved') {
-                        usersData[indx].numApproved++;
-                    } else if (r.review_status === 'rejected') {
-                        usersData[indx].numRejected++;
+        const stats = this.state.users.map(user => {
+            const userData = {
+                id: user.id,
+                fName: user.first_name,
+                lName: user.last_name,
+                numApproved: 0,
+                numRejected: 0,
+                numPending: 0,
+                timeForAvg: 0,
+                countForAvg: 0,
+            };
+
+            this.state.resources.forEach(r => {
+                ['assigned_reviewer', 'assigned_reviewer_2', 'assigned_reviewer_1_1', 'assigned_reviewer_2_2'].forEach(field => {
+                    if (r[field] === user.id) {
+                        const status = r[field === 'assigned_reviewer' ? 'review_status' : 
+                                       field === 'assigned_reviewer_2' ? 'review_status_2' :
+                                       field === 'assigned_reviewer_1_1' ? 'review_status_1_1' : 'review_status_2_2'];
+                        
+                        if (status === 'pending') userData.numPending++;
+                        else if (status === 'approved') userData.numApproved++;
+                        else if (status === 'rejected') userData.numRejected++;
                     }
-                }
-            }
+                });
+            });
 
-            if (r.assigned_reviewer_2 != -1) {
-                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer_2);
-                if (indx != -1) {
-                    if (r.review_status_2 === 'pending') {
-                        usersData[indx].numPending++;
-                    } else if (r.review_status_2 === 'approved') {
-                        usersData[indx].numApproved++;
-                    } else if (r.review_status_2 === 'rejected') {
-                        usersData[indx].numRejected++;
-                    }
+            this.state.reviews.forEach(r => {
+                if (r.review_time_sec !== 0 && r.reviewer_user_email === user.id) {
+                    userData.timeForAvg += r.review_time_sec;
+                    userData.countForAvg++;
                 }
-            }
+            });
 
-            if (r.assigned_reviewer_2_2 != -1) {
-                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer_2_2);
-                if (indx != -1) {
-                    if (r.review_status_2_2 === 'pending') {
-                        usersData[indx].numPending++;
-                    } else if (r.review_status_2_2 === 'approved') {
-                        usersData[indx].numApproved++;
-                    } else if (r.review_status_2_2 === 'rejected') {
-                        usersData[indx].numRejected++;
-                    }
-                }
-            }
-
-            if (r.assigned_reviewer_1_1 != -1) {
-                var indx = usersData.findIndex(x => x.id === r.assigned_reviewer_1_1);
-                if (indx != -1) {
-                    if (r.review_status_1_1 === 'pending') {
-                        usersData[indx].numPending++;
-                    } else if (r.review_status_1_1 === 'approved') {
-                        usersData[indx].numApproved++;
-                    } else if (r.review_status_1_1 === 'rejected') {
-                        usersData[indx].numRejected++;
-                    }
-                }
-            }
+            return userData;
         });
 
-        this.state.reviews.forEach(r => {
-            if(r.review_time_sec != 0){
-                var indx = usersData.findIndex(x => x.id === r.reviewer_user_email);
-                if (indx != -1) {
-                    usersData[indx].timeForAvg += r.review_time_sec;
-                    usersData[indx].countForAvg ++;
-                }
-            }
-        })
-
-        const resources_get = usersData.map(usr =>
-        (<tr key={usr.id} ref={tr => this.results = tr}>
-            <td>
-                <Popup content={usr.fName + ' ' + usr.lName} trigger={<p>{usr.lName}</p>} />
-            </td>
-            <td>
-                <p>{(usr.timeForAvg)==0 ? '-' : (usr.timeForAvg/usr.countForAvg).toFixed(1)}</p>
-            </td>
-            <td class="positive">
-                <h4>{usr.numApproved}</h4>
-            </td>
-            <td class="negative">
-                <h4 >{usr.numRejected}</h4>
-            </td>
-            <td>
-                <h4>{usr.numPending}</h4>
-            </td>
-        </tr>)
-        );
-
-        return resources_get
+        this.setState({ cachedUserStats: stats });
+        return stats;
     }
 
-    getUsersFooter = (reviews, ids, currentReviewer) => {
-        var totalTime = 0;
-        var totalTimeCount = 0;
-        var totalApproved = 0;
-        var totalRejected = 0;
-        var totalPending = 0;
-        
-        this.state.resources.forEach(r => {
-            if (r.assigned_reviewer != -1) {
-                if (r.review_status === 'pending') {
-                    totalPending++;
-                } else if (r.review_status === 'approved') {
-                    totalApproved++;
-                } else if (r.review_status === 'rejected') {
-                    totalRejected++;
-                } else if (r.review_status === 'conflict') {
-                    totalPending++;
-                }
-            }
-            if (r.assigned_reviewer_2 != -1) {
-                if (r.review_status_2 === 'pending') {
-                    totalPending++;
-                } else if (r.review_status_2 === 'approved') {
-                    totalApproved++;
-                } else if (r.review_status_2 === 'rejected') {
-                    totalRejected++;
-                } else if (r.review_status_2 === 'conflict') {
-                    totalPending++;
-                }
-            }
-            if (r.assigned_reviewer_1_1 != -1) {
-                if (r.review_status_1_1 === 'pending') {
-                    totalPending++;
-                } else if (r.review_status_1_1 === 'approved') {
-                    totalApproved++;
-                } else if (r.review_status_1_1 === 'rejected') {
-                    totalRejected++;
-                } else if (r.review_status_1_1 === 'conflict') {
-                    totalPending++;
-                }
-            }
-            if (r.assigned_reviewer_2_2 != -1) {
-                if (r.review_status_2_2 === 'pending') {
-                    totalPending++;
-                } else if (r.review_status_2_2 === 'approved') {
-                    totalApproved++;
-                } else if (r.review_status_2_2 === 'rejected') {
-                    totalRejected++;
-                } else if (r.review_status_2_2 === 'conflict') {
-                    totalPending++;
-                }
-            }
-        });
+    resourceIsApproved(resource) {
+        const approvedStatuses = [
+            resource.review_status_1_1,
+            resource.review_status_2,
+            resource.review_status_2_2,
+            resource.review_status
+        ].filter(status => status === 'approved');
 
-        this.state.reviews.forEach(r => {
-            if(r.review_time_sec != 0){
-                totalTime += r.review_time_sec;
-                totalTimeCount ++;
-            }
-        });
-
-        const resources_get = 
-        (
-        <tr ref={tr => this.results = tr}>
-            <th>
-                <strong>Total users</strong>
-            </th>
-            <th>
-                <p>{(totalTime/totalTimeCount).toFixed(1)}</p>
-            </th>
-            <th class="positive">
-                <p>{totalApproved}</p>
-            </th>
-            <th class="negative">
-                <p>{totalRejected}</p>
-            </th>
-            <th>
-                <p>{totalPending}</p>
-            </th>
-        </tr>
-        );
-
-        return resources_get
+        return approvedStatuses.length >= 2;
     }
 
-    pendingHeader = () => {
-        return <tr><th style={{ width: 250 }}>Resource</th><th style={{ width: 160 }}>Reviewer 1</th><th style={{ width: 160 }}>Reviewer 2</th><th style={{ width: 160 }}>Reviewer 3</th><th style={{ width: 160 }}>Reviewer 4</th><th style={{ width: 160 }}>Tiebreaker</th></tr>
-    }
-    usersHeader = () => {
-        return <tr><th style={{ width: 350 }}>User</th><th>Avg t(s)</th><th>A</th><th>R</th><th>P</th></tr>
-    }
+    resourceIsRejected(resource) {
+        const rejectedStatuses = [
+            resource.review_status_1_1,
+            resource.review_status_2,
+            resource.review_status_2_2,
+            resource.review_status
+        ].filter(status => status === 'rejected');
 
-    idToUserString = (idnum) => {
-        if (idnum == -1) return "Unassigned";
-        for (var i = 0; i < this.state.users.length; i++) {
-            if (this.state.users[i].id == idnum) return this.state.users[i].first_name + " " + this.state.users[i].last_name
-        }
+        return rejectedStatuses.length >= 2;
     }
-
-    resourceIsApproved = (resource) => {
-        var numOfApprovals = 0
-        if(resource.review_status_1_1 == 'approved')
-            numOfApprovals +=1
-        if(resource.review_status_2 == 'approved')
-            numOfApprovals +=1
-        if(resource.review_status_2_2 == 'approved')
-            numOfApprovals +=1
-        if(resource.review_status == 'approved')
-            numOfApprovals +=1
-
-        if (numOfApprovals>=2)
-            return true
-        return false
-    }
-
-    
 
     render() {
-        // Get current logged in user, take this function out of format_data and consolidate it later
-        const reviewer = this.context.security.is_logged_in
-            ? this.context.security.id
-            : "Unknown user";
+        if (this.state.loading) {
+            return <Loader active>Loading...</Loader>;
+        }
 
-        const reviewsI = this.state.reviews.filter(review => review.reviewer_user_email === reviewer);
-        var ids = []
-        reviewsI.forEach(function (item) {
-            ids.push(item.resource_id)
-        })
+        const reviewer = this.context.security.is_logged_in ? this.context.security.id : "Unknown user";
+        
+        // Filter and sort resources
+        const filteredResources = this.filterResources(this.state.resources);
+        const sortedResources = this.sortResources(filteredResources);
 
-        var reviewsApproval = new Map();
-        reviewsI.forEach(function (item) {
-            reviewsApproval.set(item.resource_id, [item.approved, item.review_comments, item.review_rating]);
-        })
+        // Pagination
+        const totalPages = Math.ceil(sortedResources.length / ITEMS_PER_PAGE);
+        const startIndex = (this.state.currentPage - 1) * ITEMS_PER_PAGE;
+        const paginatedResources = sortedResources.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+        // Calculate user stats
+        const userStats = this.calculateUserStats();
 
         const choices = [
             { text: 'most recent', value: 'newest' },
@@ -562,55 +288,214 @@ export default class ManageReviews extends Component {
             { text: 'least reviewed', value: 'least reviewed' },
             { text: 'tie breaker needed', value: 'tie breakers' },
             { text: 'conflict of interests', value: 'conflict' },
-        ]
+        ];
 
-        const { value } = this.state.order;
+        // Map users for assignment dropdown
+        const userOptions = this.state.users.map(user => ({
+            key: user.id,
+            value: user.id,
+            text: `${user.first_name} ${user.last_name}`
+        })).concat([{ key: -1, value: -1, text: "Unassigned" }]);
+
         return (
             <div>
                 <div style={{ paddingTop: '2%', paddingLeft: '6%', paddingRight: '6%' }}>
-                    <div style={{ padding: "2em 0em", textAlign: "center" }}
-                        vertical>
-                    </div>
-                    {this.state.pending === 'Completed Reviews' ?
-                        <div style={{ display: 'inline-block' }}>
-                            <h4>Order Submissions By </h4>
-                            <Dropdown class="ui inline dropdown"
-                                name="subject"
-                                placeholder='most recent'
-                                selection
-                                onChange={this.handleOrder}
-                                options={choices}
-                                value={value}
-                            />
-                        </div>
-                        : null}
+                    <Grid verticalAlign="middle">
+                        <Grid.Row columns={3} style={{ alignItems: 'center' }}>
+                            <Grid.Column>
+                                {this.state.pending === 'Completed Reviews' && (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        <h4 style={{ margin: 0 }}>Order Submissions By </h4>
+                                        <Dropdown
+                                            style={{ minHeight: '38px' }}
+                                            className="ui dropdown"
+                                            name="subject"
+                                            placeholder='most recent'
+                                            selection
+                                            onChange={this.handleOrder}
+                                            options={choices}
+                                            value={this.state.order}
+                                        />
+                                    </div>
+                                )}
+                            </Grid.Column>
+                            <Grid.Column textAlign="center">
+                                <Input
+                                    icon='search'
+                                    placeholder='Search by title...'
+                                    onChange={this.handleSearch}
+                                    value={this.state.searchTerm}
+                                    style={{ width: '100%', maxWidth: '400px' }}
+                                />
+                            </Grid.Column>
+                            <Grid.Column textAlign="right">
+                                <Checkbox
+                                    label='Hide Approved/Rejected Resources'
+                                    onChange={this.handleHideApprovedRejected}
+                                    checked={this.state.hideApprovedRejected}
+                                    style={{ marginRight: '20px' }}
+                                />
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
+
                     <Grid celled>
                         <Grid.Row>
                             <Grid.Column width={5}>
                                 <div style={{ height: '500px', overflowX: "scroll", width: "100%" }}>
-                                    <Table class="ui definition table">
+                                    <Table className="ui definition table">
                                         <thead>
-                                            {this.usersHeader()}
+                                            <tr>
+                                                <th style={{ width: 350 }}>User</th>
+                                                <th>Avg t(s)</th>
+                                                <th>A</th>
+                                                <th>R</th>
+                                                <th>P</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                            {this.getDataUsers(this.state.reviews, ids, reviewer)}
+                                            {userStats.map(usr => (
+                                                <tr key={usr.id}>
+                                                    <td>
+                                                        <Popup 
+                                                            content={`${usr.fName} ${usr.lName}`} 
+                                                            trigger={<p>{usr.lName}</p>} 
+                                                        />
+                                                    </td>
+                                                    <td>
+                                                        <p>{usr.countForAvg === 0 ? '-' : (usr.timeForAvg/usr.countForAvg).toFixed(1)}</p>
+                                                    </td>
+                                                    <td className="positive">
+                                                        <h4>{usr.numApproved}</h4>
+                                                    </td>
+                                                    <td className="negative">
+                                                        <h4>{usr.numRejected}</h4>
+                                                    </td>
+                                                    <td>
+                                                        <h4>{usr.numPending}</h4>
+                                                    </td>
+                                                </tr>
+                                            ))}
                                         </tbody>
-                                        <tfoot>
-                                            {this.getUsersFooter()}
-                                        </tfoot>
                                     </Table>
                                 </div>
                             </Grid.Column>
                             <Grid.Column width={11}>
                                 <div style={{ height: '500px', overflowX: "scroll", width: "100%" }}>
-                                    <Table class="ui celled table">
+                                    <Table className="ui celled table">
                                         <thead>
-                                            {this.pendingHeader()}
+                                            <tr>
+                                                <th style={{ width: 250 }}>Resource</th>
+                                                <th style={{ width: 160 }}>Reviewer 1</th>
+                                                <th style={{ width: 160 }}>Reviewer 2</th>
+                                                <th style={{ width: 160 }}>Reviewer 3</th>
+                                                <th style={{ width: 160 }}>Reviewer 4</th>
+                                                <th style={{ width: 160 }}>Tiebreaker</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                            {this.getData(this.state.reviews, ids, reviewer)}
+                                            {paginatedResources.map(r => (
+                                                <tr key={r.id}>
+                                                    <td><Link to={baseRoute + "/resource/" + r.id}>{r.title}</Link></td>
+                                                    <td>
+                                                        <h4>
+                                                            {r.review_status === "approved" ? 
+                                                                <p><i className="green check icon"></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer}/></p> : 
+                                                             r.review_status === "pending" ? 
+                                                                <p><i className="x icon"></i> pending</p> : 
+                                                             r.review_status === "conflict" ? 
+                                                                <p><i className="red stop circle outline icon"></i>Conflict of Interest</p> : 
+                                                                <p><i className="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer}/></p>}
+                                                            <Dropdown 
+                                                                selection 
+                                                                options={userOptions} 
+                                                                defaultValue={r.assigned_reviewer} 
+                                                                onChange={(e, { value }) => this.handleAssign("assigned_reviewer", value, r.id)}
+                                                            />
+                                                        </h4>
+                                                    </td>
+                                                    <td>
+                                                        <h4>
+                                                            {r.review_status_2 === "approved" ? 
+                                                                <p><i className="green check icon"></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2}/></p> : 
+                                                             r.review_status_2 === "pending" ? 
+                                                                <p><i className="x icon"></i> pending</p> : 
+                                                             r.review_status_2 === "conflict" ? 
+                                                                <p><i className="red stop circle outline icon"></i>Conflict of Interest</p> : 
+                                                                <p><i className="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2}/></p>}
+                                                            <Dropdown 
+                                                                selection 
+                                                                options={userOptions} 
+                                                                defaultValue={r.assigned_reviewer_2} 
+                                                                onChange={(e, { value }) => this.handleAssign("assigned_reviewer_2", value, r.id)}
+                                                            />
+                                                        </h4>
+                                                    </td>
+                                                    <td>
+                                                        <h4>
+                                                            {r.review_status_1_1 === "approved" ? 
+                                                                <p><i className="green check icon"></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_1_1}/></p> : 
+                                                             r.review_status_1_1 === "pending" ? 
+                                                                <p><i className="x icon"></i> pending</p> : 
+                                                             r.review_status_1_1 === "conflict" ? 
+                                                                <p><i className="red stop circle outline icon"></i>Conflict of Interest</p> : 
+                                                                <p><i className="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_1_1}/></p>}
+                                                            <Dropdown 
+                                                                selection 
+                                                                options={userOptions} 
+                                                                defaultValue={r.assigned_reviewer_1_1} 
+                                                                onChange={(e, { value }) => this.handleAssign("assigned_reviewer_1_1", value, r.id)}
+                                                            />
+                                                        </h4>
+                                                    </td>
+                                                    <td>
+                                                        <h4>
+                                                            {r.review_status_2_2 === "approved" ? 
+                                                                <p><i className="green check icon"></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2_2}/></p> : 
+                                                             r.review_status_2_2 === "pending" ? 
+                                                                <p><i className="x icon"></i> pending</p> : 
+                                                             r.review_status_2_2 === "conflict" ? 
+                                                                <p><i className="red stop circle outline icon"></i>Conflict of Interest</p> : 
+                                                                <p><i className="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_2_2}/></p>}
+                                                            <Dropdown 
+                                                                selection 
+                                                                options={userOptions} 
+                                                                defaultValue={r.assigned_reviewer_2_2} 
+                                                                onChange={(e, { value }) => this.handleAssign("assigned_reviewer_2_2", value, r.id)}
+                                                            />
+                                                        </h4>
+                                                    </td>
+                                                    {this.resourceNeedTieBreaker(r) ? (
+                                                        <td>
+                                                            <h4>
+                                                                {r.review_status_3 === "approved" ? 
+                                                                    <p><i className="green check icon"></i> approved <ReviewPopover resId={r.id} revId={r.assigned_reviewer_3}/></p> : 
+                                                                 r.review_status_3 === "pending" ? 
+                                                                    <p><i className="x icon"></i> pending</p> : 
+                                                                 r.review_status_3 === "conflict" ? 
+                                                                    <p><i className="red stop circle outline icon"></i>Conflict of Interest</p> : 
+                                                                    <p><i className="red x icon"></i> rejected <ReviewPopover resId={r.id} revId={r.assigned_reviewer_3}/></p>}
+                                                                <Dropdown 
+                                                                    selection 
+                                                                    options={userOptions} 
+                                                                    defaultValue={r.assigned_reviewer_3} 
+                                                                    onChange={(e, { value }) => this.handleAssign("assigned_reviewer_3", value, r.id)}
+                                                                />
+                                                            </h4>
+                                                        </td>
+                                                    ) : <td/>}
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </Table>
+                                </div>
+                                <div style={{ marginTop: '1em', textAlign: 'center' }}>
+                                    <Pagination
+                                        activePage={this.state.currentPage}
+                                        onPageChange={this.handlePageChange}
+                                        totalPages={totalPages}
+                                        ellipsisItem={null}
+                                    />
                                 </div>
                             </Grid.Column>
                         </Grid.Row>

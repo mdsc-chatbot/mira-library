@@ -21,127 +21,169 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import React from 'react'
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Segment, Checkbox, Loader, List, Accordion, Label, Icon } from 'semantic-ui-react';
+import { Segment, Checkbox, Loader, List, Accordion, Label, Icon, Tab } from 'semantic-ui-react';
 import * as styles from './FilterList.css';
 
-// Stores tags and categories
+// Language category mappings
+const LANGUAGE_CATEGORIES = {
+  en: [
+    'Audience',
+    'Costs',
+    'Health Issue',
+    'Language',
+    'Location',
+    'Resource Format',
+    'Resource Type for Education/Informational',
+    'Resource Type for Programs and Services'
+  ],
+  fr: [
+    'Coûts',
+    'Langue',
+    'Problème de santé',
+    'Type de ressource',
+    'Public',
+  ]
+};
+
 export function FilterList({ tags, categories, selectedTags, handleTagSelected, handleCategorySelected, handleTagDeselected }) {
+  // Helper function to get tags for a specific language
+  const getLanguageTags = (tags, language) => {
+    const categoryList = LANGUAGE_CATEGORIES[language] || [];
+    return tags.filter(tag => categoryList.includes(tag.tag_category));
+  };
 
-    //Getting distinct tag sub-categories
-    const distinct = (value, index, self) => {
-        return self.indexOf(value) == index;
-    }
-    var allTagCategories = []
-    for (var i = 0; i < tags.length; i++) {
-        allTagCategories.push(tags[i].tag_category)
-    }
-    var distinctTagCategories = allTagCategories.filter(distinct)
-    distinctTagCategories.sort(function (a, b) {
-        return a.localeCompare(b);
-    })
+  // Get uncategorized tags
+  const getUncategorizedTags = (tags) => {
+    const allMappedCategories = [...LANGUAGE_CATEGORIES.en, ...LANGUAGE_CATEGORIES.fr];
+    return tags.filter(tag => !allMappedCategories.includes(tag.tag_category));
+  };
 
-    // function showAc (tags, distinctTagCategories, selectedTags, handleTagSelected){
-    //     var panels = [];
-    //     distinctTagCategories.forEach(category => {
-    //         var cn = tags.filter(tag => tag.tag_category == category).map(tag => (
-    //             <List.Item><Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} checked={selectedTags.includes(tag.id)}/></List.Item>
-    //         ));
-    //         var counter = tags.filter(tag => tag.tag_category == category).filter(tag => (selectedTags.includes(tag.id))).length;
-    //         if(counter>0)
-    //             counter = '('+counter+')'
-    //         else
-    //             counter = ''
-    //         panels.push({
-    //             title: { content: category + counter, icon: "dropdown" },
-    //             content: { content: cn }
-    //         });
-    //     });
-    //     console.log(selectedTags)
-    //     return (<Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />);
-    // }
-
-    //same as the above function, but parses out "/" from the category name and adds subcategories
-    //they can only be one layer deep (this is checked in the DB)
-    function showAc (tags, distinctTagCategories, selectedTags, handleTagSelected){
-        var panels = [];
-        var supercategories = [];
-        distinctTagCategories.forEach(category => {
-            //we find all supercategories, then for each super category we nest the subcategories, which further nest the tags
-            //if the category does not have a "/", it is a supercategory on it's own, and we nest the tags directly
-            if(category.includes("/")){
-                var supercategory = category.split("/")[0];
-                if(!supercategories.includes(supercategory)){
-                    supercategories.push(supercategory);
-                }
-            } else {
-                supercategories.push(category);
-            }
-        });
-        //next, add the tags
-        supercategories.forEach(supercategory => {
-            var cn = tags.filter(tag => tag.tag_category.includes(supercategory)).map(tag => (
-                <List.Item><Checkbox name={tag.name} label={tag.name} tag_id={tag.id} onChange={handleTagSelected} checked={selectedTags.includes(tag.id)}/></List.Item>
-            ));
-            var counter = tags.filter(tag => tag.tag_category.includes(supercategory)).filter(tag => (selectedTags.includes(tag.id))).length;
-            if(counter>0)
-                counter = '('+counter+')'
-            else
-                counter = ''
-            panels.push({
-                title: { content: supercategory + counter, icon: "dropdown" },
-                content: { content: cn }
-            });
+  // Create accordion panels for a specific set of tags
+  const createAccordionPanels = (filteredTags) => {
+    const distinctCategories = [...new Set(filteredTags.map(tag => tag.tag_category))].sort();
+    
+    return distinctCategories.map(category => {
+      const categoryTags = filteredTags.filter(tag => tag.tag_category === category);
+      const selectedCount = categoryTags.filter(tag => selectedTags.includes(tag.id)).length;
+      const counter = selectedCount > 0 ? `(${selectedCount})` : '';
+      
+      return {
+        title: { content: `${category} ${counter}`, icon: "dropdown" },
+        content: {
+          content: (
+            <List>
+              {categoryTags.map(tag => (
+                <List.Item key={tag.id}>
+                  <Checkbox
+                    name={tag.name}
+                    label={tag.name}
+                    tag_id={tag.id}
+                    onChange={handleTagSelected}
+                    checked={selectedTags.includes(tag.id)}
+                  />
+                </List.Item>
+              ))}
+            </List>
+          )
         }
-        );
-        return (<Accordion defaultActiveIndex={[0, 1]} panels={panels} styled fluid />);
-    }
+      };
+    });
+  };
 
-    if (tags.length > 0) {
-        return (
-            <Segment>
-                <List className={styles.nonCenteredText}>
-                <List.Header  className={styles.centeredText}> <h3>Filters</h3></List.Header>
-                    {/* <List.Item>
-                        <List.Header>Categories</List.Header>
-                        <List.Content>
-                            
-                            {categories.map(category => (
-                                <List.Item key={category.id}>
-                                    <Checkbox name={category.name} label={category.name} category_id={category.id} onChange={handleCategorySelected}/>
-                                </List.Item>
-                            ))}
-                        </List.Content>
-                    </List.Item> */}
-                    <List.Item className={styles.filterHeader}>
-                        {   
-                            selectedTags.map(selectedTag => (<Label color='grey' className={styles.tagsLineHeight} tag_id={selectedTag} onClick={handleTagDeselected} tiny horizontal>{tags.filter(tag=> tag.id ==selectedTag)[0].name} &nbsp; <Icon name="x" color="yellow" ></Icon></Label>))
-                        }
-                    </List.Item>
-                    <List.Item>
-                        {
-                            showAc(tags, distinctTagCategories, selectedTags, handleTagSelected)
-                        }
-                    </List.Item>
-                </List>
-            </Segment>
-        );
-    } else {
-        return (
-            <React.Fragment>
-                <Loader active inline />
-                Loading Filters ...
-            </React.Fragment>
-        );
+  if (tags.length === 0) {
+    return (
+      <React.Fragment>
+        <Loader active inline />
+        Loading Filters ...
+      </React.Fragment>
+    );
+  }
+
+  // Create tab panes
+  const panes = [
+    {
+      menuItem: 'English',
+      render: () => (
+        <Tab.Pane>
+          <Accordion
+            defaultActiveIndex={[0]}
+            panels={createAccordionPanels(getLanguageTags(tags, 'en'))}
+            styled
+            fluid
+          />
+        </Tab.Pane>
+      )
+    },
+    {
+      menuItem: 'Français',
+      render: () => (
+        <Tab.Pane>
+          <Accordion
+            defaultActiveIndex={[0]}
+            panels={createAccordionPanels(getLanguageTags(tags, 'fr'))}
+            styled
+            fluid
+          />
+        </Tab.Pane>
+      )
     }
+  ];
+
+  // Add Uncategorized tab only if there are uncategorized tags
+  const uncategorizedTags = getUncategorizedTags(tags);
+  if (uncategorizedTags.length > 0) {
+    panes.push({
+      menuItem: 'Uncategorized',
+      render: () => (
+        <Tab.Pane>
+          <Accordion
+            defaultActiveIndex={[0]}
+            panels={createAccordionPanels(uncategorizedTags)}
+            styled
+            fluid
+          />
+        </Tab.Pane>
+      )
+    });
+  }
+
+  return (
+    <Segment>
+      <List className={styles.nonCenteredText}>
+        <List.Header className={styles.centeredText}>
+          <h3>Filters</h3>
+        </List.Header>
+        <List.Item className={styles.filterHeader}>
+          {selectedTags.map(selectedTag => (
+            <Label
+              key={selectedTag}
+              color='grey'
+              className={styles.tagsLineHeight}
+              tag_id={selectedTag}
+              onClick={handleTagDeselected}
+              tiny
+              horizontal
+            >
+              {tags.find(tag => tag.id === selectedTag)?.name} &nbsp;
+              <Icon name="x" color="yellow" />
+            </Label>
+          ))}
+        </List.Item>
+        <List.Item>
+          <Tab panes={panes} />
+        </List.Item>
+      </List>
+    </Segment>
+  );
 }
 
 FilterList.propTypes = {
-    tags: PropTypes.array,
-    categories: PropTypes.array,
-    selectedTags: PropTypes.array,
-    handleTagSelected: PropTypes.func.isRequired,
-    handleCategorySelected: PropTypes.func.isRequired,
-    handleTagDeselected: PropTypes.func.isRequired,
+  tags: PropTypes.array,
+  categories: PropTypes.array,
+  selectedTags: PropTypes.array,
+  handleTagSelected: PropTypes.func.isRequired,
+  handleCategorySelected: PropTypes.func.isRequired,
+  handleTagDeselected: PropTypes.func.isRequired,
 };
