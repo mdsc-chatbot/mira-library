@@ -53,6 +53,7 @@ from .api.serializers import (CustomUserSerializer,
                               UserUpdateByAdminSerializer)
 from .email_manager.email_tokens import account_activation_token
 from .models import CustomUser
+from .permissions import IsEditor
 
 # Get the JWT settings, add these lines after the import/from lines
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -398,7 +399,7 @@ class SearchByAnythingWithFilterDateIdView(generics.ListAPIView):
     GET uper/search/by_anything/
     Lists all users based on a search string (not case sensitive)
     """
-    permission_classes = (permissions.IsAdminUser,)  # Only admin can perform this operation
+    permission_classes = (IsEditor,)  # Only admins or editors can perform this operation
 
     # Get all the instance of the model
     # queryset = CustomUser.objects.all().order_by('id')
