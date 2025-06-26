@@ -95,7 +95,7 @@ def fetch_tags(request):
 def fetch_tags_by_cat(request):
     try:
         tag_set = Tag.objects.filter(
-            name__icontains=request.GET['name'], tag_category__contains=request.GET['tag_category'], approved=True).values('id', 'name')
+            name__icontains=request.GET['name'], tag_category=request.GET['tag_category'], approved=True).values('id', 'name')
         return JsonResponse(list(tag_set), safe=False)
     except:
         # Return empty http response if can't find tags

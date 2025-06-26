@@ -24,7 +24,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { Slider } from "react-semantic-ui-range";
-import { Container, Form, Header, Input, Message, Icon, Popup, Checkbox, Divider, Dropdown, Dimmer, Segment, Image, Loader} from "semantic-ui-react";
+import { Container, Form, Header, Input, Message, Icon, Popup, Checkbox, Divider, Dropdown, Dimmer, Segment, Image, Loader, Button } from "semantic-ui-react";
 import TagDropdown from "./TagDropdown";
 import TitleDropdown from "./TitleDropdown";
 import OrganizationNameDropdown from "./OrganizationNameDropdown";
@@ -34,6 +34,7 @@ import ResourceTypeDropdown from './ResourceTypeDropdown';
 import ResourceFormatDropdown from './ResourceFormatDropdown';
 import { SecurityContext } from '../contexts/SecurityContext';
 import * as styles from "./ResourceSubmitForm.css";
+import { withRouter } from "react-router-dom";
 
 export default class ResourceSubmitForm extends Component {
     static contextType = SecurityContext;
@@ -718,7 +719,14 @@ export default class ResourceSubmitForm extends Component {
         }
 
         return (
-            <div style={{ paddingTop: "3%", paddingLeft: "10%", paddingRight: "10%", paddingBottom: "3%" }}>
+            <div style={{ paddingTop: "3%", paddingLeft: "10%", paddingRight: "10%", paddingBottom: "3%", position: 'relative' }}>
+                <Button
+                    style={{ position: 'absolute', top: 10, right: 10, zIndex: 10 }}
+                    color="blue"
+                    onClick={() => this.props.history.push('/chatbotportal/app/resourcefr')}
+                >
+                    FR
+                </Button>
                 <SecurityContext.Consumer>
                     {securityContext => (
                         <Container vertical>

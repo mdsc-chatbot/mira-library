@@ -80,7 +80,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'frontend/react'),
+            #os.path.join(BASE_DIR, 'frontend/react'),
+            os.path.join(BASE_DIR, 'ChatbotPortal', 'frontend', 'react'),
             os.path.join(
                 BASE_DIR, 'authentication/email_manager', 'templates'),
         ],
@@ -158,7 +159,9 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'media', 'profile_pics'),
     os.path.join(BASE_DIR, 'frontend','react','src','logo'),
     os.path.join(BASE_DIR, 'assets'),
+    os.path.join(BASE_DIR, "ChatbotPortal/static"),
 )
+
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -243,3 +246,7 @@ LOGGING_CONFIG = None
 #         },
 #     },
 # }
+
+# Configure Django App for Heroku.
+# import django_heroku
+# django_heroku.settings(locals())

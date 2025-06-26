@@ -34,6 +34,7 @@ import LogoutPage from "./authentication/LogoutPage";
 import {SecurityContextProvider} from "./contexts/SecurityContext";
 import Footer from "./Footer";
 import ResourceSubmitForm from "./resource/ResourceSubmitForm";
+import ResourceSubmitFormFR from './resource/ResourceSubmitFormFR';
 import PublicResourcePage from "./public/PublicResourcePage";
 import SearchPage from "./search/SearchPage";
 import ManageReviews from "./managereviews/ManageReviews"
@@ -106,6 +107,10 @@ export default function App() {
                             <Route
                                 exact path={baseRoute + "/resource_submit"}
                                 component={ResourceSubmitForm}
+                            />
+                            <Route
+                                exact path={baseRoute + "/resourcefr"}
+                                component={ResourceSubmitFormFR}
                             />
                             <Route
                                 exact path={baseRoute + "/stats"}
